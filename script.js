@@ -8,7 +8,7 @@ const rngButton = document.getElementById('rngButton');
 
 const errorMessage = document.getElementById('errorMessage');
 
-const socket = new WebSocket('/ws');
+const socket = new WebSocket(`wss://${window.location.host}/ws`);
 
 socket.addEventListener('open', () => {
 
@@ -59,7 +59,7 @@ socket.addEventListener('message', event => {
 
         errorMessage.classList.remove("hidden");
 
-        console.log("❌ Invalid backend message");
+        console.log("❌ Invalid game response");
 
     }
 
