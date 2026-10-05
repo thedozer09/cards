@@ -8,7 +8,7 @@ const rngButton = document.getElementById('rngButton');
 
 const errorMessage = document.getElementById('errorMessage');
 
-const socket = new WebSocket('wss://fi12.bot-hosting.cloud:25151');
+const socket = new WebSocket('wss://u9gr0sggbn.apps.bot-hosting.cloud');
 
 socket.addEventListener('open', () => {
 
