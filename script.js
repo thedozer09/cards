@@ -8,7 +8,9 @@ const rngButton = document.getElementById('rngButton');
 
 const errorMessage = document.getElementById('errorMessage');
 
-const socket = new WebSocket(`wss://${window.location.host}/ws`);
+const clientId = '1371190489629593750';
+
+const socket = new WebSocket(`wss://${clientId}.discordsays.com/ws`);
 
 socket.addEventListener('open', () => {
 
@@ -59,7 +61,7 @@ socket.addEventListener('message', event => {
 
         errorMessage.classList.remove("hidden");
 
-        console.log("❌ Invalid game response");
+        console.log("❌ Invalid backend message");
 
     }
 
