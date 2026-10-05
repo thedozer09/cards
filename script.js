@@ -1,39 +1,17 @@
-import { DiscordSDK } from "https://unpkg.com";
-
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const testButton = document.getElementById('testButton');
 const rngButton = document.getElementById('rngButton');
 const errorMessage = document.getElementById('errorMessage');
 
-const clientId = '1371190489629593750';
 let socket = null;
 
-const discordSdk = new DiscordSDK(clientId);
-
-async function setupActivity() {
-    try {
-        await discordSdk.ready();
-        console.log("Discord SDK Ready");
-
-        discordSdk.patchUrlMappings([
-            {
-                prefix: '/ws',
-                target: 'fi12.bot-hosting.cloud:25151'
-            }
-        ], { patchWebSocket: true });
-
-        console.log("URL Mappings Patched");
-        initializeWebSocket();
-    } catch (err) {
-        console.error("Initialization failure:", err);
-        errorMessage.textContent = "⚠️ Failed to initialize Discord link.";
-        errorMessage.classList.remove("hidden");
-    }
-}
-
 function initializeWebSocket() {
-    socket = new WebSocket(`wss://fi12.bot-hosting.cloud:25151/ws`);
+    // Relative configuration tells Discord to funnel traffic through your portal mapping
+    const socketUrl = `wss://${window.location.host}/ws`;
+    
+    console.log("Connecting directly to Discord Proxy route:", socketUrl);
+    socket = new WebSocket(socketUrl);
 
     socket.addEventListener('open', () => {
         console.log("Connected to card game backend");
@@ -56,29 +34,39 @@ function initializeWebSocket() {
             }
 
             if (data.type === "error") {
-                errorMessage.textContent = data.data.message;
+                errorMessage.textContent = `❌ Server Error: ${data.data.message}`;
                 errorMessage.classList.remove("hidden");
                 return;
             }
 
-            errorMessage.textContent = "⚠️ Game communication error.";
-            errorMessage.classList.remove("hidden");
-            console.log("❌ Unknown backend message type:", data.type);
-
         } catch (err) {
-            errorMessage.textContent = "⚠️ Invalid game response.";
+            errorMessage.textContent = "⚠️ Invalid game response structural frame.";
             errorMessage.classList.remove("hidden");
-            console.log("❌ Invalid backend message");
         }
     });
 
-    socket.addEventListener('close', () => {
-        console.log("WebSocket connection closed. Retrying...");
-        setTimeout(initializeWebSocket, 3000);
+    socket.addEventListener('close', (event) => {
+        console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
+        
+        if (event.code === 1006) {
+            errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping your Bot-Hosting container port, or your backend layout dropped the connection.";
+        } else if (event.code === 1015) {
+            errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that your backend container port didn't accept.";
+        } else {
+            errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'None'}`;
+        }
+        errorMessage.classList.remove("hidden");
     });
 
     socket.addEventListener('error', (err) => {
-        console.error("WebSocket connection failure:", err);
+        console.error("WebSocket Error Stack:", err);
+        
+        if (socket.readyState === WebSocket.CONNECTING) {
+            errorMessage.textContent = "❌ ERROR: Browser CSP Security Block. Outbound traffic was blocked by the browser sandbox before leaving your app.";
+        } else {
+            errorMessage.textContent = "❌ ERROR: Generic Socket Core Failure. See network trace tool flags.";
+        }
+        errorMessage.classList.remove("hidden");
     });
 }
 
@@ -89,7 +77,13 @@ testButton.addEventListener('click', () => {
 
 rngButton.addEventListener('click', () => {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        errorMessage.textContent = "⚠️ Game server is not connected.";
+        let stateText = "UNKNOWN";
+        if (!socket) stateText = "NOT_INITIALIZED";
+        else if (socket.readyState === WebSocket.CONNECTING) stateText = "CONNECTING";
+        else if (socket.readyState === WebSocket.CLOSING) statusText = "CLOSING";
+        else if (socket.readyState === WebSocket.CLOSED) stateText = "CLOSED";
+
+        errorMessage.textContent = `⚠️ Action Cancelled: Socket State is [${stateText}]. Check the error log banner.`;
         errorMessage.classList.remove("hidden");
         return;
     }
@@ -101,4 +95,4 @@ rngButton.addEventListener('click', () => {
     }));
 });
 
-setupActivity();
+initializeWebSocket();
