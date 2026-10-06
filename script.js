@@ -131,77 +131,45 @@ rngButton.addEventListener('click', () => {
 initializeWebSocket();
 
 const loadingScreen = document.getElementById('loadingScreen');
-
 const mainScreen = document.getElementById('mainScreen');
-
 const generateButton = document.getElementById('generateButton');
-
 const leaderboardsButton = document.getElementById('leaderboardsButton');
-
 const cardsButton = document.getElementById('cardsButton');
-
 const generateScreen = document.getElementById('generateScreen');
-
 const leaderboardsScreen = document.getElementById('leaderboardsScreen');
-
 const cardsScreen = document.getElementById('cardsScreen');
 
-
 setTimeout(() => {
-
     loadingScreen.classList.add('hidden');
-
     mainScreen.classList.remove('hidden');
-
 }, 3000);
 
-
 function switchTab(button, screen) {
-
     generateButton.classList.remove('active');
-
     leaderboardsButton.classList.remove('active');
-
     cardsButton.classList.remove('active');
-
     generateScreen.classList.add('hidden');
-
     leaderboardsScreen.classList.add('hidden');
-
     cardsScreen.classList.add('hidden');
-
     button.classList.add('active');
-
     screen.classList.remove('hidden');
-
 }
 
-
 generateButton.addEventListener('click', () => {
-
     switchTab(generateButton, generateScreen);
-
 });
-
 
 leaderboardsButton.addEventListener('click', () => {
-
     switchTab(leaderboardsButton, leaderboardsScreen);
-
 });
-
 
 cardsButton.addEventListener('click', () => {
-
     switchTab(cardsButton, cardsScreen);
-
 });
-
 
 const scrollRail = document.querySelector('.scrollRail');
 
 function updateScrollRail() {
-
     if (!scrollRail) {
         return;
     }
@@ -214,9 +182,7 @@ function updateScrollRail() {
     );
 
     const spacing = 250;
-
     const edgeInset = 36;
-
     const positions = [];
 
     const usableHeight = Math.max(
@@ -230,79 +196,50 @@ function updateScrollRail() {
     );
 
     if (indicatorCount === 1) {
-
         positions.push(pageHeight / 2);
-
     } else {
-
         for (let i = 0; i < indicatorCount; i++) {
-
             positions.push(edgeInset + (i * spacing));
-
         }
-
     }
 
     scrollRail.style.height = `${pageHeight}px`;
-
     scrollRail.innerHTML = '';
 
     for (let i = 0; i < positions.length; i++) {
-
         const indicator = document.createElement('div');
-
         indicator.className = 'scrollIndicator';
-
         indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>';
-
         indicator.style.top = `${positions[i]}px`;
 
         if (positions.length === 1) {
-
             indicator.classList.add('singleScrollIndicator');
-
         } else if (i === 0) {
-
             indicator.classList.add('firstScrollIndicator');
-
         } else if (i === positions.length - 1) {
-
             indicator.classList.add('lastScrollIndicator');
-
         }
 
         scrollRail.appendChild(indicator);
-
     }
-
 }
 
-
 updateScrollRail();
-
 window.addEventListener('resize', updateScrollRail);
 
 if (typeof ResizeObserver !== 'undefined') {
-
     const scrollResizeObserver = new ResizeObserver(() => {
-
         updateScrollRail();
-
     });
 
     scrollResizeObserver.observe(mainScreen);
-
     scrollResizeObserver.observe(document.body);
-
 }
 
-
 const tabButtons = document.querySelectorAll('.tabButton');
-
 const buttonShakeStates = new Map();
 
 function startButtonEarthquake(button) {
-
     if (buttonShakeStates.has(button)) {
         return;
     }
@@ -316,56 +253,38 @@ function startButtonEarthquake(button) {
     buttonShakeStates.set(button, state);
 
     function shakeFrame(now) {
-
         if (!state.active) {
             return;
         }
 
         const elapsed = now - state.startedAt;
-
         let x = 0;
-
         let y = 0;
-
         let angle = 0;
 
         if (elapsed < 5000) {
-
             const progress = Math.min(elapsed / 5000, 1);
-
             const tilt = 0.2 + progress * 1.3;
-
             angle = Math.sin(elapsed / 140) * tilt;
-
         } else {
-
             const progress = Math.min((elapsed - 5000) / 5000, 1);
-
             const intensity = 0.25 + progress * 0.75;
-
             x = (Math.random() - 0.5) * 1.35 * intensity;
-
             y = (Math.random() - 0.5) * 1.35 * intensity;
-
             angle = (Math.random() - 0.5) * 0.3 * intensity;
-
         }
 
         button.style.transform =
             `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 
         state.animationFrame = requestAnimationFrame(shakeFrame);
-
     }
 
     state.animationFrame = requestAnimationFrame(shakeFrame);
-
 }
 
 function stopButtonEarthquake(button) {
-
     const state = buttonShakeStates.get(button);
-
     if (!state) {
         return;
     }
@@ -377,19 +296,14 @@ function stopButtonEarthquake(button) {
     }
 
     button.style.transform = '';
-
     buttonShakeStates.delete(button);
-
 }
 
 function playButtonAnimation(button) {
-
     stopButtonEarthquake(button);
 
     button.querySelectorAll('.buttonEffectImage').forEach(image => {
-
         image.remove();
-
     });
 
     button.classList.remove('clickJerk');
@@ -399,82 +313,56 @@ function playButtonAnimation(button) {
     button.classList.add('clickJerk');
 
     const car = document.createElement('img');
-
     car.className = 'buttonEffectImage carEffect';
-
     car.src = './carvector.png';
-
     car.alt = '';
 
     const tornado = document.createElement('img');
-
     tornado.className = 'buttonEffectImage tornadoEffect';
-
     tornado.src = './tornadovector.png';
-
     tornado.alt = '';
 
     button.appendChild(car);
-
     button.appendChild(tornado);
 
     button.addEventListener('animationend', () => {
-
         button.classList.remove('clickJerk');
-
     }, { once: true });
 
     tornado.addEventListener('animationend', () => {
-
         car.remove();
-
         tornado.remove();
-
     }, { once: true });
-
 }
 
 tabButtons.forEach(button => {
-
     button.addEventListener('pointerenter', () => {
-
         startButtonEarthquake(button);
-
     });
 
     button.addEventListener('pointerleave', () => {
-
         stopButtonEarthquake(button);
-
     });
 
     button.addEventListener('click', () => {
-
         playButtonAnimation(button);
-
     });
-
 });
 
-
 function startNormalButtonWiggle(button) {
-
     if (!button || button.classList.contains('tabButton')) {
         return;
     }
 
     button.classList.add('normalButtonWiggle');
-
 }
 
 function stopNormalButtonWiggle(button) {
-
     if (!button) {
         return;
     }
 
     button.classList.remove('normalButtonWiggle');
-
 }
 
 const RNG_RARITY_COLORS = {
@@ -485,36 +373,28 @@ const RNG_RARITY_COLORS = {
 };
 
 let rngRequestPending = false;
-
 let rngResultPanel = null;
-
 let rngScrambleTimer = null;
 
 const rngRandomCharacters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.?/<>~`';
 
 function getRandomRngCharacter() {
-
     const index = Math.floor(
         Math.random() * rngRandomCharacters.length
     );
 
     return rngRandomCharacters[index];
-
 }
 
 function normalizeRngModifiers(modifiers) {
-
     if (Array.isArray(modifiers)) {
-
         return modifiers.map((modifier, index) => {
-
             if (
                 modifier &&
                 typeof modifier === 'object' &&
                 !Array.isArray(modifier)
             ) {
-
                 const label =
                     modifier.name ??
                     modifier.modifier ??
@@ -530,33 +410,26 @@ function normalizeRngModifiers(modifiers) {
                 let detail = '';
 
                 if (detailEntries.length === 1) {
-
                     detail = formatRngValue(detailEntries[0][1]);
-
                 } else if (detailEntries.length > 1) {
-
                     detail = detailEntries
                         .map(([key, value]) => {
                             return `${key}: ${formatRngValue(value)}`;
                         })
                         .join(' • ');
-
                 }
 
                 return {
                     label: String(label),
                     value: detail
                 };
-
             }
 
             return {
                 label: `Modifier ${index + 1}`,
                 value: formatRngValue(modifier)
             };
-
         });
-
     }
 
     if (
@@ -564,15 +437,12 @@ function normalizeRngModifiers(modifiers) {
         typeof modifiers === 'object' &&
         !Array.isArray(modifiers)
     ) {
-
         return Object.entries(modifiers).map(([key, value]) => {
-
             if (
                 value &&
                 typeof value === 'object' &&
                 !Array.isArray(value)
             ) {
-
                 const entries = Object.entries(value);
 
                 const detail = entries
@@ -585,16 +455,13 @@ function normalizeRngModifiers(modifiers) {
                     label: key,
                     value: detail
                 };
-
             }
 
             return {
                 label: key,
                 value: formatRngValue(value)
             };
-
         });
-
     }
 
     if (
@@ -602,20 +469,16 @@ function normalizeRngModifiers(modifiers) {
         modifiers !== null &&
         modifiers !== ''
     ) {
-
         return [{
             label: 'Modifier',
             value: formatRngValue(modifiers)
         }];
-
     }
 
     return [];
-
 }
 
 function formatRngValue(value) {
-
     if (value === null || value === undefined) {
         return '';
     }
@@ -636,11 +499,9 @@ function formatRngValue(value) {
     } catch (err) {
         return String(value);
     }
-
 }
 
 function getRngRarityColor(rarity) {
-
     if (typeof rarity !== 'string') {
         return '#edf6fb';
     }
@@ -648,74 +509,52 @@ function getRngRarityColor(rarity) {
     return RNG_RARITY_COLORS[
         rarity.trim().toLowerCase()
     ] ?? '#edf6fb';
-
 }
 
 function createRngStat(label, value, valueColor = null) {
-
     const stat = document.createElement('div');
-
     stat.className = 'rngStat';
 
     const statLabel = document.createElement('div');
-
     statLabel.className = 'rngStatLabel';
-
     statLabel.textContent = label;
 
     const statValue = document.createElement('div');
-
     statValue.className = 'rngStatValue';
-
     statValue.textContent = formatRngValue(value);
 
     if (valueColor) {
-
         statValue.style.color = valueColor;
-
         statValue.style.textShadow =
             `0 0 8px ${valueColor}55`;
-
     }
 
     stat.appendChild(statLabel);
-
     stat.appendChild(statValue);
 
     return stat;
-
 }
 
 function createRngRecordCard(payload, recordText) {
-
     const card = document.createElement('div');
-
     card.className = 'rngRecordCard';
 
     const recordHeader = document.createElement('div');
-
     recordHeader.className = 'rngRecordHeader';
 
     const recordLabel = document.createElement('div');
-
     recordLabel.className = 'rngRecordLabel';
-
     recordLabel.textContent = 'Record';
 
     const recordValue = document.createElement('div');
-
     recordValue.className = 'rngRecordValue';
-
     recordValue.textContent = recordText;
 
     recordHeader.appendChild(recordLabel);
-
     recordHeader.appendChild(recordValue);
-
     card.appendChild(recordHeader);
 
     const stats = document.createElement('div');
-
     stats.className = 'rngStats';
 
     const rarity =
@@ -741,19 +580,15 @@ function createRngRecordCard(payload, recordText) {
     card.appendChild(stats);
 
     const modifiersSection = document.createElement('div');
-
     modifiersSection.className = 'rngModifiersSection';
 
     const modifiersTitle = document.createElement('div');
-
     modifiersTitle.className = 'rngModifiersTitle';
-
     modifiersTitle.textContent = 'Modifiers';
 
     modifiersSection.appendChild(modifiersTitle);
 
     const modifiersGrid = document.createElement('div');
-
     modifiersGrid.className = 'rngModifiers';
 
     const modifiers = normalizeRngModifiers(
@@ -761,69 +596,44 @@ function createRngRecordCard(payload, recordText) {
     );
 
     if (modifiers.length === 0) {
-
         const none = document.createElement('div');
-
         none.className = 'rngNoModifiers';
-
         none.textContent = 'No modifiers';
-
         modifiersGrid.appendChild(none);
-
     } else {
-
         modifiers.forEach(modifier => {
-
             const modifierCard = document.createElement('div');
-
             modifierCard.className = 'rngModifier';
 
             const modifierName = document.createElement('div');
-
             modifierName.className = 'rngModifierName';
-
             modifierName.textContent = modifier.label;
 
             const modifierValue = document.createElement('div');
-
             modifierValue.className = 'rngModifierValue';
-
             modifierValue.textContent = modifier.value;
 
             modifierCard.appendChild(modifierName);
-
             modifierCard.appendChild(modifierValue);
-
             modifiersGrid.appendChild(modifierCard);
-
         });
-
     }
 
     modifiersSection.appendChild(modifiersGrid);
-
     card.appendChild(modifiersSection);
 
     return card;
-
 }
 
 function showRngRecordResult(payload) {
-
     if (rngScrambleTimer) {
-
         clearInterval(rngScrambleTimer);
-
         rngScrambleTimer = null;
-
     }
 
     if (rngResultPanel) {
-
         rngResultPanel.remove();
-
         rngResultPanel = null;
-
     }
 
     if (
@@ -831,60 +641,63 @@ function showRngRecordResult(payload) {
         typeof payload !== 'object' ||
         payload.record === undefined
     ) {
-
         errorMessage.textContent =
             "⚠️ Invalid RNG result structure.";
-
         errorMessage.classList.remove("hidden");
-
         return;
-
     }
 
     rngResultPanel = document.createElement('div');
-
     rngResultPanel.className = 'rngResultPanel';
 
     const scramble = document.createElement('div');
-
     scramble.className = 'rngScramble';
 
     rngResultPanel.appendChild(scramble);
-
     generateScreen.appendChild(rngResultPanel);
 
     const recordText = String(payload.record);
+    const randomCharacters = [];
 
-    let revealedCount = 0;
+    for (let i = 0; i < recordText.length; i++) {
+        randomCharacters.push(
+            getRandomRngCharacter()
+        );
+    }
+
+    let phase = 'appearing';
+    let characterCount = 0;
 
     function renderScramble() {
+        if (phase === 'appearing') {
+            let output = '';
+
+            for (let i = 0; i < recordText.length; i++) {
+                if (i < characterCount) {
+                    output += randomCharacters[i];
+                } else {
+                    output += '\u00A0';
+                }
+            }
+
+            scramble.textContent = output;
+            return;
+        }
 
         let output = '';
 
         for (let i = 0; i < recordText.length; i++) {
-
-            if (i < revealedCount) {
-
+            if (i < characterCount) {
                 output += recordText[i];
-
             } else {
-
-                output += getRandomRngCharacter();
-
+                output += randomCharacters[i];
             }
-
         }
 
         scramble.textContent = output;
-
     }
 
-    renderScramble();
-
     if (recordText.length === 0) {
-
-        revealedCount = 0;
-
         scramble.textContent = '';
 
         rngResultPanel.appendChild(
@@ -892,21 +705,28 @@ function showRngRecordResult(payload) {
         );
 
         updateScrollRail();
-
         return;
-
     }
 
-    rngScrambleTimer = setInterval(() => {
+    scramble.textContent =
+        '\u00A0'.repeat(recordText.length);
 
-        revealedCount++;
+    rngScrambleTimer = setInterval(() => {
+        characterCount++;
 
         renderScramble();
 
-        if (revealedCount >= recordText.length) {
+        if (phase === 'appearing') {
+            if (characterCount >= recordText.length) {
+                phase = 'unscrambling';
+                characterCount = 0;
+            }
 
+            return;
+        }
+
+        if (characterCount >= recordText.length) {
             clearInterval(rngScrambleTimer);
-
             rngScrambleTimer = null;
 
             rngResultPanel.appendChild(
@@ -914,15 +734,11 @@ function showRngRecordResult(payload) {
             );
 
             updateScrollRail();
-
         }
-
-    }, 100);
-
+    }, 500);
 }
 
 function initializeRngFrontend() {
-
     if (!generateScreen) {
         return;
     }
@@ -935,17 +751,12 @@ function initializeRngFrontend() {
     }
 
     const actionArea = document.createElement('div');
-
     actionArea.className = 'rngActionArea';
 
     const button = document.createElement('button');
-
     button.id = 'generateRecordButton';
-
     button.className = 'rngGenerateButton';
-
     button.type = 'button';
-
     button.textContent = 'Generate Record';
 
     actionArea.appendChild(button);
@@ -953,35 +764,27 @@ function initializeRngFrontend() {
     const header = generateScreen.querySelector('.tabHeader');
 
     if (header) {
-
         header.insertAdjacentElement(
             'afterend',
             actionArea
         );
-
     } else {
-
         generateScreen.appendChild(actionArea);
-
     }
 
     button.addEventListener('click', () => {
-
         actionArea.remove();
 
         rngRequestPending = true;
 
         if (!socket || socket.readyState !== WebSocket.OPEN) {
-
             rngRequestPending = false;
 
             errorMessage.textContent =
                 "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner.";
 
             errorMessage.classList.remove("hidden");
-
             return;
-
         }
 
         socket.send(JSON.stringify({
@@ -989,9 +792,7 @@ function initializeRngFrontend() {
             version: 1,
             request: "rng_go"
         }));
-
     });
-
 }
 
 initializeRngFrontend();

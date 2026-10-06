@@ -1304,5 +1304,19 @@ button {
         right: 58px;
 
     }
+.tabHeader {
+    justify-content: center;
+    text-align: center;
+}
 
+.rngResultPanel {
+    width: min(100%, 500px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rngRecordCard {
+    width: 100%;
+    box-sizing: border-box;
+}
 }
