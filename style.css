@@ -247,6 +247,16 @@ button {
 
 }
 
+.tabLabel {
+
+    position: relative;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+}
+
 .tabButton.clickJerk {
 
     animation: clickJerk 0.2s cubic-bezier(0.22, 0.8, 0.25, 1);
@@ -287,25 +297,11 @@ button {
 
 }
 
-.tabLabel {
-
-    position: relative;
-
-    z-index: 4;
-
-    pointer-events: none;
-
-}
-
 .buttonEffectImage {
 
     position: absolute;
 
     top: 50%;
-
-    width: 82px;
-
-    height: 82px;
 
     object-fit: contain;
 
@@ -318,6 +314,10 @@ button {
 }
 
 .carEffect {
+
+    width: 82px;
+
+    height: 82px;
 
     animation:
         carDrive 10s cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
@@ -339,7 +339,7 @@ button {
 
     0% {
 
-        left: -100px;
+        left: -90px;
 
         opacity: 0;
 
@@ -395,7 +395,7 @@ button {
 
     }
 
-    84% {
+    82% {
 
         transform: translateY(calc(-50% + 0.8px)) rotate(-0.15deg);
 
@@ -403,21 +403,39 @@ button {
 
     }
 
-    91% {
+    87% {
 
-        opacity: 0.78;
+        left: 100%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(0deg);
 
     }
 
-    96% {
+    91% {
 
-        opacity: 0.35;
+        left: calc(100% + 8px);
+
+        opacity: 0.45;
+
+        transform: translateY(-50%) rotate(0deg);
+
+    }
+
+    94% {
+
+        left: calc(100% + 14px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(0deg);
 
     }
 
     100% {
 
-        left: calc(100% + 100px);
+        left: calc(100% + 14px);
 
         opacity: 0;
 
@@ -431,7 +449,7 @@ button {
 
     0% {
 
-        left: -120px;
+        left: -100px;
 
         opacity: 0;
 
@@ -487,7 +505,7 @@ button {
 
     }
 
-    84% {
+    82% {
 
         transform: translateY(-50%) rotate(-2deg);
 
@@ -495,21 +513,39 @@ button {
 
     }
 
-    91% {
+    87% {
 
-        opacity: 0.78;
+        left: 100%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(0deg);
 
     }
 
-    96% {
+    91% {
 
-        opacity: 0.35;
+        left: calc(100% + 8px);
+
+        opacity: 0.45;
+
+        transform: translateY(-50%) rotate(0deg);
+
+    }
+
+    94% {
+
+        left: calc(100% + 14px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(0deg);
 
     }
 
     100% {
 
-        left: calc(100% + 120px);
+        left: calc(100% + 14px);
 
         opacity: 0;
 
@@ -643,24 +679,6 @@ button {
     color: rgba(178, 204, 222, 0.64);
 
     font-size: 12px;
-
-}
-
-.firstScrollIndicator {
-
-    transform: translate(-50%, 12px) rotate(90deg);
-
-}
-
-.lastScrollIndicator {
-
-    transform: translate(-50%, -12px) rotate(90deg);
-
-}
-
-.singleScrollIndicator {
-
-    transform: translate(-50%, 0) rotate(90deg);
 
 }
 
