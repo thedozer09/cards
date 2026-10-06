@@ -15,6 +15,8 @@ function initializeWebSocket() {
     socket.addEventListener('open', () => {
         console.log("Connected to card game backend");
         errorMessage.classList.add("hidden");
+
+        requestRngServerTime();
     });
 
     socket.addEventListener('message', event => {
@@ -27,6 +29,33 @@ function initializeWebSocket() {
                 return;
             }
 
+            if (data.type === "time_result") {
+                if (
+                    !data.data ||
+                    typeof data.data.serverTime !== 'number' ||
+                    !Number.isFinite(data.data.serverTime) ||
+                    typeof data.data.nextReset !== 'object' ||
+                    typeof data.data.nextReset.timestamp !== 'number' ||
+                    !Number.isFinite(data.data.nextReset.timestamp)
+                ) {
+                    errorMessage.textContent =
+                        "⚠️ Invalid server time response.";
+
+                    errorMessage.classList.remove(
+                        "hidden"
+                    );
+
+                    return;
+                }
+
+                syncRngServerClock(
+                    data.data.serverTime,
+                    data.data.nextReset
+                );
+
+                return;
+            }
+
             if (data.type === "rng_result") {
                 if (!data.data || typeof data.data !== 'object') {
                     errorMessage.textContent = "⚠️ Invalid RNG result structure.";
@@ -36,7 +65,13 @@ function initializeWebSocket() {
 
                 rngRequestPending = false;
                 errorMessage.classList.add("hidden");
+                markRngRollComplete(data.data);
                 showRngRecordResult(data.data);
+                return;
+            }
+
+            if (data.type === "daily_roll_state") {
+                applyDailyRollState(data.data);
                 return;
             }
 
@@ -103,6 +138,24 @@ function initializeWebSocket() {
     });
 }
 
+function requestRngServerTime() {
+    if (
+        !socket ||
+        socket.readyState !==
+            WebSocket.OPEN
+    ) {
+        return;
+    }
+
+    socket.send(
+        JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "get_time"
+        })
+    );
+}
+
 testButton.addEventListener('click', () => {
     screen1.classList.add('hidden');
     screen2.classList.remove('hidden');
@@ -139,9 +192,16 @@ const generateScreen = document.getElementById('generateScreen');
 const leaderboardsScreen = document.getElementById('leaderboardsScreen');
 const cardsScreen = document.getElementById('cardsScreen');
 
+const screenHeaders = document.querySelectorAll('.tabHeader');
+
+screenHeaders.forEach(header => {
+    header.remove();
+});
+
 setTimeout(() => {
     loadingScreen.classList.add('hidden');
     mainScreen.classList.remove('hidden');
+    maybePlayRngLaunchFlash();
 }, 3000);
 
 function switchTab(button, screen) {
@@ -375,6 +435,21 @@ const RNG_RARITY_COLORS = {
 let rngRequestPending = false;
 let rngResultPanel = null;
 let rngScrambleTimer = null;
+let rngScrambleProgressTimer = null;
+let rngCountdownTimer = null;
+let rngDailyStatus = null;
+let rngDailyMessage = null;
+let rngDailyCountdown = null;
+let rngDailyActionArea = null;
+let rngServerTimeBase = null;
+let rngPerformanceTimeBase = null;
+let rngNextResetTimestamp = null;
+let rngLocalRollState = null;
+let rngFrontendInitialized = false;
+let rngLaunchFlashPending = false;
+let rngLaunchFlashPlayed = false;
+
+const RNG_ROLL_STATE_KEY = 'cardgame_rng_roll_state';
 
 const rngRandomCharacters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.?/<>~`';
@@ -385,6 +460,503 @@ function getRandomRngCharacter() {
     );
 
     return rngRandomCharacters[index];
+}
+
+function syncRngServerClock(
+    serverTime,
+    nextReset
+) {
+    if (
+        typeof serverTime !== 'number' ||
+        !Number.isFinite(serverTime) ||
+        !nextReset ||
+        typeof nextReset.timestamp !== 'number' ||
+        !Number.isFinite(nextReset.timestamp)
+    ) {
+        return;
+    }
+
+    rngServerTimeBase =
+        serverTime;
+
+    rngPerformanceTimeBase =
+        performance.now();
+
+    rngNextResetTimestamp =
+        nextReset.timestamp;
+
+    if (!rngFrontendInitialized) {
+        rngLocalRollState =
+            loadLocalRngRollState();
+
+        initializeRngFrontend();
+    }
+
+    updateRngDailyCountdown();
+    maybePlayRngLaunchFlash();
+}
+
+function getRngServerNow() {
+    if (
+        typeof rngServerTimeBase !== 'number' ||
+        typeof rngPerformanceTimeBase !== 'number'
+    ) {
+        return null;
+    }
+
+    return (
+        rngServerTimeBase +
+        (
+            performance.now() -
+            rngPerformanceTimeBase
+        )
+    );
+}
+
+function formatRngCountdown(milliseconds) {
+    const totalSeconds = Math.max(
+        0,
+        Math.ceil(milliseconds / 1000)
+    );
+
+    const hours = Math.floor(
+        totalSeconds / 3600
+    );
+
+    const minutes = Math.floor(
+        (totalSeconds % 3600) / 60
+    );
+
+    const seconds =
+        totalSeconds % 60;
+
+    return [
+        String(hours).padStart(2, '0'),
+        String(minutes).padStart(2, '0'),
+        String(seconds).padStart(2, '0')
+    ].join(':');
+}
+
+function sanitizeRngStoredResult(payload) {
+    if (
+        !payload ||
+        typeof payload !== 'object'
+    ) {
+        return null;
+    }
+
+    return {
+        record: payload.record ?? '',
+        rarity: payload.rarity ?? 'Unknown',
+        points: payload.points ?? '0',
+        modifiers: payload.modifiers ?? []
+    };
+}
+
+function loadLocalRngRollState() {
+    const serverNow =
+        getRngServerNow();
+
+    if (
+        serverNow === null ||
+        rngNextResetTimestamp === null
+    ) {
+        return null;
+    }
+
+    try {
+        const stored =
+            localStorage.getItem(
+                RNG_ROLL_STATE_KEY
+            );
+
+        if (!stored) {
+            return null;
+        }
+
+        const parsed =
+            JSON.parse(stored);
+
+        if (
+            !parsed ||
+            typeof parsed.resetTimestamp !== 'number' ||
+            parsed.resetTimestamp !==
+                rngNextResetTimestamp
+        ) {
+            localStorage.removeItem(
+                RNG_ROLL_STATE_KEY
+            );
+
+            return null;
+        }
+
+        if (
+            !parsed.result ||
+            typeof parsed.result !== 'object'
+        ) {
+            localStorage.removeItem(
+                RNG_ROLL_STATE_KEY
+            );
+
+            return null;
+        }
+
+        return {
+            resetTimestamp:
+                parsed.resetTimestamp,
+            result:
+                parsed.result
+        };
+
+    } catch (err) {
+        return null;
+    }
+}
+
+function saveLocalRngRollState(payload) {
+    if (
+        typeof rngNextResetTimestamp !==
+            'number'
+    ) {
+        return;
+    }
+
+    const result =
+        sanitizeRngStoredResult(payload);
+
+    if (!result) {
+        return;
+    }
+
+    const state = {
+        resetTimestamp:
+            rngNextResetTimestamp,
+        result:
+            result
+    };
+
+    rngLocalRollState =
+        state;
+
+    try {
+        localStorage.setItem(
+            RNG_ROLL_STATE_KEY,
+            JSON.stringify(
+                state
+            )
+        );
+    } catch (err) {
+    }
+}
+
+function clearLocalRngRollState() {
+    rngLocalRollState = null;
+
+    try {
+        localStorage.removeItem(
+            RNG_ROLL_STATE_KEY
+        );
+    } catch (err) {
+    }
+}
+
+function createRngDailyStatus() {
+    if (rngDailyStatus) {
+        return;
+    }
+
+    rngDailyStatus =
+        document.createElement('div');
+
+    rngDailyStatus.className =
+        'rngDailyStatus';
+
+    rngDailyMessage =
+        document.createElement('div');
+
+    rngDailyMessage.className =
+        'rngDailyMessage';
+
+    rngDailyMessage.textContent =
+        'You already rolled today.';
+
+    rngDailyCountdown =
+        document.createElement('div');
+
+    rngDailyCountdown.className =
+        'rngDailyCountdown';
+
+    rngDailyStatus.appendChild(
+        rngDailyMessage
+    );
+
+    rngDailyStatus.appendChild(
+        rngDailyCountdown
+    );
+
+    generateScreen.appendChild(
+        rngDailyStatus
+    );
+}
+
+function updateRngDailyCountdown() {
+    if (
+        !rngDailyStatus ||
+        !rngDailyCountdown
+    ) {
+        return;
+    }
+
+    const serverNow =
+        getRngServerNow();
+
+    if (
+        serverNow === null ||
+        rngNextResetTimestamp === null
+    ) {
+        return;
+    }
+
+    const remaining =
+        rngNextResetTimestamp -
+        serverNow;
+
+    if (remaining <= 0) {
+        requestRngServerTime();
+        return;
+    }
+
+    rngDailyStatus.classList.remove(
+        'hidden'
+    );
+
+    rngDailyCountdown.textContent =
+        `Next roll in ${formatRngCountdown(remaining)}`;
+}
+
+function startRngDailyCountdown() {
+    if (rngCountdownTimer) {
+        clearInterval(
+            rngCountdownTimer
+        );
+    }
+
+    updateRngDailyCountdown();
+
+    rngCountdownTimer =
+        setInterval(() => {
+            updateRngDailyCountdown();
+        }, 1000);
+}
+
+function stopRngDailyCountdown() {
+    if (!rngCountdownTimer) {
+        return;
+    }
+
+    clearInterval(
+        rngCountdownTimer
+    );
+
+    rngCountdownTimer = null;
+}
+
+function hideRngDailyStatus() {
+    if (!rngDailyStatus) {
+        return;
+    }
+
+    rngDailyStatus.classList.add(
+        'hidden'
+    );
+}
+
+function showRngDailyStatus() {
+    createRngDailyStatus();
+
+    rngDailyStatus.classList.remove(
+        'hidden'
+    );
+
+    startRngDailyCountdown();
+}
+
+function playRngLaunchFlash() {
+    if (rngLaunchFlashPlayed) {
+        return;
+    }
+
+    rngLaunchFlashPlayed = true;
+
+    const existingFlash =
+        document.querySelector(
+            '.rngLaunchFlash'
+        );
+
+    if (existingFlash) {
+        existingFlash.remove();
+    }
+
+    const flash =
+        document.createElement('div');
+
+    flash.className =
+        'rngLaunchFlash';
+
+    document.body.appendChild(
+        flash
+    );
+
+    flash.addEventListener(
+        'animationend',
+        () => {
+            flash.remove();
+        },
+        { once: true }
+    );
+}
+
+function maybePlayRngLaunchFlash() {
+    if (
+        !rngLaunchFlashPending ||
+        rngLaunchFlashPlayed ||
+        !mainScreen ||
+        mainScreen.classList.contains('hidden')
+    ) {
+        return;
+    }
+
+    rngLaunchFlashPending = false;
+    playRngLaunchFlash();
+}
+
+function animateRngRecordCard(card) {
+    if (!card) {
+        return;
+    }
+
+    const elements =
+        card.querySelectorAll(
+            '.rngRecordHeader, .rngStat, .rngModifiersTitle, .rngModifier, .rngNoModifiers'
+        );
+
+    elements.forEach(
+        (element, index) => {
+            element.style.setProperty(
+                '--rng-pop-delay',
+                `${index * 0.07}s`
+            );
+
+            element.classList.remove(
+                'rngResultPopIn'
+            );
+
+            void element.offsetWidth;
+
+            element.classList.add(
+                'rngResultPopIn'
+            );
+        }
+    );
+}
+
+function resetDailyRngFrontend() {
+    stopRngDailyCountdown();
+    clearLocalRngRollState();
+
+    if (rngResultPanel) {
+        rngResultPanel.remove();
+        rngResultPanel = null;
+    }
+
+    hideRngDailyStatus();
+
+    if (rngDailyActionArea) {
+        rngDailyActionArea.remove();
+        rngDailyActionArea = null;
+    }
+
+    requestRngServerTime();
+    updateScrollRail();
+}
+
+function markRngRollComplete(payload) {
+    saveLocalRngRollState(payload);
+    showRngDailyStatus();
+
+    if (rngDailyActionArea) {
+        rngDailyActionArea.remove();
+        rngDailyActionArea = null;
+    }
+}
+
+function applyDailyRollState(state) {
+    if (!state || typeof state !== 'object') {
+        return;
+    }
+
+    if (state.alreadyRolled !== true) {
+        resetDailyRngFrontend();
+        return;
+    }
+
+    const result =
+        sanitizeRngStoredResult(
+            state.result
+        );
+
+    if (result) {
+        if (rngResultPanel) {
+            rngResultPanel.remove();
+            rngResultPanel = null;
+        }
+
+        renderStoredRngResult(result);
+    }
+
+    if (rngDailyActionArea) {
+        rngDailyActionArea.remove();
+        rngDailyActionArea = null;
+    }
+
+    rngLaunchFlashPending = true;
+
+    showRngDailyStatus();
+    maybePlayRngLaunchFlash();
+}
+
+function renderStoredRngResult(payload) {
+    if (rngResultPanel) {
+        rngResultPanel.remove();
+        rngResultPanel = null;
+    }
+
+    rngResultPanel =
+        document.createElement('div');
+
+    rngResultPanel.className =
+        'rngResultPanel';
+
+    generateScreen.appendChild(
+        rngResultPanel
+    );
+
+    rngResultPanel.appendChild(
+        createRngRecordCard(
+            payload,
+            String(
+                payload.record ?? ''
+            )
+        )
+    );
+
+    const card =
+        rngResultPanel.querySelector(
+            '.rngRecordCard'
+        );
+
+    animateRngRecordCard(card);
+    updateScrollRail();
 }
 
 function normalizeRngModifiers(modifiers) {
@@ -631,6 +1203,11 @@ function showRngRecordResult(payload) {
         rngScrambleTimer = null;
     }
 
+    if (rngScrambleProgressTimer) {
+        clearInterval(rngScrambleProgressTimer);
+        rngScrambleProgressTimer = null;
+    }
+
     if (rngResultPanel) {
         rngResultPanel.remove();
         rngResultPanel = null;
@@ -657,142 +1234,295 @@ function showRngRecordResult(payload) {
     generateScreen.appendChild(rngResultPanel);
 
     const recordText = String(payload.record);
-    const randomCharacters = [];
 
-    for (let i = 0; i < recordText.length; i++) {
-        randomCharacters.push(
-            getRandomRngCharacter()
-        );
+    if (recordText.length === 0) {
+        scramble.textContent = '';
+
+        const card =
+            createRngRecordCard(
+                payload,
+                recordText
+            );
+
+        rngResultPanel.appendChild(card);
+        animateRngRecordCard(card);
+
+        updateScrollRail();
+        return;
     }
 
+    const scrambleCharacters =
+        new Array(
+            recordText.length
+        ).fill('');
+
+    let appearedCount = 0;
+    let lockedCount = 0;
     let phase = 'appearing';
-    let characterCount = 0;
 
     function renderScramble() {
-        if (phase === 'appearing') {
-            let output = '';
-
-            for (let i = 0; i < recordText.length; i++) {
-                if (i < characterCount) {
-                    output += randomCharacters[i];
-                } else {
-                    output += '\u00A0';
-                }
-            }
-
-            scramble.textContent = output;
-            return;
-        }
-
         let output = '';
 
-        for (let i = 0; i < recordText.length; i++) {
-            if (i < characterCount) {
+        for (
+            let i = 0;
+            i < recordText.length;
+            i++
+        ) {
+            if (i < lockedCount) {
                 output += recordText[i];
+            } else if (i < appearedCount) {
+                output += scrambleCharacters[i];
             } else {
-                output += randomCharacters[i];
+                output += '\u00A0';
             }
         }
 
         scramble.textContent = output;
     }
 
-    if (recordText.length === 0) {
-        scramble.textContent = '';
+    function rapidlyScramble() {
+        for (
+            let i = lockedCount;
+            i < appearedCount;
+            i++
+        ) {
+            scrambleCharacters[i] =
+                getRandomRngCharacter();
+        }
 
-        rngResultPanel.appendChild(
-            createRngRecordCard(payload, recordText)
-        );
-
-        updateScrollRail();
-        return;
+        renderScramble();
     }
 
     scramble.textContent =
-        '\u00A0'.repeat(recordText.length);
+        '\u00A0'.repeat(
+            recordText.length
+        );
 
-    rngScrambleTimer = setInterval(() => {
-        characterCount++;
+    rngScrambleTimer =
+        setInterval(() => {
+            rapidlyScramble();
+        }, 10);
 
-        renderScramble();
+    rngScrambleProgressTimer =
+        setInterval(() => {
+            if (phase === 'appearing') {
+                if (
+                    appearedCount <
+                    recordText.length
+                ) {
+                    appearedCount++;
 
-        if (phase === 'appearing') {
-            if (characterCount >= recordText.length) {
-                phase = 'unscrambling';
-                characterCount = 0;
+                    scrambleCharacters[
+                        appearedCount - 1
+                    ] =
+                        getRandomRngCharacter();
+
+                    renderScramble();
+                }
+
+                if (
+                    appearedCount >=
+                    recordText.length
+                ) {
+                    phase = 'unscrambling';
+                }
+
+                return;
             }
 
-            return;
-        }
+            if (phase === 'unscrambling') {
+                if (
+                    lockedCount <
+                    recordText.length
+                ) {
+                    lockedCount++;
 
-        if (characterCount >= recordText.length) {
-            clearInterval(rngScrambleTimer);
-            rngScrambleTimer = null;
+                    renderScramble();
+                }
 
-            rngResultPanel.appendChild(
-                createRngRecordCard(payload, recordText)
-            );
+                if (
+                    lockedCount >=
+                    recordText.length
+                ) {
+                    clearInterval(
+                        rngScrambleProgressTimer
+                    );
 
-            updateScrollRail();
-        }
-    }, 500);
+                    rngScrambleProgressTimer =
+                        null;
+
+                    clearInterval(
+                        rngScrambleTimer
+                    );
+
+                    rngScrambleTimer =
+                        null;
+
+                    scramble.textContent =
+                        recordText;
+
+                    const card =
+                        createRngRecordCard(
+                            payload,
+                            recordText
+                        );
+
+                    rngResultPanel.appendChild(
+                        card
+                    );
+
+                    animateRngRecordCard(
+                        card
+                    );
+
+                    updateScrollRail();
+                }
+            }
+        }, 50);
 }
 
-function initializeRngFrontend() {
+function initializeRngGenerateButton() {
     if (!generateScreen) {
         return;
     }
 
-    const existingButton =
-        document.getElementById('generateRecordButton');
-
-    if (existingButton) {
+    if (rngDailyActionArea) {
         return;
     }
 
-    const actionArea = document.createElement('div');
-    actionArea.className = 'rngActionArea';
-
-    const button = document.createElement('button');
-    button.id = 'generateRecordButton';
-    button.className = 'rngGenerateButton';
-    button.type = 'button';
-    button.textContent = 'Generate Record';
-
-    actionArea.appendChild(button);
-
-    const header = generateScreen.querySelector('.tabHeader');
-
-    if (header) {
-        header.insertAdjacentElement(
-            'afterend',
-            actionArea
-        );
-    } else {
-        generateScreen.appendChild(actionArea);
+    if (rngLocalRollState) {
+        return;
     }
 
-    button.addEventListener('click', () => {
-        actionArea.remove();
+    const actionArea =
+        document.createElement('div');
 
-        rngRequestPending = true;
+    actionArea.className =
+        'rngActionArea';
 
-        if (!socket || socket.readyState !== WebSocket.OPEN) {
-            rngRequestPending = false;
+    const button =
+        document.createElement('button');
 
-            errorMessage.textContent =
-                "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner.";
+    button.id =
+        'generateRecordButton';
 
-            errorMessage.classList.remove("hidden");
-            return;
+    button.className =
+        'rngGenerateButton';
+
+    button.type =
+        'button';
+
+    button.textContent =
+        'Generate Record';
+
+    actionArea.appendChild(
+        button
+    );
+
+    generateScreen.appendChild(
+        actionArea
+    );
+
+    rngDailyActionArea =
+        actionArea;
+
+    button.addEventListener(
+        'pointerenter',
+        () => {
+            startNormalButtonWiggle(
+                button
+            );
         }
+    );
 
-        socket.send(JSON.stringify({
-            protocol: "cardgame",
-            version: 1,
-            request: "rng_go"
-        }));
-    });
+    button.addEventListener(
+        'pointerleave',
+        () => {
+            stopNormalButtonWiggle(
+                button
+            );
+        }
+    );
+
+    button.addEventListener(
+        'focus',
+        () => {
+            startNormalButtonWiggle(
+                button
+            );
+        }
+    );
+
+    button.addEventListener(
+        'blur',
+        () => {
+            stopNormalButtonWiggle(
+                button
+            );
+        }
+    );
+
+    button.addEventListener(
+        'click',
+        () => {
+            actionArea.remove();
+            rngDailyActionArea = null;
+
+            rngRequestPending = true;
+
+            if (
+                !socket ||
+                socket.readyState !==
+                    WebSocket.OPEN
+            ) {
+                rngRequestPending = false;
+
+                errorMessage.textContent =
+                    "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner.";
+
+                errorMessage.classList.remove(
+                    "hidden"
+                );
+
+                initializeRngGenerateButton();
+                return;
+            }
+
+            socket.send(
+                JSON.stringify({
+                    protocol: "cardgame",
+                    version: 1,
+                    request: "rng_go"
+                })
+            );
+        }
+    );
 }
 
-initializeRngFrontend();
+function initializeRngFrontend() {
+    if (
+        !generateScreen ||
+        rngFrontendInitialized
+    ) {
+        return;
+    }
+
+    rngFrontendInitialized = true;
+
+    createRngDailyStatus();
+
+    if (rngLocalRollState) {
+        showRngDailyStatus();
+        renderStoredRngResult(
+            rngLocalRollState.result
+        );
+
+        rngLaunchFlashPending = true;
+    } else {
+        hideRngDailyStatus();
+        initializeRngGenerateButton();
+    }
+
+    updateRngDailyCountdown();
+    maybePlayRngLaunchFlash();
+}

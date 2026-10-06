@@ -1319,4 +1319,144 @@ button {
     width: 100%;
     box-sizing: border-box;
 }
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.rngDailyStatus {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 18px;
+    text-align: center;
+    color: #8a8f94;
+}
+
+.rngDailyMessage {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.rngDailyCountdown {
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.normalButtonWiggle {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+@keyframes normalButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+.rngLaunchFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    animation: rngLaunchFlash 0.5s ease-out forwards;
+}
+
+@keyframes rngLaunchFlash {
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.rngResultPopIn {
+    animation: rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--rng-pop-delay, 0s);
+}
+
+@keyframes rngResultPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.88);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
 }
