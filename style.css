@@ -17,17 +17,12 @@ body {
     color: #ffffff;
 
     background:
-        radial-gradient(
-            circle at 18% 8%,
-            rgba(115, 160, 205, 0.18),
-            transparent 34%
-        ),
         linear-gradient(
             135deg,
-            #182b43 0%,
-            #10233b 38%,
-            #0b1b31 68%,
-            #071426 100%
+            #172f57 0%,
+            #10264a 35%,
+            #0b1d3a 68%,
+            #061226 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -75,7 +70,7 @@ button {
 
     margin: 0;
 
-    color: rgba(224, 234, 244, 0.96);
+    color: rgba(225, 236, 247, 0.96);
 
     font-size: 28px;
 
@@ -91,9 +86,9 @@ button {
 
     height: 34px;
 
-    border: 3px solid rgba(190, 207, 224, 0.18);
+    border: 3px solid rgba(190, 212, 235, 0.18);
 
-    border-top-color: rgba(184, 211, 238, 0.95);
+    border-top-color: rgba(207, 226, 243, 0.95);
 
     border-radius: 50%;
 
@@ -141,20 +136,21 @@ button {
 
     min-height: 36px;
 
-    padding: 0 22px;
+    padding: 0 24px;
 
-    border: 1px solid rgba(208, 222, 237, 0.18);
+    border: 1px solid rgba(226, 237, 247, 0.35);
 
     border-radius: 999px;
 
     background:
         linear-gradient(
             180deg,
-            rgba(185, 201, 216, 0.9) 0%,
-            rgba(145, 166, 184, 0.9) 100%
+            #dce6ef 0%,
+            #bdd4e7 50%,
+            #a9c7df 100%
         );
 
-    color: #12263f;
+    color: #102842;
 
     font-size: 13px;
 
@@ -165,8 +161,8 @@ button {
     cursor: pointer;
 
     box-shadow:
-        0 6px 18px rgba(0, 0, 0, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        0 6px 18px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
 
     transition:
         transform 0.18s ease,
@@ -183,15 +179,16 @@ button {
     background:
         linear-gradient(
             180deg,
-            rgba(201, 216, 230, 0.96) 0%,
-            rgba(161, 181, 198, 0.96) 100%
+            #e5edf4 0%,
+            #c8ddeb 50%,
+            #b4d0e4 100%
         );
 
-    border-color: rgba(226, 237, 247, 0.3);
+    border-color: rgba(239, 246, 252, 0.55);
 
     box-shadow:
-        0 9px 22px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        0 9px 22px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
 
 }
 
@@ -203,7 +200,7 @@ button {
 
 .tabButton:focus-visible {
 
-    outline: 3px solid rgba(153, 196, 231, 0.45);
+    outline: 3px solid rgba(174, 211, 239, 0.5);
 
     outline-offset: 3px;
 
@@ -214,17 +211,18 @@ button {
     background:
         linear-gradient(
             180deg,
-            #d4e1ec 0%,
-            #aebfd0 100%
+            #e3edf5 0%,
+            #c8dceb 50%,
+            #b4d2e8 100%
         );
 
-    border-color: rgba(231, 240, 248, 0.38);
+    border-color: rgba(244, 249, 253, 0.62);
 
-    color: #0b2038;
+    color: #0b223d;
 
     box-shadow:
-        0 9px 24px rgba(0, 0, 0, 0.23),
-        inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        0 9px 24px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
 
 }
 
@@ -234,20 +232,21 @@ button {
 
     padding: 36px;
 
-    border: 1px solid rgba(127, 166, 202, 0.18);
+    border: 1px solid rgba(122, 161, 203, 0.2);
 
     border-radius: 24px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(16, 39, 67, 0.82) 0%,
-            rgba(9, 28, 52, 0.78) 100%
+            rgba(19, 47, 83, 0.84) 0%,
+            rgba(10, 29, 57, 0.9) 55%,
+            rgba(6, 19, 38, 0.94) 100%
         );
 
     box-shadow:
-        0 18px 46px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(157, 191, 222, 0.08);
+        0 18px 46px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(155, 192, 222, 0.08);
 
 }
 
@@ -263,7 +262,7 @@ button {
 
 .tabEyebrow {
 
-    color: rgba(171, 198, 222, 0.66);
+    color: rgba(178, 207, 231, 0.68);
 
     font-size: 12px;
 
@@ -277,7 +276,7 @@ button {
 
     margin: 0;
 
-    color: #edf5fc;
+    color: #eef6fc;
 
     font-size: 32px;
 
@@ -303,11 +302,11 @@ button {
 
     padding: 14px 18px;
 
-    border: 1px solid rgba(191, 211, 229, 0.18);
+    border: 1px solid rgba(191, 214, 235, 0.18);
 
     border-radius: 14px;
 
-    background: rgba(7, 20, 38, 0.94);
+    background: rgba(5, 17, 34, 0.95);
 
     color: #ffffff;
 
@@ -315,7 +314,7 @@ button {
 
     line-height: 1.45;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
 }
 
@@ -335,7 +334,7 @@ button {
 
     .tabButton {
 
-        min-height: 30px;
+        min-height: 18px;
 
         padding: 0 10px;
 
@@ -375,7 +374,7 @@ button {
 
     .tabButton {
 
-        min-height: 28px;
+        min-height: 16px;
 
         padding: 0 6px;
 
