@@ -14,16 +14,16 @@ body {
 
     font-family: Arial, Helvetica, sans-serif;
 
-    color: #edf4fa;
+    color: #f5f9fd;
 
     background:
         linear-gradient(
             135deg,
-            #3f5c79 0%,
-            #345274 28%,
-            #294666 54%,
-            #203957 76%,
-            #172c46 100%
+            #3f6085 0%,
+            #36577e 26%,
+            #2d4e76 52%,
+            #29466d 76%,
+            #244064 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -165,9 +165,9 @@ button {
     background:
         linear-gradient(
             135deg,
-            #426987 0%,
-            #365b79 50%,
-            #2b4d69 100%
+            #476f92 0%,
+            #3d6385 50%,
+            #335775 100%
         );
 
     color: #ffffff;
@@ -199,9 +199,9 @@ button {
     background:
         linear-gradient(
             135deg,
-            #4c7695 0%,
-            #3e6382 50%,
-            #315670 100%
+            #527ca0 0%,
+            #477098 50%,
+            #3b6485 100%
         );
 
     border-color: rgba(201, 222, 237, 0.34);
@@ -231,9 +231,9 @@ button {
     background:
         linear-gradient(
             135deg,
-            #527b9c 0%,
-            #426b8b 50%,
-            #355d7b 100%
+            #5b83a5 0%,
+            #4d7395 50%,
+            #406788 100%
         );
 
     border-color: rgba(213, 230, 241, 0.38);
@@ -327,11 +327,11 @@ button {
 
     align-items: center;
 
-    gap: 300px;
+    gap: 250px;
 
     pointer-events: none;
 
-    overflow: hidden;
+    overflow: visible;
 
 }
 
@@ -356,6 +356,18 @@ button {
     white-space: nowrap;
 
     transform: rotate(90deg);
+
+}
+
+.scrollIndicator:first-child {
+
+    transform: translateY(12px) rotate(90deg);
+
+}
+
+.scrollIndicator:last-child {
+
+    transform: translateY(-12px) rotate(90deg);
 
 }
 
@@ -468,7 +480,7 @@ button {
 
         padding: 18px 0;
 
-        gap: 240px;
+        gap: 250px;
 
     }
 
@@ -542,7 +554,7 @@ button {
 
         padding: 15px 0;
 
-        gap: 200px;
+        gap: 250px;
 
     }
 
