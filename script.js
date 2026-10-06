@@ -7,7 +7,6 @@ const errorMessage = document.getElementById('errorMessage');
 let socket = null;
 
 function initializeWebSocket() {
-    // Relative configuration tells Discord to funnel traffic through your portal mapping
     const socketUrl = `wss://${window.location.host}/ws`;
     
     console.log("Connecting directly to Discord Proxy route:", socketUrl);
@@ -96,3 +95,70 @@ rngButton.addEventListener('click', () => {
 });
 
 initializeWebSocket();
+
+const loadingScreen = document.getElementById('loadingScreen');
+
+const mainScreen = document.getElementById('mainScreen');
+
+const generateButton = document.getElementById('generateButton');
+
+const leaderboardsButton = document.getElementById('leaderboardsButton');
+
+const cardsButton = document.getElementById('cardsButton');
+
+const generateScreen = document.getElementById('generateScreen');
+
+const leaderboardsScreen = document.getElementById('leaderboardsScreen');
+
+const cardsScreen = document.getElementById('cardsScreen');
+
+
+setTimeout(() => {
+
+    loadingScreen.classList.add('hidden');
+
+    mainScreen.classList.remove('hidden');
+
+}, 3000);
+
+
+function switchTab(button, screen) {
+
+    generateButton.classList.remove('active');
+
+    leaderboardsButton.classList.remove('active');
+
+    cardsButton.classList.remove('active');
+
+    generateScreen.classList.add('hidden');
+
+    leaderboardsScreen.classList.add('hidden');
+
+    cardsScreen.classList.add('hidden');
+
+    button.classList.add('active');
+
+    screen.classList.remove('hidden');
+
+}
+
+
+generateButton.addEventListener('click', () => {
+
+    switchTab(generateButton, generateScreen);
+
+});
+
+
+leaderboardsButton.addEventListener('click', () => {
+
+    switchTab(leaderboardsButton, leaderboardsScreen);
+
+});
+
+
+cardsButton.addEventListener('click', () => {
+
+    switchTab(cardsButton, cardsScreen);
+
+});

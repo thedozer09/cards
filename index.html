@@ -4,30 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Card Game Test</title>
+    <title>Card Game</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- First screen -->
-    <div id="screen1" class="screen">
-        <h1>TEST</h1>
+    <div id="loadingScreen" class="loadingScreen">
 
-        <button id="testButton">TEST</button>
+        <div class="loadingContent">
 
-        <button id="rngButton">RNG TEST</button>
+            <div class="loadingSpinner"></div>
+
+            <h1>Loading...</h1>
+
+        </div>
+
     </div>
 
-    <!-- Second screen -->
-    <div id="screen2" class="screen hidden">
-        <h1 class="red">TEST</h1>
+    <div id="mainScreen" class="mainScreen hidden">
+
+        <div class="activityContainer">
+
+            <nav class="navigation">
+
+                <button id="generateButton" class="tabButton active" type="button">
+                    GENERATE
+                </button>
+
+                <button id="leaderboardsButton" class="tabButton" type="button">
+                    LEADERBOARDS
+                </button>
+
+                <button id="cardsButton" class="tabButton" type="button">
+                    CARDS
+                </button>
+
+            </nav>
+
+            <section id="generateScreen" class="tabScreen">
+
+                <div class="tabHeader">
+
+                    <span class="tabEyebrow">CARD GAME</span>
+
+                    <h1>Generate</h1>
+
+                </div>
+
+            </section>
+
+            <section id="leaderboardsScreen" class="tabScreen hidden">
+
+                <div class="tabHeader">
+
+                    <span class="tabEyebrow">CARD GAME</span>
+
+                    <h1>Leaderboards</h1>
+
+                </div>
+
+            </section>
+
+            <section id="cardsScreen" class="tabScreen hidden">
+
+                <div class="tabHeader">
+
+                    <span class="tabEyebrow">CARD GAME</span>
+
+                    <h1>Cards</h1>
+
+                </div>
+
+            </section>
+
+        </div>
+
     </div>
+
+    <div id="screen1" class="hidden">
+
+        <span id="testButton"></span>
+
+        <span id="rngButton"></span>
+
+    </div>
+
+    <div id="screen2" class="hidden"></div>
 
     <div id="errorMessage" class="error hidden"></div>
 
-    <!-- The ?v=1 forces Discord to break its old cache and download latest script.js changes -->
     <script src="script.js?v=1"></script>
 
 </body>
