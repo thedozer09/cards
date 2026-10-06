@@ -19,16 +19,15 @@ body {
     background:
         radial-gradient(
             circle at 18% 8%,
-            rgba(255, 255, 255, 0.28),
-            transparent 32%
+            rgba(115, 160, 205, 0.18),
+            transparent 34%
         ),
         linear-gradient(
             135deg,
-            #e1e5e9 0%,
-            #b4bac1 32%,
-            #777f88 62%,
-            #50677d 82%,
-            #3d5f7d 100%
+            #182b43 0%,
+            #10233b 38%,
+            #0b1b31 68%,
+            #071426 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -76,7 +75,7 @@ button {
 
     margin: 0;
 
-    color: rgba(255, 255, 255, 0.96);
+    color: rgba(224, 234, 244, 0.96);
 
     font-size: 28px;
 
@@ -92,9 +91,9 @@ button {
 
     height: 34px;
 
-    border: 3px solid rgba(255, 255, 255, 0.25);
+    border: 3px solid rgba(190, 207, 224, 0.18);
 
-    border-top-color: rgba(255, 255, 255, 0.95);
+    border-top-color: rgba(184, 211, 238, 0.95);
 
     border-radius: 50%;
 
@@ -140,33 +139,34 @@ button {
 
 .tabButton {
 
-    min-height: 72px;
+    min-height: 36px;
 
     padding: 0 22px;
 
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(208, 222, 237, 0.18);
 
-    border-radius: 18px;
+    border-radius: 999px;
 
-    background: rgba(27, 33, 40, 0.66);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(185, 201, 216, 0.9) 0%,
+            rgba(145, 166, 184, 0.9) 100%
+        );
 
-    color: rgba(255, 255, 255, 0.82);
+    color: #12263f;
 
-    font-size: 15px;
+    font-size: 13px;
 
-    font-weight: 700;
+    font-weight: 800;
 
-    letter-spacing: 0.9px;
+    letter-spacing: 1px;
 
     cursor: pointer;
 
     box-shadow:
-        0 8px 24px rgba(18, 24, 31, 0.14),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-    backdrop-filter: blur(14px);
-
-    -webkit-backdrop-filter: blur(14px);
+        0 6px 18px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
 
     transition:
         transform 0.18s ease,
@@ -180,13 +180,18 @@ button {
 
     transform: translateY(-1px);
 
-    background: rgba(42, 49, 58, 0.78);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(201, 216, 230, 0.96) 0%,
+            rgba(161, 181, 198, 0.96) 100%
+        );
 
-    border-color: rgba(255, 255, 255, 0.24);
+    border-color: rgba(226, 237, 247, 0.3);
 
     box-shadow:
-        0 11px 28px rgba(18, 24, 31, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 9px 22px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
 }
 
@@ -198,7 +203,7 @@ button {
 
 .tabButton:focus-visible {
 
-    outline: 3px solid rgba(255, 255, 255, 0.45);
+    outline: 3px solid rgba(153, 196, 231, 0.45);
 
     outline-offset: 3px;
 
@@ -206,15 +211,20 @@ button {
 
 .tabButton.active {
 
-    background: rgba(65, 99, 129, 0.94);
+    background:
+        linear-gradient(
+            180deg,
+            #d4e1ec 0%,
+            #aebfd0 100%
+        );
 
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(231, 240, 248, 0.38);
 
-    color: #ffffff;
+    color: #0b2038;
 
     box-shadow:
-        0 11px 28px rgba(22, 41, 58, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.13);
+        0 9px 24px rgba(0, 0, 0, 0.23),
+        inset 0 1px 0 rgba(255, 255, 255, 0.58);
 
 }
 
@@ -224,19 +234,20 @@ button {
 
     padding: 36px;
 
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(127, 166, 202, 0.18);
 
-    border-radius: 22px;
+    border-radius: 24px;
 
-    background: rgba(27, 33, 40, 0.47);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 39, 67, 0.82) 0%,
+            rgba(9, 28, 52, 0.78) 100%
+        );
 
     box-shadow:
-        0 16px 42px rgba(18, 24, 31, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-    backdrop-filter: blur(16px);
-
-    -webkit-backdrop-filter: blur(16px);
+        0 18px 46px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(157, 191, 222, 0.08);
 
 }
 
@@ -252,13 +263,13 @@ button {
 
 .tabEyebrow {
 
-    color: rgba(255, 255, 255, 0.58);
+    color: rgba(171, 198, 222, 0.66);
 
     font-size: 12px;
 
     font-weight: 700;
 
-    letter-spacing: 1.4px;
+    letter-spacing: 1.5px;
 
 }
 
@@ -266,7 +277,7 @@ button {
 
     margin: 0;
 
-    color: #ffffff;
+    color: #edf5fc;
 
     font-size: 32px;
 
@@ -292,11 +303,11 @@ button {
 
     padding: 14px 18px;
 
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(191, 211, 229, 0.18);
 
     border-radius: 14px;
 
-    background: rgba(28, 32, 38, 0.92);
+    background: rgba(7, 20, 38, 0.94);
 
     color: #ffffff;
 
@@ -304,11 +315,7 @@ button {
 
     line-height: 1.45;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-
-    backdrop-filter: blur(12px);
-
-    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 
 }
 
@@ -328,15 +335,15 @@ button {
 
     .tabButton {
 
-        min-height: 62px;
+        min-height: 30px;
 
         padding: 0 10px;
 
-        font-size: 12px;
+        font-size: 11px;
 
         letter-spacing: 0.5px;
 
-        border-radius: 15px;
+        border-radius: 999px;
 
     }
 
@@ -346,7 +353,7 @@ button {
 
         padding: 26px;
 
-        border-radius: 18px;
+        border-radius: 20px;
 
     }
 
@@ -368,11 +375,11 @@ button {
 
     .tabButton {
 
-        min-height: 58px;
+        min-height: 28px;
 
         padding: 0 6px;
 
-        font-size: 10px;
+        font-size: 9px;
 
     }
 
