@@ -14,15 +14,16 @@ body {
 
     font-family: Arial, Helvetica, sans-serif;
 
-    color: #ffffff;
+    color: #f5f9fd;
 
     background:
         linear-gradient(
             135deg,
-            #172f57 0%,
-            #10264a 35%,
-            #0b1d3a 68%,
-            #061226 100%
+            #3f6085 0%,
+            #36577e 26%,
+            #2d4e76 52%,
+            #29466d 76%,
+            #244064 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -70,7 +71,7 @@ button {
 
     margin: 0;
 
-    color: rgba(225, 236, 247, 0.96);
+    color: #dce7f0;
 
     font-size: 28px;
 
@@ -86,9 +87,9 @@ button {
 
     height: 34px;
 
-    border: 3px solid rgba(190, 212, 235, 0.18);
+    border: 3px solid rgba(200, 218, 234, 0.2);
 
-    border-top-color: rgba(207, 226, 243, 0.95);
+    border-top-color: #dbe8f2;
 
     border-radius: 50%;
 
@@ -108,13 +109,13 @@ button {
 
     min-height: 100vh;
 
-    padding: 28px;
+    padding: 24px 88px 24px 24px;
 
 }
 
 .activityContainer {
 
-    width: min(1100px, 100%);
+    width: min(1050px, 100%);
 
     margin: 0 auto;
 
@@ -126,46 +127,68 @@ button {
 
     grid-template-columns: repeat(3, minmax(0, 1fr));
 
-    gap: 14px;
+    gap: 11px;
 
-    margin-bottom: 18px;
+    margin-bottom: 15px;
+
+    padding: 15px;
+
+    border: 1px solid rgba(138, 166, 191, 0.2);
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #102b4b 0%,
+            #172f49 42%,
+            #242e35 72%,
+            #2d3236 100%
+        );
+
+    box-shadow:
+        0 14px 34px rgba(2, 10, 20, 0.36),
+        inset 0 1px 0 rgba(181, 208, 228, 0.06);
 
 }
 
 .tabButton {
 
-    min-height: 36px;
+    min-height: 48px;
 
-    padding: 0 24px;
+    padding: 0 21px;
 
-    border: 1px solid rgba(226, 237, 247, 0.35);
+    position: relative;
+
+    overflow: visible;
+
+    border: 1px solid rgba(170, 196, 216, 0.2);
 
     border-radius: 999px;
 
     background:
         linear-gradient(
-            180deg,
-            #dce6ef 0%,
-            #bdd4e7 50%,
-            #a9c7df 100%
+            135deg,
+            #476f92 0%,
+            #3d6385 50%,
+            #335775 100%
         );
 
-    color: #102842;
+    color: #ffffff;
 
-    font-size: 13px;
+    font-size: 16px;
 
     font-weight: 800;
 
-    letter-spacing: 1px;
+    letter-spacing: 0.85px;
 
     cursor: pointer;
 
     box-shadow:
-        0 6px 18px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        0 6px 15px rgba(2, 14, 27, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-        transform 0.18s ease,
         background 0.18s ease,
         border-color 0.18s ease,
         box-shadow 0.18s ease;
@@ -174,33 +197,31 @@ button {
 
 .tabButton:hover {
 
-    transform: translateY(-1px);
-
     background:
         linear-gradient(
-            180deg,
-            #e5edf4 0%,
-            #c8ddeb 50%,
-            #b4d0e4 100%
+            135deg,
+            #527ca0 0%,
+            #477098 50%,
+            #3b6485 100%
         );
 
-    border-color: rgba(239, 246, 252, 0.55);
+    border-color: rgba(201, 222, 237, 0.34);
 
     box-shadow:
-        0 9px 22px rgba(0, 0, 0, 0.24),
-        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+        0 9px 19px rgba(2, 14, 27, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 }
 
 .tabButton:active {
 
-    transform: translateY(0);
+    transform: none;
 
 }
 
 .tabButton:focus-visible {
 
-    outline: 3px solid rgba(174, 211, 239, 0.5);
+    outline: 3px solid rgba(168, 202, 225, 0.46);
 
     outline-offset: 3px;
 
@@ -210,19 +231,275 @@ button {
 
     background:
         linear-gradient(
-            180deg,
-            #e3edf5 0%,
-            #c8dceb 50%,
-            #b4d2e8 100%
+            135deg,
+            #5b83a5 0%,
+            #4d7395 50%,
+            #406788 100%
         );
 
-    border-color: rgba(244, 249, 253, 0.62);
+    border-color: rgba(213, 230, 241, 0.38);
 
-    color: #0b223d;
+    color: #ffffff;
 
     box-shadow:
-        0 9px 24px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        0 8px 20px rgba(2, 14, 27, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11);
+
+}
+
+.tabLabel {
+
+    position: relative;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+}
+
+.tabButton.clickJerk {
+
+    animation: clickJerk 0.2s cubic-bezier(0.22, 0.8, 0.25, 1);
+
+}
+
+@keyframes clickJerk {
+
+    0% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
+
+    22% {
+
+        transform: translate(-3px, 1px) rotate(-1deg);
+
+    }
+
+    45% {
+
+        transform: translate(3px, -1px) rotate(1deg);
+
+    }
+
+    68% {
+
+        transform: translate(-2px, 0) rotate(-0.5deg);
+
+    }
+
+    100% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
+
+}
+
+.buttonEffectImage {
+
+    position: absolute;
+
+    top: 50%;
+
+    object-fit: contain;
+
+    pointer-events: none;
+
+    z-index: 3;
+
+    opacity: 0;
+
+}
+
+.carEffect {
+
+    width: 82px;
+
+    height: 82px;
+
+    animation:
+        carDrive 3s linear forwards;
+
+}
+
+.tornadoEffect {
+
+    width: 90px;
+
+    height: 90px;
+
+    animation:
+        tornadoChase 3s linear 1s forwards;
+
+}
+
+@keyframes carDrive {
+
+    0% {
+
+        left: 0;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(-0.8deg);
+
+    }
+
+    20% {
+
+        left: 20%;
+
+        opacity: 1;
+
+        transform: translateY(calc(-50% - 1px)) rotate(0.3deg);
+
+    }
+
+    40% {
+
+        left: 40%;
+
+        opacity: 1;
+
+        transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
+
+    }
+
+    60% {
+
+        left: 60%;
+
+        opacity: 1;
+
+        transform: translateY(calc(-50% - 0.8px)) rotate(0.2deg);
+
+    }
+
+    80% {
+
+        left: 80%;
+
+        opacity: 1;
+
+        transform: translateY(calc(-50% + 0.8px)) rotate(-0.2deg);
+
+    }
+
+    93.33% {
+
+        left: calc(93.33% - 7.73px);
+
+        opacity: 1;
+
+        transform: translateY(calc(-50% - 1px)) rotate(0.15deg);
+
+    }
+
+    96.67% {
+
+        left: calc(96.67% - 7.73px);
+
+        opacity: 0.45;
+
+        transform: translateY(calc(-50% + 0.5px)) rotate(-0.1deg);
+
+    }
+
+    100% {
+
+        left: calc(100% - 82px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(0deg);
+
+    }
+
+}
+
+@keyframes tornadoChase {
+
+    0% {
+
+        left: 0;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(-2deg);
+
+    }
+
+    20% {
+
+        left: 20%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(3deg);
+
+    }
+
+    40% {
+
+        left: 40%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    60% {
+
+        left: 60%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(2.5deg);
+
+    }
+
+    80% {
+
+        left: 80%;
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(-2.5deg);
+
+    }
+
+    93.33% {
+
+        left: calc(93.33% - 8.4px);
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(3deg);
+
+    }
+
+    96.67% {
+
+        left: calc(96.67% - 8.4px);
+
+        opacity: 0.45;
+
+        transform: translateY(-50%) rotate(-1deg);
+
+    }
+
+    100% {
+
+        left: calc(100% - 90px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(0deg);
+
+    }
 
 }
 
@@ -230,23 +507,24 @@ button {
 
     min-height: 430px;
 
-    padding: 36px;
+    padding: 32px;
 
-    border: 1px solid rgba(122, 161, 203, 0.2);
+    border: 1px solid rgba(136, 164, 188, 0.18);
 
-    border-radius: 24px;
+    border-radius: 26px;
 
     background:
         linear-gradient(
-            145deg,
-            rgba(19, 47, 83, 0.84) 0%,
-            rgba(10, 29, 57, 0.9) 55%,
-            rgba(6, 19, 38, 0.94) 100%
+            135deg,
+            #102a49 0%,
+            #172f47 38%,
+            #242d34 70%,
+            #303438 100%
         );
 
     box-shadow:
-        0 18px 46px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(155, 192, 222, 0.08);
+        0 19px 44px rgba(2, 10, 20, 0.38),
+        inset 0 1px 0 rgba(177, 203, 222, 0.05);
 
 }
 
@@ -262,13 +540,13 @@ button {
 
 .tabEyebrow {
 
-    color: rgba(178, 207, 231, 0.68);
+    color: rgba(184, 207, 224, 0.6);
 
-    font-size: 12px;
+    font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 800;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
 
 }
 
@@ -276,13 +554,79 @@ button {
 
     margin: 0;
 
-    color: #eef6fc;
+    color: #e8f1f7;
 
-    font-size: 32px;
+    font-size: 31px;
 
     font-weight: 700;
 
     letter-spacing: -0.7px;
+
+}
+
+.scrollRail {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 17px;
+
+    width: 55px;
+
+    min-height: 100vh;
+
+    pointer-events: none;
+
+    overflow: visible;
+
+    z-index: 10;
+
+}
+
+.scrollIndicator {
+
+    position: absolute;
+
+    left: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    width: max-content;
+
+    color: rgba(197, 216, 230, 0.58);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    transform: translateX(-50%) rotate(90deg);
+
+}
+
+.scrollIndicator strong {
+
+    font-size: 10px;
+
+    letter-spacing: 1.4px;
+
+    color: rgba(216, 229, 239, 0.66);
+
+}
+
+.scrollIndicator span {
+
+    color: rgba(178, 204, 222, 0.64);
+
+    font-size: 12px;
 
 }
 
@@ -292,7 +636,7 @@ button {
 
     left: 20px;
 
-    right: 20px;
+    right: 86px;
 
     bottom: 20px;
 
@@ -302,11 +646,16 @@ button {
 
     padding: 14px 18px;
 
-    border: 1px solid rgba(191, 214, 235, 0.18);
+    border: 1px solid rgba(177, 205, 225, 0.18);
 
-    border-radius: 14px;
+    border-radius: 15px;
 
-    background: rgba(5, 17, 34, 0.95);
+    background:
+        linear-gradient(
+            135deg,
+            #122b47 0%,
+            #252e34 100%
+        );
 
     color: #ffffff;
 
@@ -314,7 +663,7 @@ button {
 
     line-height: 1.45;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 
 }
 
@@ -322,27 +671,45 @@ button {
 
     .mainScreen {
 
-        padding: 16px;
+        padding: 16px 66px 16px 16px;
 
     }
 
     .navigation {
 
-        gap: 8px;
+        gap: 7px;
+
+        padding: 11px;
+
+        border-radius: 22px;
 
     }
 
     .tabButton {
 
-        min-height: 18px;
+        min-height: 44px;
 
-        padding: 0 10px;
+        padding: 0 9px;
 
         font-size: 11px;
 
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
 
-        border-radius: 999px;
+    }
+
+    .buttonEffectImage {
+
+        width: 64px;
+
+        height: 64px;
+
+    }
+
+    .tornadoEffect {
+
+        width: 72px;
+
+        height: 72px;
 
     }
 
@@ -350,15 +717,51 @@ button {
 
         min-height: 360px;
 
-        padding: 26px;
+        padding: 24px;
 
-        border-radius: 20px;
+        border-radius: 21px;
 
     }
 
     .tabScreen h1 {
 
-        font-size: 27px;
+        font-size: 26px;
+
+    }
+
+    .scrollRail {
+
+        right: 12px;
+
+        width: 44px;
+
+    }
+
+    .scrollIndicator {
+
+        gap: 4px;
+
+        font-size: 8px;
+
+    }
+
+    .scrollIndicator strong {
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+
+    }
+
+    .scrollIndicator span {
+
+        font-size: 10px;
+
+    }
+
+    .error {
+
+        right: 68px;
 
     }
 
@@ -366,15 +769,23 @@ button {
 
 @media (max-width: 430px) {
 
+    .mainScreen {
+
+        padding-right: 55px;
+
+    }
+
     .navigation {
 
-        gap: 6px;
+        gap: 5px;
+
+        padding: 9px;
 
     }
 
     .tabButton {
 
-        min-height: 16px;
+        min-height: 40px;
 
         padding: 0 6px;
 
@@ -382,9 +793,57 @@ button {
 
     }
 
+    .buttonEffectImage {
+
+        width: 54px;
+
+        height: 54px;
+
+    }
+
+    .tornadoEffect {
+
+        width: 62px;
+
+        height: 62px;
+
+    }
+
     .tabScreen {
 
-        padding: 22px;
+        padding: 20px;
+
+    }
+
+    .scrollRail {
+
+        right: 8px;
+
+        width: 38px;
+
+    }
+
+    .scrollIndicator {
+
+        gap: 3px;
+
+    }
+
+    .scrollIndicator strong {
+
+        font-size: 7px;
+
+    }
+
+    .scrollIndicator span {
+
+        font-size: 9px;
+
+    }
+
+    .error {
+
+        right: 58px;
 
     }
 

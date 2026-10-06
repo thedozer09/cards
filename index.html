@@ -6,7 +6,7 @@
 
     <title>Card Game</title>
 
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=20">
 </head>
 
 <body>
@@ -30,15 +30,21 @@
             <nav class="navigation">
 
                 <button id="generateButton" class="tabButton active" type="button">
-                    GENERATE
+
+                    <span class="tabLabel">GENERATE</span>
+
                 </button>
 
                 <button id="leaderboardsButton" class="tabButton" type="button">
-                    LEADERBOARDS
+
+                    <span class="tabLabel">LEADERBOARDS</span>
+
                 </button>
 
                 <button id="cardsButton" class="tabButton" type="button">
-                    CARDS
+
+                    <span class="tabLabel">CARDS</span>
+
                 </button>
 
             </nav>
@@ -83,9 +89,19 @@
 
     </main>
 
+    <div class="scrollRail" aria-hidden="true"></div>
+
+    <div id="screen1" class="hidden"></div>
+
+    <div id="screen2" class="hidden"></div>
+
+    <button id="testButton" class="hidden" type="button"></button>
+
+    <button id="rngButton" class="hidden" type="button"></button>
+
     <div id="errorMessage" class="error hidden"></div>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=13"></script>
 
 </body>
 </html>
