@@ -331,7 +331,7 @@ button {
     height: 90px;
 
     animation:
-        tornadoChase 1.5s linear 1.5s forwards;
+        tornadoChase 3s linear forwards;
 
 }
 
@@ -389,7 +389,7 @@ button {
 
     93.33% {
 
-        left: 93.33%;
+        left: calc(93.33% - 7.73px);
 
         opacity: 1;
 
@@ -399,9 +399,9 @@ button {
 
     96.67% {
 
-        left: 96.67%;
+        left: calc(96.67% - 7.73px);
 
-        opacity: 0;
+        opacity: 0.45;
 
         transform: translateY(calc(-50% + 0.5px)) rotate(-0.1deg);
 
@@ -473,7 +473,7 @@ button {
 
     93.33% {
 
-        left: 93.33%;
+        left: calc(93.33% - 8.4px);
 
         opacity: 1;
 
@@ -483,9 +483,9 @@ button {
 
     96.67% {
 
-        left: 96.67%;
+        left: calc(96.67% - 8.4px);
 
-        opacity: 0;
+        opacity: 0.45;
 
         transform: translateY(-50%) rotate(-1deg);
 
