@@ -8,31 +8,22 @@ body {
     min-height: 100%;
 }
 
-html {
-    scrollbar-width: none;
-}
-
-html::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
 body {
 
     min-height: 100vh;
 
     font-family: Arial, Helvetica, sans-serif;
 
-    color: #f5f9fd;
+    color: #edf4fa;
 
     background:
         linear-gradient(
             135deg,
-            #6688a6 0%,
-            #57799d 25%,
-            #476b95 50%,
-            #3a5e91 75%,
-            #315287 100%
+            #3f5c79 0%,
+            #345274 28%,
+            #294666 54%,
+            #203957 76%,
+            #172c46 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -80,7 +71,7 @@ button {
 
     margin: 0;
 
-    color: #f0f6fb;
+    color: #dce7f0;
 
     font-size: 28px;
 
@@ -96,9 +87,9 @@ button {
 
     height: 34px;
 
-    border: 3px solid rgba(222, 234, 244, 0.28);
+    border: 3px solid rgba(200, 218, 234, 0.2);
 
-    border-top-color: #f0f6fb;
+    border-top-color: #dbe8f2;
 
     border-radius: 50%;
 
@@ -118,13 +109,13 @@ button {
 
     min-height: 100vh;
 
-    padding: 28px 72px 28px 28px;
+    padding: 24px 88px 24px 24px;
 
 }
 
 .activityContainer {
 
-    width: min(1100px, 100%);
+    width: min(1050px, 100%);
 
     margin: 0 auto;
 
@@ -136,56 +127,62 @@ button {
 
     grid-template-columns: repeat(3, minmax(0, 1fr));
 
-    gap: 14px;
+    gap: 11px;
 
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 
-    padding: 20px;
+    padding: 15px;
 
-    border: 1px solid rgba(156, 184, 209, 0.26);
+    border: 1px solid rgba(138, 166, 191, 0.2);
 
-    border-radius: 30px;
+    border-radius: 25px;
 
     background:
         linear-gradient(
             135deg,
-            #15365f 0%,
-            #173653 40%,
-            #293840 72%,
-            #353b3e 100%
+            #102b4b 0%,
+            #172f49 42%,
+            #242e35 72%,
+            #2d3236 100%
         );
 
     box-shadow:
-        0 18px 44px rgba(4, 15, 29, 0.34),
-        inset 0 1px 0 rgba(182, 209, 230, 0.1);
+        0 14px 34px rgba(2, 10, 20, 0.36),
+        inset 0 1px 0 rgba(181, 208, 228, 0.06);
 
 }
 
 .tabButton {
 
-    min-height: 64px;
+    min-height: 48px;
 
-    padding: 0 28px;
+    padding: 0 21px;
 
-    border: 1px solid rgba(174, 201, 222, 0.24);
+    border: 1px solid rgba(170, 196, 216, 0.2);
 
     border-radius: 999px;
 
-    background: #315f86;
+    background:
+        linear-gradient(
+            135deg,
+            #426987 0%,
+            #365b79 50%,
+            #2b4d69 100%
+        );
 
     color: #ffffff;
 
-    font-size: 18px;
+    font-size: 16px;
 
     font-weight: 800;
 
-    letter-spacing: 1px;
+    letter-spacing: 0.85px;
 
     cursor: pointer;
 
     box-shadow:
-        0 8px 18px rgba(4, 18, 33, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        0 6px 15px rgba(2, 14, 27, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
         transform 0.18s ease,
@@ -199,13 +196,19 @@ button {
 
     transform: translateY(-1px);
 
-    background: #3d719a;
+    background:
+        linear-gradient(
+            135deg,
+            #4c7695 0%,
+            #3e6382 50%,
+            #315670 100%
+        );
 
-    border-color: rgba(207, 226, 241, 0.42);
+    border-color: rgba(201, 222, 237, 0.34);
 
     box-shadow:
-        0 11px 22px rgba(4, 18, 33, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        0 9px 19px rgba(2, 14, 27, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 }
 
@@ -217,7 +220,7 @@ button {
 
 .tabButton:focus-visible {
 
-    outline: 3px solid rgba(184, 214, 235, 0.6);
+    outline: 3px solid rgba(168, 202, 225, 0.46);
 
     outline-offset: 3px;
 
@@ -225,15 +228,21 @@ button {
 
 .tabButton.active {
 
-    background: #4278a3;
+    background:
+        linear-gradient(
+            135deg,
+            #527b9c 0%,
+            #426b8b 50%,
+            #355d7b 100%
+        );
 
-    border-color: rgba(226, 239, 249, 0.48);
+    border-color: rgba(213, 230, 241, 0.38);
 
     color: #ffffff;
 
     box-shadow:
-        0 10px 24px rgba(4, 18, 33, 0.38),
-        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+        0 8px 20px rgba(2, 14, 27, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11);
 
 }
 
@@ -241,24 +250,24 @@ button {
 
     min-height: 430px;
 
-    padding: 36px;
+    padding: 32px;
 
-    border: 1px solid rgba(153, 181, 203, 0.22);
+    border: 1px solid rgba(136, 164, 188, 0.18);
 
-    border-radius: 28px;
+    border-radius: 26px;
 
     background:
         linear-gradient(
             135deg,
-            #122f53 0%,
-            #1a324a 38%,
-            #2c343a 72%,
-            #383c3e 100%
+            #102a49 0%,
+            #172f47 38%,
+            #242d34 70%,
+            #303438 100%
         );
 
     box-shadow:
-        0 22px 50px rgba(4, 15, 29, 0.36),
-        inset 0 1px 0 rgba(186, 210, 228, 0.08);
+        0 19px 44px rgba(2, 10, 20, 0.38),
+        inset 0 1px 0 rgba(177, 203, 222, 0.05);
 
 }
 
@@ -274,13 +283,13 @@ button {
 
 .tabEyebrow {
 
-    color: rgba(194, 214, 230, 0.68);
+    color: rgba(184, 207, 224, 0.6);
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 800;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
 
 }
 
@@ -288,13 +297,13 @@ button {
 
     margin: 0;
 
-    color: #f1f6fa;
+    color: #e8f1f7;
 
-    font-size: 34px;
+    font-size: 31px;
 
     font-weight: 700;
 
-    letter-spacing: -0.8px;
+    letter-spacing: -0.7px;
 
 }
 
@@ -304,13 +313,13 @@ button {
 
     top: 0;
 
-    right: 0;
+    right: 17px;
 
-    width: 54px;
+    width: 55px;
 
     min-height: 100vh;
 
-    padding: 22px 8px;
+    padding: 24px 0;
 
     display: flex;
 
@@ -318,7 +327,7 @@ button {
 
     align-items: center;
 
-    gap: 72px;
+    gap: 300px;
 
     pointer-events: none;
 
@@ -336,11 +345,11 @@ button {
 
     justify-content: center;
 
-    gap: 6px;
+    gap: 5px;
 
-    color: rgba(222, 234, 244, 0.68);
+    color: rgba(197, 216, 230, 0.58);
 
-    font-size: 10px;
+    font-size: 9px;
 
     font-weight: 800;
 
@@ -352,19 +361,19 @@ button {
 
 .scrollIndicator strong {
 
-    font-size: 11px;
+    font-size: 10px;
 
-    letter-spacing: 1.6px;
+    letter-spacing: 1.4px;
 
-    color: rgba(235, 243, 249, 0.78);
+    color: rgba(216, 229, 239, 0.66);
 
 }
 
 .scrollIndicator span {
 
-    color: rgba(190, 216, 234, 0.76);
+    color: rgba(178, 204, 222, 0.64);
 
-    font-size: 13px;
+    font-size: 12px;
 
 }
 
@@ -374,7 +383,7 @@ button {
 
     left: 20px;
 
-    right: 74px;
+    right: 86px;
 
     bottom: 20px;
 
@@ -384,15 +393,15 @@ button {
 
     padding: 14px 18px;
 
-    border: 1px solid rgba(190, 213, 231, 0.2);
+    border: 1px solid rgba(177, 205, 225, 0.18);
 
-    border-radius: 16px;
+    border-radius: 15px;
 
     background:
         linear-gradient(
             135deg,
-            #162f4e 0%,
-            #272f35 100%
+            #122b47 0%,
+            #252e34 100%
         );
 
     color: #ffffff;
@@ -401,7 +410,7 @@ button {
 
     line-height: 1.45;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 
 }
 
@@ -409,29 +418,29 @@ button {
 
     .mainScreen {
 
-        padding: 16px 58px 16px 16px;
+        padding: 16px 66px 16px 16px;
 
     }
 
     .navigation {
 
-        gap: 8px;
+        gap: 7px;
 
-        padding: 14px;
+        padding: 11px;
 
-        border-radius: 24px;
+        border-radius: 22px;
 
     }
 
     .tabButton {
 
-        min-height: 58px;
+        min-height: 44px;
 
-        padding: 0 10px;
+        padding: 0 9px;
 
-        font-size: 12px;
+        font-size: 11px;
 
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
 
     }
 
@@ -439,25 +448,27 @@ button {
 
         min-height: 360px;
 
-        padding: 26px;
+        padding: 24px;
 
-        border-radius: 22px;
+        border-radius: 21px;
 
     }
 
     .tabScreen h1 {
 
-        font-size: 27px;
+        font-size: 26px;
 
     }
 
     .scrollRail {
 
+        right: 12px;
+
         width: 44px;
 
-        padding: 18px 5px;
+        padding: 18px 0;
 
-        gap: 58px;
+        gap: 240px;
 
     }
 
@@ -471,21 +482,21 @@ button {
 
     .scrollIndicator strong {
 
-        font-size: 9px;
+        font-size: 8px;
 
-        letter-spacing: 1.1px;
+        letter-spacing: 1px;
 
     }
 
     .scrollIndicator span {
 
-        font-size: 11px;
+        font-size: 10px;
 
     }
 
     .error {
 
-        right: 60px;
+        right: 68px;
 
     }
 
@@ -495,21 +506,21 @@ button {
 
     .mainScreen {
 
-        padding-right: 50px;
+        padding-right: 55px;
 
     }
 
     .navigation {
 
-        gap: 6px;
+        gap: 5px;
 
-        padding: 11px;
+        padding: 9px;
 
     }
 
     .tabButton {
 
-        min-height: 52px;
+        min-height: 40px;
 
         padding: 0 6px;
 
@@ -519,17 +530,19 @@ button {
 
     .tabScreen {
 
-        padding: 22px;
+        padding: 20px;
 
     }
 
     .scrollRail {
 
+        right: 8px;
+
         width: 38px;
 
-        padding: 16px 3px;
+        padding: 15px 0;
 
-        gap: 48px;
+        gap: 200px;
 
     }
 
@@ -541,13 +554,19 @@ button {
 
     .scrollIndicator strong {
 
-        font-size: 8px;
+        font-size: 7px;
+
+    }
+
+    .scrollIndicator span {
+
+        font-size: 9px;
 
     }
 
     .error {
 
-        right: 52px;
+        right: 58px;
 
     }
 

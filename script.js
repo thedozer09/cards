@@ -180,7 +180,7 @@ function updateScrollRail() {
         window.innerHeight
     );
 
-    const spacing = 100;
+    const spacing = 500;
 
     const indicatorCount = Math.max(
         1,
