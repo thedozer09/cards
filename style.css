@@ -5,77 +5,387 @@
 html,
 body {
     margin: 0;
-    width: 100%;
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
-    background: #111111;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-}
 
-.screen {
-    width: 100%;
     min-height: 100vh;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
 
-    padding-top: 20px;
-}
+    color: #ffffff;
 
-.hidden {
-    display: none;
+    background:
+        linear-gradient(
+            135deg,
+            #172f57 0%,
+            #10264a 35%,
+            #0b1d3a 68%,
+            #061226 100%
+        );
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
 }
 
 button {
-    margin-top: 20px;
+    font: inherit;
+}
 
-    padding: 10px 24px;
+.hidden {
+    display: none !important;
+}
 
-    border: none;
-    border-radius: 6px;
+.loadingScreen {
 
-    background: #5865f2;
-    color: white;
+    min-height: 100vh;
 
-    font-size: 16px;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+}
+
+.loadingContent {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+
+}
+
+.loadingContent h1 {
+
+    margin: 0;
+
+    color: rgba(225, 236, 247, 0.96);
+
+    font-size: 28px;
+
+    font-weight: 600;
+
+    letter-spacing: -0.4px;
+
+}
+
+.loadingSpinner {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: 3px solid rgba(190, 212, 235, 0.18);
+
+    border-top-color: rgba(207, 226, 243, 0.95);
+
+    border-radius: 50%;
+
+    animation: loadingSpin 0.9s linear infinite;
+
+}
+
+@keyframes loadingSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+.mainScreen {
+
+    min-height: 100vh;
+
+    padding: 28px;
+
+}
+
+.activityContainer {
+
+    width: min(1100px, 100%);
+
+    margin: 0 auto;
+
+}
+
+.navigation {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-bottom: 18px;
+
+}
+
+.tabButton {
+
+    min-height: 36px;
+
+    padding: 0 24px;
+
+    border: 1px solid rgba(226, 237, 247, 0.35);
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #dce6ef 0%,
+            #bdd4e7 50%,
+            #a9c7df 100%
+        );
+
+    color: #102842;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
     cursor: pointer;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+
 }
 
-button:hover {
-    background: #4752c4;
+.tabButton:hover {
+
+    transform: translateY(-1px);
+
+    background:
+        linear-gradient(
+            180deg,
+            #e5edf4 0%,
+            #c8ddeb 50%,
+            #b4d0e4 100%
+        );
+
+    border-color: rgba(239, 246, 252, 0.55);
+
+    box-shadow:
+        0 9px 22px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
 }
 
-#rngButton {
-    background: #ffd43b;
-    color: black;
+.tabButton:active {
+
+    transform: translateY(0);
+
 }
 
-#rngButton:hover {
-    background: #f0c400;
+.tabButton:focus-visible {
+
+    outline: 3px solid rgba(174, 211, 239, 0.5);
+
+    outline-offset: 3px;
+
 }
 
-.red {
-    color: red;
+.tabButton.active {
+
+    background:
+        linear-gradient(
+            180deg,
+            #e3edf5 0%,
+            #c8dceb 50%,
+            #b4d2e8 100%
+        );
+
+    border-color: rgba(244, 249, 253, 0.62);
+
+    color: #0b223d;
+
+    box-shadow:
+        0 9px 24px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+}
+
+.tabScreen {
+
+    min-height: 430px;
+
+    padding: 36px;
+
+    border: 1px solid rgba(122, 161, 203, 0.2);
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19, 47, 83, 0.84) 0%,
+            rgba(10, 29, 57, 0.9) 55%,
+            rgba(6, 19, 38, 0.94) 100%
+        );
+
+    box-shadow:
+        0 18px 46px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(155, 192, 222, 0.08);
+
+}
+
+.tabHeader {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.tabEyebrow {
+
+    color: rgba(178, 207, 231, 0.68);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+}
+
+.tabScreen h1 {
+
+    margin: 0;
+
+    color: #eef6fc;
+
+    font-size: 32px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.7px;
+
 }
 
 .error {
+
     position: fixed;
 
-    top: 20px;
-    left: 50%;
+    left: 20px;
 
-    transform: translateX(-50%);
+    right: 20px;
 
-    padding: 12px 20px;
+    bottom: 20px;
 
-    background: #ff0000;
-    color: white;
+    max-width: 760px;
 
-    border-radius: 6px;
+    margin: 0 auto;
 
-    font-size: 16px;
+    padding: 14px 18px;
+
+    border: 1px solid rgba(191, 214, 235, 0.18);
+
+    border-radius: 14px;
+
+    background: rgba(5, 17, 34, 0.95);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+}
+
+@media (max-width: 700px) {
+
+    .mainScreen {
+
+        padding: 16px;
+
+    }
+
+    .navigation {
+
+        gap: 8px;
+
+    }
+
+    .tabButton {
+
+        min-height: 18px;
+
+        padding: 0 10px;
+
+        font-size: 11px;
+
+        letter-spacing: 0.5px;
+
+        border-radius: 999px;
+
+    }
+
+    .tabScreen {
+
+        min-height: 360px;
+
+        padding: 26px;
+
+        border-radius: 20px;
+
+    }
+
+    .tabScreen h1 {
+
+        font-size: 27px;
+
+    }
+
+}
+
+@media (max-width: 430px) {
+
+    .navigation {
+
+        gap: 6px;
+
+    }
+
+    .tabButton {
+
+        min-height: 16px;
+
+        padding: 0 6px;
+
+        font-size: 9px;
+
+    }
+
+    .tabScreen {
+
+        padding: 22px;
+
+    }
+
 }
