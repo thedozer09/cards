@@ -8,22 +8,31 @@ body {
     min-height: 100%;
 }
 
+html {
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
 body {
 
     min-height: 100vh;
 
     font-family: Arial, Helvetica, sans-serif;
 
-    color: #eef6ff;
+    color: #f5f9fd;
 
     background:
         linear-gradient(
             135deg,
-            #6f93b8 0%,
-            #52779f 22%,
-            #345a87 48%,
-            #1d3b68 72%,
-            #091a38 100%
+            #6688a6 0%,
+            #57799d 25%,
+            #476b95 50%,
+            #3a5e91 75%,
+            #315287 100%
         );
 
     -webkit-font-smoothing: antialiased;
@@ -71,7 +80,7 @@ button {
 
     margin: 0;
 
-    color: #e8f2fb;
+    color: #f0f6fb;
 
     font-size: 28px;
 
@@ -87,9 +96,9 @@ button {
 
     height: 34px;
 
-    border: 3px solid rgba(228, 239, 248, 0.3);
+    border: 3px solid rgba(222, 234, 244, 0.28);
 
-    border-top-color: #e7f2fb;
+    border-top-color: #f0f6fb;
 
     border-radius: 50%;
 
@@ -109,7 +118,7 @@ button {
 
     min-height: 100vh;
 
-    padding: 28px;
+    padding: 28px 72px 28px 28px;
 
 }
 
@@ -133,48 +142,40 @@ button {
 
     padding: 20px;
 
-    border: 2px solid rgba(234, 243, 249, 0.52);
+    border: 1px solid rgba(156, 184, 209, 0.26);
 
-    border-radius: 34px;
+    border-radius: 30px;
 
     background:
         linear-gradient(
             135deg,
-            #c9e8f8 0%,
-            #b8d7e8 28%,
-            #99b5c6 55%,
-            #788b99 78%,
-            #64747f 100%
+            #15365f 0%,
+            #173653 40%,
+            #293840 72%,
+            #353b3e 100%
         );
 
     box-shadow:
-        0 18px 42px rgba(7, 22, 43, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        0 18px 44px rgba(4, 15, 29, 0.34),
+        inset 0 1px 0 rgba(182, 209, 230, 0.1);
 
 }
 
 .tabButton {
 
-    min-height: 20px;
+    min-height: 64px;
 
-    padding: 0 26px;
+    padding: 0 28px;
 
-    border: 2px solid rgba(243, 248, 252, 0.72);
+    border: 1px solid rgba(174, 201, 222, 0.24);
 
     border-radius: 999px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #f1f4f6 0%,
-            #dfe5ea 35%,
-            #b3c8da 68%,
-            #6d94b8 100%
-        );
+    background: #315f86;
 
-    color: #16314d;
+    color: #ffffff;
 
-    font-size: 13px;
+    font-size: 18px;
 
     font-weight: 800;
 
@@ -183,14 +184,14 @@ button {
     cursor: pointer;
 
     box-shadow:
-        0 7px 17px rgba(18, 39, 60, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        0 8px 18px rgba(4, 18, 33, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
     transition:
         transform 0.18s ease,
         background 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease;
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 
 }
 
@@ -198,20 +199,13 @@ button {
 
     transform: translateY(-1px);
 
-    background:
-        linear-gradient(
-            135deg,
-            #f7f9fa 0%,
-            #e7edf1 32%,
-            #c3d5e2 65%,
-            #7ca2c4 100%
-        );
+    background: #3d719a;
 
-    border-color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(207, 226, 241, 0.42);
 
     box-shadow:
-        0 10px 22px rgba(17, 38, 60, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        0 11px 22px rgba(4, 18, 33, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
 }
 
@@ -223,7 +217,7 @@ button {
 
 .tabButton:focus-visible {
 
-    outline: 3px solid rgba(221, 238, 250, 0.82);
+    outline: 3px solid rgba(184, 214, 235, 0.6);
 
     outline-offset: 3px;
 
@@ -231,22 +225,15 @@ button {
 
 .tabButton.active {
 
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff 0%,
-            #e9eef2 30%,
-            #cbdbe6 62%,
-            #79a4c9 100%
-        );
+    background: #4278a3;
 
-    border-color: #ffffff;
+    border-color: rgba(226, 239, 249, 0.48);
 
-    color: #102943;
+    color: #ffffff;
 
     box-shadow:
-        0 10px 24px rgba(14, 35, 58, 0.36),
-        inset 0 1px 0 #ffffff;
+        0 10px 24px rgba(4, 18, 33, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
 
 }
 
@@ -256,23 +243,22 @@ button {
 
     padding: 36px;
 
-    border: 2px solid rgba(224, 240, 249, 0.42);
+    border: 1px solid rgba(153, 181, 203, 0.22);
 
-    border-radius: 30px;
+    border-radius: 28px;
 
     background:
         linear-gradient(
             135deg,
-            #c9e9f8 0%,
-            #b4d4e7 27%,
-            #9caeb9 56%,
-            #7d8d98 78%,
-            #687781 100%
+            #122f53 0%,
+            #1a324a 38%,
+            #2c343a 72%,
+            #383c3e 100%
         );
 
     box-shadow:
-        0 22px 50px rgba(7, 22, 43, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.58);
+        0 22px 50px rgba(4, 15, 29, 0.36),
+        inset 0 1px 0 rgba(186, 210, 228, 0.08);
 
 }
 
@@ -288,7 +274,7 @@ button {
 
 .tabEyebrow {
 
-    color: #38556d;
+    color: rgba(194, 214, 230, 0.68);
 
     font-size: 12px;
 
@@ -302,13 +288,83 @@ button {
 
     margin: 0;
 
-    color: #173752;
+    color: #f1f6fa;
 
-    font-size: 32px;
+    font-size: 34px;
 
     font-weight: 700;
 
-    letter-spacing: -0.7px;
+    letter-spacing: -0.8px;
+
+}
+
+.scrollRail {
+
+    position: fixed;
+
+    top: 0;
+
+    right: 0;
+
+    width: 54px;
+
+    min-height: 100vh;
+
+    padding: 22px 8px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 72px;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+}
+
+.scrollIndicator {
+
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    color: rgba(222, 234, 244, 0.68);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    transform: rotate(90deg);
+
+}
+
+.scrollIndicator strong {
+
+    font-size: 11px;
+
+    letter-spacing: 1.6px;
+
+    color: rgba(235, 243, 249, 0.78);
+
+}
+
+.scrollIndicator span {
+
+    color: rgba(190, 216, 234, 0.76);
+
+    font-size: 13px;
 
 }
 
@@ -318,7 +374,7 @@ button {
 
     left: 20px;
 
-    right: 20px;
+    right: 74px;
 
     bottom: 20px;
 
@@ -328,15 +384,15 @@ button {
 
     padding: 14px 18px;
 
-    border: 1px solid rgba(218, 234, 245, 0.32);
+    border: 1px solid rgba(190, 213, 231, 0.2);
 
     border-radius: 16px;
 
     background:
         linear-gradient(
             135deg,
-            #203e60 0%,
-            #0b2343 100%
+            #162f4e 0%,
+            #272f35 100%
         );
 
     color: #ffffff;
@@ -353,7 +409,7 @@ button {
 
     .mainScreen {
 
-        padding: 16px;
+        padding: 16px 58px 16px 16px;
 
     }
 
@@ -363,17 +419,17 @@ button {
 
         padding: 14px;
 
-        border-radius: 26px;
+        border-radius: 24px;
 
     }
 
     .tabButton {
 
-        min-height: 18px;
+        min-height: 58px;
 
         padding: 0 10px;
 
-        font-size: 11px;
+        font-size: 12px;
 
         letter-spacing: 0.5px;
 
@@ -385,7 +441,7 @@ button {
 
         padding: 26px;
 
-        border-radius: 24px;
+        border-radius: 22px;
 
     }
 
@@ -395,9 +451,53 @@ button {
 
     }
 
+    .scrollRail {
+
+        width: 44px;
+
+        padding: 18px 5px;
+
+        gap: 58px;
+
+    }
+
+    .scrollIndicator {
+
+        gap: 4px;
+
+        font-size: 8px;
+
+    }
+
+    .scrollIndicator strong {
+
+        font-size: 9px;
+
+        letter-spacing: 1.1px;
+
+    }
+
+    .scrollIndicator span {
+
+        font-size: 11px;
+
+    }
+
+    .error {
+
+        right: 60px;
+
+    }
+
 }
 
 @media (max-width: 430px) {
+
+    .mainScreen {
+
+        padding-right: 50px;
+
+    }
 
     .navigation {
 
@@ -409,7 +509,7 @@ button {
 
     .tabButton {
 
-        min-height: 16px;
+        min-height: 52px;
 
         padding: 0 6px;
 
@@ -420,6 +520,34 @@ button {
     .tabScreen {
 
         padding: 22px;
+
+    }
+
+    .scrollRail {
+
+        width: 38px;
+
+        padding: 16px 3px;
+
+        gap: 48px;
+
+    }
+
+    .scrollIndicator {
+
+        gap: 3px;
+
+    }
+
+    .scrollIndicator strong {
+
+        font-size: 8px;
+
+    }
+
+    .error {
+
+        right: 52px;
 
     }
 

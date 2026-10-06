@@ -48,9 +48,9 @@ function initializeWebSocket() {
         console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
         
         if (event.code === 1006) {
-            errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping your Bot-Hosting container port, or your backend layout dropped the connection.";
+            errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured.";
         } else if (event.code === 1015) {
-            errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that your backend container port didn't accept.";
+            errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that backend container port didn't accept.";
         } else {
             errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'None'}`;
         }
@@ -162,3 +162,54 @@ cardsButton.addEventListener('click', () => {
     switchTab(cardsButton, cardsScreen);
 
 });
+
+
+const scrollRail = document.querySelector('.scrollRail');
+
+function updateScrollRail() {
+
+    if (!scrollRail) {
+        return;
+    }
+
+    scrollRail.innerHTML = '';
+
+    const pageHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+        window.innerHeight
+    );
+
+    const spacing = 100;
+
+    const indicatorCount = Math.max(
+        1,
+        Math.ceil(pageHeight / spacing)
+    );
+
+    for (let i = 0; i < indicatorCount; i++) {
+
+        const indicator = document.createElement('div');
+
+        indicator.className = 'scrollIndicator';
+
+        indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>';
+
+        scrollRail.appendChild(indicator);
+
+    }
+
+}
+
+
+updateScrollRail();
+
+window.addEventListener('resize', updateScrollRail);
+
+const scrollRailObserver = new ResizeObserver(() => {
+
+    updateScrollRail();
+
+});
+
+scrollRailObserver.observe(document.documentElement);
