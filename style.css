@@ -158,6 +158,10 @@ button {
 
     padding: 0 21px;
 
+    position: relative;
+
+    overflow: hidden;
+
     border: 1px solid rgba(170, 196, 216, 0.2);
 
     border-radius: 999px;
@@ -185,7 +189,6 @@ button {
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-        transform 0.18s ease,
         background 0.18s ease,
         border-color 0.18s ease,
         box-shadow 0.18s ease;
@@ -193,8 +196,6 @@ button {
 }
 
 .tabButton:hover {
-
-    transform: translateY(-1px);
 
     background:
         linear-gradient(
@@ -243,6 +244,178 @@ button {
     box-shadow:
         0 8px 20px rgba(2, 14, 27, 0.38),
         inset 0 1px 0 rgba(255, 255, 255, 0.11);
+
+}
+
+.tabLabel {
+
+    position: relative;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+}
+
+.buttonEffectImage {
+
+    position: absolute;
+
+    top: 50%;
+
+    width: 44px;
+
+    height: 44px;
+
+    object-fit: contain;
+
+    pointer-events: none;
+
+    z-index: 3;
+
+    opacity: 0;
+
+}
+
+.carEffect {
+
+    animation:
+        carDrive 0.9s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+
+}
+
+.tornadoEffect {
+
+    width: 48px;
+
+    height: 48px;
+
+    animation:
+        tornadoChase 0.9s cubic-bezier(0.2, 0.75, 0.25, 1) 0.12s forwards;
+
+}
+
+@keyframes carDrive {
+
+    0% {
+
+        left: -56px;
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    8% {
+
+        opacity: 1;
+
+    }
+
+    24% {
+
+        transform: translateY(-50%) rotate(3deg);
+
+    }
+
+    42% {
+
+        transform: translateY(-50%) rotate(-2deg);
+
+    }
+
+    60% {
+
+        transform: translateY(-50%) rotate(2deg);
+
+    }
+
+    78% {
+
+        transform: translateY(-50%) rotate(-2deg);
+
+    }
+
+    92% {
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(1deg);
+
+    }
+
+    100% {
+
+        left: calc(100% + 56px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(-1deg);
+
+    }
+
+}
+
+@keyframes tornadoChase {
+
+    0% {
+
+        left: -76px;
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(-4deg);
+
+    }
+
+    8% {
+
+        opacity: 1;
+
+    }
+
+    24% {
+
+        transform: translateY(-50%) rotate(4deg);
+
+    }
+
+    42% {
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    60% {
+
+        transform: translateY(-50%) rotate(3deg);
+
+    }
+
+    78% {
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    92% {
+
+        opacity: 1;
+
+        transform: translateY(-50%) rotate(2deg);
+
+    }
+
+    100% {
+
+        left: calc(100% + 62px);
+
+        opacity: 0;
+
+        transform: translateY(-50%) rotate(-2deg);
+
+    }
 
 }
 
@@ -309,7 +482,7 @@ button {
 
 .scrollRail {
 
-    position: fixed;
+    position: absolute;
 
     top: 0;
 
@@ -319,25 +492,19 @@ button {
 
     min-height: 100vh;
 
-    padding: 24px 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    gap: 250px;
-
     pointer-events: none;
 
     overflow: visible;
+
+    z-index: 10;
 
 }
 
 .scrollIndicator {
 
-    flex: 0 0 auto;
+    position: absolute;
+
+    left: 50%;
 
     display: flex;
 
@@ -347,6 +514,8 @@ button {
 
     gap: 5px;
 
+    width: max-content;
+
     color: rgba(197, 216, 230, 0.58);
 
     font-size: 9px;
@@ -355,19 +524,7 @@ button {
 
     white-space: nowrap;
 
-    transform: rotate(90deg);
-
-}
-
-.scrollIndicator:first-child {
-
-    transform: translateY(12px) rotate(90deg);
-
-}
-
-.scrollIndicator:last-child {
-
-    transform: translateY(-12px) rotate(90deg);
+    transform: translateX(-50%) rotate(90deg);
 
 }
 
@@ -386,6 +543,18 @@ button {
     color: rgba(178, 204, 222, 0.64);
 
     font-size: 12px;
+
+}
+
+.firstScrollIndicator {
+
+    transform: translate(-50%, 12px) rotate(90deg);
+
+}
+
+.lastScrollIndicator {
+
+    transform: translate(-50%, -12px) rotate(90deg);
 
 }
 
@@ -456,6 +625,22 @@ button {
 
     }
 
+    .buttonEffectImage {
+
+        width: 36px;
+
+        height: 36px;
+
+    }
+
+    .tornadoEffect {
+
+        width: 40px;
+
+        height: 40px;
+
+    }
+
     .tabScreen {
 
         min-height: 360px;
@@ -477,10 +662,6 @@ button {
         right: 12px;
 
         width: 44px;
-
-        padding: 18px 0;
-
-        gap: 250px;
 
     }
 
@@ -540,6 +721,22 @@ button {
 
     }
 
+    .buttonEffectImage {
+
+        width: 30px;
+
+        height: 30px;
+
+    }
+
+    .tornadoEffect {
+
+        width: 34px;
+
+        height: 34px;
+
+    }
+
     .tabScreen {
 
         padding: 20px;
@@ -551,10 +748,6 @@ button {
         right: 8px;
 
         width: 38px;
-
-        padding: 15px 0;
-
-        gap: 250px;
 
     }
 

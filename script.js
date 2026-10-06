@@ -172,20 +172,23 @@ function updateScrollRail() {
         return;
     }
 
-    scrollRail.innerHTML = '';
-
     const pageHeight = Math.max(
         document.documentElement.scrollHeight,
         document.body.scrollHeight,
+        mainScreen.scrollHeight,
         window.innerHeight
     );
 
-    const spacing = 500;
+    const spacing = 250;
 
     const indicatorCount = Math.max(
         1,
         Math.ceil(pageHeight / spacing)
     );
+
+    scrollRail.style.height = `${pageHeight}px`;
+
+    scrollRail.innerHTML = '';
 
     for (let i = 0; i < indicatorCount; i++) {
 
@@ -194,6 +197,16 @@ function updateScrollRail() {
         indicator.className = 'scrollIndicator';
 
         indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>';
+
+        indicator.style.top = `${i * spacing}px`;
+
+        if (i === 0) {
+            indicator.classList.add('firstScrollIndicator');
+        }
+
+        if (i === indicatorCount - 1) {
+            indicator.classList.add('lastScrollIndicator');
+        }
 
         scrollRail.appendChild(indicator);
 
@@ -206,10 +219,165 @@ updateScrollRail();
 
 window.addEventListener('resize', updateScrollRail);
 
-const scrollRailObserver = new ResizeObserver(() => {
+if (typeof ResizeObserver !== 'undefined') {
 
-    updateScrollRail();
+    const scrollResizeObserver = new ResizeObserver(() => {
+
+        updateScrollRail();
+
+    });
+
+    scrollResizeObserver.observe(mainScreen);
+
+}
+
+
+const tabButtons = document.querySelectorAll('.tabButton');
+
+const buttonShakeStates = new Map();
+
+function startButtonEarthquake(button) {
+
+    if (buttonShakeStates.has(button)) {
+        return;
+    }
+
+    const state = {
+        active: true,
+        animationFrame: null,
+        startedAt: performance.now()
+    };
+
+    buttonShakeStates.set(button, state);
+
+    function shakeFrame(now) {
+
+        if (!state.active) {
+            return;
+        }
+
+        const elapsed = now - state.startedAt;
+
+        const intensity = Math.min(elapsed / 1800, 1);
+
+        const movement = 1 + intensity * 4;
+
+        const rotation = 0.6 + intensity * 2.4;
+
+        const x = (Math.random() - 0.5) * movement;
+
+        const y = (Math.random() - 0.5) * movement;
+
+        const angle = (Math.random() - 0.5) * rotation;
+
+        button.style.transform =
+            `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+        state.animationFrame = requestAnimationFrame(shakeFrame);
+
+    }
+
+    state.animationFrame = requestAnimationFrame(shakeFrame);
+
+}
+
+function stopButtonEarthquake(button) {
+
+    const state = buttonShakeStates.get(button);
+
+    if (!state) {
+        return;
+    }
+
+    state.active = false;
+
+    if (state.animationFrame) {
+        cancelAnimationFrame(state.animationFrame);
+    }
+
+    button.style.transform = '';
+
+    buttonShakeStates.delete(button);
+
+}
+
+function playButtonAnimation(button) {
+
+    button.querySelectorAll('.buttonEffectImage').forEach(image => {
+
+        image.remove();
+
+    });
+
+    const car = document.createElement('img');
+
+    car.className = 'buttonEffectImage carEffect';
+
+    car.src = './carvector.png';
+
+    car.alt = '';
+
+    const tornado = document.createElement('img');
+
+    tornado.className = 'buttonEffectImage tornadoEffect';
+
+    tornado.src = './tornadovector.png';
+
+    tornado.alt = '';
+
+    button.appendChild(car);
+
+    button.appendChild(tornado);
+
+    tornado.addEventListener('animationend', () => {
+
+        car.remove();
+
+        tornado.remove();
+
+    }, { once: true });
+
+}
+
+tabButtons.forEach(button => {
+
+    button.addEventListener('pointerenter', () => {
+
+        startButtonEarthquake(button);
+
+    });
+
+    button.addEventListener('pointerleave', () => {
+
+        stopButtonEarthquake(button);
+
+    });
+
+    button.addEventListener('click', () => {
+
+        playButtonAnimation(button);
+
+    });
 
 });
 
-scrollRailObserver.observe(document.documentElement);
+
+function startNormalButtonWiggle(button) {
+
+    if (!button || button.classList.contains('tabButton')) {
+        return;
+    }
+
+    button.classList.add('normalButtonWiggle');
+
+}
+
+function stopNormalButtonWiggle(button) {
+
+    if (!button) {
+        return;
+    }
+
+    button.classList.remove('normalButtonWiggle');
+
+}
