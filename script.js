@@ -181,6 +181,8 @@ function updateScrollRail() {
 
     const spacing = 250;
 
+    const edgeInset = 36;
+
     const indicatorCount = Math.max(
         1,
         Math.ceil(pageHeight / spacing)
@@ -198,15 +200,30 @@ function updateScrollRail() {
 
         indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>';
 
-        indicator.style.top = `${i * spacing}px`;
+        let topPosition;
 
-        if (i === 0) {
-            indicator.classList.add('firstScrollIndicator');
+        if (indicatorCount === 1) {
+
+            topPosition = pageHeight / 2;
+
+        } else if (i === 0) {
+
+            topPosition = edgeInset;
+
+        } else if (i === indicatorCount - 1) {
+
+            topPosition = Math.max(
+                edgeInset,
+                pageHeight - edgeInset
+            );
+
+        } else {
+
+            topPosition = i * spacing;
+
         }
 
-        if (i === indicatorCount - 1) {
-            indicator.classList.add('lastScrollIndicator');
-        }
+        indicator.style.top = `${topPosition}px`;
 
         scrollRail.appendChild(indicator);
 
@@ -228,6 +245,8 @@ if (typeof ResizeObserver !== 'undefined') {
     });
 
     scrollResizeObserver.observe(mainScreen);
+
+    scrollResizeObserver.observe(document.body);
 
 }
 
@@ -258,11 +277,11 @@ function startButtonEarthquake(button) {
 
         const elapsed = now - state.startedAt;
 
-        const intensity = Math.min(elapsed / 1800, 1);
+        const intensity = Math.min(elapsed / 10000, 1);
 
-        const movement = 1 + intensity * 4;
+        const movement = 0.08 + intensity * 1.22;
 
-        const rotation = 0.6 + intensity * 2.4;
+        const rotation = 0.05 + intensity * 0.65;
 
         const x = (Math.random() - 0.5) * movement;
 
