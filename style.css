@@ -320,7 +320,7 @@ button {
     height: 82px;
 
     animation:
-        carDrive 14s cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
+        carDrive 14s linear forwards;
 
 }
 
@@ -331,7 +331,7 @@ button {
     height: 90px;
 
     animation:
-        tornadoChase 7s cubic-bezier(0.18, 0.72, 0.22, 1) 5s forwards;
+        tornadoChase 7s linear 5s forwards;
 
 }
 
@@ -339,39 +339,41 @@ button {
 
     0% {
 
-        left: -90px;
+        left: 0;
 
-        opacity: 0;
+        opacity: 1;
 
         transform: translateY(-50%) rotate(-0.8deg);
 
     }
 
-    5% {
+    10% {
 
         opacity: 1;
-
-    }
-
-    15% {
 
         transform: translateY(calc(-50% - 1px)) rotate(0.3deg);
 
     }
 
-    25% {
+    20% {
+
+        opacity: 1;
 
         transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
 
     }
 
-    35% {
+    30% {
+
+        opacity: 1;
 
         transform: translateY(calc(-50% - 0.8px)) rotate(0.2deg);
 
     }
 
-    45% {
+    40% {
+
+        opacity: 1;
 
         transform: translateY(calc(-50% + 0.8px)) rotate(-0.2deg);
 
@@ -381,43 +383,35 @@ button {
 
         opacity: 1;
 
-    }
-
-    55% {
-
         transform: translateY(calc(-50% - 1px)) rotate(0.25deg);
-
-        opacity: 0.65;
 
     }
 
     60% {
 
-        transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
+        opacity: 1;
 
-        opacity: 0.4;
+        transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
 
     }
 
-    65% {
+    69% {
+
+        opacity: 1;
 
         transform: translateY(calc(-50% - 0.8px)) rotate(0.2deg);
-
-        opacity: 0.15;
 
     }
 
     70% {
 
-        transform: translateY(calc(-50% + 0.8px)) rotate(-0.15deg);
+        opacity: 1;
 
-        opacity: 0;
+        transform: translateY(calc(-50% + 0.8px)) rotate(-0.15deg);
 
     }
 
-    87% {
-
-        left: 100%;
+    71.5% {
 
         opacity: 0;
 
@@ -427,7 +421,7 @@ button {
 
     100% {
 
-        left: 100%;
+        left: max(0px, calc(100% - 82px));
 
         opacity: 0;
 
@@ -441,39 +435,41 @@ button {
 
     0% {
 
-        left: -100px;
+        left: 0;
 
-        opacity: 0;
+        opacity: 1;
 
         transform: translateY(-50%) rotate(-2deg);
 
     }
 
-    8% {
+    10% {
 
         opacity: 1;
-
-    }
-
-    18% {
 
         transform: translateY(-50%) rotate(3deg);
 
     }
 
-    28% {
+    20% {
+
+        opacity: 1;
 
         transform: translateY(-50%) rotate(-3deg);
 
     }
 
-    38% {
+    30% {
+
+        opacity: 1;
 
         transform: translateY(-50%) rotate(2.5deg);
 
     }
 
-    48% {
+    40% {
+
+        opacity: 1;
 
         transform: translateY(-50%) rotate(-2.5deg);
 
@@ -483,43 +479,35 @@ button {
 
         opacity: 1;
 
-    }
-
-    55% {
-
         transform: translateY(-50%) rotate(3deg);
-
-        opacity: 0.65;
 
     }
 
     60% {
 
-        transform: translateY(-50%) rotate(-3deg);
+        opacity: 1;
 
-        opacity: 0.4;
+        transform: translateY(-50%) rotate(-3deg);
 
     }
 
-    65% {
+    69% {
+
+        opacity: 1;
 
         transform: translateY(-50%) rotate(2.5deg);
-
-        opacity: 0.15;
 
     }
 
     70% {
 
-        transform: translateY(-50%) rotate(-2deg);
+        opacity: 1;
 
-        opacity: 0;
+        transform: translateY(-50%) rotate(-2deg);
 
     }
 
-    87% {
-
-        left: 100%;
+    71.5% {
 
         opacity: 0;
 
@@ -529,7 +517,7 @@ button {
 
     100% {
 
-        left: 100%;
+        left: max(0px, calc(100% - 90px));
 
         opacity: 0;
 
