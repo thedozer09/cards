@@ -181,18 +181,40 @@ function updateScrollRail() {
 
     const spacing = 250;
 
-    const edgeInset = 36;
+    const edgeInset = 24;
 
-    const indicatorCount = Math.max(
-        1,
-        Math.ceil(pageHeight / spacing)
+    const positions = [];
+
+    let position = edgeInset;
+
+    while (position < pageHeight - edgeInset) {
+
+        positions.push(position);
+
+        position += spacing;
+
+    }
+
+    const bottomPosition = Math.max(
+        edgeInset,
+        pageHeight - edgeInset
     );
+
+    if (positions.length === 0) {
+
+        positions.push(pageHeight / 2);
+
+    } else if (positions[positions.length - 1] !== bottomPosition) {
+
+        positions.push(bottomPosition);
+
+    }
 
     scrollRail.style.height = `${pageHeight}px`;
 
     scrollRail.innerHTML = '';
 
-    for (let i = 0; i < indicatorCount; i++) {
+    for (let i = 0; i < positions.length; i++) {
 
         const indicator = document.createElement('div');
 
@@ -200,30 +222,21 @@ function updateScrollRail() {
 
         indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>';
 
-        let topPosition;
+        indicator.style.top = `${positions[i]}px`;
 
-        if (indicatorCount === 1) {
+        if (positions.length === 1) {
 
-            topPosition = pageHeight / 2;
+            indicator.classList.add('singleScrollIndicator');
 
         } else if (i === 0) {
 
-            topPosition = edgeInset;
+            indicator.classList.add('firstScrollIndicator');
 
-        } else if (i === indicatorCount - 1) {
+        } else if (i === positions.length - 1) {
 
-            topPosition = Math.max(
-                edgeInset,
-                pageHeight - edgeInset
-            );
-
-        } else {
-
-            topPosition = i * spacing;
+            indicator.classList.add('lastScrollIndicator');
 
         }
-
-        indicator.style.top = `${topPosition}px`;
 
         scrollRail.appendChild(indicator);
 
@@ -277,17 +290,33 @@ function startButtonEarthquake(button) {
 
         const elapsed = now - state.startedAt;
 
-        const intensity = Math.min(elapsed / 10000, 1);
+        let x = 0;
 
-        const movement = 0.08 + intensity * 1.22;
+        let y = 0;
 
-        const rotation = 0.05 + intensity * 0.65;
+        let angle = 0;
 
-        const x = (Math.random() - 0.5) * movement;
+        if (elapsed < 5000) {
 
-        const y = (Math.random() - 0.5) * movement;
+            const progress = Math.min(elapsed / 5000, 1);
 
-        const angle = (Math.random() - 0.5) * rotation;
+            const tilt = 0.2 + progress * 1.3;
+
+            angle = Math.sin(elapsed / 140) * tilt;
+
+        } else {
+
+            const progress = Math.min((elapsed - 5000) / 5000, 1);
+
+            const intensity = 0.25 + progress * 0.75;
+
+            x = (Math.random() - 0.5) * 1.35 * intensity;
+
+            y = (Math.random() - 0.5) * 1.35 * intensity;
+
+            angle = (Math.random() - 0.5) * 0.3 * intensity;
+
+        }
 
         button.style.transform =
             `translate(${x}px, ${y}px) rotate(${angle}deg)`;
@@ -321,6 +350,8 @@ function stopButtonEarthquake(button) {
 }
 
 function playButtonAnimation(button) {
+
+    stopButtonEarthquake(button);
 
     button.querySelectorAll('.buttonEffectImage').forEach(image => {
 

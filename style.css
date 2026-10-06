@@ -280,7 +280,7 @@ button {
 .carEffect {
 
     animation:
-        carDrive 1.8s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+        carDrive 5s cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
 
 }
 
@@ -291,7 +291,7 @@ button {
     height: 48px;
 
     animation:
-        tornadoChase 1.8s cubic-bezier(0.2, 0.75, 0.25, 1) 0.2s forwards;
+        tornadoChase 2.5s cubic-bezier(0.18, 0.72, 0.22, 1) 2.5s forwards;
 
 }
 
@@ -303,37 +303,61 @@ button {
 
         opacity: 0;
 
-        transform: translateY(-50%) rotate(-2deg);
+        transform: translateY(-50%) rotate(-0.8deg);
 
     }
 
-    7% {
+    6% {
 
         opacity: 1;
 
     }
 
+    15% {
+
+        transform: translateY(calc(-50% - 0.4px)) rotate(0.2deg);
+
+    }
+
     25% {
 
-        transform: translateY(-50%) rotate(2deg);
+        transform: translateY(calc(-50% + 0.4px)) rotate(-0.2deg);
+
+    }
+
+    35% {
+
+        transform: translateY(calc(-50% - 0.3px)) rotate(0.15deg);
 
     }
 
     45% {
 
-        transform: translateY(-50%) rotate(-1.5deg);
+        transform: translateY(calc(-50% + 0.3px)) rotate(-0.15deg);
+
+    }
+
+    55% {
+
+        transform: translateY(calc(-50% - 0.4px)) rotate(0.2deg);
 
     }
 
     65% {
 
-        transform: translateY(-50%) rotate(1.5deg);
+        transform: translateY(calc(-50% + 0.4px)) rotate(-0.2deg);
 
     }
 
-    82% {
+    75% {
 
-        transform: translateY(-50%) rotate(-1deg);
+        transform: translateY(calc(-50% - 0.3px)) rotate(0.15deg);
+
+    }
+
+    85% {
+
+        transform: translateY(calc(-50% + 0.3px)) rotate(-0.15deg);
 
     }
 
@@ -341,7 +365,7 @@ button {
 
         opacity: 1;
 
-        transform: translateY(-50%) rotate(1deg);
+        transform: translateY(-50%) rotate(0deg);
 
     }
 
@@ -365,37 +389,61 @@ button {
 
         opacity: 0;
 
-        transform: translateY(-50%) rotate(-3deg);
+        transform: translateY(-50%) rotate(-2deg);
 
     }
 
-    7% {
+    8% {
 
         opacity: 1;
 
     }
 
-    25% {
+    18% {
 
         transform: translateY(-50%) rotate(3deg);
 
     }
 
-    45% {
+    28% {
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    38% {
+
+        transform: translateY(-50%) rotate(2.5deg);
+
+    }
+
+    48% {
+
+        transform: translateY(-50%) rotate(-2.5deg);
+
+    }
+
+    58% {
+
+        transform: translateY(-50%) rotate(3deg);
+
+    }
+
+    68% {
+
+        transform: translateY(-50%) rotate(-3deg);
+
+    }
+
+    78% {
+
+        transform: translateY(-50%) rotate(2.5deg);
+
+    }
+
+    88% {
 
         transform: translateY(-50%) rotate(-2deg);
-
-    }
-
-    65% {
-
-        transform: translateY(-50%) rotate(2deg);
-
-    }
-
-    82% {
-
-        transform: translateY(-50%) rotate(-1.5deg);
 
     }
 
@@ -543,6 +591,24 @@ button {
     color: rgba(178, 204, 222, 0.64);
 
     font-size: 12px;
+
+}
+
+.firstScrollIndicator {
+
+    transform: translate(-50%, 12px) rotate(90deg);
+
+}
+
+.lastScrollIndicator {
+
+    transform: translate(-50%, -12px) rotate(90deg);
+
+}
+
+.singleScrollIndicator {
+
+    transform: translate(-50%, 0) rotate(90deg);
 
 }
 
