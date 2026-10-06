@@ -181,32 +181,31 @@ function updateScrollRail() {
 
     const spacing = 250;
 
-    const edgeInset = 24;
+    const edgeInset = 36;
 
     const positions = [];
 
-    let position = edgeInset;
-
-    while (position < pageHeight - edgeInset) {
-
-        positions.push(position);
-
-        position += spacing;
-
-    }
-
-    const bottomPosition = Math.max(
-        edgeInset,
-        pageHeight - edgeInset
+    const usableHeight = Math.max(
+        0,
+        pageHeight - (edgeInset * 2)
     );
 
-    if (positions.length === 0) {
+    const indicatorCount = Math.max(
+        1,
+        Math.floor(usableHeight / spacing) + 1
+    );
+
+    if (indicatorCount === 1) {
 
         positions.push(pageHeight / 2);
 
-    } else if (positions[positions.length - 1] !== bottomPosition) {
+    } else {
 
-        positions.push(bottomPosition);
+        for (let i = 0; i < indicatorCount; i++) {
+
+            positions.push(edgeInset + (i * spacing));
+
+        }
 
     }
 
@@ -359,6 +358,12 @@ function playButtonAnimation(button) {
 
     });
 
+    button.classList.remove('clickJerk');
+
+    void button.offsetWidth;
+
+    button.classList.add('clickJerk');
+
     const car = document.createElement('img');
 
     car.className = 'buttonEffectImage carEffect';
@@ -378,6 +383,12 @@ function playButtonAnimation(button) {
     button.appendChild(car);
 
     button.appendChild(tornado);
+
+    button.addEventListener('animationend', () => {
+
+        button.classList.remove('clickJerk');
+
+    }, { once: true });
 
     tornado.addEventListener('animationend', () => {
 

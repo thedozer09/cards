@@ -247,6 +247,46 @@ button {
 
 }
 
+.tabButton.clickJerk {
+
+    animation: clickJerk 0.2s cubic-bezier(0.22, 0.8, 0.25, 1);
+
+}
+
+@keyframes clickJerk {
+
+    0% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
+
+    22% {
+
+        transform: translate(-3px, 1px) rotate(-1deg);
+
+    }
+
+    45% {
+
+        transform: translate(3px, -1px) rotate(1deg);
+
+    }
+
+    68% {
+
+        transform: translate(-2px, 0) rotate(-0.5deg);
+
+    }
+
+    100% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
+
+}
+
 .tabLabel {
 
     position: relative;
@@ -355,17 +395,23 @@ button {
 
     }
 
-    85% {
+    84% {
 
         transform: translateY(calc(-50% + 0.8px)) rotate(-0.15deg);
 
-    }
-
-    94% {
-
         opacity: 1;
 
-        transform: translateY(-50%) rotate(0deg);
+    }
+
+    91% {
+
+        opacity: 0.78;
+
+    }
+
+    96% {
+
+        opacity: 0.35;
 
     }
 
@@ -441,17 +487,23 @@ button {
 
     }
 
-    88% {
+    84% {
 
         transform: translateY(-50%) rotate(-2deg);
 
-    }
-
-    94% {
-
         opacity: 1;
 
-        transform: translateY(-50%) rotate(1deg);
+    }
+
+    91% {
+
+        opacity: 0.78;
+
+    }
+
+    96% {
+
+        opacity: 0.35;
 
     }
 
@@ -591,6 +643,24 @@ button {
     color: rgba(178, 204, 222, 0.64);
 
     font-size: 12px;
+
+}
+
+.firstScrollIndicator {
+
+    transform: translate(-50%, 12px) rotate(90deg);
+
+}
+
+.lastScrollIndicator {
+
+    transform: translate(-50%, -12px) rotate(90deg);
+
+}
+
+.singleScrollIndicator {
+
+    transform: translate(-50%, 0) rotate(90deg);
 
 }
 
