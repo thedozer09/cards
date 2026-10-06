@@ -331,7 +331,7 @@ button {
     height: 90px;
 
     animation:
-        tornadoChase 3s linear forwards;
+        tornadoChase 3s linear 1s forwards;
 
 }
 
