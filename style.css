@@ -503,6 +503,368 @@ button {
 
 }
 
+.rngActionArea {
+
+    min-height: 260px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 28px;
+
+}
+
+.rngGenerateButton {
+
+    min-width: 190px;
+
+    min-height: 52px;
+
+    padding: 0 28px;
+
+    border: 1px solid rgba(185, 211, 230, 0.24);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #416e98 0%,
+            #365f87 52%,
+            #2e5278 100%
+        );
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 16px rgba(2, 14, 27, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+
+}
+
+.rngGenerateButton:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #4c7da8 0%,
+            #3e6b93 52%,
+            #345c82 100%
+        );
+
+    border-color: rgba(207, 226, 239, 0.34);
+
+    box-shadow:
+        0 9px 19px rgba(2, 14, 27, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+
+}
+
+.rngGenerateButton:active {
+
+    transform: translateY(1px);
+
+}
+
+.rngResultPanel {
+
+    width: 100%;
+
+    margin-top: 24px;
+
+    padding: 34px 32px 42px;
+
+    border: 1px solid rgba(144, 176, 199, 0.18);
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #14385f 0%,
+            #1c354d 42%,
+            #293237 76%,
+            #303538 100%
+        );
+
+    box-shadow:
+        0 16px 34px rgba(2, 10, 20, 0.3),
+        inset 0 1px 0 rgba(183, 211, 229, 0.06);
+
+}
+
+.rngScramble {
+
+    min-height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 8px 0 24px;
+
+    color: #21b7ff;
+
+    font-family: "Courier New", Courier, monospace;
+
+    font-size: 32px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+    text-align: center;
+
+    text-shadow:
+        0 0 8px rgba(33, 183, 255, 0.24);
+
+    word-break: break-all;
+
+}
+
+.rngRecordCard {
+
+    width: min(680px, 100%);
+
+    margin: 10px auto 0;
+
+    padding: 28px;
+
+    border: 1px solid rgba(190, 214, 231, 0.2);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #203e5e 0%,
+            #253845 46%,
+            #313739 100%
+        );
+
+    box-shadow:
+        0 14px 28px rgba(2, 10, 20, 0.28),
+        inset 0 1px 0 rgba(216, 231, 241, 0.06);
+
+}
+
+.rngRecordHeader {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 22px;
+
+    text-align: center;
+
+}
+
+.rngRecordLabel {
+
+    color: rgba(193, 215, 229, 0.62);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+
+    text-transform: uppercase;
+
+}
+
+.rngRecordValue {
+
+    color: #f3f8fc;
+
+    font-family: "Courier New", Courier, monospace;
+
+    font-size: 26px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+    word-break: break-all;
+
+}
+
+.rngStats {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-bottom: 24px;
+
+}
+
+.rngStat {
+
+    min-height: 78px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 15px 16px;
+
+    border: 1px solid rgba(176, 204, 223, 0.14);
+
+    border-radius: 14px;
+
+    background: rgba(8, 25, 41, 0.28);
+
+}
+
+.rngStatLabel {
+
+    color: rgba(190, 211, 226, 0.6);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    text-transform: uppercase;
+
+}
+
+.rngStatValue {
+
+    color: #edf6fb;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+
+}
+
+.rngModifiersSection {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+.rngModifiersTitle {
+
+    color: #dbeaf4;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+
+    text-transform: uppercase;
+
+}
+
+.rngModifiers {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+    gap: 10px;
+
+}
+
+.rngModifier {
+
+    min-height: 74px;
+
+    padding: 14px 15px;
+
+    border: 1px solid rgba(176, 204, 223, 0.14);
+
+    border-radius: 13px;
+
+    background: rgba(8, 25, 41, 0.3);
+
+}
+
+.rngModifierName {
+
+    margin-bottom: 7px;
+
+    color: #f0f6fa;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+
+}
+
+.rngModifierValue {
+
+    color: rgba(203, 220, 231, 0.76);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+
+}
+
+.rngNoModifiers {
+
+    padding: 18px;
+
+    border: 1px dashed rgba(176, 204, 223, 0.18);
+
+    border-radius: 13px;
+
+    color: rgba(200, 218, 230, 0.56);
+
+    font-size: 12px;
+
+    text-align: center;
+
+}
+
 .tabScreen {
 
     min-height: 430px;
@@ -713,6 +1075,56 @@ button {
 
     }
 
+    .rngActionArea {
+
+        min-height: 230px;
+
+        padding: 20px;
+
+    }
+
+    .rngGenerateButton {
+
+        min-width: 170px;
+
+        min-height: 48px;
+
+        padding: 0 22px;
+
+        font-size: 14px;
+
+    }
+
+    .rngResultPanel {
+
+        padding: 28px 20px 34px;
+
+        border-radius: 21px;
+
+    }
+
+    .rngScramble {
+
+        min-height: 48px;
+
+        font-size: 24px;
+
+        letter-spacing: 2px;
+
+    }
+
+    .rngRecordCard {
+
+        padding: 22px;
+
+    }
+
+    .rngStats {
+
+        grid-template-columns: 1fr;
+
+    }
+
     .tabScreen {
 
         min-height: 360px;
@@ -806,6 +1218,52 @@ button {
         width: 62px;
 
         height: 62px;
+
+    }
+
+    .rngActionArea {
+
+        min-height: 210px;
+
+        padding: 16px;
+
+    }
+
+    .rngGenerateButton {
+
+        min-width: 155px;
+
+        min-height: 44px;
+
+        padding: 0 18px;
+
+        font-size: 13px;
+
+    }
+
+    .rngResultPanel {
+
+        padding: 24px 15px 28px;
+
+    }
+
+    .rngScramble {
+
+        font-size: 20px;
+
+        letter-spacing: 1.4px;
+
+    }
+
+    .rngRecordCard {
+
+        padding: 18px;
+
+    }
+
+    .rngRecordValue {
+
+        font-size: 21px;
 
     }
 

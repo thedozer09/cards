@@ -3,48 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Card Game</title>
-
-    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="stylesheet" href="./style.css?v=24">
 </head>
-
 <body>
 
     <div id="loadingScreen" class="loadingScreen">
-
         <div class="loadingContent">
-
+            <h1>Loading Card Game</h1>
             <div class="loadingSpinner"></div>
-
-            <h1>Loading...</h1>
-
         </div>
-
     </div>
 
     <main id="mainScreen" class="mainScreen hidden">
 
         <div class="activityContainer">
 
+            <div id="errorMessage" class="error hidden"></div>
+
             <nav class="navigation">
 
                 <button id="generateButton" class="tabButton active" type="button">
-
-                    <span class="tabLabel">GENERATE</span>
-
+                    <span class="tabLabel">Generate</span>
                 </button>
 
                 <button id="leaderboardsButton" class="tabButton" type="button">
-
-                    <span class="tabLabel">LEADERBOARDS</span>
-
+                    <span class="tabLabel">Leaderboards</span>
                 </button>
 
                 <button id="cardsButton" class="tabButton" type="button">
-
-                    <span class="tabLabel">CARDS</span>
-
+                    <span class="tabLabel">Cards</span>
                 </button>
 
             </nav>
@@ -53,9 +41,13 @@
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        RNG
+                    </div>
 
-                    <h1>Generate</h1>
+                    <h1>
+                        Generate Record
+                    </h1>
 
                 </div>
 
@@ -65,9 +57,13 @@
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        RANKINGS
+                    </div>
 
-                    <h1>Leaderboards</h1>
+                    <h1>
+                        Leaderboards
+                    </h1>
 
                 </div>
 
@@ -77,9 +73,13 @@
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        COLLECTION
+                    </div>
 
-                    <h1>Cards</h1>
+                    <h1>
+                        Cards
+                    </h1>
 
                 </div>
 
@@ -87,21 +87,19 @@
 
         </div>
 
+        <div id="screen1" class="hidden"></div>
+
+        <div id="screen2" class="hidden"></div>
+
+        <button id="testButton" class="hidden" type="button"></button>
+
+        <button id="rngButton" class="hidden" type="button"></button>
+
     </main>
 
-    <div class="scrollRail" aria-hidden="true"></div>
+    <div class="scrollRail"></div>
 
-    <div id="screen1" class="hidden"></div>
-
-    <div id="screen2" class="hidden"></div>
-
-    <button id="testButton" class="hidden" type="button"></button>
-
-    <button id="rngButton" class="hidden" type="button"></button>
-
-    <div id="errorMessage" class="error hidden"></div>
-
-    <script src="script.js?v=13"></script>
+    <script src="./script.js?v=24"></script>
 
 </body>
 </html>

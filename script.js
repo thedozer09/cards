@@ -28,13 +28,47 @@ function initializeWebSocket() {
             }
 
             if (data.type === "rng_result") {
-                document.body.style.background = data.data.color.code;
+                if (!data.data || typeof data.data !== 'object') {
+                    errorMessage.textContent = "⚠️ Invalid RNG result structure.";
+                    errorMessage.classList.remove("hidden");
+                    return;
+                }
+
+                rngRequestPending = false;
+                errorMessage.classList.add("hidden");
+                showRngRecordResult(data.data);
                 return;
             }
 
-            if (data.type === "error") {
-                errorMessage.textContent = `❌ Server Error: ${data.data.message}`;
+            if (data.type === "rng_error") {
+                rngRequestPending = false;
+
+                const message =
+                    data.data &&
+                    typeof data.data.message === 'string'
+                        ? data.data.message
+                        : "Failed to generate an RNG record.";
+
+                errorMessage.textContent = `❌ RNG Error: ${message}`;
                 errorMessage.classList.remove("hidden");
+                return;
+            }
+
+            if (data.type === "request_error") {
+                rngRequestPending = false;
+
+                const message =
+                    data.data &&
+                    typeof data.data.message === 'string'
+                        ? data.data.message
+                        : "Rear request processing failed.";
+
+                errorMessage.textContent = `❌ Server Error: ${message}`;
+                errorMessage.classList.remove("hidden");
+                return;
+            }
+
+            if (data.type === "rng_test") {
                 return;
             }
 
@@ -442,3 +476,522 @@ function stopNormalButtonWiggle(button) {
     button.classList.remove('normalButtonWiggle');
 
 }
+
+const RNG_RARITY_COLORS = {
+    common: "#dce7f0",
+    uncommon: "#4fd1c5",
+    rare: "#4da6ff",
+    legendary: "#ffd84d"
+};
+
+let rngRequestPending = false;
+
+let rngResultPanel = null;
+
+let rngScrambleTimer = null;
+
+const rngRandomCharacters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.?/<>~`';
+
+function getRandomRngCharacter() {
+
+    const index = Math.floor(
+        Math.random() * rngRandomCharacters.length
+    );
+
+    return rngRandomCharacters[index];
+
+}
+
+function normalizeRngModifiers(modifiers) {
+
+    if (Array.isArray(modifiers)) {
+
+        return modifiers.map((modifier, index) => {
+
+            if (
+                modifier &&
+                typeof modifier === 'object' &&
+                !Array.isArray(modifier)
+            ) {
+
+                const label =
+                    modifier.name ??
+                    modifier.modifier ??
+                    modifier.type ??
+                    modifier.id ??
+                    `Modifier ${index + 1}`;
+
+                const detailEntries = Object.entries(modifier)
+                    .filter(([key]) => {
+                        return !['name', 'modifier', 'type', 'id'].includes(key);
+                    });
+
+                let detail = '';
+
+                if (detailEntries.length === 1) {
+
+                    detail = formatRngValue(detailEntries[0][1]);
+
+                } else if (detailEntries.length > 1) {
+
+                    detail = detailEntries
+                        .map(([key, value]) => {
+                            return `${key}: ${formatRngValue(value)}`;
+                        })
+                        .join(' • ');
+
+                }
+
+                return {
+                    label: String(label),
+                    value: detail
+                };
+
+            }
+
+            return {
+                label: `Modifier ${index + 1}`,
+                value: formatRngValue(modifier)
+            };
+
+        });
+
+    }
+
+    if (
+        modifiers &&
+        typeof modifiers === 'object' &&
+        !Array.isArray(modifiers)
+    ) {
+
+        return Object.entries(modifiers).map(([key, value]) => {
+
+            if (
+                value &&
+                typeof value === 'object' &&
+                !Array.isArray(value)
+            ) {
+
+                const entries = Object.entries(value);
+
+                const detail = entries
+                    .map(([entryKey, entryValue]) => {
+                        return `${entryKey}: ${formatRngValue(entryValue)}`;
+                    })
+                    .join(' • ');
+
+                return {
+                    label: key,
+                    value: detail
+                };
+
+            }
+
+            return {
+                label: key,
+                value: formatRngValue(value)
+            };
+
+        });
+
+    }
+
+    if (
+        modifiers !== undefined &&
+        modifiers !== null &&
+        modifiers !== ''
+    ) {
+
+        return [{
+            label: 'Modifier',
+            value: formatRngValue(modifiers)
+        }];
+
+    }
+
+    return [];
+
+}
+
+function formatRngValue(value) {
+
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    if (typeof value === 'string') {
+        return value;
+    }
+
+    if (
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+    ) {
+        return String(value);
+    }
+
+    try {
+        return JSON.stringify(value);
+    } catch (err) {
+        return String(value);
+    }
+
+}
+
+function getRngRarityColor(rarity) {
+
+    if (typeof rarity !== 'string') {
+        return '#edf6fb';
+    }
+
+    return RNG_RARITY_COLORS[
+        rarity.trim().toLowerCase()
+    ] ?? '#edf6fb';
+
+}
+
+function createRngStat(label, value, valueColor = null) {
+
+    const stat = document.createElement('div');
+
+    stat.className = 'rngStat';
+
+    const statLabel = document.createElement('div');
+
+    statLabel.className = 'rngStatLabel';
+
+    statLabel.textContent = label;
+
+    const statValue = document.createElement('div');
+
+    statValue.className = 'rngStatValue';
+
+    statValue.textContent = formatRngValue(value);
+
+    if (valueColor) {
+
+        statValue.style.color = valueColor;
+
+        statValue.style.textShadow =
+            `0 0 8px ${valueColor}55`;
+
+    }
+
+    stat.appendChild(statLabel);
+
+    stat.appendChild(statValue);
+
+    return stat;
+
+}
+
+function createRngRecordCard(payload, recordText) {
+
+    const card = document.createElement('div');
+
+    card.className = 'rngRecordCard';
+
+    const recordHeader = document.createElement('div');
+
+    recordHeader.className = 'rngRecordHeader';
+
+    const recordLabel = document.createElement('div');
+
+    recordLabel.className = 'rngRecordLabel';
+
+    recordLabel.textContent = 'Record';
+
+    const recordValue = document.createElement('div');
+
+    recordValue.className = 'rngRecordValue';
+
+    recordValue.textContent = recordText;
+
+    recordHeader.appendChild(recordLabel);
+
+    recordHeader.appendChild(recordValue);
+
+    card.appendChild(recordHeader);
+
+    const stats = document.createElement('div');
+
+    stats.className = 'rngStats';
+
+    const rarity =
+        typeof payload.rarity === 'string'
+            ? payload.rarity.trim().toLowerCase()
+            : 'unknown';
+
+    stats.appendChild(
+        createRngStat(
+            'Rarity',
+            payload.rarity ?? 'Unknown',
+            getRngRarityColor(rarity)
+        )
+    );
+
+    stats.appendChild(
+        createRngStat(
+            'Points',
+            payload.points ?? '0'
+        )
+    );
+
+    card.appendChild(stats);
+
+    const modifiersSection = document.createElement('div');
+
+    modifiersSection.className = 'rngModifiersSection';
+
+    const modifiersTitle = document.createElement('div');
+
+    modifiersTitle.className = 'rngModifiersTitle';
+
+    modifiersTitle.textContent = 'Modifiers';
+
+    modifiersSection.appendChild(modifiersTitle);
+
+    const modifiersGrid = document.createElement('div');
+
+    modifiersGrid.className = 'rngModifiers';
+
+    const modifiers = normalizeRngModifiers(
+        payload.modifiers
+    );
+
+    if (modifiers.length === 0) {
+
+        const none = document.createElement('div');
+
+        none.className = 'rngNoModifiers';
+
+        none.textContent = 'No modifiers';
+
+        modifiersGrid.appendChild(none);
+
+    } else {
+
+        modifiers.forEach(modifier => {
+
+            const modifierCard = document.createElement('div');
+
+            modifierCard.className = 'rngModifier';
+
+            const modifierName = document.createElement('div');
+
+            modifierName.className = 'rngModifierName';
+
+            modifierName.textContent = modifier.label;
+
+            const modifierValue = document.createElement('div');
+
+            modifierValue.className = 'rngModifierValue';
+
+            modifierValue.textContent = modifier.value;
+
+            modifierCard.appendChild(modifierName);
+
+            modifierCard.appendChild(modifierValue);
+
+            modifiersGrid.appendChild(modifierCard);
+
+        });
+
+    }
+
+    modifiersSection.appendChild(modifiersGrid);
+
+    card.appendChild(modifiersSection);
+
+    return card;
+
+}
+
+function showRngRecordResult(payload) {
+
+    if (rngScrambleTimer) {
+
+        clearInterval(rngScrambleTimer);
+
+        rngScrambleTimer = null;
+
+    }
+
+    if (rngResultPanel) {
+
+        rngResultPanel.remove();
+
+        rngResultPanel = null;
+
+    }
+
+    if (
+        !payload ||
+        typeof payload !== 'object' ||
+        payload.record === undefined
+    ) {
+
+        errorMessage.textContent =
+            "⚠️ Invalid RNG result structure.";
+
+        errorMessage.classList.remove("hidden");
+
+        return;
+
+    }
+
+    rngResultPanel = document.createElement('div');
+
+    rngResultPanel.className = 'rngResultPanel';
+
+    const scramble = document.createElement('div');
+
+    scramble.className = 'rngScramble';
+
+    rngResultPanel.appendChild(scramble);
+
+    generateScreen.appendChild(rngResultPanel);
+
+    const recordText = String(payload.record);
+
+    let revealedCount = 0;
+
+    function renderScramble() {
+
+        let output = '';
+
+        for (let i = 0; i < recordText.length; i++) {
+
+            if (i < revealedCount) {
+
+                output += recordText[i];
+
+            } else {
+
+                output += getRandomRngCharacter();
+
+            }
+
+        }
+
+        scramble.textContent = output;
+
+    }
+
+    renderScramble();
+
+    if (recordText.length === 0) {
+
+        revealedCount = 0;
+
+        scramble.textContent = '';
+
+        rngResultPanel.appendChild(
+            createRngRecordCard(payload, recordText)
+        );
+
+        updateScrollRail();
+
+        return;
+
+    }
+
+    rngScrambleTimer = setInterval(() => {
+
+        revealedCount++;
+
+        renderScramble();
+
+        if (revealedCount >= recordText.length) {
+
+            clearInterval(rngScrambleTimer);
+
+            rngScrambleTimer = null;
+
+            rngResultPanel.appendChild(
+                createRngRecordCard(payload, recordText)
+            );
+
+            updateScrollRail();
+
+        }
+
+    }, 100);
+
+}
+
+function initializeRngFrontend() {
+
+    if (!generateScreen) {
+        return;
+    }
+
+    const existingButton =
+        document.getElementById('generateRecordButton');
+
+    if (existingButton) {
+        return;
+    }
+
+    const actionArea = document.createElement('div');
+
+    actionArea.className = 'rngActionArea';
+
+    const button = document.createElement('button');
+
+    button.id = 'generateRecordButton';
+
+    button.className = 'rngGenerateButton';
+
+    button.type = 'button';
+
+    button.textContent = 'Generate Record';
+
+    actionArea.appendChild(button);
+
+    const header = generateScreen.querySelector('.tabHeader');
+
+    if (header) {
+
+        header.insertAdjacentElement(
+            'afterend',
+            actionArea
+        );
+
+    } else {
+
+        generateScreen.appendChild(actionArea);
+
+    }
+
+    button.addEventListener('click', () => {
+
+        actionArea.remove();
+
+        rngRequestPending = true;
+
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+
+            rngRequestPending = false;
+
+            errorMessage.textContent =
+                "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner.";
+
+            errorMessage.classList.remove("hidden");
+
+            return;
+
+        }
+
+        socket.send(JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "rng_go"
+        }));
+
+    });
+
+}
+
+initializeRngFrontend();
