@@ -320,7 +320,7 @@ button {
     height: 82px;
 
     animation:
-        carDrive 10s cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
+        carDrive 14s cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
 
 }
 
@@ -331,7 +331,7 @@ button {
     height: 90px;
 
     animation:
-        tornadoChase 5s cubic-bezier(0.18, 0.72, 0.22, 1) 5s forwards;
+        tornadoChase 7s cubic-bezier(0.18, 0.72, 0.22, 1) 5s forwards;
 
 }
 
@@ -387,31 +387,31 @@ button {
 
         transform: translateY(calc(-50% - 1px)) rotate(0.25deg);
 
-        opacity: 0.9;
+        opacity: 0.65;
+
+    }
+
+    60% {
+
+        transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
+
+        opacity: 0.4;
 
     }
 
     65% {
 
-        transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
-
-        opacity: 0.7;
-
-    }
-
-    75% {
-
         transform: translateY(calc(-50% - 0.8px)) rotate(0.2deg);
 
-        opacity: 0.5;
+        opacity: 0.15;
 
     }
 
-    82% {
+    70% {
 
         transform: translateY(calc(-50% + 0.8px)) rotate(-0.15deg);
 
-        opacity: 0.3;
+        opacity: 0;
 
     }
 
@@ -485,35 +485,35 @@ button {
 
     }
 
-    58% {
+    55% {
 
         transform: translateY(-50%) rotate(3deg);
 
-        opacity: 0.9;
+        opacity: 0.65;
 
     }
 
-    68% {
+    60% {
 
         transform: translateY(-50%) rotate(-3deg);
 
-        opacity: 0.7;
+        opacity: 0.4;
 
     }
 
-    78% {
+    65% {
 
         transform: translateY(-50%) rotate(2.5deg);
 
-        opacity: 0.5;
+        opacity: 0.15;
 
     }
 
-    82% {
+    70% {
 
         transform: translateY(-50%) rotate(-2deg);
 
-        opacity: 0.3;
+        opacity: 0;
 
     }
 
