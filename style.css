@@ -8,6 +8,10 @@ body {
     min-height: 100%;
 }
 
+html {
+    min-height: 100%;
+}
+
 body {
     min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
@@ -21,6 +25,8 @@ body {
             #29466d 76%,
             #244064 100%
         );
+    background-repeat: no-repeat;
+    background-size: 100% 100% !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition:
@@ -703,6 +709,7 @@ button {
     display: inline-block;
     line-height: 21px;
     font-size: 18px;
+    transform: translateY(10px);
 }
 
 .rngLifetimeWheel {
@@ -773,6 +780,8 @@ button {
 }
 
 .rngLifetimeDigitFace {
+    position: relative;
+    top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -993,62 +1002,6 @@ button {
     }
 }
 
-.rngLaunchFlash {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    pointer-events: none;
-    background: #ffffff;
-    animation:
-        rngLaunchFlash 0.6s ease-out forwards;
-}
-
-@keyframes rngLaunchFlash {
-    0% {
-        opacity: 0;
-    }
-
-    12% {
-        opacity: 1;
-    }
-
-    38% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-.rngResultPopIn {
-    animation:
-        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-    animation-delay: var(--rng-pop-delay, 0s);
-}
-
-@keyframes rngResultPopIn {
-    0% {
-        opacity: 0;
-        transform: translateY(12px) scale(0.88);
-    }
-
-    55% {
-        opacity: 1;
-        transform: translateY(-3px) scale(1.025);
-    }
-
-    78% {
-        opacity: 1;
-        transform: translateY(1px) scale(0.995);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
 .musicToggleButton {
     position: fixed;
     top: 14px;
@@ -1084,6 +1037,31 @@ button {
     box-shadow:
         0 9px 19px rgba(2, 14, 27, 0.34),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation:
+        musicButtonWiggle 0.48s ease-in-out infinite;
+}
+
+@keyframes musicButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+    20% {
+        transform: translateX(-3px) rotate(-1.2deg);
+    }
+
+    40% {
+        transform: translateX(3px) rotate(1.2deg);
+    }
+
+    60% {
+        transform: translateX(-3px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translateX(3px) rotate(1deg);
+    }
 }
 
 .musicToggleButton:active {
@@ -1106,17 +1084,21 @@ button {
     isolation: isolate;
 }
 
+.rngStat:has(.rngRarityValue) {
+    overflow: visible;
+}
+
 .rngRarityValue::before {
     content: "";
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 146%;
-    height: 190%;
+    width: 165%;
+    height: 210%;
     transform: translate(-50%, -50%);
     border-radius: 999px;
-    filter: blur(9px);
-    opacity: 0.85;
+    filter: blur(6px);
+    opacity: 1;
     pointer-events: none;
     z-index: -1;
 }
@@ -1125,40 +1107,103 @@ button {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(220, 231, 240, 0.5) 0%,
-            rgba(220, 231, 240, 0.2) 45%,
-            rgba(220, 231, 240, 0) 80%
+            rgba(245, 250, 255, 0.95) 0%,
+            rgba(225, 237, 246, 0.72) 22%,
+            rgba(220, 231, 240, 0.36) 48%,
+            rgba(220, 231, 240, 0) 82%
         );
+    box-shadow:
+        0 0 24px 9px rgba(220, 231, 240, 0.34);
 }
 
 .rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(79, 209, 197, 0.6) 0%,
-            rgba(79, 209, 197, 0.24) 45%,
-            rgba(79, 209, 197, 0) 80%
+            rgba(115, 255, 237, 0.98) 0%,
+            rgba(79, 209, 197, 0.74) 22%,
+            rgba(79, 209, 197, 0.38) 48%,
+            rgba(79, 209, 197, 0) 82%
         );
+    box-shadow:
+        0 0 24px 9px rgba(79, 209, 197, 0.38);
 }
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(77, 166, 255, 0.7) 0%,
-            rgba(77, 166, 255, 0.28) 45%,
+            rgba(150, 211, 255, 1) 0%,
+            rgba(77, 166, 255, 0.82) 22%,
+            rgba(77, 166, 255, 0.42) 48%,
             rgba(77, 166, 255, 0) 82%
         );
+    box-shadow:
+        0 0 26px 10px rgba(77, 166, 255, 0.45);
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(255, 216, 77, 0.78) 0%,
-            rgba(255, 216, 77, 0.3) 45%,
+            rgba(255, 242, 150, 1) 0%,
+            rgba(255, 216, 77, 0.86) 22%,
+            rgba(255, 216, 77, 0.44) 48%,
             rgba(255, 216, 77, 0) 82%
         );
+    box-shadow:
+        0 0 28px 11px rgba(255, 216, 77, 0.5);
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue,
+.rngRecordCard.rng-rarity-legendary .rngRarityValue {
+    background-size: 240% 100%;
+    background-position: 240% 0;
+    background-repeat: no-repeat;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent !important;
+    animation:
+        rngRarityShine 2.2s linear infinite;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue {
+    background-image:
+        linear-gradient(
+            110deg,
+            #4da6ff 0%,
+            #4da6ff 34%,
+            #dff3ff 46%,
+            #ffffff 50%,
+            #dff3ff 54%,
+            #4da6ff 66%,
+            #4da6ff 100%
+        );
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue {
+    background-image:
+        linear-gradient(
+            110deg,
+            #ffd84d 0%,
+            #ffd84d 34%,
+            #fff8c4 46%,
+            #ffffff 50%,
+            #fff8c4 54%,
+            #ffd84d 66%,
+            #ffd84d 100%
+        );
+}
+
+@keyframes rngRarityShine {
+    0% {
+        background-position: 240% 0;
+    }
+
+    100% {
+        background-position: -40% 0;
+    }
 }
 
 .rngLifetimeStatLabel {
@@ -1351,6 +1396,14 @@ button {
         width: 38px;
         height: 38px;
         font-size: 16px;
+    }
+
+    .rngLifetimeNormalValue {
+        transform: translateY(10px);
+    }
+
+    .rngLifetimeDigitFace {
+        top: 10px;
     }
 
     .rngLifetimeScoreValue {
