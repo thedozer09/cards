@@ -203,7 +203,6 @@ const TAB_LOADING_DURATION = 3000;
 const RNG_ROLL_LOADING_DURATION = 3000;
 const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const RNG_LOCAL_RESULT_STORAGE_KEY = 'cardgame_rng_last_result';
-const RNG_STARTUP_TEST_BYPASS_ENABLED = true;
 const tabLoadingStates = new Map();
 
 errorMessage.style.zIndex = '100000';
@@ -775,7 +774,6 @@ let rngNextResetTimestamp = null;
 let rngLocalRollState = null; 
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false; 
-let rngStartupTestAvailable = RNG_STARTUP_TEST_BYPASS_ENABLED;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -1118,18 +1116,12 @@ function createRngDailyStatus() {
     rngDailyStatus.className = 
         'rngDailyStatus'; 
 
-    rngDailyStatus.style.color =
-        '#8a8f94';
-	 
     rngDailyMessage = 
         document.createElement('div'); 
 	 
     rngDailyMessage.className = 
         'rngDailyMessage'; 
 
-    rngDailyMessage.style.color =
-        '#8a8f94';
-	 
     rngDailyMessage.textContent = 
         'Next roll in'; 
 	 
@@ -1138,9 +1130,6 @@ function createRngDailyStatus() {
 	 
     rngDailyCountdown.className = 
         'rngDailyCountdown'; 
-
-    rngDailyCountdown.style.color =
-        '#8a8f94';
 	 
     rngDailyStatus.appendChild( 
         rngDailyMessage 
@@ -1207,12 +1196,6 @@ function updateRngDailyCountdown() {
         formatRngCountdown(
             remaining
         );
-
-    rngDailyMessage.style.color =
-        '#8a8f94';
-
-    rngDailyCountdown.style.color =
-        '#8a8f94';
 
     showRngDailyStatus();
     startRngDailyCountdown();
@@ -1593,9 +1576,6 @@ function markRngRollComplete(payload) {
 
     rngLocalRollState =
         loadLocalRngRollState();
-
-    rngStartupTestAvailable = false;
-    requestRngServerTime();
 
     updateRngDailyCountdown();
 
@@ -2340,12 +2320,8 @@ function initializeRngGenerateButton() {
         return;
     }
 
-    const cooldownActive =
-        updateRngDailyCountdown();
-
     if (
-        cooldownActive &&
-        !rngStartupTestAvailable
+        updateRngDailyCountdown()
     ) {
         return;
     }
@@ -2471,8 +2447,7 @@ function beginRngRollRequest() {
     }
 
     if (
-        nextRollTimestamp > serverNow &&
-        !rngStartupTestAvailable
+        nextRollTimestamp > serverNow
     ) {
         updateRngDailyCountdown();
         return;
