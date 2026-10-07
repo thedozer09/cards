@@ -198,8 +198,237 @@ const screenHeaders = document.querySelectorAll('.tabHeader');
 screenHeaders.forEach(header => { 
     header.remove(); 
 }); 
+
+const TAB_LOADING_DURATION = 3000;
+const tabLoadingStates = new Map();
+
+function createTabLoadingScreen(screen, label) {
+    if (!screen) {
+        return null;
+    }
+
+    const existing =
+        screen.querySelector(
+            '.tabLoadingScreen'
+        );
+
+    if (existing) {
+        return existing;
+    }
+
+    screen.style.position = 'relative';
+
+    const loader =
+        document.createElement('div');
+
+    loader.className =
+        'tabLoadingScreen';
+
+    loader.style.position = 'absolute';
+    loader.style.top = '0';
+    loader.style.right = '0';
+    loader.style.bottom = '0';
+    loader.style.left = '0';
+    loader.style.zIndex = '50';
+    loader.style.display = 'flex';
+    loader.style.alignItems = 'center';
+    loader.style.justifyContent = 'center';
+    loader.style.padding = '24px';
+    loader.style.background = 'transparent';
+
+    const content =
+        document.createElement('div');
+
+    content.style.display = 'flex';
+    content.style.flexDirection = 'column';
+    content.style.alignItems = 'center';
+    content.style.justifyContent = 'center';
+    content.style.gap = '18px';
+    content.style.textAlign = 'center';
+
+    const title =
+        document.createElement('h1');
+
+    title.textContent =
+        `Loading ${label}`;
+
+    title.style.margin = '0';
+    title.style.color = '#dce7f0';
+    title.style.fontSize = '28px';
+    title.style.fontWeight = '600';
+    title.style.letterSpacing = '-0.4px';
+
+    const spinner =
+        document.createElement('div');
+
+    spinner.style.width = '34px';
+    spinner.style.height = '34px';
+    spinner.style.border = '3px solid rgba(200, 218, 234, 0.2)';
+    spinner.style.borderTopColor = '#dbe8f2';
+    spinner.style.borderRadius = '50%';
+    spinner.style.animation = 'loadingSpin 0.9s linear infinite';
+
+    content.appendChild(title);
+    content.appendChild(spinner);
+    loader.appendChild(content);
+    screen.appendChild(loader);
+
+    return loader;
+}
+
+function initializeTabLoadingScreens() {
+    createTabLoadingScreen(
+        generateScreen,
+        'Generate'
+    );
+
+    createTabLoadingScreen(
+        leaderboardsScreen,
+        'Leaderboards'
+    );
+
+    createTabLoadingScreen(
+        cardsScreen,
+        'Cards'
+    );
+
+    tabLoadingStates.set(
+        generateScreen,
+        {
+            loading: false,
+            loaded: false,
+            timer: null
+        }
+    );
+
+    tabLoadingStates.set(
+        leaderboardsScreen,
+        {
+            loading: false,
+            loaded: false,
+            timer: null
+        }
+    );
+
+    tabLoadingStates.set(
+        cardsScreen,
+        {
+            loading: false,
+            loaded: false,
+            timer: null
+        }
+    );
+}
+
+function finishTabLoading(screen) {
+    const state =
+        tabLoadingStates.get(screen);
+
+    if (!state) {
+        return;
+    }
+
+    state.loading = false;
+    state.loaded = true;
+
+    if (state.timer) {
+        clearTimeout(
+            state.timer
+        );
+
+        state.timer = null;
+    }
+
+    const loader =
+        screen.querySelector(
+            '.tabLoadingScreen'
+        );
+
+    if (loader) {
+        loader.classList.add(
+            'hidden'
+        );
+    }
+}
+
+function startTabLoading(
+    screen,
+    label,
+    callback
+) {
+    if (!screen) {
+        return;
+    }
+
+    let state =
+        tabLoadingStates.get(screen);
+
+    if (!state) {
+        state = {
+            loading: false,
+            loaded: false,
+            timer: null
+        };
+
+        tabLoadingStates.set(
+            screen,
+            state
+        );
+    }
+
+    const loader =
+        createTabLoadingScreen(
+            screen,
+            label
+        );
+
+    if (
+        state.loaded
+    ) {
+        if (loader) {
+            loader.classList.add(
+                'hidden'
+            );
+        }
+
+        if (callback) {
+            callback();
+        }
+
+        return;
+    }
+
+    if (
+        state.loading
+    ) {
+        return;
+    }
+
+    state.loading = true;
+
+    if (loader) {
+        loader.classList.remove(
+            'hidden'
+        );
+    }
+
+    state.timer =
+        setTimeout(() => {
+            finishTabLoading(screen);
+
+            if (callback) {
+                callback();
+            }
+        }, TAB_LOADING_DURATION);
+}
+
+initializeTabLoadingScreens();
 	 
 setTimeout(() => { 
+    finishTabLoading(
+        generateScreen
+    );
+
     loadingScreen.classList.add('hidden'); 
     mainScreen.classList.remove('hidden'); 
     maybePlayRngLaunchFlash(); 
@@ -216,8 +445,24 @@ function switchTab(button, screen) {
     screen.classList.remove('hidden'); 
 
     if (screen === generateScreen) {
-        handleRngGenerateTabActivation();
+        startTabLoading(
+            generateScreen,
+            'Generate',
+            handleRngGenerateTabActivation
+        );
+    } else if (screen === leaderboardsScreen) {
+        startTabLoading(
+            leaderboardsScreen,
+            'Leaderboards'
+        );
+
+        clearRngRarityTheme();
     } else {
+        startTabLoading(
+            cardsScreen,
+            'Cards'
+        );
+
         clearRngRarityTheme();
     }
 } 
@@ -439,6 +684,9 @@ const RNG_RARITY_COLORS = {
     legendary: "#ffd84d" 
 }; 
 
+const RNG_RANDOM_CHARACTERS =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
 const RNG_RARITY_THEME_CLASSES = [
     'rng-rarity-common',
     'rng-rarity-uncommon',
@@ -463,6 +711,7 @@ let rngDailyMessage = null;
 let rngDailyCountdown = null; 
 let rngDailyActionArea = null; 
 let rngTopControlArea = null;
+let rngControlSlot = null;
 let rngServerTimeBase = null; 
 let rngPerformanceTimeBase = null; 
 let rngNextResetTimestamp = null; 
@@ -472,10 +721,10 @@ let rngLaunchFlashPending = false;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
-        Math.random() * rngRandomCharacters.length 
+        Math.random() * RNG_RANDOM_CHARACTERS.length 
     ); 
 	 
-    return rngRandomCharacters[index]; 
+    return RNG_RANDOM_CHARACTERS[index]; 
 } 
 	 
 function syncRngServerClock( 
@@ -590,6 +839,64 @@ function createRngTopControlArea() {
     rngTopControlArea.className =
         'rngTopControlArea';
 
+    rngTopControlArea.style.height =
+        'auto';
+
+    rngTopControlArea.style.minHeight =
+        '86px';
+
+    rngTopControlArea.style.display =
+        'flex';
+
+    rngTopControlArea.style.flexDirection =
+        'column';
+
+    rngTopControlArea.style.alignItems =
+        'center';
+
+    rngTopControlArea.style.justifyContent =
+        'flex-start';
+
+    rngTopControlArea.style.overflow =
+        'visible';
+
+    rngControlSlot =
+        document.createElement('div');
+
+    rngControlSlot.className =
+        'rngControlSlot';
+
+    rngControlSlot.style.width =
+        '350px';
+
+    rngControlSlot.style.minWidth =
+        '350px';
+
+    rngControlSlot.style.maxWidth =
+        '350px';
+
+    rngControlSlot.style.height =
+        '86px';
+
+    rngControlSlot.style.minHeight =
+        '86px';
+
+    rngControlSlot.style.display =
+        'flex';
+
+    rngControlSlot.style.alignItems =
+        'center';
+
+    rngControlSlot.style.justifyContent =
+        'center';
+
+    rngControlSlot.style.flexShrink =
+        '0';
+
+    rngTopControlArea.appendChild(
+        rngControlSlot
+    );
+
     generateScreen.appendChild(
         rngTopControlArea
     );
@@ -631,7 +938,7 @@ function createRngDailyStatus() {
         rngDailyCountdown 
     ); 
 	 
-    rngTopControlArea.appendChild( 
+    rngControlSlot.appendChild( 
         rngDailyStatus 
     ); 
 } 
@@ -809,7 +1116,9 @@ function handleRngGenerateTabActivation() {
     }
 
     if (rngScrambleElement) {
-        scrollRngResultIntoView(rngScrambleElement);
+        scrollRngResultIntoView(
+            rngScrambleElement
+        );
         return;
     }
 
@@ -868,7 +1177,7 @@ function resetDailyRngFrontend() {
     stopRngDailyCountdown(); 
     clearLocalRngRollState(); 
     clearRngRarityTheme();
- 
+
     if (rngScrambleProgressTimer) {
         clearInterval(
             rngScrambleProgressTimer
@@ -1251,34 +1560,89 @@ function showRngRecordResult(payload) {
     applyRngRarityTheme(
         payload.rarity
     );
+
+    createRngTopControlArea();
 	 
-    const scramble = document.createElement('div'); 
-    scramble.className = 'rngScramble'; 
-    scramble.style.display = 'flex';
-    scramble.style.visibility = 'visible';
-    scramble.style.opacity = '1';
-    scramble.style.background = 'transparent';
-    scramble.style.border = '0';
-    scramble.style.boxShadow = 'none';
-    scramble.style.position = 'relative';
-    scramble.style.zIndex = '2';
+    const scramble = 
+        document.createElement('div'); 
+	 
+    scramble.className = 
+        'rngScramble'; 
 
-    rngScrambleElement = scramble;
+    scramble.style.display =
+        'flex';
 
-    generateScreen.appendChild(scramble);
+    scramble.style.alignItems =
+        'center';
+
+    scramble.style.justifyContent =
+        'center';
+
+    scramble.style.visibility =
+        'visible';
+
+    scramble.style.opacity =
+        '1';
+
+    scramble.style.background =
+        'transparent';
+
+    scramble.style.border =
+        '0';
+
+    scramble.style.boxShadow =
+        'none';
+
+    scramble.style.position =
+        'relative';
+
+    scramble.style.zIndex =
+        '2';
+
+    scramble.style.width =
+        '350px';
+
+    scramble.style.minWidth =
+        '350px';
+
+    scramble.style.maxWidth =
+        '350px';
+
+    scramble.style.minHeight =
+        '58px';
+
+    scramble.style.margin =
+        '0 auto';
+
+    scramble.style.flexShrink =
+        '0';
+
+    rngScrambleElement =
+        scramble;
+
+    rngTopControlArea.appendChild(
+        scramble
+    );
 
     void scramble.offsetWidth;
+
     updateScrollRail();
 	 
     const recordText = String(payload.record); 
 	 
     if (recordText.length === 0) { 
         scramble.textContent = ''; 
-	 
-        rngResultPanel = document.createElement('div'); 
-        rngResultPanel.className = 'rngResultPanel'; 
-        generateScreen.appendChild(rngResultPanel);
 
+        rngResultPanel =
+            document.createElement('div');
+
+        rngResultPanel.className =
+            'rngResultPanel';
+
+        generateScreen.appendChild(
+            rngResultPanel
+        );
+	 
         const card = 
             createRngRecordCard( 
                 payload, 
@@ -1292,6 +1656,8 @@ function showRngRecordResult(payload) {
 	 
         updateScrollRail(); 
         initializeRngGenerateButton();
+        rngScrambleElement = null;
+        scramble.remove();
         return; 
     } 
 	 
@@ -1391,12 +1757,14 @@ function showRngRecordResult(payload) {
 
         initializeRngGenerateButton();
         updateScrollRail();
+
+        rngScrambleElement = null;
+
+        scramble.remove();
     }
 	 
-    appearedCount = Math.min(
-        1,
-        recordText.length
-    );
+    appearedCount =
+        1;
 
     for (
         let i = 0;
@@ -1528,7 +1896,7 @@ function initializeRngGenerateButton() {
         button 
     ); 
 	 
-    rngTopControlArea.appendChild( 
+    rngControlSlot.appendChild( 
         actionArea 
     ); 
 	 
