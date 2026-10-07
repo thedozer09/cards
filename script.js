@@ -202,6 +202,7 @@ screenHeaders.forEach(header => {
 const TAB_LOADING_DURATION = 3000;
 const RNG_ROLL_LOADING_DURATION = 3000;
 const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
+const RNG_LOCAL_RESULT_STORAGE_KEY = 'cardgame_rng_last_result';
 const tabLoadingStates = new Map();
 
 errorMessage.style.zIndex = '100000';
@@ -804,20 +805,11 @@ function syncRngServerClock(
 	 
     rngNextResetTimestamp = 
         nextReset.timestamp; 
-	 
-    const storedRollState =
-        loadLocalRngRollState();
 
-    if (
-        !storedRollState ||
-        storedRollState.nextRollTimestamp !==
+    saveLocalRngRollState({
+        nextRollTimestamp:
             nextReset.timestamp
-    ) {
-        saveLocalRngRollState({
-            nextRollTimestamp:
-                nextReset.timestamp
-        });
-    }
+    });
 
     if (!rngFrontendInitialized) { 
         rngLocalRollState = 
@@ -868,159 +860,6 @@ function formatRngCountdown(milliseconds) {
         String(minutes).padStart(2, '0'), 
         String(seconds).padStart(2, '0') 
     ].join(':'); 
-} 
-	 
-function getNewYorkDateParts(timestamp) {
-    const parts =
-        new Intl.DateTimeFormat(
-            'en-US',
-            {
-                timeZone: 'America/New_York',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            }
-        ).formatToParts(
-            new Date(timestamp)
-        );
-
-    const values = {};
-
-    parts.forEach(part => {
-        if (
-            part.type !== 'literal'
-        ) {
-            values[part.type] =
-                part.value;
-        }
-    });
-
-    return {
-        year: Number(values.year),
-        month: Number(values.month),
-        day: Number(values.day)
-    };
-}
-
-function getTimeZoneOffsetMilliseconds(
-    timestamp,
-    timeZone
-) {
-    const parts =
-        new Intl.DateTimeFormat(
-            'en-US',
-            {
-                timeZone,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }
-        ).formatToParts(
-            new Date(timestamp)
-        );
-
-    const values = {};
-
-    parts.forEach(part => {
-        if (
-            part.type !== 'literal'
-        ) {
-            values[part.type] =
-                part.value;
-        }
-    });
-
-    const hour =
-        Number(values.hour) === 24
-            ? 0
-            : Number(values.hour);
-
-    const asUtc =
-        Date.UTC(
-            Number(values.year),
-            Number(values.month) - 1,
-            Number(values.day),
-            hour,
-            Number(values.minute),
-            Number(values.second)
-        );
-
-    return (
-        asUtc -
-        timestamp
-    );
-}
-
-function getNewYorkMidnightTimestamp(
-    year,
-    month,
-    day
-) {
-    const utcGuess =
-        Date.UTC(
-            year,
-            month - 1,
-            day,
-            0,
-            0,
-            0
-        );
-
-    const offset =
-        getTimeZoneOffsetMilliseconds(
-            utcGuess,
-            'America/New_York'
-        );
-
-    return (
-        utcGuess -
-        offset
-    );
-}
-
-function getNextNewYorkResetTimestamp(
-    timestamp
-) {
-    const current =
-        getNewYorkDateParts(
-            timestamp
-        );
-
-    const currentMidnight =
-        getNewYorkMidnightTimestamp(
-            current.year,
-            current.month,
-            current.day
-        );
-
-    if (
-        currentMidnight >
-        timestamp
-    ) {
-        return currentMidnight;
-    }
-
-    const nextDay =
-        new Date(
-            Date.UTC(
-                current.year,
-                current.month - 1,
-                current.day + 1,
-                0,
-                0,
-                0
-            )
-        );
-
-    return getNewYorkMidnightTimestamp(
-        nextDay.getUTCFullYear(),
-        nextDay.getUTCMonth() + 1,
-        nextDay.getUTCDate()
-    );
 } 
 	 
 function sanitizeRngStoredResult(payload) { 
@@ -1117,16 +956,57 @@ function clearLocalRngRollState() {
     } catch (err) {
     }
 } 
-	 
-function getLocalRngNextRollTimestamp() {
-    const state =
-        loadLocalRngRollState();
 
-    if (!state) {
+function loadLocalRngResult() {
+    try {
+        const stored =
+            localStorage.getItem(
+                RNG_LOCAL_RESULT_STORAGE_KEY
+            );
+
+        if (!stored) {
+            return null;
+        }
+
+        const payload =
+            JSON.parse(stored);
+
+        return sanitizeRngStoredResult(
+            payload
+        );
+    } catch (err) {
         return null;
     }
+}
 
-    return state.nextRollTimestamp;
+function saveLocalRngResult(payload) {
+    const sanitized =
+        sanitizeRngStoredResult(
+            payload
+        );
+
+    if (!sanitized) {
+        return;
+    }
+
+    try {
+        localStorage.setItem(
+            RNG_LOCAL_RESULT_STORAGE_KEY,
+            JSON.stringify(
+                sanitized
+            )
+        );
+    } catch (err) {
+    }
+}
+
+function clearLocalRngResult() {
+    try {
+        localStorage.removeItem(
+            RNG_LOCAL_RESULT_STORAGE_KEY
+        );
+    } catch (err) {
+    }
 }
 
 function getRngNextRollTimestamp() {
@@ -1144,30 +1024,9 @@ function getRngNextRollTimestamp() {
     }
     */
 
-    return getLocalRngNextRollTimestamp();
-}
-
-function setLocalRngNextRollFromReset() {
-    let nextRollTimestamp =
-        rngNextResetTimestamp;
-
-    if (
-        typeof nextRollTimestamp !== 'number' ||
-        !Number.isFinite(nextRollTimestamp)
-    ) {
-        const now =
-            getRngServerNow() ??
-            Date.now();
-
-        nextRollTimestamp =
-            getNextNewYorkResetTimestamp(
-                now
-            );
-    }
-
-    saveLocalRngRollState({
-        nextRollTimestamp
-    });
+    return rngNextResetTimestamp ??
+        rngLocalRollState?.nextRollTimestamp ??
+        null;
 }
 
 function createRngTopControlArea() {
@@ -1298,27 +1157,30 @@ function updateRngDailyCountdown() {
     const nextRollTimestamp =
         getRngNextRollTimestamp();
 
+    const serverNow =
+        getRngServerNow();
+
     if (
         typeof nextRollTimestamp !== 'number' ||
-        !Number.isFinite(nextRollTimestamp)
+        !Number.isFinite(nextRollTimestamp) ||
+        typeof serverNow !== 'number' ||
+        !Number.isFinite(serverNow)
     ) {
         stopRngDailyCountdown();
         hideRngDailyStatus();
         return false;
     }
 
-    const now =
-        getRngServerNow() ??
-        Date.now();
-
     const remaining =
         nextRollTimestamp -
-        now;
+        serverNow;
 
     if (
         remaining <= 0
     ) {
         stopRngDailyCountdown();
+
+        rngNextResetTimestamp = null;
         clearLocalRngRollState();
         hideRngDailyStatus();
 
@@ -1588,13 +1450,15 @@ function handleRngGenerateTabActivation() {
 
         if (card) {
             applyRngRarityTheme(
-                getRngDisplayRarity(
-                    card.dataset.rngPayload
-                        ? JSON.parse(
-                            card.dataset.rngPayload
-                        )
-                        : null
-                )
+                card.classList.contains('rng-rarity-common')
+                    ? 'common'
+                    : card.classList.contains('rng-rarity-uncommon')
+                        ? 'uncommon'
+                        : card.classList.contains('rng-rarity-rare')
+                            ? 'rare'
+                            : card.classList.contains('rng-rarity-legendary')
+                                ? 'legendary'
+                                : 'unknown'
             );
 
             scrollRngResultIntoView(card);
@@ -1711,7 +1575,23 @@ function resetDailyRngFrontend() {
 } 
 	 
 function markRngRollComplete(payload) { 
-    setLocalRngNextRollFromReset();
+    saveLocalRngResult(
+        payload
+    );
+
+    if (
+        typeof rngNextResetTimestamp === 'number' &&
+        Number.isFinite(rngNextResetTimestamp)
+    ) {
+        saveLocalRngRollState({
+            nextRollTimestamp:
+                rngNextResetTimestamp
+        });
+    }
+
+    rngLocalRollState =
+        loadLocalRngRollState();
+
     updateRngDailyCountdown();
 
     if (rngDailyActionArea) { 
@@ -1725,6 +1605,14 @@ function applyDailyRollState(state) {
 } 
 	 
 function renderStoredRngResult(payload) { 
+    if (
+        !payload ||
+        typeof payload !== 'object' ||
+        payload.record === undefined
+    ) {
+        return;
+    }
+
     if (rngScrambleElement) {
         rngScrambleElement.remove();
         rngScrambleElement = null;
@@ -1769,7 +1657,6 @@ function renderStoredRngResult(payload) {
         ); 
 	 
     scrollRngResultIntoView(card);
-    requestRngLaunchFlash();
     animateRngRecordCard(card); 
     updateScrollRail(); 
 } 
@@ -1906,9 +1793,6 @@ function createRngStat(label, value, valueColor = null) {
     statLabel.className = 'rngStatLabel'; 
     statLabel.textContent = label; 
 
-    const normalizedLabel =
-        String(label).toLowerCase();
-
     if (
         String(label).length > 15
     ) {
@@ -1936,7 +1820,7 @@ function createRngStat(label, value, valueColor = null) {
         'break-word';
 
     if (
-        normalizedLabel.includes(
+        String(label).toLowerCase().includes(
             'lifetime record'
         )
     ) {
@@ -1960,11 +1844,6 @@ function createRngRecordCard(payload, recordText) {
     const card = document.createElement('div'); 
     card.className = 'rngRecordCard'; 
 	 
-    const rarity = 
-        typeof payload.rarity === 'string' 
-            ? payload.rarity.trim().toLowerCase() 
-            : 'unknown'; 
-
     const displayRarity =
         getRngDisplayRarity(
             payload
@@ -2041,9 +1920,14 @@ function createRngRecordCard(payload, recordText) {
     stats.appendChild(
         createRngStat(
             'Times Rolled',
+            1
+            /*
+            // FUTURE TRELLO TIMES ROLLED READING
+
             payload.timesRolled ??
                 payload.times_rolled ??
                 1
+            */
         )
     ); 
 	 
@@ -2550,14 +2434,35 @@ function beginRngRollRequest() {
     const nextRollTimestamp =
         getRngNextRollTimestamp();
 
-    const now =
-        getRngServerNow() ??
-        Date.now();
+    const serverNow =
+        getRngServerNow();
 
     if (
-        typeof nextRollTimestamp === 'number' &&
-        Number.isFinite(nextRollTimestamp) &&
-        nextRollTimestamp > now
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp) ||
+        typeof serverNow !== 'number' ||
+        !Number.isFinite(serverNow)
+    ) {
+        if (
+            typeof serverNow !== 'number' ||
+            !Number.isFinite(serverNow)
+        ) {
+            rngRequestPending = false;
+
+            errorMessage.textContent =
+                "⚠️ Action Cancelled: Server time has not been synchronized yet.";
+
+            errorMessage.classList.remove(
+                "hidden"
+            );
+
+            initializeRngGenerateButton();
+            return;
+        }
+    }
+
+    if (
+        nextRollTimestamp > serverNow
     ) {
         updateRngDailyCountdown();
         return;
@@ -2611,8 +2516,25 @@ function initializeRngFrontend() {
     createRngDailyStatus(); 
     hideRngDailyStatus(); 
     clearRngRarityTheme(); 
-    initializeRngGenerateButton(); 
+
+    const storedResult =
+        loadLocalRngResult();
+
+    if (storedResult) {
+        renderStoredRngResult(
+            storedResult
+        );
+    }
 
     updateRngDailyCountdown(); 
+
+    if (
+        !rngResultPanel &&
+        !rngRequestPending &&
+        !rngRollLoadingPending
+    ) {
+        initializeRngGenerateButton();
+    }
+
     maybePlayRngLaunchFlash(); 
 }
