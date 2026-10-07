@@ -777,6 +777,9 @@ const RNG_APPEAR_DURATION = 700;
 const RNG_SCRAMBLE_TICK = 50;
 const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
+const RNG_LIFETIME_DIGIT_DURATION = 650;
+const RNG_LIFETIME_DIGIT_STAGGER = 70;
+const RNG_LIFETIME_NEW_DIGIT_DURATION = 580;
 	 
 let rngRequestPending = false; 
 let rngRollLoadingPending = false; 
@@ -796,7 +799,8 @@ let rngPerformanceTimeBase = null;
 let rngNextResetTimestamp = null; 
 let rngLocalRollState = null; 
 let rngFrontendInitialized = false; 
-let rngLaunchFlashPending = false; 
+let rngLaunchFlashPending = false;
+let rngPendingLifetimeScore = null;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -1611,8 +1615,310 @@ function markRngRollComplete(payload) {
         rngDailyActionArea.remove(); 
         rngDailyActionArea = null; 
     } 
-} 
+}
 
+function getRngLifetimePayloadScore(payload) {
+    if (
+        !payload ||
+        typeof payload !== 'object'
+    ) {
+        return null;
+    }
+
+    const value =
+        Number(
+            payload.lifetimeRecordScore ??
+            payload.lifetimeScore ??
+            payload.lifetime_record_score
+        );
+
+    if (
+        !Number.isFinite(value)
+    ) {
+        return null;
+    }
+
+    return value;
+}
+
+function getRngLifetimeStatValueElement() {
+    if (
+        !rngResultPanel
+    ) {
+        return null;
+    }
+
+    const statLabels =
+        rngResultPanel.querySelectorAll(
+            '.rngStatLabel'
+        );
+
+    for (
+        const statLabel of statLabels
+    ) {
+        if (
+            statLabel.textContent !==
+            'Lifetime Record Score'
+        ) {
+            continue;
+        }
+
+        const stat =
+            statLabel.parentElement;
+
+        if (!stat) {
+            return null;
+        }
+
+        return stat.querySelector(
+            '.rngStatValue'
+        );
+    }
+
+    return null;
+}
+
+function createRngLifetimeDigitFace(
+    digit
+) {
+    const face =
+        document.createElement('span');
+
+    face.className =
+        'rngLifetimeDigitFace';
+
+    face.textContent =
+        String(digit);
+
+    return face;
+}
+
+function animateRngLifetimeScore(
+    element,
+    oldScore,
+    newScore
+) {
+    if (
+        !element ||
+        typeof newScore !== 'number' ||
+        !Number.isFinite(newScore)
+    ) {
+        return;
+    }
+
+    const normalizedOldScore =
+        typeof oldScore === 'number' &&
+        Number.isFinite(oldScore)
+            ? Math.round(oldScore)
+            : Math.round(newScore);
+
+    const normalizedNewScore =
+        Math.round(newScore);
+
+    const oldText =
+        String(normalizedOldScore);
+
+    const newText =
+        String(normalizedNewScore);
+
+    if (
+        oldText === newText
+    ) {
+        element.textContent =
+            newText;
+
+        element.setAttribute(
+            'data-rng-lifetime-score',
+            newText
+        );
+
+        return;
+    }
+
+    element.innerHTML = '';
+
+    element.classList.add(
+        'rngLifetimeScoreValue'
+    );
+
+    element.setAttribute(
+        'data-rng-lifetime-score',
+        newText
+    );
+
+    element.setAttribute(
+        'aria-label',
+        newText
+    );
+
+    const oldLength =
+        oldText.length;
+
+    const newLength =
+        newText.length;
+
+    const oldOffset =
+        newLength -
+        oldLength;
+
+    for (
+        let i = 0;
+        i < newLength;
+        i++
+    ) {
+        const targetDigit =
+            newText[i];
+
+        const oldPosition =
+            i -
+            oldOffset;
+
+        const oldDigit =
+            oldPosition >= 0
+                ? oldText[oldPosition]
+                : null;
+
+        const digitFrame =
+            document.createElement('span');
+
+        digitFrame.className =
+            'rngLifetimeDigit';
+
+        const animationOrder =
+            newLength -
+            1 -
+            i;
+
+        const delay =
+            animationOrder *
+            RNG_LIFETIME_DIGIT_STAGGER;
+
+        if (
+            oldDigit === null
+        ) {
+            const face =
+                createRngLifetimeDigitFace(
+                    targetDigit
+                );
+
+            digitFrame.classList.add(
+                'rngLifetimeDigitNew'
+            );
+
+            digitFrame.style.setProperty(
+                '--rng-lifetime-digit-delay',
+                `${delay}ms`
+            );
+
+            digitFrame.appendChild(
+                face
+            );
+        } else {
+            const strip =
+                document.createElement('span');
+
+            strip.className =
+                'rngLifetimeDigitStrip';
+
+            for (
+                let cycle = 0;
+                cycle < 2;
+                cycle++
+            ) {
+                for (
+                    let digit = 0;
+                    digit <= 9;
+                    digit++
+                ) {
+                    strip.appendChild(
+                        createRngLifetimeDigitFace(
+                            digit
+                        )
+                    );
+                }
+            }
+
+            const oldNumericDigit =
+                Number(oldDigit);
+
+            const newNumericDigit =
+                Number(targetDigit);
+
+            const forwardSteps =
+                (
+                    newNumericDigit -
+                    oldNumericDigit +
+                    10
+                ) % 10;
+
+            strip.style.transform =
+                `translateY(-${oldNumericDigit}em)`;
+
+            strip.style.transitionDuration =
+                `${RNG_LIFETIME_DIGIT_DURATION}ms`;
+
+            strip.style.transitionDelay =
+                `${delay}ms`;
+
+            digitFrame.appendChild(
+                strip
+            );
+
+            if (
+                forwardSteps > 0
+            ) {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        strip.style.transform =
+                            `translateY(-${oldNumericDigit + forwardSteps}em)`;
+                    });
+                });
+            }
+        }
+
+        element.appendChild(
+            digitFrame
+        );
+    }
+}
+
+function animatePendingRngLifetimeScore(
+    payload
+) {
+    if (
+        typeof rngPendingLifetimeScore !== 'number' ||
+        !Number.isFinite(rngPendingLifetimeScore)
+    ) {
+        return;
+    }
+
+    const targetScore =
+        rngPendingLifetimeScore;
+
+    rngPendingLifetimeScore =
+        null;
+
+    const currentScore =
+        getRngLifetimePayloadScore(
+            payload
+        );
+
+    const lifetimeValueElement =
+        getRngLifetimeStatValueElement();
+
+    if (
+        !lifetimeValueElement
+    ) {
+        return;
+    }
+
+    animateRngLifetimeScore(
+        lifetimeValueElement,
+        currentScore,
+        targetScore
+    );
+}
+ 
 function sendRngLifetimeUpdate(payload) {
     if (
         !payload ||
@@ -1622,10 +1928,8 @@ function sendRngLifetimeUpdate(payload) {
     }
 
     const currentLifetime =
-        Number(
-            payload.lifetimeRecordScore ??
-            payload.lifetimeScore ??
-            payload.lifetime_record_score
+        getRngLifetimePayloadScore(
+            payload
         );
 
     const points =
@@ -1634,7 +1938,7 @@ function sendRngLifetimeUpdate(payload) {
         );
 
     if (
-        !Number.isFinite(currentLifetime) ||
+        currentLifetime === null ||
         !Number.isFinite(points)
     ) {
         console.error(
@@ -1649,10 +1953,26 @@ function sendRngLifetimeUpdate(payload) {
         points;
 
     if (
+        !Number.isFinite(newLifetimeScore)
+    ) {
+        console.error(
+            "❌ Could not calculate new RNG lifetime score."
+        );
+
+        return;
+    }
+
+    rngPendingLifetimeScore =
+        newLifetimeScore;
+
+    if (
         !socket ||
         socket.readyState !==
             WebSocket.OPEN
     ) {
+        rngPendingLifetimeScore =
+            null;
+
         console.error(
             "❌ Could not send RNG lifetime update because socket is not open."
         );
@@ -1692,50 +2012,44 @@ function applyRngLifetimeUpdateResult(score) {
         );
     }
 
+    const lifetimeValueElement =
+        getRngLifetimeStatValueElement();
+
     if (
-        !rngResultPanel
+        !lifetimeValueElement
     ) {
         return;
     }
 
-    const statLabels =
-        rngResultPanel.querySelectorAll(
-            '.rngStatLabel'
+    const currentScore =
+        Number(
+            lifetimeValueElement.getAttribute(
+                'data-rng-lifetime-score'
+            )
         );
 
-    for (
-        const statLabel of statLabels
+    if (
+        Number.isFinite(currentScore) &&
+        currentScore === score
     ) {
-        if (
-            statLabel.textContent !==
-            'Lifetime Record Score'
-        ) {
-            continue;
-        }
-
-        const stat =
-            statLabel.parentElement;
-
-        if (!stat) {
-            return;
-        }
-
-        const statValue =
-            stat.querySelector(
-                '.rngStatValue'
-            );
-
-        if (!statValue) {
-            return;
-        }
-
-        statValue.textContent =
-            formatRngValue(
-                score
-            );
+        lifetimeValueElement.textContent =
+            lifetimeValueElement.textContent;
 
         return;
     }
+
+    const fallbackScore =
+        Number(
+            lifetimeValueElement.textContent
+        );
+
+    animateRngLifetimeScore(
+        lifetimeValueElement,
+        Number.isFinite(currentScore)
+            ? currentScore
+            : fallbackScore,
+        score
+    );
 }
 	 
 function applyDailyRollState(state) { 
@@ -1964,6 +2278,39 @@ function createRngStat(label, value, valueColor = null) {
     ) {
         statValue.style.fontSize =
             '15px';
+
+        statValue.classList.add(
+            'rngLifetimeScoreValue'
+        );
+
+        const initialLifetime =
+            Number(
+                value
+            );
+
+        if (
+            Number.isFinite(
+                initialLifetime
+            )
+        ) {
+            statValue.setAttribute(
+                'data-rng-lifetime-score',
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                )
+            );
+
+            statValue.setAttribute(
+                'aria-label',
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                )
+            );
+        }
     }
 	 
     if (valueColor) { 
@@ -2247,7 +2594,10 @@ function showRngRecordResult(payload) {
         rngResultPanel.appendChild(card); 
         scrollRngResultIntoView(card);
         requestRngLaunchFlash();
-        animateRngRecordCard(card); 
+        animateRngRecordCard(card);
+        animatePendingRngLifetimeScore(
+            payload
+        ); 
 	 
         updateScrollRail(); 
         initializeRngGenerateButton();
@@ -2348,6 +2698,10 @@ function showRngRecordResult(payload) {
 
         animateRngRecordCard(
             card
+        );
+
+        animatePendingRngLifetimeScore(
+            payload
         );
 
         updateRngDailyCountdown();
