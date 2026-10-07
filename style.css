@@ -504,29 +504,16 @@ button {
 }
 
 .rngActionArea {
-
-    width: 250px;
-
-    min-width: 250px;
-
-    max-width: 250px;
-
-    min-height: 0;
-
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     margin: 0 auto;
-
     padding: 24px 0 12px;
-
     box-sizing: border-box;
-
     background: transparent;
-
 }
 
 .rngGenerateButton {
@@ -587,6 +574,8 @@ button {
         0 9px 19px rgba(2, 14, 27, 0.32),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
+    transform: translateY(-1px);
+
 }
 
 .rngGenerateButton:active {
@@ -595,166 +584,52 @@ button {
 
 }
 
-.rngDailyStatus {
-
-    width: 250px;
-
-    min-width: 250px;
-
-    max-width: 250px;
-
-    margin: 0 auto 12px;
-
-    text-align: center;
-
-    color: #9ba1a6;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-}
-
-.rngDailyMessage {
-
-    color: #9ba1a6;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-}
-
-.rngDailyCountdown {
-
-    margin-top: 4px;
-
-    color: #8e959a;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.04em;
-
-}
-
-.normalButtonWiggle {
-
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-
-}
-
-@keyframes normalButtonWiggle {
-
-    0%,
-    100% {
-
-        transform: translateX(0);
-
-    }
-
-    25% {
-
-        transform: translateX(-3px);
-
-    }
-
-    75% {
-
-        transform: translateX(3px);
-
-    }
-
-}
-
 .rngResultPanel {
-
-    width: 250px;
-
-    min-width: 250px;
-
-    max-width: 250px;
-
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
     margin: 0 auto;
-
     padding: 0;
-
     box-sizing: border-box;
-
     background: transparent;
-
     border: 0;
-
     box-shadow: none;
-
     overflow: visible;
-
 }
 
 .rngScramble {
-
-    width: 250px;
-
-    min-width: 250px;
-
-    max-width: 250px;
-
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
     min-height: 58px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     margin: 0 auto;
-
     padding: 8px 0 24px;
-
     color: #21b7ff;
-
     font-family: "Courier New", Courier, monospace;
-
-    font-size: 32px;
-
+    font-size: 29px;
     font-weight: 900;
-
-    letter-spacing: 3px;
-
+    letter-spacing: 2.4px;
     text-align: center;
-
     text-shadow:
         0 0 8px rgba(33, 183, 255, 0.24);
-
     word-break: break-all;
-
     overflow-wrap: anywhere;
-
     background: transparent;
-
     border: 0;
-
 }
 
 .rngRecordCard {
-
-    width: 250px;
-
-    min-width: 250px;
-
-    max-width: 250px;
-
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
     margin: 10px auto 0;
-
-    padding: 28px;
-
+    padding: 24px;
     box-sizing: border-box;
-
     border: 1px solid rgba(190, 214, 231, 0.2);
-
     border-radius: 20px;
-
     background:
         linear-gradient(
             135deg,
@@ -762,282 +637,151 @@ button {
             #253845 46%,
             #313739 100%
         );
-
     box-shadow:
         0 14px 28px rgba(2, 10, 20, 0.28),
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
-
     overflow: hidden;
-
 }
 
 .rngRecordHeader {
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     gap: 6px;
-
-    margin-bottom: 22px;
-
+    margin-bottom: 18px;
     text-align: center;
-
+    background: transparent;
 }
 
 .rngRecordLabel {
-
     color: rgba(193, 215, 229, 0.62);
-
-    font-size: 10px;
-
+    font-size: 9px;
     font-weight: 800;
-
-    letter-spacing: 1.6px;
-
+    letter-spacing: 1.4px;
     text-transform: uppercase;
-
-    overflow-wrap: anywhere;
-
 }
 
 .rngRecordValue {
-
     width: 100%;
-
     max-width: 100%;
-
     color: #f3f8fc;
-
     font-family: "Courier New", Courier, monospace;
-
-    font-size: 26px;
-
+    font-size: 22px;
     font-weight: 900;
-
-    letter-spacing: 1.5px;
-
+    letter-spacing: 1px;
+    line-height: 1.15;
     text-align: center;
-
     word-break: break-all;
-
     overflow-wrap: anywhere;
-
 }
 
 .rngStats {
-
     width: 100%;
-
     max-width: 100%;
-
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 12px;
-
-    margin-bottom: 24px;
-
+    gap: 9px;
+    margin-bottom: 18px;
     background: transparent;
-
 }
 
 .rngStat {
-
     min-width: 0;
-
-    min-height: 78px;
-
+    min-height: 65px;
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
-    gap: 7px;
-
-    padding: 15px 16px;
-
+    gap: 5px;
+    padding: 10px 11px;
     border: 0;
-
     border-radius: 0;
-
     background: transparent;
-
     overflow: hidden;
-
 }
 
 .rngStatLabel {
-
     color: rgba(190, 211, 226, 0.6);
-
-    font-size: 9px;
-
+    font-size: 8px;
     font-weight: 800;
-
-    letter-spacing: 1.3px;
-
+    letter-spacing: 1.1px;
     text-transform: uppercase;
-
-    overflow-wrap: anywhere;
-
 }
 
 .rngStatValue {
-
     color: #edf6fb;
-
-    font-size: 18px;
-
+    font-size: 16px;
     font-weight: 800;
-
     overflow-wrap: anywhere;
-
-    word-break: break-word;
-
 }
 
 .rngModifiersSection {
-
     width: 100%;
-
     max-width: 100%;
-
     display: flex;
-
     flex-direction: column;
-
-    gap: 12px;
-
+    gap: 9px;
     background: transparent;
-
 }
 
 .rngModifiersTitle {
-
     color: #dbeaf4;
-
-    font-size: 13px;
-
+    font-size: 11px;
     font-weight: 900;
-
-    letter-spacing: 1.2px;
-
+    letter-spacing: 1.1px;
     text-transform: uppercase;
-
-    overflow-wrap: anywhere;
-
 }
 
 .rngModifiers {
-
     width: 100%;
-
     max-width: 100%;
-
     display: grid;
-
     grid-template-columns: 1fr;
-
-    gap: 10px;
-
+    gap: 7px;
     background: transparent;
-
 }
 
 .rngModifier {
-
     min-width: 0;
-
-    min-height: 74px;
-
-    padding: 14px 15px;
-
+    min-height: 60px;
+    padding: 10px 0;
     border: 0;
-
     border-radius: 0;
-
     background: transparent;
-
     overflow: hidden;
-
 }
 
 .rngModifierName {
-
-    margin-bottom: 7px;
-
+    margin-bottom: 5px;
     color: #f0f6fa;
-
-    font-size: 13px;
-
+    font-size: 12px;
     font-weight: 800;
-
     overflow-wrap: anywhere;
-
-    word-break: break-word;
-
 }
 
 .rngModifierValue {
-
     color: rgba(203, 220, 231, 0.76);
-
-    font-size: 12px;
-
+    font-size: 11px;
     line-height: 1.4;
-
     overflow-wrap: anywhere;
-
-    word-break: break-word;
-
 }
 
 .rngNoModifiers {
-
-    padding: 18px;
-
+    padding: 14px;
     border: 0;
-
     border-radius: 0;
-
-    color: rgba(155, 165, 172, 0.7);
-
-    font-size: 12px;
-
+    color: rgba(155, 165, 172, 0.68);
+    font-size: 11px;
     text-align: center;
-
     background: transparent;
-
 }
 
 .tabScreen {
-
     min-height: 430px;
-
     padding: 32px;
-
-    border: 1px solid rgba(136, 164, 188, 0.18);
-
-    border-radius: 26px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #102a49 0%,
-            #172f47 38%,
-            #242d34 70%,
-            #303438 100%
-        );
-
-    box-shadow:
-        0 19px 44px rgba(2, 10, 20, 0.38),
-        inset 0 1px 0 rgba(177, 203, 222, 0.05);
-
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .tabHeader {
@@ -1179,82 +923,6 @@ button {
 
 }
 
-.rngResultPopIn {
-
-    animation:
-        rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
-
-    animation-delay: var(--rng-pop-delay, 0s);
-
-}
-
-@keyframes rngResultPopIn {
-
-    0% {
-
-        opacity: 0;
-
-        transform: translateY(10px) scale(0.88);
-
-    }
-
-    65% {
-
-        opacity: 1;
-
-        transform: translateY(-2px) scale(1.03);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
-
-}
-
-.rngLaunchFlash {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 99999;
-
-    pointer-events: none;
-
-    background: #ffffff;
-
-    animation:
-        rngLaunchFlash 0.5s ease-out forwards;
-
-}
-
-@keyframes rngLaunchFlash {
-
-    0% {
-
-        opacity: 0;
-
-    }
-
-    35% {
-
-        opacity: 1;
-
-    }
-
-    100% {
-
-        opacity: 0;
-
-    }
-
-}
-
 @media (max-width: 700px) {
 
     .mainScreen {
@@ -1303,13 +971,7 @@ button {
 
     .rngActionArea {
 
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-        padding: 20px 0 10px;
+        padding: 20px 0 12px;
 
     }
 
@@ -1325,39 +987,17 @@ button {
 
     }
 
-    .rngDailyStatus {
-
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-        margin-bottom: 10px;
-
-    }
-
     .rngResultPanel {
 
-        width: 250px;
+        padding: 0;
 
-        min-width: 250px;
-
-        max-width: 250px;
+        border-radius: 0;
 
     }
 
     .rngScramble {
 
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
         min-height: 48px;
-
-        padding: 8px 0 20px;
 
         font-size: 24px;
 
@@ -1367,27 +1007,13 @@ button {
 
     .rngRecordCard {
 
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
         padding: 22px;
 
     }
 
     .rngStats {
 
-        width: 100%;
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .rngModifiers {
-
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
 
     }
 
@@ -1396,8 +1022,6 @@ button {
         min-height: 360px;
 
         padding: 24px;
-
-        border-radius: 21px;
 
     }
 
@@ -1489,13 +1113,7 @@ button {
 
     .rngActionArea {
 
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-        padding: 16px 0 8px;
+        padding: 20px 0 12px;
 
     }
 
@@ -1511,61 +1129,37 @@ button {
 
     }
 
-    .rngDailyStatus {
-
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-    }
-
-    .rngResultPanel {
-
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-    }
-
     .rngScramble {
 
-        width: 250px;
+        min-height: 52px;
 
-        min-width: 250px;
+        font-size: 21px;
 
-        max-width: 250px;
-
-        font-size: 20px;
-
-        letter-spacing: 1.4px;
+        letter-spacing: 1.7px;
 
     }
 
     .rngRecordCard {
 
-        width: 250px;
-
-        min-width: 250px;
-
-        max-width: 250px;
-
-        padding: 18px;
+        padding: 20px;
 
     }
 
     .rngRecordValue {
 
-        font-size: 21px;
+        font-size: 20px;
 
     }
 
     .tabScreen {
 
         padding: 20px;
+
+    }
+
+    .tabScreen h1 {
+
+        font-size: 24px;
 
     }
 
@@ -1601,4 +1195,97 @@ button {
 
     }
 
+}
+
+.rngDailyStatus {
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
+    margin: 0 auto 12px;
+    padding: 0;
+    text-align: center;
+    color: #949a9f;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.rngDailyMessage {
+    color: #949a9f;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.rngDailyCountdown {
+    margin-top: 4px;
+    color: #898f94;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.normalButtonWiggle {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+@keyframes normalButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+.rngLaunchFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    animation:
+        rngLaunchFlash 0.6s ease-out forwards;
+}
+
+@keyframes rngLaunchFlash {
+    0% {
+        opacity: 0;
+    }
+    12% {
+        opacity: 1;
+    }
+    38% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.rngResultPopIn {
+    animation:
+        rngResultPopIn 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--rng-pop-delay, 0s);
+}
+
+@keyframes rngResultPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.88);
+    }
+    65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.03);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
