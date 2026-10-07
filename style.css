@@ -58,15 +58,15 @@ body.rng-rarity-common {
 
             135deg,
 
-            #557590 0%,
+            #3f6085 0%,
 
-            #4a6981 28%,
+            #36577e 28%,
 
-            #435d70 55%,
+            #2f5378 54%,
 
-            #3d5363 78%,
+            #2b4a70 78%,
 
-            #374a58 100%
+            #264468 100%
 
         );
 
@@ -80,15 +80,15 @@ body.rng-rarity-uncommon {
 
             135deg,
 
-            #247b79 0%,
+            #256c6a 0%,
 
-            #286f72 28%,
+            #285f65 28%,
 
-            #2d626b 55%,
+            #2c555e 54%,
 
-            #315664 78%,
+            #2d4d59 78%,
 
-            #344b59 100%
+            #294652 100%
 
         );
 
@@ -102,15 +102,15 @@ body.rng-rarity-rare {
 
             135deg,
 
-            #2468a3 0%,
+            #225e97 0%,
 
-            #285f97 28%,
+            #28588c 28%,
 
-            #2e587f 55%,
+            #2c507d 54%,
 
-            #334f6e 78%,
+            #30496f 78%,
 
-            #37485b 100%
+            #2f4563 100%
 
         );
 
@@ -124,15 +124,15 @@ body.rng-rarity-legendary {
 
             135deg,
 
-            #7b671f 0%,
+            #725d18 0%,
 
-            #6c5d2c 28%,
+            #655323 28%,
 
-            #5d5234 55%,
+            #584c2e 54%,
 
-            #4e4839 78%,
+            #4d4434 78%,
 
-            #41403d 100%
+            #433d39 100%
 
         );
 
@@ -1236,7 +1236,7 @@ button {
 
     background: transparent;
 
-    overflow: hidden;
+    overflow: visible;
 
     text-align: center;
 
@@ -1578,17 +1578,17 @@ button {
 
     top: 50%;
 
-    width: 118px;
+    width: 50px;
 
-    height: 58px;
+    height: 28px;
 
     transform: translate(-50%, -50%);
 
     border-radius: 50%;
 
-    filter: blur(18px);
+    filter: blur(8px);
 
-    opacity: 0.34;
+    opacity: 0.42;
 
     pointer-events: none;
 
@@ -1596,17 +1596,17 @@ button {
 
 }
 
-.rngRarityStat.rng-rarity-common::before {
+.rngRarityStat[data-rng-rarity="common"]::before {
 
     background:
 
         radial-gradient(
 
-            circle,
+            ellipse,
 
-            rgba(220, 231, 240, 0.48) 0%,
+            rgba(220, 231, 240, 0.42) 0%,
 
-            rgba(220, 231, 240, 0.18) 45%,
+            rgba(220, 231, 240, 0.16) 42%,
 
             rgba(220, 231, 240, 0) 100%
 
@@ -1614,17 +1614,17 @@ button {
 
 }
 
-.rngRarityStat.rng-rarity-uncommon::before {
+.rngRarityStat[data-rng-rarity="uncommon"]::before {
 
     background:
 
         radial-gradient(
 
-            circle,
+            ellipse,
 
-            rgba(79, 209, 197, 0.58) 0%,
+            rgba(79, 209, 197, 0.5) 0%,
 
-            rgba(79, 209, 197, 0.2) 45%,
+            rgba(79, 209, 197, 0.18) 42%,
 
             rgba(79, 209, 197, 0) 100%
 
@@ -1632,17 +1632,17 @@ button {
 
 }
 
-.rngRarityStat.rng-rarity-rare::before {
+.rngRarityStat[data-rng-rarity="rare"]::before {
 
     background:
 
         radial-gradient(
 
-            circle,
+            ellipse,
 
-            rgba(77, 166, 255, 0.72) 0%,
+            rgba(77, 166, 255, 0.66) 0%,
 
-            rgba(77, 166, 255, 0.28) 44%,
+            rgba(77, 166, 255, 0.22) 42%,
 
             rgba(77, 166, 255, 0) 100%
 
@@ -1650,17 +1650,17 @@ button {
 
 }
 
-.rngRarityStat.rng-rarity-legendary::before {
+.rngRarityStat[data-rng-rarity="legendary"]::before {
 
     background:
 
         radial-gradient(
 
-            circle,
+            ellipse,
 
-            rgba(255, 216, 77, 0.82) 0%,
+            rgba(255, 216, 77, 0.72) 0%,
 
-            rgba(255, 216, 77, 0.32) 44%,
+            rgba(255, 216, 77, 0.25) 42%,
 
             rgba(255, 216, 77, 0) 100%
 
