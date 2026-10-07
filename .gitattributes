@@ -1,9 +1,5 @@
 *.md linguist-detectable
 *.txt linguist-language=Markdown
 *.txt linguist-detectable
-*.mp3 linguist-language=Markdown
-*.mp3 linguist-detectable
-*.png linguist-language=Markdown
-*.png linguist-detectable
 .gitattributes linguist-language=Markdown
 .gitattributes linguist-detectable
