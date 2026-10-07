@@ -1,5 +1,9 @@
 *.md linguist-detectable
-*.png linguist-vendored
-*.mp3 linguist-vendored
-turtle_data.txt linguist-language=Turtle
-turtle_data.txt linguist-detectable
+*.txt linguist-language=Markdown
+*.txt linguist-detectable
+*.mp3 linguist-language=Markdown
+*.mp3 linguist-detectable
+*.png linguist-language=Markdown
+*.png linguist-detectable
+.gitattributes linguist-language=Markdown
+.gitattributes linguist-detectable
