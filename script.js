@@ -594,6 +594,7 @@ initializeTabLoadingScreens();
 setTimeout(() => { 
     loadingScreen.classList.add('hidden'); 
     mainScreen.classList.remove('hidden'); 
+    updateScrollRail();
     startActivityMusic();
 
     if (
@@ -640,6 +641,8 @@ function switchTab(button, screen) {
 
         clearRngRarityTheme();
     }
+
+    updateScrollRail();
 } 
 	 
 generateButton.addEventListener('click', () => { 
@@ -657,16 +660,22 @@ cardsButton.addEventListener('click', () => {
 const scrollRail = document.querySelector('.scrollRail'); 
 	 
 function updateScrollRail() { 
-    if (!scrollRail) { 
-        return; 
-    } 
-	 
+    document.documentElement.style.minHeight = ''; 
+    document.body.style.minHeight = ''; 
+
     const pageHeight = Math.max( 
         document.documentElement.scrollHeight, 
         document.body.scrollHeight, 
         mainScreen.scrollHeight, 
         window.innerHeight 
     ); 
+
+    document.documentElement.style.minHeight = `${pageHeight}px`; 
+    document.body.style.minHeight = `${pageHeight}px`; 
+
+    if (!scrollRail) { 
+        return; 
+    } 
 	 
     const spacing = 250; 
     const edgeInset = 36; 
