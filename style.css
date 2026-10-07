@@ -634,6 +634,110 @@ button {
 
 }
 
+.musicToggleButton {
+
+    position: fixed;
+
+    top: 16px;
+
+    left: 16px;
+
+    z-index: 100001;
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(190, 214, 231, 0.24);
+
+    border-radius: 50%;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            rgba(18, 43, 71, 0.95) 0%,
+
+            rgba(37, 46, 52, 0.95) 100%
+
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 8px 18px rgba(2, 10, 20, 0.32),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+
+        background 0.18s ease,
+
+        border-color 0.18s ease,
+
+        box-shadow 0.18s ease,
+
+        transform 0.18s ease;
+
+}
+
+.musicToggleButton:hover {
+
+    border-color: rgba(211, 230, 242, 0.38);
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            rgba(29, 57, 87, 0.98) 0%,
+
+            rgba(48, 57, 64, 0.98) 100%
+
+        );
+
+    box-shadow:
+
+        0 10px 21px rgba(2, 10, 20, 0.38),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+
+}
+
+.musicToggleButton:active {
+
+    transform: translateY(1px);
+
+}
+
+.musicToggleButton:focus-visible {
+
+    outline: 3px solid rgba(168, 202, 225, 0.46);
+
+    outline-offset: 3px;
+
+}
+
 .rngTopControlArea {
 
     width: 350px;
@@ -912,6 +1016,8 @@ button {
 
 .rngRecordCard {
 
+    position: relative;
+
     width: 350px;
 
     min-width: 350px;
@@ -949,6 +1055,10 @@ button {
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
 
     overflow: hidden;
+
+    transform-origin: center center;
+
+    will-change: transform;
 
 }
 
@@ -1218,13 +1328,29 @@ button {
 
 }
 
+.rngLifetimeStatValue {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height: 21px;
+
+    min-height: 21px;
+
+    overflow: visible;
+
+}
+
 .rngLifetimeScoreValue {
 
     position: relative;
 
-    top: 10px;
+    top: 0;
 
-    display: inline-flex;
+    display: flex;
 
     align-items: center;
 
@@ -1240,11 +1366,15 @@ button {
 
     overflow: visible;
 
-    font-size: inherit;
+    font-size: 18px;
+
+    font-weight: 800;
 
     line-height: 21px;
 
     font-variant-numeric: tabular-nums;
+
+    transform: translateX(0);
 
 }
 
@@ -1257,6 +1387,16 @@ button {
     display: inline-block;
 
     line-height: 21px;
+
+    height: 21px;
+
+    min-height: 21px;
+
+    font-size: inherit;
+
+    font-weight: inherit;
+
+    font-variant-numeric: tabular-nums;
 
 }
 
@@ -1417,6 +1557,194 @@ button {
     backface-visibility: hidden;
 
     transform-origin: center center;
+
+}
+
+.rngRarityStat {
+
+    position: relative;
+
+    overflow: visible;
+
+}
+
+.rngRarityStat::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    width: 118px;
+
+    height: 58px;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    filter: blur(18px);
+
+    opacity: 0.34;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+}
+
+.rngRarityStat.rng-rarity-common::before {
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(220, 231, 240, 0.48) 0%,
+
+            rgba(220, 231, 240, 0.18) 45%,
+
+            rgba(220, 231, 240, 0) 100%
+
+        );
+
+}
+
+.rngRarityStat.rng-rarity-uncommon::before {
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(79, 209, 197, 0.58) 0%,
+
+            rgba(79, 209, 197, 0.2) 45%,
+
+            rgba(79, 209, 197, 0) 100%
+
+        );
+
+}
+
+.rngRarityStat.rng-rarity-rare::before {
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(77, 166, 255, 0.72) 0%,
+
+            rgba(77, 166, 255, 0.28) 44%,
+
+            rgba(77, 166, 255, 0) 100%
+
+        );
+
+}
+
+.rngRarityStat.rng-rarity-legendary::before {
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(255, 216, 77, 0.82) 0%,
+
+            rgba(255, 216, 77, 0.32) 44%,
+
+            rgba(255, 216, 77, 0) 100%
+
+        );
+
+}
+
+.rngRarityStat .rngStatLabel,
+
+.rngRarityStat .rngStatValue {
+
+    position: relative;
+
+    z-index: 1;
+
+}
+
+.rngRarityShiny {
+
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    background-image:
+
+        linear-gradient(
+
+            120deg,
+
+            currentColor 0%,
+
+            currentColor 28%,
+
+            #ffffff 42%,
+
+            currentColor 55%,
+
+            currentColor 100%
+
+        );
+
+    animation:
+
+        rngRarityShine 2.1s ease-in-out infinite;
+
+    text-shadow: none;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityShiny {
+
+    color: #4da6ff;
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityShiny {
+
+    color: #ffd84d;
+
+}
+
+@keyframes rngRarityShine {
+
+    0% {
+
+        background-position: 160% 50%;
+
+    }
+
+    50% {
+
+        background-position: -20% 50%;
+
+    }
+
+    100% {
+
+        background-position: 160% 50%;
+
+    }
 
 }
 
@@ -1914,6 +2242,20 @@ button {
 
     }
 
+    .musicToggleButton {
+
+        top: 12px;
+
+        left: 12px;
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 16px;
+
+    }
+
     .rngTopControlArea {
 
         min-height: 86px;
@@ -2052,6 +2394,20 @@ button {
 
     }
 
+    .musicToggleButton {
+
+        top: 9px;
+
+        left: 9px;
+
+        width: 35px;
+
+        height: 35px;
+
+        font-size: 15px;
+
+    }
+
     .rngTopControlArea {
 
         min-height: 86px;
@@ -2139,4 +2495,5 @@ button {
         right: 58px;
 
     }
+
 }
