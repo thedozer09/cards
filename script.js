@@ -201,7 +201,6 @@ screenHeaders.forEach(header => {
 
 const TAB_LOADING_DURATION = 3000;
 const RNG_ROLL_LOADING_DURATION = 3000;
-const RNG_LOCAL_ROLL_INTERVAL = 24 * 60 * 60 * 1000;
 const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const tabLoadingStates = new Map();
 
@@ -700,6 +699,45 @@ const RNG_RARITY_COLORS = {
     legendary: "#ffd84d" 
 }; 
 
+const RNG_RARITY_GRADIENTS = {
+    common:
+        `linear-gradient(
+            135deg,
+            #557590 0%,
+            #4a6981 28%,
+            #435d70 55%,
+            #3d5363 78%,
+            #374a58 100%
+        )`,
+    uncommon:
+        `linear-gradient(
+            135deg,
+            #247b79 0%,
+            #286f72 28%,
+            #2d626b 55%,
+            #315664 78%,
+            #344b59 100%
+        )`,
+    rare:
+        `linear-gradient(
+            135deg,
+            #2468a3 0%,
+            #285f97 28%,
+            #2e587f 55%,
+            #334f6e 78%,
+            #37485b 100%
+        )`,
+    legendary:
+        `linear-gradient(
+            135deg,
+            #7b671f 0%,
+            #6c5d2c 28%,
+            #5d5234 55%,
+            #4e4839 78%,
+            #41403d 100%
+        )`
+};
+
 const RNG_RANDOM_CHARACTERS =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
 
@@ -767,6 +805,20 @@ function syncRngServerClock(
     rngNextResetTimestamp = 
         nextReset.timestamp; 
 	 
+    const storedRollState =
+        loadLocalRngRollState();
+
+    if (
+        !storedRollState ||
+        storedRollState.nextRollTimestamp !==
+            nextReset.timestamp
+    ) {
+        saveLocalRngRollState({
+            nextRollTimestamp:
+                nextReset.timestamp
+        });
+    }
+
     if (!rngFrontendInitialized) { 
         rngLocalRollState = 
             loadLocalRngRollState(); 
@@ -818,6 +870,159 @@ function formatRngCountdown(milliseconds) {
     ].join(':'); 
 } 
 	 
+function getNewYorkDateParts(timestamp) {
+    const parts =
+        new Intl.DateTimeFormat(
+            'en-US',
+            {
+                timeZone: 'America/New_York',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }
+        ).formatToParts(
+            new Date(timestamp)
+        );
+
+    const values = {};
+
+    parts.forEach(part => {
+        if (
+            part.type !== 'literal'
+        ) {
+            values[part.type] =
+                part.value;
+        }
+    });
+
+    return {
+        year: Number(values.year),
+        month: Number(values.month),
+        day: Number(values.day)
+    };
+}
+
+function getTimeZoneOffsetMilliseconds(
+    timestamp,
+    timeZone
+) {
+    const parts =
+        new Intl.DateTimeFormat(
+            'en-US',
+            {
+                timeZone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }
+        ).formatToParts(
+            new Date(timestamp)
+        );
+
+    const values = {};
+
+    parts.forEach(part => {
+        if (
+            part.type !== 'literal'
+        ) {
+            values[part.type] =
+                part.value;
+        }
+    });
+
+    const hour =
+        Number(values.hour) === 24
+            ? 0
+            : Number(values.hour);
+
+    const asUtc =
+        Date.UTC(
+            Number(values.year),
+            Number(values.month) - 1,
+            Number(values.day),
+            hour,
+            Number(values.minute),
+            Number(values.second)
+        );
+
+    return (
+        asUtc -
+        timestamp
+    );
+}
+
+function getNewYorkMidnightTimestamp(
+    year,
+    month,
+    day
+) {
+    const utcGuess =
+        Date.UTC(
+            year,
+            month - 1,
+            day,
+            0,
+            0,
+            0
+        );
+
+    const offset =
+        getTimeZoneOffsetMilliseconds(
+            utcGuess,
+            'America/New_York'
+        );
+
+    return (
+        utcGuess -
+        offset
+    );
+}
+
+function getNextNewYorkResetTimestamp(
+    timestamp
+) {
+    const current =
+        getNewYorkDateParts(
+            timestamp
+        );
+
+    const currentMidnight =
+        getNewYorkMidnightTimestamp(
+            current.year,
+            current.month,
+            current.day
+        );
+
+    if (
+        currentMidnight >
+        timestamp
+    ) {
+        return currentMidnight;
+    }
+
+    const nextDay =
+        new Date(
+            Date.UTC(
+                current.year,
+                current.month - 1,
+                current.day + 1,
+                0,
+                0,
+                0
+            )
+        );
+
+    return getNewYorkMidnightTimestamp(
+        nextDay.getUTCFullYear(),
+        nextDay.getUTCMonth() + 1,
+        nextDay.getUTCDate()
+    );
+} 
+	 
 function sanitizeRngStoredResult(payload) { 
     if ( 
         !payload || 
@@ -835,6 +1040,10 @@ function sanitizeRngStoredResult(payload) {
             payload.lifetimeScore ?? 
             payload.lifetime_record_score ?? 
             '0', 
+        timesRolled: 
+            payload.timesRolled ?? 
+            payload.times_rolled ?? 
+            1, 
         modifiers: payload.modifiers ?? [] 
     }; 
 } 
@@ -895,7 +1104,7 @@ function saveLocalRngRollState(payload) {
             )
         );
     } catch (err) {
-    }
+    } 
 } 
 	 
 function clearLocalRngRollState() { 
@@ -938,14 +1147,29 @@ function getRngNextRollTimestamp() {
     return getLocalRngNextRollTimestamp();
 }
 
-function setLocalRngNextRollFromNow() {
+function setLocalRngNextRollFromReset() {
+    let nextRollTimestamp =
+        rngNextResetTimestamp;
+
+    if (
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp)
+    ) {
+        const now =
+            getRngServerNow() ??
+            Date.now();
+
+        nextRollTimestamp =
+            getNextNewYorkResetTimestamp(
+                now
+            );
+    }
+
     saveLocalRngRollState({
-        nextRollTimestamp:
-            Date.now() +
-            RNG_LOCAL_ROLL_INTERVAL
+        nextRollTimestamp
     });
 }
-	 
+
 function createRngTopControlArea() {
     if (rngTopControlArea) {
         return;
@@ -1032,12 +1256,18 @@ function createRngDailyStatus() {
 	 
     rngDailyStatus.className = 
         'rngDailyStatus'; 
+
+    rngDailyStatus.style.color =
+        '#8a8f94';
 	 
     rngDailyMessage = 
         document.createElement('div'); 
 	 
     rngDailyMessage.className = 
         'rngDailyMessage'; 
+
+    rngDailyMessage.style.color =
+        '#8a8f94';
 	 
     rngDailyMessage.textContent = 
         'Next roll in'; 
@@ -1047,6 +1277,9 @@ function createRngDailyStatus() {
 	 
     rngDailyCountdown.className = 
         'rngDailyCountdown'; 
+
+    rngDailyCountdown.style.color =
+        '#8a8f94';
 	 
     rngDailyStatus.appendChild( 
         rngDailyMessage 
@@ -1074,9 +1307,13 @@ function updateRngDailyCountdown() {
         return false;
     }
 
+    const now =
+        getRngServerNow() ??
+        Date.now();
+
     const remaining =
         nextRollTimestamp -
-        Date.now();
+        now;
 
     if (
         remaining <= 0
@@ -1106,6 +1343,12 @@ function updateRngDailyCountdown() {
         formatRngCountdown(
             remaining
         );
+
+    rngDailyMessage.style.color =
+        '#8a8f94';
+
+    rngDailyCountdown.style.color =
+        '#8a8f94';
 
     showRngDailyStatus();
     startRngDailyCountdown();
@@ -1162,6 +1405,8 @@ function clearRngRarityTheme() {
     RNG_RARITY_THEME_CLASSES.forEach(className => {
         document.body.classList.remove(className);
     });
+
+    document.body.style.background = '';
 }
 
 function normalizeRngRarity(rarity) {
@@ -1178,6 +1423,57 @@ function normalizeRngRarity(rarity) {
     return normalized;
 }
 
+function getRngDisplayRarity(payload) {
+    const baseRarity =
+        normalizeRngRarity(
+            payload &&
+            payload.rarity
+        );
+
+    /*
+    // FUTURE MODIFIER-BASED RARITY PROCESSING
+
+    let rarityTier =
+        baseRarity === 'common'
+            ? 0
+            : baseRarity === 'uncommon'
+                ? 1
+                : baseRarity === 'rare'
+                    ? 2
+                    : baseRarity === 'legendary'
+                        ? 3
+                        : -1;
+
+    if (
+        rarityTier >= 0 &&
+        Array.isArray(payload?.modifiers)
+    ) {
+        payload.modifiers.forEach(modifier => {
+            // Future modifier processing will determine
+            // whether a modifier increases rarity here.
+        });
+    }
+
+    const rarityByTier = [
+        'common',
+        'uncommon',
+        'rare',
+        'legendary'
+    ];
+
+    if (rarityTier >= 0) {
+        return rarityByTier[
+            Math.min(
+                rarityTier,
+                rarityByTier.length - 1
+            )
+        ];
+    }
+    */
+
+    return baseRarity;
+}
+
 function applyRngRarityTheme(rarity) {
     clearRngRarityTheme();
 
@@ -1189,9 +1485,28 @@ function applyRngRarityTheme(rarity) {
         document.body.classList.add(
             `rng-rarity-${normalized}`
         );
+
+        if (
+            RNG_RARITY_GRADIENTS[normalized]
+        ) {
+            document.body.style.background =
+                RNG_RARITY_GRADIENTS[normalized];
+        }
     }
 
     return normalized;
+}
+
+function getRngRarityGradient(rarity) {
+    const normalized =
+        normalizeRngRarity(
+            rarity
+        );
+
+    return (
+        RNG_RARITY_GRADIENTS[normalized] ??
+        ''
+    );
 }
 
 function playRngLaunchFlash() { 
@@ -1273,15 +1588,13 @@ function handleRngGenerateTabActivation() {
 
         if (card) {
             applyRngRarityTheme(
-                card.classList.contains('rng-rarity-common')
-                    ? 'common'
-                    : card.classList.contains('rng-rarity-uncommon')
-                        ? 'uncommon'
-                        : card.classList.contains('rng-rarity-rare')
-                            ? 'rare'
-                            : card.classList.contains('rng-rarity-legendary')
-                                ? 'legendary'
-                                : 'unknown'
+                getRngDisplayRarity(
+                    card.dataset.rngPayload
+                        ? JSON.parse(
+                            card.dataset.rngPayload
+                        )
+                        : null
+                )
             );
 
             scrollRngResultIntoView(card);
@@ -1398,7 +1711,7 @@ function resetDailyRngFrontend() {
 } 
 	 
 function markRngRollComplete(payload) { 
-    setLocalRngNextRollFromNow();
+    setLocalRngNextRollFromReset();
     updateRngDailyCountdown();
 
     if (rngDailyActionArea) { 
@@ -1422,8 +1735,13 @@ function renderStoredRngResult(payload) {
         rngResultPanel = null; 
     } 
 
+    const displayRarity =
+        getRngDisplayRarity(
+            payload
+        );
+
     applyRngRarityTheme(
-        payload && payload.rarity
+        displayRarity
     );
 	 
     rngResultPanel = 
@@ -1587,10 +1905,44 @@ function createRngStat(label, value, valueColor = null) {
     const statLabel = document.createElement('div'); 
     statLabel.className = 'rngStatLabel'; 
     statLabel.textContent = label; 
+
+    const normalizedLabel =
+        String(label).toLowerCase();
+
+    if (
+        String(label).length > 15
+    ) {
+        statLabel.style.fontSize =
+            '7px';
+
+        statLabel.style.letterSpacing =
+            '0.8px';
+
+        statLabel.style.lineHeight =
+            '1.2';
+
+        statLabel.style.whiteSpace =
+            'normal';
+    }
 	 
     const statValue = document.createElement('div'); 
     statValue.className = 'rngStatValue'; 
     statValue.textContent = formatRngValue(value); 
+
+    statValue.style.overflowWrap =
+        'anywhere';
+
+    statValue.style.wordBreak =
+        'break-word';
+
+    if (
+        normalizedLabel.includes(
+            'lifetime record'
+        )
+    ) {
+        statValue.style.fontSize =
+            '15px';
+    }
 	 
     if (valueColor) { 
         statValue.style.color = valueColor; 
@@ -1613,13 +1965,32 @@ function createRngRecordCard(payload, recordText) {
             ? payload.rarity.trim().toLowerCase() 
             : 'unknown'; 
 
+    const displayRarity =
+        getRngDisplayRarity(
+            payload
+        );
+
     const normalizedRarity =
-        normalizeRngRarity(rarity);
+        normalizeRngRarity(
+            displayRarity
+        );
 
     if (normalizedRarity !== 'unknown') {
         card.classList.add(
             `rng-rarity-${normalizedRarity}`
         );
+
+        const rarityGradient =
+            getRngRarityGradient(
+                normalizedRarity
+            );
+
+        if (
+            rarityGradient
+        ) {
+            card.style.background =
+                rarityGradient;
+        }
     }
 	 
     const recordHeader = document.createElement('div'); 
@@ -1643,8 +2014,10 @@ function createRngRecordCard(payload, recordText) {
     stats.appendChild( 
         createRngStat( 
             'Rarity', 
-            payload.rarity ?? 'Unknown', 
-            getRngRarityColor(rarity) 
+            displayRarity !== 'unknown'
+                ? displayRarity
+                : payload.rarity ?? 'Unknown', 
+            getRngRarityColor(displayRarity) 
         ) 
     ); 
 	 
@@ -1662,6 +2035,15 @@ function createRngRecordCard(payload, recordText) {
                 payload.lifetimeScore ??
                 payload.lifetime_record_score ??
                 '0'
+        )
+    );
+
+    stats.appendChild(
+        createRngStat(
+            'Times Rolled',
+            payload.timesRolled ??
+                payload.times_rolled ??
+                1
         )
     ); 
 	 
@@ -1748,8 +2130,13 @@ function showRngRecordResult(payload) {
         return; 
     } 
 
+    const displayRarity =
+        getRngDisplayRarity(
+            payload
+        );
+
     applyRngRarityTheme(
-        payload.rarity
+        displayRarity
     );
 
     createRngTopControlArea();
@@ -2163,10 +2550,14 @@ function beginRngRollRequest() {
     const nextRollTimestamp =
         getRngNextRollTimestamp();
 
+    const now =
+        getRngServerNow() ??
+        Date.now();
+
     if (
         typeof nextRollTimestamp === 'number' &&
         Number.isFinite(nextRollTimestamp) &&
-        nextRollTimestamp > Date.now()
+        nextRollTimestamp > now
     ) {
         updateRngDailyCountdown();
         return;
