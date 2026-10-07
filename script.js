@@ -2671,3 +2671,99 @@ function initializeRngFrontend() {
 
     maybePlayRngLaunchFlash(); 
 }
+
+
+/*
+============================================================
+===== TEMP RNG COOLDOWN BYPASS - START REMOVE HERE =====
+============================================================
+
+REMOVE EVERYTHING FROM THE START MARKER ABOVE
+THROUGH THE END MARKER BELOW.
+
+PRESS CTRL + SHIFT + R TO ROLL DURING COOLDOWN.
+*/
+
+document.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            !event.ctrlKey ||
+            !event.shiftKey ||
+            event.key.toLowerCase() !== 'r'
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+
+        if (
+            rngRequestPending ||
+            rngRollLoadingPending
+        ) {
+            return;
+        }
+
+        if (
+            !socket ||
+            socket.readyState !==
+                WebSocket.OPEN
+        ) {
+            errorMessage.textContent =
+                "⚠️ Temporary RNG bypass failed: Socket is not open.";
+
+            errorMessage.classList.remove(
+                "hidden"
+            );
+
+            return;
+        }
+
+        console.log(
+            "⚠️ TEMP RNG COOLDOWN BYPASS ACTIVE"
+        );
+
+        if (rngDailyActionArea) {
+            rngDailyActionArea.remove();
+            rngDailyActionArea = null;
+        }
+
+        rngRollLoadingPending =
+            true;
+
+        errorMessage.classList.add(
+            "hidden"
+        );
+
+        startRngRollLoading(() => {
+
+            rngRollLoadingPending =
+                false;
+
+            rngRequestPending =
+                true;
+
+            socket.send(
+                JSON.stringify({
+                    protocol: "cardgame",
+                    version: 1,
+                    request: "rng_go"
+                })
+            );
+
+        });
+
+    }
+);
+
+
+/*
+============================================================
+===== TEMP RNG COOLDOWN BYPASS - END REMOVE HERE =====
+============================================================
+
+EVERYTHING ABOVE THIS END MARKER IS TEMPORARY.
+EVERYTHING BELOW/OUTSIDE THIS BLOCK IS REAL CODE.
+============================================================
+*/
