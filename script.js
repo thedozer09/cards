@@ -782,6 +782,9 @@ const RNG_LIFETIME_FADE_DURATION = 260;
 const RNG_LIFETIME_ROLL_DURATION = 2000;
 const RNG_LIFETIME_DIGIT_STAGGER = 0;
 const RNG_LIFETIME_VISIBLE_STEPS = 1;
+const RNG_RECORD_WIGGLE_DURATION = 2800;
+const RNG_RECORD_WIGGLE_AMPLITUDE = 4;
+const RNG_RECORD_WIGGLE_ROTATION = 0.7;
 	 
 let rngRequestPending = false; 
 let rngRollLoadingPending = false; 
@@ -806,6 +809,7 @@ let rngPendingLifetimeScore = null;
 let rngLifetimeAnimationActive = false;
 let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = [];
+let rngRecordCardWiggleFrame = null;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -1450,6 +1454,102 @@ function scrollRngResultIntoView(element) {
     });
 }
 
+function clearRngRecordCardWiggle() {
+    if (
+        rngRecordCardWiggleFrame
+    ) {
+        cancelAnimationFrame(
+            rngRecordCardWiggleFrame
+        );
+
+        rngRecordCardWiggleFrame =
+            null;
+    }
+}
+
+function startRngRecordCardWiggle(
+    card
+) {
+    if (!card) {
+        return;
+    }
+
+    clearRngRecordCardWiggle();
+
+    const startedAt =
+        performance.now();
+
+    function wiggleFrame(now) {
+        if (
+            !card.parentElement
+        ) {
+            rngRecordCardWiggleFrame =
+                null;
+
+            return;
+        }
+
+        const elapsed =
+            now -
+            startedAt;
+
+        const progress =
+            Math.min(
+                elapsed /
+                    RNG_RECORD_WIGGLE_DURATION,
+                1
+            );
+
+        const wave =
+            Math.sin(
+                progress *
+                    Math.PI *
+                    4
+            );
+
+        const envelope =
+            Math.sin(
+                progress *
+                    Math.PI
+            );
+
+        const x =
+            wave *
+            envelope *
+            RNG_RECORD_WIGGLE_AMPLITUDE;
+
+        const rotation =
+            wave *
+            envelope *
+            RNG_RECORD_WIGGLE_ROTATION;
+
+        card.style.transform =
+            `translateX(${x}px) rotate(${rotation}deg)`;
+
+        if (
+            progress >= 1
+        ) {
+            card.style.transform =
+                'none';
+
+            rngRecordCardWiggleFrame =
+                null;
+
+            return;
+        }
+
+        rngRecordCardWiggleFrame =
+            requestAnimationFrame(
+                wiggleFrame
+            );
+    }
+
+    rngRecordCardWiggleFrame =
+        requestAnimationFrame(
+            wiggleFrame
+        );
+}
+
 function handleRngGenerateTabActivation() {
     if (
         !generateScreen ||
@@ -1467,6 +1567,8 @@ function handleRngGenerateTabActivation() {
             );
 
         if (card) {
+            clearRngRecordCardWiggle();
+
             applyRngRarityTheme(
                 card.classList.contains('rng-rarity-common')
                     ? 'common'
@@ -1512,6 +1614,8 @@ function animateRngRecordCard(
     if (!card) { 
         return; 
     } 
+
+    clearRngRecordCardWiggle();
 	 
     const childElements = 
         card.querySelectorAll( 
@@ -1581,10 +1685,29 @@ function animateRngRecordCard(
                         card.style.transform =
                             'none';
 
+                        playRngLaunchFlash();
+
                         void card.offsetWidth;
 
                         card.classList.add(
                             'rngRecordCardFinalPop'
+                        );
+
+                        card.addEventListener(
+                            'animationend',
+                            finalPopEvent => {
+                                if (
+                                    finalPopEvent.animationName !==
+                                    'rngRecordCardFinalPop'
+                                ) {
+                                    return;
+                                }
+
+                                startRngRecordCardWiggle(
+                                    card
+                                );
+                            },
+                            { once: true }
                         );
                     },
                     { once: true }
@@ -1651,6 +1774,7 @@ function resetDailyRngFrontend() {
     clearRngRarityTheme();
 
     clearRngLifetimeAnimation();
+    clearRngRecordCardWiggle();
     rngPendingLifetimeScore = null;
 
     if (rngScrambleProgressTimer) {
@@ -2893,6 +3017,16 @@ function createRngStat(label, value, valueColor = null) {
             'lifetime'
         )
     ) {
+        stat.classList.add(
+            'rngLifetimeStat'
+        );
+
+        stat.style.position =
+            'relative';
+
+        stat.style.left =
+            '-6px';
+
         statLabel.classList.add(
             'rngLifetimeStatLabel'
         );
@@ -3028,6 +3162,9 @@ function createRngRecordCard(payload, recordText) {
     const recordLabel = document.createElement('div'); 
     recordLabel.className = 'rngRecordLabel'; 
     recordLabel.textContent = 'Record'; 
+
+    recordLabel.style.fontSize =
+        '28px';
 	 
     const recordValue = document.createElement('div'); 
     recordValue.className = 'rngRecordValue'; 
