@@ -778,8 +778,8 @@ const RNG_SCRAMBLE_TICK = 50;
 const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
 const RNG_LIFETIME_DIGIT_DURATION = 650;
-const RNG_LIFETIME_DIGIT_STAGGER = 70;
-const RNG_LIFETIME_NEW_DIGIT_DURATION = 580;
+const RNG_LIFETIME_DIGIT_STAGGER = 650;
+const RNG_LIFETIME_NEW_DIGIT_DURATION = 600;
 	 
 let rngRequestPending = false; 
 let rngRollLoadingPending = false; 
@@ -801,6 +801,7 @@ let rngLocalRollState = null;
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false;
 let rngPendingLifetimeScore = null;
+let rngLifetimeAnimationActive = false;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -1500,7 +1501,10 @@ function handleRngGenerateTabActivation() {
     }
 }
 	 
-function animateRngRecordCard(card) { 
+function animateRngRecordCard(
+    card,
+    onComplete = null
+) { 
     if (!card) { 
         return; 
     } 
@@ -1514,6 +1518,29 @@ function animateRngRecordCard(card) {
         card,
         ...childElements
     ];
+
+    const lastElement =
+        elements[
+            elements.length - 1
+        ];
+
+    if (
+        onComplete &&
+        lastElement
+    ) {
+        lastElement.addEventListener(
+            'animationend',
+            event => {
+                if (
+                    event.animationName ===
+                    'rngResultPopIn'
+                ) {
+                    onComplete();
+                }
+            },
+            { once: true }
+        );
+    }
 
     elements.forEach( 
         (element, index) => { 
@@ -1541,13 +1568,23 @@ function animateRngRecordCard(card) {
                 'rngResultPopIn' 
             ); 
         } 
-    ); 
+    );
+
+    if (
+        onComplete &&
+        !lastElement
+    ) {
+        onComplete();
+    }
 } 
 	 
 function resetDailyRngFrontend() { 
     stopRngDailyCountdown(); 
     clearLocalRngRollState(); 
     clearRngRarityTheme();
+
+    rngPendingLifetimeScore = null;
+    rngLifetimeAnimationActive = false;
 
     if (rngScrambleProgressTimer) {
         clearInterval(
@@ -1693,6 +1730,40 @@ function createRngLifetimeDigitFace(
     return face;
 }
 
+function createRngLifetimeDigitStrip() {
+    const strip =
+        document.createElement('span');
+
+    strip.className =
+        'rngLifetimeDigitStrip';
+
+    for (
+        let digit = 0;
+        digit <= 9;
+        digit++
+    ) {
+        strip.appendChild(
+            createRngLifetimeDigitFace(
+                digit
+            )
+        );
+    }
+
+    for (
+        let digit = 0;
+        digit <= 9;
+        digit++
+    ) {
+        strip.appendChild(
+            createRngLifetimeDigitFace(
+                digit
+            )
+        );
+    }
+
+    return strip;
+}
+
 function animateRngLifetimeScore(
     element,
     oldScore,
@@ -1732,6 +1803,13 @@ function animateRngLifetimeScore(
             newText
         );
 
+        element.setAttribute(
+            'aria-label',
+            newText
+        );
+
+        rngLifetimeAnimationActive = false;
+
         return;
     }
 
@@ -1750,6 +1828,8 @@ function animateRngLifetimeScore(
         'aria-label',
         newText
     );
+
+    rngLifetimeAnimationActive = true;
 
     const oldLength =
         oldText.length;
@@ -1796,10 +1876,8 @@ function animateRngLifetimeScore(
         if (
             oldDigit === null
         ) {
-            const face =
-                createRngLifetimeDigitFace(
-                    targetDigit
-                );
+            const strip =
+                createRngLifetimeDigitStrip();
 
             digitFrame.classList.add(
                 'rngLifetimeDigitNew'
@@ -1810,33 +1888,28 @@ function animateRngLifetimeScore(
                 `${delay}ms`
             );
 
+            strip.style.transform =
+                'translateY(0)';
+
+            strip.style.transitionDuration =
+                `${RNG_LIFETIME_NEW_DIGIT_DURATION}ms`;
+
+            strip.style.transitionDelay =
+                `${delay}ms`;
+
             digitFrame.appendChild(
-                face
+                strip
             );
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    strip.style.transform =
+                        `translateY(-${Number(targetDigit)}em)`;
+                });
+            });
         } else {
             const strip =
-                document.createElement('span');
-
-            strip.className =
-                'rngLifetimeDigitStrip';
-
-            for (
-                let cycle = 0;
-                cycle < 2;
-                cycle++
-            ) {
-                for (
-                    let digit = 0;
-                    digit <= 9;
-                    digit++
-                ) {
-                    strip.appendChild(
-                        createRngLifetimeDigitFace(
-                            digit
-                        )
-                    );
-                }
-            }
+                createRngLifetimeDigitStrip();
 
             const oldNumericDigit =
                 Number(oldDigit);
@@ -1880,6 +1953,21 @@ function animateRngLifetimeScore(
             digitFrame
         );
     }
+
+    const totalAnimationDuration =
+        (
+            newLength -
+            1
+        ) *
+        RNG_LIFETIME_DIGIT_STAGGER +
+        Math.max(
+            RNG_LIFETIME_DIGIT_DURATION,
+            RNG_LIFETIME_NEW_DIGIT_DURATION
+        );
+
+    setTimeout(() => {
+        rngLifetimeAnimationActive = false;
+    }, totalAnimationDuration);
 }
 
 function animatePendingRngLifetimeScore(
@@ -2021,6 +2109,21 @@ function applyRngLifetimeUpdateResult(score) {
         return;
     }
 
+    lifetimeValueElement.setAttribute(
+        'data-rng-lifetime-confirmed-score',
+        String(
+            Math.round(
+                score
+            )
+        )
+    );
+
+    if (
+        rngLifetimeAnimationActive
+    ) {
+        return;
+    }
+
     const currentScore =
         Number(
             lifetimeValueElement.getAttribute(
@@ -2032,24 +2135,37 @@ function applyRngLifetimeUpdateResult(score) {
         Number.isFinite(currentScore) &&
         currentScore === score
     ) {
-        lifetimeValueElement.textContent =
-            lifetimeValueElement.textContent;
-
         return;
     }
 
-    const fallbackScore =
-        Number(
-            lifetimeValueElement.textContent
+    if (
+        rngPendingLifetimeScore === null
+    ) {
+        lifetimeValueElement.textContent =
+            String(
+                Math.round(
+                    score
+                )
+            );
+
+        lifetimeValueElement.setAttribute(
+            'data-rng-lifetime-score',
+            String(
+                Math.round(
+                    score
+                )
+            )
         );
 
-    animateRngLifetimeScore(
-        lifetimeValueElement,
-        Number.isFinite(currentScore)
-            ? currentScore
-            : fallbackScore,
-        score
-    );
+        lifetimeValueElement.setAttribute(
+            'aria-label',
+            String(
+                Math.round(
+                    score
+                )
+            )
+        );
+    }
 }
 	 
 function applyDailyRollState(state) { 
@@ -2244,22 +2360,6 @@ function createRngStat(label, value, valueColor = null) {
     const statLabel = document.createElement('div'); 
     statLabel.className = 'rngStatLabel'; 
     statLabel.textContent = label; 
-
-    if (
-        String(label).length > 15
-    ) {
-        statLabel.style.fontSize =
-            '7px';
-
-        statLabel.style.letterSpacing =
-            '0.8px';
-
-        statLabel.style.lineHeight =
-            '1.2';
-
-        statLabel.style.whiteSpace =
-            'normal';
-    }
 	 
     const statValue = document.createElement('div'); 
     statValue.className = 'rngStatValue'; 
@@ -2276,9 +2376,6 @@ function createRngStat(label, value, valueColor = null) {
             'lifetime record'
         )
     ) {
-        statValue.style.fontSize =
-            '15px';
-
         statValue.classList.add(
             'rngLifetimeScoreValue'
         );
@@ -2594,15 +2691,20 @@ function showRngRecordResult(payload) {
         rngResultPanel.appendChild(card); 
         scrollRngResultIntoView(card);
         requestRngLaunchFlash();
-        animateRngRecordCard(card);
-        animatePendingRngLifetimeScore(
-            payload
-        ); 
+
+        animateRngRecordCard(
+            card,
+            () => {
+                animatePendingRngLifetimeScore(
+                    payload
+                );
+            }
+        );
 	 
         updateScrollRail(); 
-        initializeRngGenerateButton();
-        rngScrambleElement = null;
-        scramble.remove();
+        initializeRngGenerateButton(); 
+        rngScrambleElement = null; 
+        scramble.remove(); 
         return; 
     } 
 	 
@@ -2697,11 +2799,12 @@ function showRngRecordResult(payload) {
         requestRngLaunchFlash();
 
         animateRngRecordCard(
-            card
-        );
-
-        animatePendingRngLifetimeScore(
-            payload
+            card,
+            () => {
+                animatePendingRngLifetimeScore(
+                    payload
+                );
+            }
         );
 
         updateRngDailyCountdown();
@@ -3114,7 +3217,7 @@ document.addEventListener(
 
 /*
 ============================================================
-===== TEMP RNG COOLDOWN BYPASS - END REMOVE HERE =====
+===== TEMP RNG COOLDOWN BYPASS - END MARKER =====
 ============================================================
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY.

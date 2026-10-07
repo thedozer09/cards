@@ -1046,7 +1046,7 @@ button {
 
     color: rgba(193, 215, 229, 0.62);
 
-    font-size: 9px;
+    font-size: 10px;
 
     font-weight: 800;
 
@@ -1066,7 +1066,7 @@ button {
 
     font-family: "Courier New", Courier, monospace;
 
-    font-size: 22px;
+    font-size: 24px;
 
     font-weight: 900;
 
@@ -1130,11 +1130,13 @@ button {
 
     color: rgba(190, 211, 226, 0.6);
 
-    font-size: 8px;
+    font-size: 9px;
 
     font-weight: 800;
 
     letter-spacing: 1.1px;
+
+    line-height: 1.2;
 
     text-transform: uppercase;
 
@@ -1144,9 +1146,11 @@ button {
 
     color: #edf6fb;
 
-    font-size: 16px;
+    font-size: 18px;
 
     font-weight: 800;
+
+    line-height: 1.15;
 
     overflow-wrap: anywhere;
 
@@ -1167,6 +1171,10 @@ button {
     white-space: nowrap;
 
     overflow: visible;
+
+    font-size: inherit;
+
+    line-height: 1em;
 
     font-variant-numeric: tabular-nums;
 
@@ -1244,7 +1252,7 @@ button {
 
         rngLifetimeDigitNew
 
-        580ms
+        600ms
 
         cubic-bezier(0.16, 1, 0.3, 1)
 
@@ -1352,7 +1360,7 @@ button {
 
     color: #dbeaf4;
 
-    font-size: 11px;
+    font-size: 12px;
 
     font-weight: 900;
 
@@ -1402,7 +1410,7 @@ button {
 
     color: #f0f6fa;
 
-    font-size: 12px;
+    font-size: 13px;
 
     font-weight: 800;
 
@@ -1414,7 +1422,7 @@ button {
 
     color: rgba(203, 220, 231, 0.76);
 
-    font-size: 11px;
+    font-size: 12px;
 
     line-height: 1.4;
 
@@ -1432,7 +1440,7 @@ button {
 
     color: rgba(155, 165, 172, 0.68);
 
-    font-size: 11px;
+    font-size: 12px;
 
     text-align: center;
 
@@ -1946,7 +1954,7 @@ button {
 
     .rngRecordValue {
 
-        font-size: 20px;
+        font-size: 22px;
 
     }
 
