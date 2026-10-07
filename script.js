@@ -205,22 +205,8 @@ const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const RNG_LOCAL_RESULT_STORAGE_KEY = 'cardgame_rng_last_result';
 const RNG_TEMP_CACHE_CLEAR_KEY = 'cardgame_rng_old_24hr_cache_cleared';
 const tabLoadingStates = new Map();
-
 try {
-    if (
-        localStorage.getItem(
-            RNG_TEMP_CACHE_CLEAR_KEY
-        ) !== '1'
-    ) {
-        localStorage.removeItem(
-            RNG_LOCAL_ROLL_STORAGE_KEY
-        );
-
-        localStorage.setItem(
-            RNG_TEMP_CACHE_CLEAR_KEY,
-            '1'
-        );
-    }
+    localStorage.clear();
 } catch (err) {
 }
 
