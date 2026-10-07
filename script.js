@@ -69,6 +69,29 @@ function initializeWebSocket() {
                 showRngRecordResult(data.data); 
                 return; 
             } 
+
+            if (data.type === "rng_lifetime_updated") { 
+                if ( 
+                    !data.data || 
+                    typeof data.data.lifetimeRecordScore !== 'number' || 
+                    !Number.isFinite(data.data.lifetimeRecordScore) 
+                ) { 
+                    errorMessage.textContent = 
+                        "⚠️ Invalid lifetime score update response."; 
+
+                    errorMessage.classList.remove( 
+                        "hidden" 
+                    ); 
+
+                    return; 
+                } 
+
+                applyRngLifetimeUpdateResult( 
+                    data.data.lifetimeRecordScore 
+                ); 
+
+                return; 
+            } 
 	 
             if (data.type === "daily_roll_state") { 
                 return; 
@@ -1010,20 +1033,6 @@ function clearLocalRngResult() {
 }
 
 function getRngNextRollTimestamp() {
-    /*
-    // FUTURE TRELLO TIMING PROCESSING
-
-    const trelloRollState = null;
-
-    if (
-        trelloRollState &&
-        typeof trelloRollState.nextRollTimestamp === 'number' &&
-        Number.isFinite(trelloRollState.nextRollTimestamp)
-    ) {
-        return trelloRollState.nextRollTimestamp;
-    }
-    */
-
     return rngNextResetTimestamp ??
         rngLocalRollState?.nextRollTimestamp ??
         null;
@@ -1116,12 +1125,18 @@ function createRngDailyStatus() {
     rngDailyStatus.className = 
         'rngDailyStatus'; 
 
+    rngDailyStatus.style.color =
+        '#8a8f94';
+	 
     rngDailyMessage = 
         document.createElement('div'); 
 	 
     rngDailyMessage.className = 
         'rngDailyMessage'; 
 
+    rngDailyMessage.style.color =
+        '#8a8f94';
+	 
     rngDailyMessage.textContent = 
         'Next roll in'; 
 	 
@@ -1130,6 +1145,9 @@ function createRngDailyStatus() {
 	 
     rngDailyCountdown.className = 
         'rngDailyCountdown'; 
+
+    rngDailyCountdown.style.color =
+        '#8a8f94';
 	 
     rngDailyStatus.appendChild( 
         rngDailyMessage 
@@ -1196,6 +1214,12 @@ function updateRngDailyCountdown() {
         formatRngCountdown(
             remaining
         );
+
+    rngDailyMessage.style.color =
+        '#8a8f94';
+
+    rngDailyCountdown.style.color =
+        '#8a8f94';
 
     showRngDailyStatus();
     startRngDailyCountdown();
@@ -1579,11 +1603,140 @@ function markRngRollComplete(payload) {
 
     updateRngDailyCountdown();
 
+    sendRngLifetimeUpdate(
+        payload
+    );
+
     if (rngDailyActionArea) { 
         rngDailyActionArea.remove(); 
         rngDailyActionArea = null; 
     } 
 } 
+
+function sendRngLifetimeUpdate(payload) {
+    if (
+        !payload ||
+        typeof payload !== 'object'
+    ) {
+        return;
+    }
+
+    const currentLifetime =
+        Number(
+            payload.lifetimeRecordScore ??
+            payload.lifetimeScore ??
+            payload.lifetime_record_score
+        );
+
+    const points =
+        Number(
+            payload.points
+        );
+
+    if (
+        !Number.isFinite(currentLifetime) ||
+        !Number.isFinite(points)
+    ) {
+        console.error(
+            "❌ Could not calculate new RNG lifetime score."
+        );
+
+        return;
+    }
+
+    const newLifetimeScore =
+        currentLifetime +
+        points;
+
+    if (
+        !socket ||
+        socket.readyState !==
+            WebSocket.OPEN
+    ) {
+        console.error(
+            "❌ Could not send RNG lifetime update because socket is not open."
+        );
+
+        return;
+    }
+
+    socket.send(
+        JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "rng_lifetime_update",
+            info: {
+                score:
+                    newLifetimeScore
+            }
+        })
+    );
+
+    console.log(
+        `📈 RNG lifetime score update sent: ${currentLifetime} + ${points} = ${newLifetimeScore}`
+    );
+}
+
+function applyRngLifetimeUpdateResult(score) {
+    const storedResult =
+        loadLocalRngResult();
+
+    if (
+        storedResult
+    ) {
+        storedResult.lifetimeRecordScore =
+            score;
+
+        saveLocalRngResult(
+            storedResult
+        );
+    }
+
+    if (
+        !rngResultPanel
+    ) {
+        return;
+    }
+
+    const statLabels =
+        rngResultPanel.querySelectorAll(
+            '.rngStatLabel'
+        );
+
+    for (
+        const statLabel of statLabels
+    ) {
+        if (
+            statLabel.textContent !==
+            'Lifetime Record Score'
+        ) {
+            continue;
+        }
+
+        const stat =
+            statLabel.parentElement;
+
+        if (!stat) {
+            return;
+        }
+
+        const statValue =
+            stat.querySelector(
+                '.rngStatValue'
+            );
+
+        if (!statValue) {
+            return;
+        }
+
+        statValue.textContent =
+            formatRngValue(
+                score
+            );
+
+        return;
+    }
+}
 	 
 function applyDailyRollState(state) { 
     return; 
@@ -1905,14 +2058,9 @@ function createRngRecordCard(payload, recordText) {
     stats.appendChild(
         createRngStat(
             'Times Rolled',
-            1
-            /*
-            // FUTURE TRELLO TIMES ROLLED READING
-
             payload.timesRolled ??
                 payload.times_rolled ??
                 1
-            */
         )
     ); 
 	 
