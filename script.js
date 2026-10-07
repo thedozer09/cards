@@ -778,11 +778,10 @@ const RNG_SCRAMBLE_TICK = 50;
 const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
 const RNG_LIFETIME_ROLL_DELAY = 3000;
-const RNG_LIFETIME_DIGIT_DURATION = 500;
-const RNG_LIFETIME_DIGIT_STAGGER = 160;
-const RNG_LIFETIME_NEW_DIGIT_DURATION = 650;
-const RNG_LIFETIME_FADE_DISTANCE = 40;
-const RNG_LIFETIME_VISIBLE_STEPS = 2;
+const RNG_LIFETIME_FADE_DURATION = 260;
+const RNG_LIFETIME_DIGIT_STEP_DURATION = 280;
+const RNG_LIFETIME_DIGIT_STAGGER = 120;
+const RNG_LIFETIME_VISIBLE_STEPS = 1;
 	 
 let rngRequestPending = false; 
 let rngRollLoadingPending = false; 
@@ -1506,7 +1505,10 @@ function handleRngGenerateTabActivation() {
     }
 }
 	 
-function animateRngRecordCard(card) { 
+function animateRngRecordCard(
+    card,
+    onLifetimeLabelShown = null
+) { 
     if (!card) { 
         return; 
     } 
@@ -1523,6 +1525,29 @@ function animateRngRecordCard(card) {
 
     elements.forEach( 
         (element, index) => { 
+
+            if (
+                onLifetimeLabelShown &&
+                element.classList.contains(
+                    'rngStatLabel'
+                ) &&
+                element.textContent ===
+                    'Lifetime Record Score'
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName ===
+                            'rngResultPopIn'
+                        ) {
+                            onLifetimeLabelShown();
+                        }
+                    },
+                    { once: true }
+                );
+            }
+
             element.style.setProperty( 
                 '--rng-pop-delay', 
                 `${index * (RNG_POP_INTERVAL / 1000)}s` 
@@ -1550,11 +1575,16 @@ function animateRngRecordCard(card) {
     ); 
 } 
 	 
-function stopRngLifetimeAnimationFrames() {
+function clearRngLifetimeAnimation() {
     if (
-        rngLifetimeAnimationFrames.length === 0
+        rngLifetimeRollTimer
     ) {
-        return;
+        clearTimeout(
+            rngLifetimeRollTimer
+        );
+
+        rngLifetimeRollTimer =
+            null;
     }
 
     rngLifetimeAnimationFrames.forEach(
@@ -1572,26 +1602,12 @@ function stopRngLifetimeAnimationFrames() {
         false;
 }
 
-function clearRngLifetimeRollTimer() {
-    if (
-        rngLifetimeRollTimer
-    ) {
-        clearTimeout(
-            rngLifetimeRollTimer
-        );
-
-        rngLifetimeRollTimer =
-            null;
-    }
-}
-
 function resetDailyRngFrontend() { 
     stopRngDailyCountdown(); 
     clearLocalRngRollState(); 
     clearRngRarityTheme();
 
-    clearRngLifetimeRollTimer();
-    stopRngLifetimeAnimationFrames();
+    clearRngLifetimeAnimation();
     rngPendingLifetimeScore = null;
 
     if (rngScrambleProgressTimer) {
@@ -1736,7 +1752,11 @@ function createRngLifetimeDigitFace(
 
     face.textContent =
         String(
-            Number(digit) % 10
+            (
+                Number(digit) +
+                10
+            ) %
+            10
         );
 
     return face;
@@ -1753,14 +1773,12 @@ function getRngLifetimeReelDigit(
         ) %
         10 +
         10
-    ) %
-        10;
+    ) % 10;
 }
 
 function createRngLifetimeDigitReel(
     oldDigit,
     targetDigit,
-    isNewDigit,
     delay,
     onFinished
 ) {
@@ -1769,14 +1787,6 @@ function createRngLifetimeDigitReel(
 
     digitFrame.className =
         'rngLifetimeDigit';
-
-    if (
-        isNewDigit
-    ) {
-        digitFrame.classList.add(
-            'rngLifetimeDigitNew'
-        );
-    }
 
     const strip =
         document.createElement('span');
@@ -1801,17 +1811,13 @@ function createRngLifetimeDigitReel(
             10
         ) % 10;
 
-    const faceCount =
+    const totalFaces =
         forwardSteps +
-        (
-            RNG_LIFETIME_VISIBLE_STEPS *
-            2
-        ) +
-        1;
+        3;
 
     for (
         let index = 0;
-        index < faceCount;
+        index < totalFaces;
         index++
     ) {
         const digit =
@@ -1841,22 +1847,22 @@ function createRngLifetimeDigitReel(
             numericTargetDigit,
         forwardSteps,
         delay,
-        isNewDigit,
         onFinished
     };
 }
 
-function updateRngLifetimeReel(
+function updateRngLifetimeDigitFaces(
     reel,
     translateY,
     faceHeight,
     frameHeight
 ) {
+    const centerY =
+        frameHeight /
+        2;
+
     const faces =
         reel.strip.children;
-
-    const centerY =
-        frameHeight / 2;
 
     for (
         let index = 0;
@@ -1886,39 +1892,41 @@ function updateRngLifetimeReel(
                 centerY
             );
 
-        const opacity =
-            Math.max(
-                0,
-                Math.min(
-                    1,
+        const fadeStart =
+            faceHeight *
+            1.2;
+
+        const fadeEnd =
+            faceHeight *
+            2;
+
+        let opacity = 1;
+
+        if (
+            distance >
+            fadeStart
+        ) {
+            opacity =
+                Math.max(
+                    0,
                     1 -
                         (
-                            distance /
-                            RNG_LIFETIME_FADE_DISTANCE
+                            (
+                                distance -
+                                fadeStart
+                            ) /
+                            (
+                                fadeEnd -
+                                fadeStart
+                            )
                         )
-                )
-            );
+                );
+        }
 
         face.style.opacity =
             String(
                 opacity
             );
-
-        const scale =
-            distance <= 2
-                ? 1
-                : Math.max(
-                    0.9,
-                    1 -
-                        Math.min(
-                            distance /
-                                300,
-                            0.1
-                        )
-                );
-
-        face.style.transform =
-            `scale(${scale})`;
     }
 }
 
@@ -1945,44 +1953,11 @@ function easeRngLifetimeRoll(
 }
 
 function startRngLifetimeDigitReel(
-    reel
+    reel,
+    faceHeight,
+    frameHeight,
+    onGlobalFrame
 ) {
-    const frame =
-        reel.digitFrame;
-
-    const strip =
-        reel.strip;
-
-    const firstFace =
-        strip.querySelector(
-            '.rngLifetimeDigitFace'
-        );
-
-    if (!firstFace) {
-        reel.onFinished();
-        return;
-    }
-
-    const faceHeight =
-        firstFace.getBoundingClientRect().height;
-
-    const frameHeight =
-        frame.getBoundingClientRect().height;
-
-    if (
-        !Number.isFinite(
-            faceHeight
-        ) ||
-        faceHeight <= 0 ||
-        !Number.isFinite(
-            frameHeight
-        ) ||
-        frameHeight <= 0
-    ) {
-        reel.onFinished();
-        return;
-    }
-
     const centerOffset =
         (
             frameHeight -
@@ -2011,10 +1986,10 @@ function startRngLifetimeDigitReel(
             faceHeight
         );
 
-    strip.style.transform =
+    reel.strip.style.transform =
         `translateY(${startTranslate}px)`;
 
-    updateRngLifetimeReel(
+    updateRngLifetimeDigitFaces(
         reel,
         startTranslate,
         faceHeight,
@@ -2034,29 +2009,17 @@ function startRngLifetimeDigitReel(
             cancelAnimationFrame(
                 frameId
             );
-
-            rngLifetimeAnimationFrames =
-                rngLifetimeAnimationFrames.filter(
-                    value => value !==
-                        frameId
-                );
         }
 
-        strip.style.transform =
+        reel.strip.style.transform =
             `translateY(${endTranslate}px)`;
 
-        updateRngLifetimeReel(
+        updateRngLifetimeDigitFaces(
             reel,
             endTranslate,
             faceHeight,
             frameHeight
         );
-
-        frame.style.transform =
-            'perspective(320px) rotateX(0deg) scale(1)';
-
-        frame.style.opacity =
-            '1';
 
         reel.onFinished();
     }
@@ -2077,18 +2040,6 @@ function startRngLifetimeDigitReel(
             elapsed <
             reel.delay
         ) {
-            frame.style.opacity =
-                reel.isNewDigit
-                    ? '0'
-                    : '1';
-
-            if (
-                reel.isNewDigit
-            ) {
-                frame.style.transform =
-                    'perspective(320px) rotateX(-75deg) scale(0.72)';
-            }
-
             frameId =
                 requestAnimationFrame(
                     animate
@@ -2101,20 +2052,21 @@ function startRngLifetimeDigitReel(
             return;
         }
 
+        if (
+            reel.forwardSteps ===
+            0
+        ) {
+            complete();
+            return;
+        }
+
         const localElapsed =
             elapsed -
             reel.delay;
 
         const duration =
-            reel.isNewDigit
-                ? RNG_LIFETIME_NEW_DIGIT_DURATION
-                : (
-                    Math.max(
-                        1,
-                        reel.forwardSteps
-                    ) *
-                    RNG_LIFETIME_DIGIT_DURATION
-                );
+            reel.forwardSteps *
+            RNG_LIFETIME_DIGIT_STEP_DURATION;
 
         const progress =
             Math.min(
@@ -2138,10 +2090,10 @@ function startRngLifetimeDigitReel(
                 eased
             );
 
-        strip.style.transform =
+        reel.strip.style.transform =
             `translateY(${currentTranslate}px)`;
 
-        updateRngLifetimeReel(
+        updateRngLifetimeDigitFaces(
             reel,
             currentTranslate,
             faceHeight,
@@ -2149,45 +2101,9 @@ function startRngLifetimeDigitReel(
         );
 
         if (
-            reel.isNewDigit
+            onGlobalFrame
         ) {
-            const entranceProgress =
-                Math.min(
-                    localElapsed /
-                        RNG_LIFETIME_NEW_DIGIT_DURATION,
-                    1
-                );
-
-            const entranceEase =
-                easeRngLifetimeRoll(
-                    entranceProgress
-                );
-
-            frame.style.opacity =
-                String(
-                    entranceEase
-                );
-
-            frame.style.transform =
-                `perspective(320px) rotateX(${(
-                    -75 *
-                    (
-                        1 -
-                        entranceEase
-                    )
-                )}deg) scale(${(
-                    0.72 +
-                    (
-                        0.28 *
-                        entranceEase
-                    )
-                )})`;
-        } else {
-            frame.style.opacity =
-                '1';
-
-            frame.style.transform =
-                'none';
+            onGlobalFrame();
         }
 
         if (
@@ -2224,6 +2140,8 @@ function animateRngLifetimeScore(
 ) {
     if (
         !element ||
+        typeof oldScore !== 'number' ||
+        !Number.isFinite(oldScore) ||
         typeof newScore !== 'number' ||
         !Number.isFinite(newScore)
     ) {
@@ -2231,15 +2149,12 @@ function animateRngLifetimeScore(
     }
 
     const normalizedOldScore =
-        typeof oldScore === 'number' &&
-        Number.isFinite(oldScore)
-            ? Math.max(
-                0,
-                Math.round(
-                    oldScore
-                )
+        Math.max(
+            0,
+            Math.round(
+                oldScore
             )
-            : 0;
+        );
 
     const normalizedNewScore =
         Math.max(
@@ -2262,8 +2177,18 @@ function animateRngLifetimeScore(
     if (
         oldText === newText
     ) {
-        element.textContent =
-            newText;
+        const normalValue =
+            element.querySelector(
+                '.rngLifetimeNormalValue'
+            );
+
+        if (normalValue) {
+            normalValue.textContent =
+                newText;
+        } else {
+            element.textContent =
+                newText;
+        }
 
         element.setAttribute(
             'data-rng-lifetime-score',
@@ -2275,20 +2200,37 @@ function animateRngLifetimeScore(
             newText
         );
 
-        rngLifetimeAnimationActive =
-            false;
-
         return;
     }
 
-    stopRngLifetimeAnimationFrames();
-
-    element.innerHTML =
-        '';
+    clearRngLifetimeAnimation();
 
     element.classList.add(
         'rngLifetimeScoreValue'
     );
+
+    let normalValue =
+        element.querySelector(
+            '.rngLifetimeNormalValue'
+        );
+
+    if (!normalValue) {
+        element.textContent =
+            '';
+
+        normalValue =
+            document.createElement('span');
+
+        normalValue.className =
+            'rngLifetimeNormalValue';
+
+        element.appendChild(
+            normalValue
+        );
+    }
+
+    normalValue.textContent =
+        oldText;
 
     element.setAttribute(
         'data-rng-lifetime-score',
@@ -2310,121 +2252,212 @@ function animateRngLifetimeScore(
         newText
     );
 
-    rngLifetimeAnimationActive =
-        true;
+    const wheel =
+        document.createElement('span');
 
-    const oldLength =
-        oldText.length;
+    wheel.className =
+        'rngLifetimeWheel';
 
-    const newLength =
-        newText.length;
+    wheel.setAttribute(
+        'aria-hidden',
+        'true'
+    );
 
-    const oldOffset =
-        newLength -
-        oldLength;
+    const wheelLength =
+        Math.max(
+            oldText.length,
+            newText.length
+        );
 
-    const reels = [];
+    const oldPadded =
+        oldText.padStart(
+            wheelLength,
+            '0'
+        );
+
+    const newPadded =
+        newText.padStart(
+            wheelLength,
+            '0'
+        );
 
     let completedDigits =
         0;
 
-    const totalDigits =
-        newLength;
+    const digitReels = [];
 
-    function digitFinished() {
+    function finishDigit() {
         completedDigits++;
 
         if (
-            completedDigits >=
-            totalDigits
+            completedDigits <
+            digitReels.length
         ) {
-            rngLifetimeAnimationActive =
-                false;
-
-            rngLifetimeAnimationFrames =
-                [];
-
-            element.setAttribute(
-                'data-rng-lifetime-score',
-                newText
-            );
-
-            element.setAttribute(
-                'aria-label',
-                newText
-            );
+            return;
         }
+
+        normalValue.textContent =
+            newText;
+
+        element.setAttribute(
+            'data-rng-lifetime-score',
+            newText
+        );
+
+        element.setAttribute(
+            'aria-label',
+            newText
+        );
+
+        wheel.style.opacity =
+            '0';
+
+        window.setTimeout(
+            () => {
+                if (
+                    wheel.parentElement
+                ) {
+                    wheel.remove();
+                }
+
+                rngLifetimeAnimationFrames =
+                    [];
+
+                rngLifetimeAnimationActive =
+                    false;
+            },
+            RNG_LIFETIME_FADE_DURATION
+        );
     }
 
     for (
-        let i = 0;
-        i < newLength;
-        i++
+        let index = 0;
+        index < wheelLength;
+        index++
     ) {
-        const targetDigit =
+        const oldDigit =
             Number(
-                newText[i]
+                oldPadded[index]
             );
 
-        const oldPosition =
-            i -
-            oldOffset;
-
-        const oldDigit =
-            oldPosition >= 0
-                ? Number(
-                    oldText[
-                        oldPosition
-                    ]
-                )
-                : 0;
-
-        const isNewDigit =
-            oldPosition < 0;
-
-        const animationOrder =
-            newLength -
-            1 -
-            i;
+        const targetDigit =
+            Number(
+                newPadded[index]
+            );
 
         const delay =
-            animationOrder *
+            (
+                wheelLength -
+                1 -
+                index
+            ) *
             RNG_LIFETIME_DIGIT_STAGGER;
 
         const reel =
             createRngLifetimeDigitReel(
                 oldDigit,
                 targetDigit,
-                isNewDigit,
                 delay,
-                digitFinished
+                finishDigit
             );
 
-        element.appendChild(
+        wheel.appendChild(
             reel.digitFrame
         );
 
-        reels.push(
+        digitReels.push(
             reel
         );
     }
 
+    element.appendChild(
+        wheel
+    );
+
+    rngLifetimeAnimationActive =
+        true;
+
     requestAnimationFrame(() => {
-        reels.forEach(
-            reel => {
-                startRngLifetimeDigitReel(
-                    reel
-                );
-            }
-        );
+        wheel.style.opacity =
+            '1';
     });
+
+    window.setTimeout(
+        () => {
+            if (
+                !wheel.parentElement
+            ) {
+                return;
+            }
+
+            const sampleDigit =
+                wheel.querySelector(
+                    '.rngLifetimeDigit'
+                );
+
+            const sampleFace =
+                wheel.querySelector(
+                    '.rngLifetimeDigitFace'
+                );
+
+            if (
+                !sampleDigit ||
+                !sampleFace
+            ) {
+                return;
+            }
+
+            const faceHeight =
+                sampleFace.getBoundingClientRect().height;
+
+            const frameHeight =
+                sampleDigit.getBoundingClientRect().height;
+
+            if (
+                !Number.isFinite(
+                    faceHeight
+                ) ||
+                faceHeight <= 0 ||
+                !Number.isFinite(
+                    frameHeight
+                ) ||
+                frameHeight <= 0
+            ) {
+                normalValue.textContent =
+                    newText;
+
+                wheel.style.opacity =
+                    '0';
+
+                window.setTimeout(
+                    () => {
+                        wheel.remove();
+                        rngLifetimeAnimationActive =
+                            false;
+                    },
+                    RNG_LIFETIME_FADE_DURATION
+                );
+
+                return;
+            }
+
+            digitReels.forEach(
+                reel => {
+                    startRngLifetimeDigitReel(
+                        reel,
+                        faceHeight,
+                        frameHeight
+                    );
+                }
+            );
+        },
+        270
+    );
 }
 
 function scheduleRngLifetimeScoreAnimation(
     payload
 ) {
-    clearRngLifetimeRollTimer();
-
     if (
         typeof rngPendingLifetimeScore !== 'number' ||
         !Number.isFinite(
@@ -2432,6 +2465,17 @@ function scheduleRngLifetimeScoreAnimation(
         )
     ) {
         return;
+    }
+
+    if (
+        rngLifetimeRollTimer
+    ) {
+        clearTimeout(
+            rngLifetimeRollTimer
+        );
+
+        rngLifetimeRollTimer =
+            null;
     }
 
     const targetScore =
@@ -2461,6 +2505,15 @@ function scheduleRngLifetimeScoreAnimation(
                 getRngLifetimePayloadScore(
                     payload
                 );
+
+            if (
+                currentScore === null
+            ) {
+                return;
+            }
+
+            rngPendingLifetimeScore =
+                null;
 
             animateRngLifetimeScore(
                 lifetimeValueElement,
@@ -2779,7 +2832,6 @@ function createRngStat(label, value, valueColor = null) {
 	 
     const statValue = document.createElement('div'); 
     statValue.className = 'rngStatValue'; 
-    statValue.textContent = formatRngValue(value); 
 
     statValue.style.overflowWrap =
         'anywhere';
@@ -2796,6 +2848,12 @@ function createRngStat(label, value, valueColor = null) {
             'rngLifetimeScoreValue'
         );
 
+        const normalValue =
+            document.createElement('span');
+
+        normalValue.className =
+            'rngLifetimeNormalValue';
+
         const initialLifetime =
             Number(
                 value
@@ -2806,6 +2864,13 @@ function createRngStat(label, value, valueColor = null) {
                 initialLifetime
             )
         ) {
+            normalValue.textContent =
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                );
+
             statValue.setAttribute(
                 'data-rng-lifetime-score',
                 String(
@@ -2823,7 +2888,21 @@ function createRngStat(label, value, valueColor = null) {
                     )
                 )
             );
+        } else {
+            normalValue.textContent =
+                formatRngValue(
+                    value
+                );
         }
+
+        statValue.appendChild(
+            normalValue
+        );
+    } else {
+        statValue.textContent =
+            formatRngValue(
+                value
+            );
     }
 	 
     if (valueColor) { 
@@ -2832,8 +2911,13 @@ function createRngStat(label, value, valueColor = null) {
             `0 0 8px ${valueColor}55`; 
     } 
 	 
-    stat.appendChild(statLabel); 
-    stat.appendChild(statValue); 
+    stat.appendChild( 
+        statLabel 
+    ); 
+
+    stat.appendChild( 
+        statValue 
+    ); 
 	 
     return stat; 
 } 
@@ -3107,9 +3191,14 @@ function showRngRecordResult(payload) {
         rngResultPanel.appendChild(card); 
         scrollRngResultIntoView(card);
         requestRngLaunchFlash();
-        animateRngRecordCard(card);
-        scheduleRngLifetimeScoreAnimation(
-            payload
+
+        animateRngRecordCard(
+            card,
+            () => {
+                scheduleRngLifetimeScoreAnimation(
+                    payload
+                );
+            }
         );
 	 
         updateScrollRail(); 
@@ -3210,11 +3299,12 @@ function showRngRecordResult(payload) {
         requestRngLaunchFlash();
 
         animateRngRecordCard(
-            card
-        );
-
-        scheduleRngLifetimeScoreAnimation(
-            payload
+            card,
+            () => {
+                scheduleRngLifetimeScoreAnimation(
+                    payload
+                );
+            }
         );
 
         updateRngDailyCountdown();
