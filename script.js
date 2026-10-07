@@ -203,12 +203,8 @@ const TAB_LOADING_DURATION = 3000;
 const RNG_ROLL_LOADING_DURATION = 3000;
 const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const RNG_LOCAL_RESULT_STORAGE_KEY = 'cardgame_rng_last_result';
-const RNG_TEMP_CACHE_CLEAR_KEY = 'cardgame_rng_old_24hr_cache_cleared';
+const RNG_STARTUP_TEST_BYPASS_ENABLED = true;
 const tabLoadingStates = new Map();
-try {
-    localStorage.clear();
-} catch (err) {
-}
 
 errorMessage.style.zIndex = '100000';
 errorMessage.style.position = 'fixed';
@@ -761,7 +757,7 @@ const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
 	 
 let rngRequestPending = false; 
-let rngRollLoadingPending = false;
+let rngRollLoadingPending = false; 
 let rngResultPanel = null; 
 let rngScrambleElement = null;
 let rngScrambleTimer = null; 
@@ -779,6 +775,7 @@ let rngNextResetTimestamp = null;
 let rngLocalRollState = null; 
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false; 
+let rngStartupTestAvailable = RNG_STARTUP_TEST_BYPASS_ENABLED;
 	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -1597,6 +1594,9 @@ function markRngRollComplete(payload) {
     rngLocalRollState =
         loadLocalRngRollState();
 
+    rngStartupTestAvailable = false;
+    requestRngServerTime();
+
     updateRngDailyCountdown();
 
     if (rngDailyActionArea) { 
@@ -2340,8 +2340,12 @@ function initializeRngGenerateButton() {
         return;
     }
 
+    const cooldownActive =
+        updateRngDailyCountdown();
+
     if (
-        updateRngDailyCountdown()
+        cooldownActive &&
+        !rngStartupTestAvailable
     ) {
         return;
     }
@@ -2467,7 +2471,8 @@ function beginRngRollRequest() {
     }
 
     if (
-        nextRollTimestamp > serverNow
+        nextRollTimestamp > serverNow &&
+        !rngStartupTestAvailable
     ) {
         updateRngDailyCountdown();
         return;
