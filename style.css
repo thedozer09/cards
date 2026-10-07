@@ -505,7 +505,13 @@ button {
 
 .rngActionArea {
 
-    min-height: 260px;
+    width: 250px;
+
+    min-width: 250px;
+
+    max-width: 250px;
+
+    min-height: 0;
 
     display: flex;
 
@@ -513,7 +519,13 @@ button {
 
     justify-content: center;
 
-    padding: 28px;
+    margin: 0 auto;
+
+    padding: 24px 0 12px;
+
+    box-sizing: border-box;
+
+    background: transparent;
 
 }
 
@@ -575,8 +587,6 @@ button {
         0 9px 19px rgba(2, 14, 27, 0.32),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
-    transform: translateY(-1px);
-
 }
 
 .rngGenerateButton:active {
@@ -585,34 +595,110 @@ button {
 
 }
 
+.rngDailyStatus {
+
+    width: 250px;
+
+    min-width: 250px;
+
+    max-width: 250px;
+
+    margin: 0 auto 12px;
+
+    text-align: center;
+
+    color: #9ba1a6;
+
+    box-sizing: border-box;
+
+    background: transparent;
+
+}
+
+.rngDailyMessage {
+
+    color: #9ba1a6;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+}
+
+.rngDailyCountdown {
+
+    margin-top: 4px;
+
+    color: #8e959a;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.04em;
+
+}
+
+.normalButtonWiggle {
+
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+
+}
+
+@keyframes normalButtonWiggle {
+
+    0%,
+    100% {
+
+        transform: translateX(0);
+
+    }
+
+    25% {
+
+        transform: translateX(-3px);
+
+    }
+
+    75% {
+
+        transform: translateX(3px);
+
+    }
+
+}
+
 .rngResultPanel {
 
-    width: 100%;
+    width: 250px;
 
-    margin-top: 24px;
+    min-width: 250px;
 
-    padding: 34px 32px 42px;
+    max-width: 250px;
 
-    border: 1px solid rgba(144, 176, 199, 0.18);
+    margin: 0 auto;
 
-    border-radius: 24px;
+    padding: 0;
 
-    background:
-        linear-gradient(
-            135deg,
-            #14385f 0%,
-            #1c354d 42%,
-            #293237 76%,
-            #303538 100%
-        );
+    box-sizing: border-box;
 
-    box-shadow:
-        0 16px 34px rgba(2, 10, 20, 0.3),
-        inset 0 1px 0 rgba(183, 211, 229, 0.06);
+    background: transparent;
+
+    border: 0;
+
+    box-shadow: none;
+
+    overflow: visible;
 
 }
 
 .rngScramble {
+
+    width: 250px;
+
+    min-width: 250px;
+
+    max-width: 250px;
 
     min-height: 58px;
 
@@ -621,6 +707,8 @@ button {
     align-items: center;
 
     justify-content: center;
+
+    margin: 0 auto;
 
     padding: 8px 0 24px;
 
@@ -641,15 +729,27 @@ button {
 
     word-break: break-all;
 
+    overflow-wrap: anywhere;
+
+    background: transparent;
+
+    border: 0;
+
 }
 
 .rngRecordCard {
 
-    width: min(680px, 100%);
+    width: 250px;
+
+    min-width: 250px;
+
+    max-width: 250px;
 
     margin: 10px auto 0;
 
     padding: 28px;
+
+    box-sizing: border-box;
 
     border: 1px solid rgba(190, 214, 231, 0.2);
 
@@ -666,6 +766,8 @@ button {
     box-shadow:
         0 14px 28px rgba(2, 10, 20, 0.28),
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
+
+    overflow: hidden;
 
 }
 
@@ -697,9 +799,15 @@ button {
 
     text-transform: uppercase;
 
+    overflow-wrap: anywhere;
+
 }
 
 .rngRecordValue {
+
+    width: 100%;
+
+    max-width: 100%;
 
     color: #f3f8fc;
 
@@ -711,11 +819,19 @@ button {
 
     letter-spacing: 1.5px;
 
+    text-align: center;
+
     word-break: break-all;
+
+    overflow-wrap: anywhere;
 
 }
 
 .rngStats {
+
+    width: 100%;
+
+    max-width: 100%;
 
     display: grid;
 
@@ -725,9 +841,13 @@ button {
 
     margin-bottom: 24px;
 
+    background: transparent;
+
 }
 
 .rngStat {
+
+    min-width: 0;
 
     min-height: 78px;
 
@@ -741,11 +861,13 @@ button {
 
     padding: 15px 16px;
 
-    border: 1px solid rgba(176, 204, 223, 0.14);
+    border: 0;
 
-    border-radius: 14px;
+    border-radius: 0;
 
-    background: rgba(8, 25, 41, 0.28);
+    background: transparent;
+
+    overflow: hidden;
 
 }
 
@@ -761,6 +883,8 @@ button {
 
     text-transform: uppercase;
 
+    overflow-wrap: anywhere;
+
 }
 
 .rngStatValue {
@@ -773,15 +897,23 @@ button {
 
     overflow-wrap: anywhere;
 
+    word-break: break-word;
+
 }
 
 .rngModifiersSection {
+
+    width: 100%;
+
+    max-width: 100%;
 
     display: flex;
 
     flex-direction: column;
 
     gap: 12px;
+
+    background: transparent;
 
 }
 
@@ -797,29 +929,41 @@ button {
 
     text-transform: uppercase;
 
+    overflow-wrap: anywhere;
+
 }
 
 .rngModifiers {
 
+    width: 100%;
+
+    max-width: 100%;
+
     display: grid;
 
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: 1fr;
 
     gap: 10px;
+
+    background: transparent;
 
 }
 
 .rngModifier {
 
+    min-width: 0;
+
     min-height: 74px;
 
     padding: 14px 15px;
 
-    border: 1px solid rgba(176, 204, 223, 0.14);
+    border: 0;
 
-    border-radius: 13px;
+    border-radius: 0;
 
-    background: rgba(8, 25, 41, 0.3);
+    background: transparent;
+
+    overflow: hidden;
 
 }
 
@@ -835,6 +979,8 @@ button {
 
     overflow-wrap: anywhere;
 
+    word-break: break-word;
+
 }
 
 .rngModifierValue {
@@ -847,21 +993,25 @@ button {
 
     overflow-wrap: anywhere;
 
+    word-break: break-word;
+
 }
 
 .rngNoModifiers {
 
     padding: 18px;
 
-    border: 1px dashed rgba(176, 204, 223, 0.18);
+    border: 0;
 
-    border-radius: 13px;
+    border-radius: 0;
 
-    color: rgba(200, 218, 230, 0.56);
+    color: rgba(155, 165, 172, 0.7);
 
     font-size: 12px;
 
     text-align: center;
+
+    background: transparent;
 
 }
 
@@ -1029,6 +1179,82 @@ button {
 
 }
 
+.rngResultPopIn {
+
+    animation:
+        rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+
+    animation-delay: var(--rng-pop-delay, 0s);
+
+}
+
+@keyframes rngResultPopIn {
+
+    0% {
+
+        opacity: 0;
+
+        transform: translateY(10px) scale(0.88);
+
+    }
+
+    65% {
+
+        opacity: 1;
+
+        transform: translateY(-2px) scale(1.03);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}
+
+.rngLaunchFlash {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    pointer-events: none;
+
+    background: #ffffff;
+
+    animation:
+        rngLaunchFlash 0.5s ease-out forwards;
+
+}
+
+@keyframes rngLaunchFlash {
+
+    0% {
+
+        opacity: 0;
+
+    }
+
+    35% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+    }
+
+}
+
 @media (max-width: 700px) {
 
     .mainScreen {
@@ -1077,9 +1303,13 @@ button {
 
     .rngActionArea {
 
-        min-height: 230px;
+        width: 250px;
 
-        padding: 20px;
+        min-width: 250px;
+
+        max-width: 250px;
+
+        padding: 20px 0 10px;
 
     }
 
@@ -1095,17 +1325,39 @@ button {
 
     }
 
+    .rngDailyStatus {
+
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
+
+        margin-bottom: 10px;
+
+    }
+
     .rngResultPanel {
 
-        padding: 28px 20px 34px;
+        width: 250px;
 
-        border-radius: 21px;
+        min-width: 250px;
+
+        max-width: 250px;
 
     }
 
     .rngScramble {
 
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
+
         min-height: 48px;
+
+        padding: 8px 0 20px;
 
         font-size: 24px;
 
@@ -1115,11 +1367,25 @@ button {
 
     .rngRecordCard {
 
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
+
         padding: 22px;
 
     }
 
     .rngStats {
+
+        width: 100%;
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .rngModifiers {
 
         grid-template-columns: 1fr;
 
@@ -1223,9 +1489,13 @@ button {
 
     .rngActionArea {
 
-        min-height: 210px;
+        width: 250px;
 
-        padding: 16px;
+        min-width: 250px;
+
+        max-width: 250px;
+
+        padding: 16px 0 8px;
 
     }
 
@@ -1241,13 +1511,33 @@ button {
 
     }
 
+    .rngDailyStatus {
+
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
+
+    }
+
     .rngResultPanel {
 
-        padding: 24px 15px 28px;
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
 
     }
 
     .rngScramble {
+
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
 
         font-size: 20px;
 
@@ -1256,6 +1546,12 @@ button {
     }
 
     .rngRecordCard {
+
+        width: 250px;
+
+        min-width: 250px;
+
+        max-width: 250px;
 
         padding: 18px;
 
@@ -1304,159 +1600,5 @@ button {
         right: 58px;
 
     }
-.tabHeader {
-    justify-content: center;
-    text-align: center;
-}
 
-.rngResultPanel {
-    width: min(100%, 500px);
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.rngRecordCard {
-    width: 100%;
-    box-sizing: border-box;
-}
-.rngResultPanel {
-    width: 250px;
-    max-width: 250px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-
-.rngScramble {
-    width: 250px;
-    max-width: 250px;
-    box-sizing: border-box;
-}
-
-.rngRecordCard {
-    width: 250px;
-    max-width: 250px;
-    box-sizing: border-box;
-}
-
-.rngStats,
-.rngModifiersSection,
-.rngModifiers {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-.rngDailyStatus {
-    width: 250px;
-    max-width: 250px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 18px;
-    text-align: center;
-    color: #8a8f94;
-}
-
-.rngDailyMessage {
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.rngDailyCountdown {
-    margin-top: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-}
-
-.normalButtonWiggle {
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-}
-
-@keyframes normalButtonWiggle {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-3px);
-    }
-
-    75% {
-        transform: translateX(3px);
-    }
-}
-
-.rngLaunchFlash {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    pointer-events: none;
-    background: #ffffff;
-    animation: rngLaunchFlash 0.5s ease-out forwards;
-}
-
-@keyframes rngLaunchFlash {
-    0% {
-        opacity: 0;
-    }
-
-    35% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-.rngResultPanel {
-    width: 250px;
-    max-width: 250px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-
-.rngScramble {
-    width: 250px;
-    max-width: 250px;
-    box-sizing: border-box;
-}
-
-.rngRecordCard {
-    width: 250px;
-    max-width: 250px;
-    box-sizing: border-box;
-}
-
-.rngStats,
-.rngModifiersSection,
-.rngModifiers {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-.rngResultPopIn {
-    animation: rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
-    animation-delay: var(--rng-pop-delay, 0s);
-}
-
-@keyframes rngResultPopIn {
-    0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.88);
-    }
-
-    65% {
-        opacity: 1;
-        transform: translateY(-2px) scale(1.03);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 }
