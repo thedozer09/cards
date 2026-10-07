@@ -1,0 +1,5 @@
+*.md linguist-detectable
+*.png linguist-language=Turtle
+*.png linguist-detectable
+*.mp3 linguist-language=Turtle
+*.mp3 linguist-detectable
