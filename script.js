@@ -450,10 +450,11 @@ const RNG_SCRAMBLE_DURATION = 5000;
 const RNG_APPEAR_DURATION = 700;
 const RNG_SCRAMBLE_TICK = 50;
 const RNG_POP_INTERVAL = 400;
-const RNG_POP_DURATION = 350;
+const RNG_POP_DURATION = 650;
 	 
 let rngRequestPending = false; 
 let rngResultPanel = null; 
+let rngScrambleElement = null;
 let rngScrambleTimer = null; 
 let rngScrambleProgressTimer = null; 
 let rngCountdownTimer = null; 
@@ -807,6 +808,11 @@ function handleRngGenerateTabActivation() {
         return;
     }
 
+    if (rngScrambleElement) {
+        scrollRngResultIntoView(rngScrambleElement);
+        return;
+    }
+
     clearRngRarityTheme();
 
     if (!rngRequestPending) {
@@ -836,6 +842,9 @@ function animateRngRecordCard(card) {
                 `${index * (RNG_POP_INTERVAL / 1000)}s` 
             ); 
 
+            element.style.animationDuration =
+                `${RNG_POP_DURATION}ms`;
+
             element.classList.remove( 
                 'rngResultPopIn' 
             ); 
@@ -859,6 +868,27 @@ function resetDailyRngFrontend() {
     stopRngDailyCountdown(); 
     clearLocalRngRollState(); 
     clearRngRarityTheme();
+ 
+    if (rngScrambleProgressTimer) {
+        clearInterval(
+            rngScrambleProgressTimer
+        );
+
+        rngScrambleProgressTimer = null;
+    }
+
+    if (rngScrambleTimer) {
+        clearInterval(
+            rngScrambleTimer
+        );
+
+        rngScrambleTimer = null;
+    }
+
+    if (rngScrambleElement) {
+        rngScrambleElement.remove();
+        rngScrambleElement = null;
+    }
 	 
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
@@ -892,6 +922,11 @@ function applyDailyRollState(state) {
 } 
 	 
 function renderStoredRngResult(payload) { 
+    if (rngScrambleElement) {
+        rngScrambleElement.remove();
+        rngScrambleElement = null;
+    }
+
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
         rngResultPanel = null; 
@@ -1191,6 +1226,11 @@ function showRngRecordResult(payload) {
         rngScrambleProgressTimer = null; 
     } 
 	 
+    if (rngScrambleElement) {
+        rngScrambleElement.remove();
+        rngScrambleElement = null;
+    }
+
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
         rngResultPanel = null; 
@@ -1212,25 +1252,33 @@ function showRngRecordResult(payload) {
         payload.rarity
     );
 	 
-    rngResultPanel = document.createElement('div'); 
-    rngResultPanel.className = 'rngResultPanel'; 
-	 
     const scramble = document.createElement('div'); 
     scramble.className = 'rngScramble'; 
+    scramble.style.display = 'flex';
     scramble.style.visibility = 'visible';
     scramble.style.opacity = '1';
-    scramble.style.display = 'flex';
-	 
-    rngResultPanel.appendChild(scramble); 
-    generateScreen.appendChild(rngResultPanel); 
+    scramble.style.background = 'transparent';
+    scramble.style.border = '0';
+    scramble.style.boxShadow = 'none';
+    scramble.style.position = 'relative';
+    scramble.style.zIndex = '2';
 
-    scrollRngResultIntoView(scramble);
+    rngScrambleElement = scramble;
+
+    generateScreen.appendChild(scramble);
+
+    void scramble.offsetWidth;
+    updateScrollRail();
 	 
     const recordText = String(payload.record); 
 	 
     if (recordText.length === 0) { 
         scramble.textContent = ''; 
 	 
+        rngResultPanel = document.createElement('div'); 
+        rngResultPanel.className = 'rngResultPanel'; 
+        generateScreen.appendChild(rngResultPanel);
+
         const card = 
             createRngRecordCard( 
                 payload, 
@@ -1314,6 +1362,16 @@ function showRngRecordResult(payload) {
         scramble.textContent =
             recordText;
 
+        rngResultPanel =
+            document.createElement('div');
+
+        rngResultPanel.className =
+            'rngResultPanel';
+
+        generateScreen.appendChild(
+            rngResultPanel
+        );
+
         const card =
             createRngRecordCard(
                 payload,
@@ -1335,11 +1393,22 @@ function showRngRecordResult(payload) {
         updateScrollRail();
     }
 	 
-    scramble.textContent = 
-        '\u00A0'.repeat( 
-            recordText.length 
-        ); 
-	 
+    appearedCount = Math.min(
+        1,
+        recordText.length
+    );
+
+    for (
+        let i = 0;
+        i < appearedCount;
+        i++
+    ) {
+        scrambleCharacters[i] =
+            getRandomRngCharacter();
+    }
+
+    renderScramble();
+
     const scrambleStartTime =
         performance.now();
 
