@@ -200,7 +200,13 @@ screenHeaders.forEach(header => {
 }); 
 
 const TAB_LOADING_DURATION = 3000;
+const RNG_ROLL_LOADING_DURATION = 3000;
+const RNG_LOCAL_ROLL_INTERVAL = 24 * 60 * 60 * 1000;
+const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const tabLoadingStates = new Map();
+
+errorMessage.style.zIndex = '100000';
+errorMessage.style.position = 'fixed';
 
 function createTabLoadingScreen(screen, label) {
     if (!screen) {
@@ -229,49 +235,41 @@ function createTabLoadingScreen(screen, label) {
     loader.style.right = '0';
     loader.style.bottom = '0';
     loader.style.left = '0';
-    loader.style.zIndex = '50';
+    loader.style.zIndex = '9990';
     loader.style.display = 'flex';
     loader.style.alignItems = 'center';
     loader.style.justifyContent = 'center';
     loader.style.padding = '24px';
-    loader.style.background = 'transparent';
+    loader.style.background = 'rgba(10, 22, 36, 0.86)';
+    loader.style.pointerEvents = 'auto';
 
     const content =
         document.createElement('div');
 
     content.style.display = 'flex';
-    content.style.flexDirection = 'column';
     content.style.alignItems = 'center';
     content.style.justifyContent = 'center';
-    content.style.gap = '18px';
     content.style.textAlign = 'center';
 
     const title =
-        document.createElement('h1');
+        document.createElement('div');
 
     title.textContent =
-        `Loading ${label}`;
+        'Loading...';
 
     title.style.margin = '0';
     title.style.color = '#dce7f0';
-    title.style.fontSize = '28px';
-    title.style.fontWeight = '600';
-    title.style.letterSpacing = '-0.4px';
-
-    const spinner =
-        document.createElement('div');
-
-    spinner.style.width = '34px';
-    spinner.style.height = '34px';
-    spinner.style.border = '3px solid rgba(200, 218, 234, 0.2)';
-    spinner.style.borderTopColor = '#dbe8f2';
-    spinner.style.borderRadius = '50%';
-    spinner.style.animation = 'loadingSpin 0.9s linear infinite';
+    title.style.fontSize = '20px';
+    title.style.fontWeight = '700';
+    title.style.letterSpacing = '0.2px';
 
     content.appendChild(title);
-    content.appendChild(spinner);
     loader.appendChild(content);
     screen.appendChild(loader);
+
+    loader.classList.add(
+        'hidden'
+    );
 
     return loader;
 }
@@ -296,7 +294,7 @@ function initializeTabLoadingScreens() {
         generateScreen,
         {
             loading: false,
-            loaded: false,
+            loaded: true,
             timer: null
         }
     );
@@ -422,13 +420,35 @@ function startTabLoading(
         }, TAB_LOADING_DURATION);
 }
 
+function startRngRollLoading(callback) {
+    const loader =
+        createTabLoadingScreen(
+            generateScreen,
+            'Generate'
+        );
+
+    if (loader) {
+        loader.classList.remove(
+            'hidden'
+        );
+    }
+
+    setTimeout(() => {
+        if (loader) {
+            loader.classList.add(
+                'hidden'
+            );
+        }
+
+        if (callback) {
+            callback();
+        }
+    }, RNG_ROLL_LOADING_DURATION);
+}
+
 initializeTabLoadingScreens();
 	 
 setTimeout(() => { 
-    finishTabLoading(
-        generateScreen
-    );
-
     loadingScreen.classList.add('hidden'); 
     mainScreen.classList.remove('hidden'); 
     maybePlayRngLaunchFlash(); 
@@ -445,11 +465,7 @@ function switchTab(button, screen) {
     screen.classList.remove('hidden'); 
 
     if (screen === generateScreen) {
-        startTabLoading(
-            generateScreen,
-            'Generate',
-            handleRngGenerateTabActivation
-        );
+        handleRngGenerateTabActivation();
     } else if (screen === leaderboardsScreen) {
         startTabLoading(
             leaderboardsScreen,
@@ -701,6 +717,7 @@ const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
 	 
 let rngRequestPending = false; 
+let rngRollLoadingPending = false;
 let rngResultPanel = null; 
 let rngScrambleElement = null;
 let rngScrambleTimer = null; 
@@ -751,7 +768,8 @@ function syncRngServerClock(
         nextReset.timestamp; 
 	 
     if (!rngFrontendInitialized) { 
-        rngLocalRollState = null; 
+        rngLocalRollState = 
+            loadLocalRngRollState(); 
         initializeRngFrontend(); 
     } 
 	 
@@ -812,21 +830,121 @@ function sanitizeRngStoredResult(payload) {
         record: payload.record ?? '', 
         rarity: payload.rarity ?? 'Unknown', 
         points: payload.points ?? '0', 
+        lifetimeRecordScore: 
+            payload.lifetimeRecordScore ?? 
+            payload.lifetimeScore ?? 
+            payload.lifetime_record_score ?? 
+            '0', 
         modifiers: payload.modifiers ?? [] 
     }; 
 } 
 	 
 function loadLocalRngRollState() { 
-    return null; 
+    try {
+        const stored =
+            localStorage.getItem(
+                RNG_LOCAL_ROLL_STORAGE_KEY
+            );
+
+        if (!stored) {
+            return null;
+        }
+
+        const nextRollTimestamp =
+            Number(stored);
+
+        if (
+            !Number.isFinite(
+                nextRollTimestamp
+            )
+        ) {
+            localStorage.removeItem(
+                RNG_LOCAL_ROLL_STORAGE_KEY
+            );
+
+            return null;
+        }
+
+        return {
+            nextRollTimestamp
+        };
+    } catch (err) {
+        return null;
+    }
 } 
 	 
 function saveLocalRngRollState(payload) { 
-    rngLocalRollState = null; 
+    if ( 
+        !payload || 
+        typeof payload.nextRollTimestamp !== 'number' || 
+        !Number.isFinite(payload.nextRollTimestamp) 
+    ) { 
+        return; 
+    } 
+
+    rngLocalRollState = {
+        nextRollTimestamp:
+            payload.nextRollTimestamp
+    };
+
+    try {
+        localStorage.setItem(
+            RNG_LOCAL_ROLL_STORAGE_KEY,
+            String(
+                payload.nextRollTimestamp
+            )
+        );
+    } catch (err) {
+    }
 } 
 	 
 function clearLocalRngRollState() { 
-    rngLocalRollState = null; 
+    rngLocalRollState = null;
+
+    try {
+        localStorage.removeItem(
+            RNG_LOCAL_ROLL_STORAGE_KEY
+        );
+    } catch (err) {
+    }
 } 
+	 
+function getLocalRngNextRollTimestamp() {
+    const state =
+        loadLocalRngRollState();
+
+    if (!state) {
+        return null;
+    }
+
+    return state.nextRollTimestamp;
+}
+
+function getRngNextRollTimestamp() {
+    /*
+    // FUTURE TRELLO TIMING PROCESSING
+
+    const trelloRollState = null;
+
+    if (
+        trelloRollState &&
+        typeof trelloRollState.nextRollTimestamp === 'number' &&
+        Number.isFinite(trelloRollState.nextRollTimestamp)
+    ) {
+        return trelloRollState.nextRollTimestamp;
+    }
+    */
+
+    return getLocalRngNextRollTimestamp();
+}
+
+function setLocalRngNextRollFromNow() {
+    saveLocalRngRollState({
+        nextRollTimestamp:
+            Date.now() +
+            RNG_LOCAL_ROLL_INTERVAL
+    });
+}
 	 
 function createRngTopControlArea() {
     if (rngTopControlArea) {
@@ -922,7 +1040,7 @@ function createRngDailyStatus() {
         'rngDailyMessage'; 
 	 
     rngDailyMessage.textContent = 
-        'You already rolled today.'; 
+        'Next roll in'; 
 	 
     rngDailyCountdown = 
         document.createElement('div'); 
@@ -944,11 +1062,64 @@ function createRngDailyStatus() {
 } 
 	 
 function updateRngDailyCountdown() { 
-    hideRngDailyStatus(); 
+    const nextRollTimestamp =
+        getRngNextRollTimestamp();
+
+    if (
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp)
+    ) {
+        stopRngDailyCountdown();
+        hideRngDailyStatus();
+        return false;
+    }
+
+    const remaining =
+        nextRollTimestamp -
+        Date.now();
+
+    if (
+        remaining <= 0
+    ) {
+        stopRngDailyCountdown();
+        clearLocalRngRollState();
+        hideRngDailyStatus();
+
+        if (
+            !rngRequestPending &&
+            !rngRollLoadingPending &&
+            !rngResultPanel &&
+            !rngScrambleElement
+        ) {
+            initializeRngGenerateButton();
+        }
+
+        return false;
+    }
+
+    createRngDailyStatus();
+
+    rngDailyMessage.textContent =
+        'Next roll in';
+
+    rngDailyCountdown.textContent =
+        formatRngCountdown(
+            remaining
+        );
+
+    showRngDailyStatus();
+    startRngDailyCountdown();
+
+    return true;
 } 
 	 
 function startRngDailyCountdown() { 
-    stopRngDailyCountdown(); 
+    stopRngDailyCountdown();
+
+    rngCountdownTimer =
+        setInterval(() => {
+            updateRngDailyCountdown();
+        }, 1000);
 } 
 	 
 function stopRngDailyCountdown() { 
@@ -974,7 +1145,13 @@ function hideRngDailyStatus() {
 } 
 	 
 function showRngDailyStatus() { 
-    hideRngDailyStatus(); 
+    if (!rngDailyStatus) {
+        return;
+    }
+
+    rngDailyStatus.classList.remove(
+        'hidden'
+    );
 } 
 	 
 function clearRngRarityTheme() {
@@ -1119,12 +1296,16 @@ function handleRngGenerateTabActivation() {
         scrollRngResultIntoView(
             rngScrambleElement
         );
+
         return;
     }
 
-    clearRngRarityTheme();
+    updateRngDailyCountdown();
 
-    if (!rngRequestPending) {
+    if (
+        !rngRequestPending &&
+        !rngRollLoadingPending
+    ) {
         initializeRngGenerateButton();
     }
 }
@@ -1217,8 +1398,8 @@ function resetDailyRngFrontend() {
 } 
 	 
 function markRngRollComplete(payload) { 
-    clearLocalRngRollState();
-    hideRngDailyStatus();
+    setLocalRngNextRollFromNow();
+    updateRngDailyCountdown();
 
     if (rngDailyActionArea) { 
         rngDailyActionArea.remove(); 
@@ -1472,6 +1653,16 @@ function createRngRecordCard(payload, recordText) {
             'Points', 
             payload.points ?? '0' 
         ) 
+    ); 
+
+    stats.appendChild(
+        createRngStat(
+            'Lifetime Record Score',
+            payload.lifetimeRecordScore ??
+                payload.lifetimeScore ??
+                payload.lifetime_record_score ??
+                '0'
+        )
     ); 
 	 
     card.appendChild(stats); 
@@ -1755,7 +1946,7 @@ function showRngRecordResult(payload) {
             card
         );
 
-        initializeRngGenerateButton();
+        updateRngDailyCountdown();
         updateScrollRail();
 
         rngScrambleElement = null;
@@ -1869,6 +2060,16 @@ function initializeRngGenerateButton() {
         return; 
     } 
 
+    if (rngRollLoadingPending) {
+        return;
+    }
+
+    if (
+        updateRngDailyCountdown()
+    ) {
+        return;
+    }
+
     createRngTopControlArea();
 	 
     const actionArea = 
@@ -1945,36 +2146,60 @@ function initializeRngGenerateButton() {
             actionArea.remove(); 
             rngDailyActionArea = null; 
 	 
-            rngRequestPending = true; 
-	 
-            if ( 
-                !socket || 
-                socket.readyState !== 
-                    WebSocket.OPEN 
-            ) { 
-                rngRequestPending = false; 
-	 
-                errorMessage.textContent = 
-                    "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner."; 
-	 
-                errorMessage.classList.remove( 
-                    "hidden" 
-                ); 
-	 
-                initializeRngGenerateButton(); 
-                return; 
-            } 
-	 
-            socket.send( 
-                JSON.stringify({ 
-                    protocol: "cardgame", 
-                    version: 1, 
-                    request: "rng_go" 
-                }) 
-            ); 
+            rngRollLoadingPending = true;
+            errorMessage.classList.add(
+                "hidden"
+            );
+
+            startRngRollLoading(() => {
+                rngRollLoadingPending = false;
+                beginRngRollRequest();
+            });
         } 
     ); 
 } 
+
+function beginRngRollRequest() {
+    const nextRollTimestamp =
+        getRngNextRollTimestamp();
+
+    if (
+        typeof nextRollTimestamp === 'number' &&
+        Number.isFinite(nextRollTimestamp) &&
+        nextRollTimestamp > Date.now()
+    ) {
+        updateRngDailyCountdown();
+        return;
+    }
+
+    rngRequestPending = true;
+
+    if ( 
+        !socket || 
+        socket.readyState !== 
+            WebSocket.OPEN 
+    ) { 
+        rngRequestPending = false; 
+	 
+        errorMessage.textContent = 
+            "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner."; 
+	 
+        errorMessage.classList.remove( 
+            "hidden" 
+        ); 
+	 
+        initializeRngGenerateButton(); 
+        return; 
+    } 
+	 
+    socket.send( 
+        JSON.stringify({ 
+            protocol: "cardgame", 
+            version: 1, 
+            request: "rng_go" 
+        }) 
+    ); 
+}
 	 
 function initializeRngFrontend() { 
     if ( 
@@ -1985,6 +2210,11 @@ function initializeRngFrontend() {
     } 
 	 
     rngFrontendInitialized = true; 
+
+    if (!rngLocalRollState) {
+        rngLocalRollState =
+            loadLocalRngRollState();
+    }
 	 
     createRngTopControlArea();
     createRngDailyStatus(); 
