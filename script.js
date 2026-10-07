@@ -349,6 +349,21 @@ setTimeout(() => {
     loadingScreen.classList.add('hidden');
     mainScreen.classList.remove('hidden');
 
+    if (
+        rngStoredResultScrollPending &&
+        rngResultPanel
+    ) {
+
+        rngStoredResultScrollPending =
+            false;
+
+        scrollRngResultIntoView(
+            rngResultPanel.querySelector(
+                '.rngRecordCard'
+            )
+        );
+    }
+
     maybePlayRngLaunchFlash();
 
 }, 3000);
@@ -846,16 +861,16 @@ const RNG_RARITY_COLORS = {
 const RNG_RARITY_GRADIENTS = {
 
     common:
-        'linear-gradient(135deg, #dce7f0 0%, #aebdc8 50%, #7f909d 100%)',
+        'linear-gradient(135deg, #304b65 0%, #354653 46%, #31383d 100%)',
 
     uncommon:
-        'linear-gradient(135deg, #71f1df 0%, #4fd1c5 45%, #2b8f91 100%)',
+        'linear-gradient(135deg, #205f5c 0%, #2b4f53 46%, #313b40 100%)',
 
     rare:
-        'linear-gradient(135deg, #8bd7ff 0%, #4da6ff 42%, #245ec5 100%)',
+        'linear-gradient(135deg, #21598a 0%, #2d485f 46%, #303b43 100%)',
 
     legendary:
-        'linear-gradient(135deg, #fff4a1 0%, #ffd84d 42%, #cc9414 100%)'
+        'linear-gradient(135deg, #695719 0%, #50472f 46%, #343a3e 100%)'
 
 };
 
@@ -883,8 +898,8 @@ const RNG_LIFETIME_ROLL_DURATION = 2000;
 const RNG_LIFETIME_DIGIT_STAGGER = 0;
 const RNG_LIFETIME_VISIBLE_STEPS = 1;
 const RNG_RECORD_WIGGLE_DURATION = 2800;
-const RNG_RECORD_WIGGLE_AMPLITUDE = 5;
-const RNG_RECORD_WIGGLE_ROTATION = 1.2;
+const RNG_RECORD_WIGGLE_AMPLITUDE = 100;
+const RNG_RECORD_WIGGLE_ROTATION = 24;
 
 
 let rngRequestPending = false;
@@ -912,6 +927,7 @@ let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = [];
 let rngRecordCardWiggleFrame = null;
 let rngRngTimeRefreshTimer = null;
+let rngStoredResultScrollPending = false;
 
 
 function getRandomRngCharacter() {
@@ -982,34 +998,8 @@ function syncRngServerClock(
 
         updateRngDailyCountdown();
 
-        const nextRollTimestamp =
-            getRngNextRollTimestamp();
-
-        const serverNow =
-            getRngServerNow();
-
         if (
-            nextRollTimestamp &&
-            typeof serverNow === 'number' &&
-            serverNow >= nextRollTimestamp
-        ) {
-            handleRngCooldownExpired();
-        } else if (
-            rngResultPanel &&
-            nextRollTimestamp &&
-            typeof serverNow === 'number' &&
-            serverNow < nextRollTimestamp
-        ) {
-            const card =
-                rngResultPanel.querySelector(
-                    '.rngRecordCard'
-                );
-
-            if (card) {
-                scrollRngResultIntoView(card);
-            }
-        } else if (
-            !nextRollTimestamp &&
+            !getRngNextRollTimestamp() &&
             !rngResultPanel &&
             !rngScrambleElement &&
             !rngRequestPending &&
@@ -1872,7 +1862,7 @@ function startRngRecordCardWiggle(
                 elapsed *
                 0.047
             ) *
-            1.5 *
+            30 *
             envelope;
 
         card.style.transform =
@@ -1979,10 +1969,6 @@ function handleRngGenerateTabActivation() {
                     rarity
                 );
 
-                scrollRngResultIntoView(
-                    card
-                );
-
                 startRngRecordCardWiggle(
                     card
                 );
@@ -1995,9 +1981,7 @@ function handleRngGenerateTabActivation() {
             rngScrambleElement
         ) {
 
-            scrollRngResultIntoView(
-                rngScrambleElement
-            );
+            return;
 
         } else {
 
@@ -3082,9 +3066,16 @@ function renderStoredRngResult(
         rngResultPanel
     );
 
-    scrollRngResultIntoView(
-        card
-    );
+    if (
+        mainScreen.classList.contains(
+            'hidden'
+        )
+    ) {
+
+        rngStoredResultScrollPending =
+            true;
+
+    }
 
     animateRngRecordCard(
         card
@@ -3282,6 +3273,9 @@ function createRngStat(
             );
 
         valueElement.dataset.rngRarity =
+            normalizedRarity;
+
+        stat.dataset.rngRarity =
             normalizedRarity;
 
         if (
@@ -3687,9 +3681,14 @@ function showRngRecordResult(
             rngResultPanel
         );
 
-        scrollRngResultIntoView(
-            card
-        );
+        if (
+            currentTab === 'generate'
+        ) {
+
+            scrollRngResultIntoView(
+                card
+            );
+        }
 
         requestRngLaunchFlash();
 
@@ -3718,10 +3717,6 @@ function showRngRecordResult(
         '';
 
     generateScreen.appendChild(
-        rngScrambleElement
-    );
-
-    scrollRngResultIntoView(
         rngScrambleElement
     );
 
@@ -3898,9 +3893,14 @@ function finishRngScramble(
                 rngResultPanel
             );
 
-            scrollRngResultIntoView(
-                card
-            );
+            if (
+                currentTab === 'generate'
+            ) {
+
+                scrollRngResultIntoView(
+                    card
+                );
+            }
 
             animateRngRecordCard(
                 card,
@@ -4404,6 +4404,137 @@ THROUGH THE END MARKER BELOW.
 
 PRESS CTRL + SHIFT + R TO ROLL DURING COOLDOWN.
 */
+
+const rngTestOriginalSyncRngServerClock =
+    syncRngServerClock;
+
+const rngTestOriginalMarkRngRollComplete =
+    markRngRollComplete;
+
+let rngTestHasRolled =
+    false;
+
+let rngTestNextResetTimestamp =
+    null;
+
+try {
+
+    localStorage.removeItem(
+        RNG_LOCAL_ROLL_STORAGE_KEY
+    );
+
+    localStorage.removeItem(
+        RNG_LOCAL_RESULT_STORAGE_KEY
+    );
+
+} catch (err) {
+
+    console.log(
+        "Temporary RNG test storage reset failed."
+    );
+}
+
+
+syncRngServerClock =
+    function (
+        serverTime,
+        nextReset
+    ) {
+
+        rngTestOriginalSyncRngServerClock(
+            serverTime,
+            nextReset
+        );
+
+        if (
+            !rngTestHasRolled
+        ) {
+
+            rngTestNextResetTimestamp =
+                null;
+
+            rngNextResetTimestamp =
+                null;
+
+            clearLocalRngRollState();
+            clearLocalRngResult();
+
+            if (rngResultPanel) {
+                rngResultPanel.remove();
+                rngResultPanel = null;
+            }
+
+            hideRngDailyStatus();
+
+            clearRngRarityTheme();
+
+            if (
+                currentTab === 'generate' &&
+                !rngRequestPending &&
+                !rngRollLoadingPending
+            ) {
+                initializeRngGenerateButton();
+            }
+
+            updateScrollRail();
+
+            return;
+        }
+
+        if (
+            typeof rngTestNextResetTimestamp === 'number' &&
+            Number.isFinite(
+                rngTestNextResetTimestamp
+            )
+        ) {
+
+            rngNextResetTimestamp =
+                rngTestNextResetTimestamp;
+
+            saveLocalRngRollState(
+                rngTestNextResetTimestamp
+            );
+
+            updateRngDailyCountdown();
+        }
+    };
+
+
+markRngRollComplete =
+    function (
+        payload
+    ) {
+
+        rngTestOriginalMarkRngRollComplete(
+            payload
+        );
+
+        const serverNow =
+            getRngServerNow();
+
+        if (
+            typeof serverNow === 'number' &&
+            Number.isFinite(serverNow)
+        ) {
+
+            rngTestHasRolled =
+                true;
+
+            rngTestNextResetTimestamp =
+                serverNow +
+                60000;
+
+            rngNextResetTimestamp =
+                rngTestNextResetTimestamp;
+
+            saveLocalRngRollState(
+                rngTestNextResetTimestamp
+            );
+
+            updateRngDailyCountdown();
+        }
+    };
+
 
 document.addEventListener(
     'keydown',
