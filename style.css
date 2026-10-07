@@ -1046,7 +1046,7 @@ button {
 
     color: rgba(193, 215, 229, 0.62);
 
-    font-size: 10px;
+    font-size: 14px;
 
     font-weight: 800;
 
@@ -1104,7 +1104,7 @@ button {
 
     min-width: 0;
 
-    min-height: 65px;
+    min-height: 72px;
 
     display: flex;
 
@@ -1130,7 +1130,7 @@ button {
 
     color: rgba(190, 211, 226, 0.6);
 
-    font-size: 9px;
+    font-size: 14px;
 
     font-weight: 800;
 
@@ -1162,11 +1162,11 @@ button {
 
     align-items: center;
 
-    justify-content: flex-start;
+    justify-content: center;
 
-    height: 1em;
+    height: 90px;
 
-    min-height: 1em;
+    min-height: 90px;
 
     white-space: nowrap;
 
@@ -1186,23 +1186,31 @@ button {
 
     display: inline-flex;
 
-    align-items: flex-start;
+    align-items: center;
 
     justify-content: center;
 
     width: 0.62em;
 
-    height: 1em;
+    height: 90px;
 
-    min-height: 1em;
+    min-height: 90px;
+
+    flex-shrink: 0;
 
     overflow: hidden;
 
-    perspective: 260px;
+    perspective: 320px;
 
 }
 
 .rngLifetimeDigitStrip {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
 
     display: flex;
 
@@ -1211,12 +1219,6 @@ button {
     width: 100%;
 
     height: max-content;
-
-    transform: translateY(0);
-
-    transition-property: transform;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 
     will-change: transform;
 
@@ -1244,99 +1246,13 @@ button {
 
     backface-visibility: hidden;
 
+    transform-origin: center center;
+
 }
 
 .rngLifetimeDigitNew {
 
-    animation:
-
-        rngLifetimeDigitNew
-
-        600ms
-
-        cubic-bezier(0.16, 1, 0.3, 1)
-
-        both;
-
-    animation-delay: var(--rng-lifetime-digit-delay, 0ms);
-
-    transform-origin: center center;
-
     transform-style: preserve-3d;
-
-}
-
-@keyframes rngLifetimeDigitNew {
-
-    0% {
-
-        opacity: 0;
-
-        transform:
-
-            translateY(-0.55em)
-
-            rotateX(-85deg)
-
-            scale(0.72);
-
-    }
-
-    35% {
-
-        opacity: 0.9;
-
-        transform:
-
-            translateY(0.1em)
-
-            rotateX(14deg)
-
-            scale(1.04);
-
-    }
-
-    62% {
-
-        opacity: 1;
-
-        transform:
-
-            translateY(-0.025em)
-
-            rotateX(-4deg)
-
-            scale(0.99);
-
-    }
-
-    82% {
-
-        opacity: 1;
-
-        transform:
-
-            translateY(0.012em)
-
-            rotateX(1deg)
-
-            scale(1.01);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform:
-
-            translateY(0)
-
-            rotateX(0deg)
-
-            scale(1);
-
-    }
 
 }
 
@@ -1360,7 +1276,7 @@ button {
 
     color: #dbeaf4;
 
-    font-size: 12px;
+    font-size: 14px;
 
     font-weight: 900;
 
