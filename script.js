@@ -214,9 +214,11 @@ function switchTab(button, screen) {
     cardsScreen.classList.add('hidden'); 
     button.classList.add('active'); 
     screen.classList.remove('hidden'); 
- 
+
     if (screen === generateScreen) {
         handleRngGenerateTabActivation();
+    } else {
+        clearRngRarityTheme();
     }
 } 
  
@@ -445,6 +447,7 @@ const RNG_RARITY_THEME_CLASSES = [
 ];
 
 const RNG_SCRAMBLE_DURATION = 5000;
+const RNG_APPEAR_DURATION = 700;
 const RNG_SCRAMBLE_TICK = 100;
  
 let rngRequestPending = false; 
@@ -456,17 +459,13 @@ let rngDailyStatus = null;
 let rngDailyMessage = null; 
 let rngDailyCountdown = null; 
 let rngDailyActionArea = null; 
+let rngTopControlArea = null;
 let rngServerTimeBase = null; 
 let rngPerformanceTimeBase = null; 
 let rngNextResetTimestamp = null; 
 let rngLocalRollState = null; 
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false; 
- 
-const RNG_ROLL_STATE_KEY = 'cardgame_rng_roll_state'; 
- 
-const rngRandomCharacters = 
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.?/<>~`'; 
  
 function getRandomRngCharacter() { 
     const index = Math.floor( 
@@ -500,9 +499,7 @@ function syncRngServerClock(
         nextReset.timestamp; 
  
     if (!rngFrontendInitialized) { 
-        rngLocalRollState = 
-            null; 
- 
+        rngLocalRollState = null; 
         initializeRngFrontend(); 
     } 
  
@@ -579,10 +576,28 @@ function clearLocalRngRollState() {
     rngLocalRollState = null; 
 } 
  
+function createRngTopControlArea() {
+    if (rngTopControlArea) {
+        return;
+    }
+
+    rngTopControlArea =
+        document.createElement('div');
+
+    rngTopControlArea.className =
+        'rngTopControlArea';
+
+    generateScreen.appendChild(
+        rngTopControlArea
+    );
+}
+
 function createRngDailyStatus() { 
     if (rngDailyStatus) { 
         return; 
     } 
+
+    createRngTopControlArea();
  
     rngDailyStatus = 
         document.createElement('div'); 
@@ -613,7 +628,7 @@ function createRngDailyStatus() {
         rngDailyCountdown 
     ); 
  
-    generateScreen.appendChild( 
+    rngTopControlArea.appendChild( 
         rngDailyStatus 
     ); 
 } 
@@ -653,12 +668,12 @@ function showRngDailyStatus() {
 } 
  
 function clearRngRarityTheme() {
-    if (!generateScreen) {
+    if (!document.body) {
         return;
     }
 
     RNG_RARITY_THEME_CLASSES.forEach(className => {
-        generateScreen.classList.remove(className);
+        document.body.classList.remove(className);
     });
 }
 
@@ -682,10 +697,9 @@ function applyRngRarityTheme(rarity) {
     const normalized = normalizeRngRarity(rarity);
 
     if (
-        generateScreen &&
         normalized !== 'unknown'
     ) {
-        generateScreen.classList.add(
+        document.body.classList.add(
             `rng-rarity-${normalized}`
         );
     }
@@ -740,6 +754,20 @@ function maybePlayRngLaunchFlash() {
     playRngLaunchFlash(); 
 }
 
+function scrollRngResultIntoView(element) {
+    if (!element) {
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        });
+    });
+}
+
 function handleRngGenerateTabActivation() {
     if (
         !generateScreen ||
@@ -757,6 +785,19 @@ function handleRngGenerateTabActivation() {
             );
 
         if (card) {
+            applyRngRarityTheme(
+                card.classList.contains('rng-rarity-common')
+                    ? 'common'
+                    : card.classList.contains('rng-rarity-uncommon')
+                        ? 'uncommon'
+                        : card.classList.contains('rng-rarity-rare')
+                            ? 'rare'
+                            : card.classList.contains('rng-rarity-legendary')
+                                ? 'legendary'
+                                : 'unknown'
+            );
+
+            scrollRngResultIntoView(card);
             animateRngRecordCard(card);
             requestRngLaunchFlash();
         }
@@ -765,7 +806,6 @@ function handleRngGenerateTabActivation() {
     }
 
     clearRngRarityTheme();
-    hideRngDailyStatus();
 
     if (!rngRequestPending) {
         initializeRngGenerateButton();
@@ -872,6 +912,8 @@ function renderStoredRngResult(payload) {
             '.rngRecordCard' 
         ); 
  
+    scrollRngResultIntoView(card);
+    requestRngLaunchFlash();
     animateRngRecordCard(card); 
     updateScrollRail(); 
 } 
@@ -1163,6 +1205,8 @@ function showRngRecordResult(payload) {
  
     rngResultPanel.appendChild(scramble); 
     generateScreen.appendChild(rngResultPanel); 
+
+    scrollRngResultIntoView(rngResultPanel);
  
     const recordText = String(payload.record); 
  
@@ -1176,6 +1220,7 @@ function showRngRecordResult(payload) {
             ); 
  
         rngResultPanel.appendChild(card); 
+        scrollRngResultIntoView(card);
         requestRngLaunchFlash();
         animateRngRecordCard(card); 
  
@@ -1242,8 +1287,11 @@ function showRngRecordResult(payload) {
             rngScrambleTimer = null;
         }
 
-        lockedCount = recordText.length;
-        appearedCount = recordText.length;
+        lockedCount =
+            recordText.length;
+
+        appearedCount =
+            recordText.length;
 
         scramble.textContent =
             recordText;
@@ -1258,6 +1306,7 @@ function showRngRecordResult(payload) {
             card
         );
 
+        scrollRngResultIntoView(card);
         requestRngLaunchFlash();
 
         animateRngRecordCard(
@@ -1282,46 +1331,70 @@ function showRngRecordResult(payload) {
                 performance.now() -
                 scrambleStartTime;
 
-            const progress =
+            const totalProgress =
                 Math.min(
                     elapsed /
                         RNG_SCRAMBLE_DURATION,
                     1
                 );
 
-            appearedCount =
-                Math.min(
-                    recordText.length,
-                    Math.max(
-                        1,
-                        Math.ceil(
-                            progress *
-                                recordText.length
-                        ) + 1
-                    )
-                );
-
-            lockedCount =
-                Math.min(
-                    recordText.length,
-                    Math.floor(
-                        progress *
-                            recordText.length
-                    )
-                );
-
             if (
-                appearedCount >=
-                recordText.length
+                elapsed <
+                RNG_APPEAR_DURATION
             ) {
+                const appearanceProgress =
+                    Math.min(
+                        elapsed /
+                            RNG_APPEAR_DURATION,
+                        1
+                    );
+
+                appearedCount =
+                    Math.min(
+                        recordText.length,
+                        Math.max(
+                            1,
+                            Math.ceil(
+                                appearanceProgress *
+                                    recordText.length
+                            )
+                        )
+                    );
+
+                lockedCount = 0;
+            } else {
                 appearedCount =
                     recordText.length;
+
+                const unscrambleDuration =
+                    RNG_SCRAMBLE_DURATION -
+                    RNG_APPEAR_DURATION;
+
+                const unscrambleElapsed =
+                    Math.min(
+                        elapsed -
+                            RNG_APPEAR_DURATION,
+                        unscrambleDuration
+                    );
+
+                const unscrambleProgress =
+                    Math.min(
+                        unscrambleElapsed /
+                            unscrambleDuration,
+                        1
+                    );
+
+                lockedCount =
+                    Math.floor(
+                        unscrambleProgress *
+                            recordText.length
+                    );
             }
 
             rapidlyScramble();
 
             if (
-                progress >= 1
+                totalProgress >= 1
             ) {
                 finishRngScramble();
             }
@@ -1340,6 +1413,8 @@ function initializeRngGenerateButton() {
     if (rngRequestPending) { 
         return; 
     } 
+
+    createRngTopControlArea();
  
     const actionArea = 
         document.createElement('div'); 
@@ -1366,7 +1441,7 @@ function initializeRngGenerateButton() {
         button 
     ); 
  
-    generateScreen.appendChild( 
+    rngTopControlArea.appendChild( 
         actionArea 
     ); 
  
@@ -1456,6 +1531,7 @@ function initializeRngFrontend() {
  
     rngFrontendInitialized = true; 
  
+    createRngTopControlArea();
     createRngDailyStatus(); 
     hideRngDailyStatus(); 
     clearRngRarityTheme();

@@ -29,6 +29,65 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
+    transition:
+        background 0.35s ease;
+
+}
+
+body.rng-rarity-common {
+
+    background:
+        linear-gradient(
+            135deg,
+            #557590 0%,
+            #4a6981 28%,
+            #435d70 55%,
+            #3d5363 78%,
+            #374a58 100%
+        );
+
+}
+
+body.rng-rarity-uncommon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #247b79 0%,
+            #286f72 28%,
+            #2d626b 55%,
+            #315664 78%,
+            #344b59 100%
+        );
+
+}
+
+body.rng-rarity-rare {
+
+    background:
+        linear-gradient(
+            135deg,
+            #2468a3 0%,
+            #285f97 28%,
+            #2e587f 55%,
+            #334f6e 78%,
+            #37485b 100%
+        );
+
+}
+
+body.rng-rarity-legendary {
+
+    background:
+        linear-gradient(
+            135deg,
+            #7b671f 0%,
+            #6c5d2c 28%,
+            #5d5234 55%,
+            #4e4839 78%,
+            #41403d 100%
+        );
+
 }
 
 button {
@@ -503,15 +562,28 @@ button {
 
 }
 
-.rngActionArea {
+.rngTopControlArea {
     width: 350px;
     min-width: 350px;
     max-width: 350px;
+    min-height: 86px;
+    height: 86px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    padding: 24px 0 12px;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+.rngActionArea {
+    width: 100%;
+    height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 10px 0;
     box-sizing: border-box;
     background: transparent;
 }
@@ -584,6 +656,38 @@ button {
 
 }
 
+.rngDailyStatus {
+    width: 100%;
+    height: 86px;
+    min-height: 86px;
+    margin: 0;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #949a9f;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.rngDailyMessage {
+    color: #949a9f;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.rngDailyCountdown {
+    margin-top: 4px;
+    color: #898f94;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
 .rngResultPanel {
     width: 350px;
     min-width: 350px;
@@ -649,7 +753,7 @@ button {
             135deg,
             #304b65 0%,
             #354653 46%,
-            #3b3e40 100%
+            #31383d 100%
         );
 }
 
@@ -659,7 +763,7 @@ button {
             135deg,
             #205f5c 0%,
             #2b4f53 46%,
-            #343c3f 100%
+            #313b40 100%
         );
 }
 
@@ -669,7 +773,7 @@ button {
             135deg,
             #21598a 0%,
             #2d485f 46%,
-            #343d42 100%
+            #303b43 100%
         );
 }
 
@@ -679,7 +783,7 @@ button {
             135deg,
             #695719 0%,
             #50472f 46%,
-            #363a3d 100%
+            #343a3e 100%
         );
 }
 
@@ -818,64 +922,10 @@ button {
 .tabScreen {
     min-height: 430px;
     padding: 32px;
-    border: 1px solid rgba(136, 164, 188, 0.18);
-    border-radius: 26px;
-    background:
-        linear-gradient(
-            135deg,
-            #102a49 0%,
-            #172f47 38%,
-            #242d34 70%,
-            #303438 100%
-        );
-    box-shadow:
-        0 19px 44px rgba(2, 10, 20, 0.38),
-        inset 0 1px 0 rgba(177, 203, 222, 0.05);
-    transition: background 0.3s ease;
-}
-
-.tabScreen.rng-rarity-common {
-    background:
-        linear-gradient(
-            135deg,
-            #365a7a 0%,
-            #3c607c 38%,
-            #414f60 70%,
-            #3f454c 100%
-        );
-}
-
-.tabScreen.rng-rarity-uncommon {
-    background:
-        linear-gradient(
-            135deg,
-            #1f676b 0%,
-            #286873 38%,
-            #315966 70%,
-            #343f49 100%
-        );
-}
-
-.tabScreen.rng-rarity-rare {
-    background:
-        linear-gradient(
-            135deg,
-            #205a91 0%,
-            #2b608f 38%,
-            #31536c 70%,
-            #323f4b 100%
-        );
-}
-
-.tabScreen.rng-rarity-legendary {
-    background:
-        linear-gradient(
-            135deg,
-            #75611d 0%,
-            #65552c 38%,
-            #4c4839 70%,
-            #373b3e 100%
-        );
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .tabHeader {
@@ -1017,6 +1067,76 @@ button {
 
 }
 
+.normalButtonWiggle {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+@keyframes normalButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+.rngLaunchFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    animation:
+        rngLaunchFlash 0.6s ease-out forwards;
+}
+
+@keyframes rngLaunchFlash {
+    0% {
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    38% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.rngResultPopIn {
+    animation:
+        rngResultPopIn 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--rng-pop-delay, 0s);
+}
+
+@keyframes rngResultPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.88);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (max-width: 700px) {
 
     .mainScreen {
@@ -1063,9 +1183,11 @@ button {
 
     }
 
-    .rngActionArea {
+    .rngTopControlArea {
 
-        padding: 20px 0 12px;
+        min-height: 86px;
+
+        height: 86px;
 
     }
 
@@ -1078,14 +1200,6 @@ button {
         padding: 0 22px;
 
         font-size: 14px;
-
-    }
-
-    .rngResultPanel {
-
-        padding: 0;
-
-        border-radius: 0;
 
     }
 
@@ -1116,8 +1230,6 @@ button {
         min-height: 360px;
 
         padding: 24px;
-
-        border-radius: 21px;
 
     }
 
@@ -1207,9 +1319,11 @@ button {
 
     }
 
-    .rngActionArea {
+    .rngTopControlArea {
 
-        padding: 20px 0 12px;
+        min-height: 86px;
+
+        height: 86px;
 
     }
 
@@ -1291,97 +1405,4 @@ button {
 
     }
 
-}
-
-.rngDailyStatus {
-    width: 350px;
-    min-width: 350px;
-    max-width: 350px;
-    margin: 0 auto 12px;
-    padding: 0;
-    text-align: center;
-    color: #949a9f;
-    box-sizing: border-box;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-}
-
-.rngDailyMessage {
-    color: #949a9f;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.rngDailyCountdown {
-    margin-top: 4px;
-    color: #898f94;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-}
-
-.normalButtonWiggle {
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-}
-
-@keyframes normalButtonWiggle {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-3px);
-    }
-
-    75% {
-        transform: translateX(3px);
-    }
-}
-
-.rngLaunchFlash {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    pointer-events: none;
-    background: #ffffff;
-    animation:
-        rngLaunchFlash 0.6s ease-out forwards;
-}
-
-@keyframes rngLaunchFlash {
-    0% {
-        opacity: 0;
-    }
-    12% {
-        opacity: 1;
-    }
-    38% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.rngResultPopIn {
-    animation:
-        rngResultPopIn 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
-    animation-delay: var(--rng-pop-delay, 0s);
-}
-
-@keyframes rngResultPopIn {
-    0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.88);
-    }
-    65% {
-        opacity: 1;
-        transform: translateY(-2px) scale(1.03);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
