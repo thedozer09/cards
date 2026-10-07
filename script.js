@@ -3,9 +3,128 @@ const screen2 = document.getElementById('screen2');
 const testButton = document.getElementById('testButton'); 
 const rngButton = document.getElementById('rngButton'); 
 const errorMessage = document.getElementById('errorMessage'); 
+const activityMusic = document.getElementById('activityMusic');
+const musicToggleButton = document.getElementById('musicToggleButton'); 
 	 
 let socket = null; 
+let activityMusicStarted = false;
 	 
+function updateActivityMusicButton() {
+    if (!musicToggleButton) {
+        return;
+    }
+
+    if (
+        activityMusic &&
+        activityMusic.muted
+    ) {
+        musicToggleButton.textContent = '🔇';
+        musicToggleButton.setAttribute(
+            'aria-label',
+            'Unmute music'
+        );
+        musicToggleButton.setAttribute(
+            'title',
+            'Unmute music'
+        );
+    } else {
+        musicToggleButton.textContent = '🔊';
+        musicToggleButton.setAttribute(
+            'aria-label',
+            'Mute music'
+        );
+        musicToggleButton.setAttribute(
+            'title',
+            'Mute music'
+        );
+    }
+}
+
+function startActivityMusic() {
+    if (!activityMusic) {
+        return;
+    }
+
+    activityMusic.volume = 0.5;
+    activityMusic.loop = true;
+
+    if (
+        activityMusic.muted
+    ) {
+        return;
+    }
+
+    const playPromise =
+        activityMusic.play();
+
+    if (
+        playPromise &&
+        typeof playPromise.catch === 'function'
+    ) {
+        playPromise
+            .then(() => {
+                activityMusicStarted = true;
+            })
+            .catch(() => {
+            });
+    }
+}
+
+function initializeActivityMusic() {
+    if (
+        !activityMusic
+    ) {
+        return;
+    }
+
+    activityMusic.volume = 0.5;
+    activityMusic.loop = true;
+
+    updateActivityMusicButton();
+    startActivityMusic();
+
+    const startFromInteraction = () => {
+        if (
+            !activityMusicStarted &&
+            !activityMusic.muted
+        ) {
+            startActivityMusic();
+        }
+    };
+
+    document.addEventListener(
+        'pointerdown',
+        startFromInteraction,
+        { once: true }
+    );
+
+    document.addEventListener(
+        'keydown',
+        startFromInteraction,
+        { once: true }
+    );
+
+    if (
+        musicToggleButton
+    ) {
+        musicToggleButton.addEventListener(
+            'click',
+            () => {
+                if (
+                    activityMusic.muted
+                ) {
+                    activityMusic.muted = false;
+                    startActivityMusic();
+                } else {
+                    activityMusic.muted = true;
+                }
+
+                updateActivityMusicButton();
+            }
+        );
+    }
+}
+
 function initializeWebSocket() { 
     const socketUrl = `wss://${window.location.host}/ws`; 
      
@@ -205,155 +324,282 @@ rngButton.addEventListener('click', () => {
     })); 
 }); 
 	 
+initializeActivityMusic();
 initializeWebSocket(); 
-
-
-const loadingScreen = document.getElementById('loadingScreen');
-const mainScreen = document.getElementById('mainScreen');
-const generateButton = document.getElementById('generateButton');
-const leaderboardsButton = document.getElementById('leaderboardsButton');
-const cardsButton = document.getElementById('cardsButton');
-const generateScreen = document.getElementById('generateScreen');
-const leaderboardsScreen = document.getElementById('leaderboardsScreen');
-const cardsScreen = document.getElementById('cardsScreen');
-
-
-document.querySelectorAll('.tabHeader').forEach(
-    element => {
-        element.remove();
-    }
-);
-
+	 
+const loadingScreen = document.getElementById('loadingScreen'); 
+const mainScreen = document.getElementById('mainScreen'); 
+const generateButton = document.getElementById('generateButton'); 
+const leaderboardsButton = document.getElementById('leaderboardsButton'); 
+const cardsButton = document.getElementById('cardsButton'); 
+const generateScreen = document.getElementById('generateScreen'); 
+const leaderboardsScreen = document.getElementById('leaderboardsScreen'); 
+const cardsScreen = document.getElementById('cardsScreen'); 
+	 
+const screenHeaders = document.querySelectorAll('.tabHeader'); 
+	 
+screenHeaders.forEach(header => { 
+    header.remove(); 
+}); 
 
 const TAB_LOADING_DURATION = 3000;
 const RNG_ROLL_LOADING_DURATION = 3000;
 const RNG_LOCAL_ROLL_STORAGE_KEY = 'cardgame_rng_next_roll_timestamp';
 const RNG_LOCAL_RESULT_STORAGE_KEY = 'cardgame_rng_last_result';
-
-
 const tabLoadingStates = new Map();
-
 
 errorMessage.style.zIndex = '100000';
 errorMessage.style.position = 'fixed';
 
-
-let currentTab = 'generate';
-let tabLoadingScreen = null;
-
-
-function createTabLoadingScreen() {
-
-    if (tabLoadingScreen) {
-        return tabLoadingScreen;
+function createTabLoadingScreen(screen, label) {
+    if (!screen) {
+        return null;
     }
 
-    tabLoadingScreen = document.createElement('div');
-    tabLoadingScreen.className = 'tabLoadingScreen';
-    tabLoadingScreen.style.width = '350px';
-    tabLoadingScreen.style.minWidth = '350px';
-    tabLoadingScreen.style.maxWidth = '350px';
-    tabLoadingScreen.style.minHeight = '86px';
-    tabLoadingScreen.style.height = '86px';
-    tabLoadingScreen.style.display = 'flex';
-    tabLoadingScreen.style.alignItems = 'center';
-    tabLoadingScreen.style.justifyContent = 'center';
-    tabLoadingScreen.style.margin = '0 auto';
-    tabLoadingScreen.style.boxSizing = 'border-box';
-    tabLoadingScreen.style.background = 'transparent';
-    tabLoadingScreen.style.color = '#dce7f0';
-    tabLoadingScreen.style.fontSize = '15px';
-    tabLoadingScreen.style.fontWeight = '800';
-    tabLoadingScreen.style.letterSpacing = '0.8px';
-    tabLoadingScreen.style.textAlign = 'center';
+    const existing =
+        screen.querySelector(
+            '.tabLoadingScreen'
+        );
 
-    return tabLoadingScreen;
+    if (existing) {
+        return existing;
+    }
+
+    screen.style.position = 'relative';
+
+    const loader =
+        document.createElement('div');
+
+    loader.className =
+        'tabLoadingScreen';
+
+    loader.style.position = 'absolute';
+    loader.style.top = '0';
+    loader.style.right = '0';
+    loader.style.bottom = '0';
+    loader.style.left = '0';
+    loader.style.zIndex = '9990';
+    loader.style.display = 'flex';
+    loader.style.alignItems = 'center';
+    loader.style.justifyContent = 'center';
+    loader.style.padding = '24px';
+    loader.style.background = 'rgba(10, 22, 36, 0.86)';
+    loader.style.pointerEvents = 'auto';
+
+    const content =
+        document.createElement('div');
+
+    content.style.display = 'flex';
+    content.style.alignItems = 'center';
+    content.style.justifyContent = 'center';
+    content.style.textAlign = 'center';
+
+    const title =
+        document.createElement('div');
+
+    title.textContent =
+        'Loading...';
+
+    title.style.margin = '0';
+    title.style.color = '#dce7f0';
+    title.style.fontSize = '20px';
+    title.style.fontWeight = '700';
+    title.style.letterSpacing = '0.2px';
+
+    content.appendChild(title);
+    loader.appendChild(content);
+    screen.appendChild(loader);
+
+    loader.classList.add(
+        'hidden'
+    );
+
+    return loader;
 }
 
+function initializeTabLoadingScreens() {
+    createTabLoadingScreen(
+        generateScreen,
+        'Generate'
+    );
 
-function startTabLoading(tabName) {
+    createTabLoadingScreen(
+        leaderboardsScreen,
+        'Leaderboards'
+    );
 
-    const existingState = tabLoadingStates.get(tabName);
-
-    if (existingState) {
-        clearTimeout(existingState.timer);
-    }
-
-    const loadingElement = createTabLoadingScreen();
-
-    loadingElement.textContent = `Loading ${tabName}...`;
-
-    const targetScreen =
-        tabName === 'generate'
-            ? generateScreen
-            : tabName === 'leaderboards'
-                ? leaderboardsScreen
-                : cardsScreen;
-
-    targetScreen.prepend(loadingElement);
-
-    const timer = setTimeout(() => {
-        finishTabLoading(tabName);
-    }, TAB_LOADING_DURATION);
+    createTabLoadingScreen(
+        cardsScreen,
+        'Cards'
+    );
 
     tabLoadingStates.set(
-        tabName,
+        generateScreen,
         {
-            timer,
-            loadingElement
+            loading: false,
+            loaded: true,
+            timer: null
+        }
+    );
+
+    tabLoadingStates.set(
+        leaderboardsScreen,
+        {
+            loading: false,
+            loaded: false,
+            timer: null
+        }
+    );
+
+    tabLoadingStates.set(
+        cardsScreen,
+        {
+            loading: false,
+            loaded: false,
+            timer: null
         }
     );
 }
 
-
-function finishTabLoading(tabName) {
-
-    const state = tabLoadingStates.get(tabName);
+function finishTabLoading(screen) {
+    const state =
+        tabLoadingStates.get(screen);
 
     if (!state) {
         return;
     }
 
-    clearTimeout(state.timer);
+    state.loading = false;
+    state.loaded = true;
 
-    if (state.loadingElement) {
-        state.loadingElement.remove();
+    if (state.timer) {
+        clearTimeout(
+            state.timer
+        );
+
+        state.timer = null;
     }
 
-    tabLoadingStates.delete(tabName);
+    const loader =
+        screen.querySelector(
+            '.tabLoadingScreen'
+        );
+
+    if (loader) {
+        loader.classList.add(
+            'hidden'
+        );
+    }
 }
 
+function startTabLoading(
+    screen,
+    label,
+    callback
+) {
+    if (!screen) {
+        return;
+    }
 
-function startRngRollLoading(onComplete) {
+    let state =
+        tabLoadingStates.get(screen);
 
-    const loadingElement = createTabLoadingScreen();
+    if (!state) {
+        state = {
+            loading: false,
+            loaded: false,
+            timer: null
+        };
 
-    loadingElement.textContent = 'Generating Record...';
+        tabLoadingStates.set(
+            screen,
+            state
+        );
+    }
 
-    generateScreen.prepend(loadingElement);
+    const loader =
+        createTabLoadingScreen(
+            screen,
+            label
+        );
 
-    setTimeout(() => {
-
-        loadingElement.remove();
-
-        if (typeof onComplete === 'function') {
-            onComplete();
+    if (
+        state.loaded
+    ) {
+        if (loader) {
+            loader.classList.add(
+                'hidden'
+            );
         }
 
+        if (callback) {
+            callback();
+        }
+
+        return;
+    }
+
+    if (
+        state.loading
+    ) {
+        return;
+    }
+
+    state.loading = true;
+
+    if (loader) {
+        loader.classList.remove(
+            'hidden'
+        );
+    }
+
+    state.timer =
+        setTimeout(() => {
+            finishTabLoading(screen);
+
+            if (callback) {
+                callback();
+            }
+        }, TAB_LOADING_DURATION);
+}
+
+function startRngRollLoading(callback) {
+    const loader =
+        createTabLoadingScreen(
+            generateScreen,
+            'Generate'
+        );
+
+    if (loader) {
+        loader.classList.remove(
+            'hidden'
+        );
+    }
+
+    setTimeout(() => {
+        if (loader) {
+            loader.classList.add(
+                'hidden'
+            );
+        }
+
+        if (callback) {
+            callback();
+        }
     }, RNG_ROLL_LOADING_DURATION);
 }
 
-
-setTimeout(() => {
-
-    loadingScreen.classList.add('hidden');
-    mainScreen.classList.remove('hidden');
+initializeTabLoadingScreens();
+	 
+setTimeout(() => { 
+    loadingScreen.classList.add('hidden'); 
+    mainScreen.classList.remove('hidden'); 
+    startActivityMusic();
 
     if (
         rngStoredResultScrollPending &&
         rngResultPanel
     ) {
-
         rngStoredResultScrollPending =
             false;
 
@@ -364,520 +610,313 @@ setTimeout(() => {
         );
     }
 
-    maybePlayRngLaunchFlash();
+    maybePlayRngLaunchFlash(); 
+}, 3000); 
+	 
+function switchTab(button, screen) { 
+    generateButton.classList.remove('active'); 
+    leaderboardsButton.classList.remove('active'); 
+    cardsButton.classList.remove('active'); 
+    generateScreen.classList.add('hidden'); 
+    leaderboardsScreen.classList.add('hidden'); 
+    cardsScreen.classList.add('hidden'); 
+    button.classList.add('active'); 
+    screen.classList.remove('hidden'); 
 
-}, 3000);
-
-
-function switchTab(tabName) {
-
-    if (tabName === currentTab) {
-        return;
-    }
-
-    currentTab = tabName;
-
-    generateButton.classList.toggle(
-        'active',
-        tabName === 'generate'
-    );
-
-    leaderboardsButton.classList.toggle(
-        'active',
-        tabName === 'leaderboards'
-    );
-
-    cardsButton.classList.toggle(
-        'active',
-        tabName === 'cards'
-    );
-
-    generateScreen.classList.toggle(
-        'hidden',
-        tabName !== 'generate'
-    );
-
-    leaderboardsScreen.classList.toggle(
-        'hidden',
-        tabName !== 'leaderboards'
-    );
-
-    cardsScreen.classList.toggle(
-        'hidden',
-        tabName !== 'cards'
-    );
-
-    if (tabName === 'generate') {
-
+    if (screen === generateScreen) {
         handleRngGenerateTabActivation();
-
-        return;
-    }
-
-    clearRngRarityTheme();
-
-    startTabLoading(tabName);
-
-    updateScrollRail();
-}
-
-
-generateButton.addEventListener(
-    'click',
-    () => {
-        switchTab('generate');
-    }
-);
-
-
-leaderboardsButton.addEventListener(
-    'click',
-    () => {
-        switchTab('leaderboards');
-    }
-);
-
-
-cardsButton.addEventListener(
-    'click',
-    () => {
-        switchTab('cards');
-    }
-);
-
-
-const scrollRail = document.querySelector('.scrollRail');
-
-
-function updateScrollRail() {
-
-    if (!scrollRail) {
-        return;
-    }
-
-    const pageHeight = Math.max(
-        document.documentElement.scrollHeight,
-        document.body.scrollHeight,
-        mainScreen ? mainScreen.scrollHeight : 0,
-        window.innerHeight
-    );
-
-    const spacing = 250;
-    const edgeInset = 36;
-
-    scrollRail.innerHTML = '';
-
-    if (pageHeight <= window.innerHeight + 10) {
-        return;
-    }
-
-    const availableHeight =
-        Math.max(
-            window.innerHeight -
-                (edgeInset * 2),
-            0
+    } else if (screen === leaderboardsScreen) {
+        startTabLoading(
+            leaderboardsScreen,
+            'Leaderboards'
         );
 
-    const count = Math.max(
-        2,
-        Math.ceil(
-            (
-                pageHeight -
-                window.innerHeight
-            ) / spacing
-        ) + 1
-    );
+        clearRngRarityTheme();
+    } else {
+        startTabLoading(
+            cardsScreen,
+            'Cards'
+        );
 
-    for (let i = 0; i < count; i++) {
-
-        const indicator = document.createElement('div');
-
-        indicator.className = 'scrollIndicator';
-
-        if (count === 1) {
-            indicator.classList.add('single');
-        } else if (i === 0) {
-            indicator.classList.add('first');
-        } else if (i === count - 1) {
-            indicator.classList.add('last');
-        }
-
-        const ratio =
-            count === 1
-                ? 0
-                : i / (count - 1);
-
-        indicator.style.top =
-            `${edgeInset + (availableHeight * ratio)}px`;
-
-        const arrow =
-            document.createElement('span');
-
-        arrow.textContent =
-            i === 0
-                ? '↑'
-                : i === count - 1
-                    ? '↓'
-                    : '↕';
-
-        const label =
-            document.createElement('strong');
-
-        label.textContent = 'SCROLL';
-
-        indicator.appendChild(arrow);
-        indicator.appendChild(label);
-
-        scrollRail.appendChild(indicator);
+        clearRngRarityTheme();
     }
-}
-
-
-window.addEventListener(
-    'resize',
-    updateScrollRail
-);
-
-
-if (typeof ResizeObserver !== 'undefined') {
-
-    const scrollResizeObserver =
-        new ResizeObserver(() => {
-            updateScrollRail();
-        });
-
-    if (mainScreen) {
-        scrollResizeObserver.observe(mainScreen);
-    }
-
-    scrollResizeObserver.observe(document.body);
-}
-
-
-updateScrollRail();
-
-
-const tabButtons =
-    document.querySelectorAll('.tabButton');
-
-
-const normalButtons =
-    document.querySelectorAll(
-        'button:not(.tabButton)'
-    );
-
-
-const earthquakeStates =
-    new Map();
-
-
-function startButtonEarthquake(button) {
-
-    if (earthquakeStates.has(button)) {
-        return;
-    }
-
-    const startTime = performance.now();
-
-    function animate(now) {
-
-        if (!earthquakeStates.has(button)) {
-            return;
-        }
-
-        const elapsed =
-            now -
-            startTime;
-
-        if (elapsed >= 10000) {
-            stopButtonEarthquake(button);
-            return;
-        }
-
-        let x = 0;
-        let y = 0;
-        let rotation = 0;
-
-        if (elapsed < 5000) {
-
-            const progress =
-                elapsed /
-                5000;
-
-            const intensity =
-                progress *
-                progress;
-
-            const wave =
-                Math.sin(
-                    elapsed *
-                    0.03
-                );
-
-            x =
-                wave *
-                1.3 *
-                intensity;
-
-            y =
-                Math.cos(
-                    elapsed *
-                    0.037
-                ) *
-                1.1 *
-                intensity;
-
-            rotation =
-                wave *
-                0.45 *
-                intensity;
-
-        } else {
-
-            const intensity =
-                1;
-
-            x =
-                (
-                    Math.random() -
-                    0.5
-                ) *
-                5 *
-                intensity;
-
-            y =
-                (
-                    Math.random() -
-                    0.5
-                ) *
-                4 *
-                intensity;
-
-            rotation =
-                (
-                    Math.random() -
-                    0.5
-                ) *
-                1.5 *
-                intensity;
-        }
-
-        button.style.transform =
-            `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-
-        const frame =
-            requestAnimationFrame(
-                animate
-            );
-
-        earthquakeStates.set(
-            button,
-            frame
-        );
-    }
-
-    const frame =
-        requestAnimationFrame(
-            animate
-        );
-
-    earthquakeStates.set(
-        button,
-        frame
-    );
-}
-
-
-function stopButtonEarthquake(button) {
-
-    const frame =
-        earthquakeStates.get(button);
-
-    if (frame) {
-        cancelAnimationFrame(frame);
-    }
-
-    earthquakeStates.delete(button);
-
-    button.style.transform = '';
-}
-
-
-function playButtonAnimation(button) {
-
-    stopButtonEarthquake(button);
-
-    button
-        .querySelectorAll(
-            '.buttonEffectImage'
-        )
-        .forEach(
-            element => element.remove()
-        );
-
-    button.classList.remove(
-        'clickJerk'
-    );
-
-    void button.offsetWidth;
-
-    button.classList.add(
-        'clickJerk'
-    );
-
-    const car =
-        document.createElement('img');
-
-    car.src =
-        './carvector.png';
-
-    car.className =
-        'buttonEffectImage carEffect';
-
-    const tornado =
-        document.createElement('img');
-
-    tornado.src =
-        './tornadovector.png';
-
-    tornado.className =
-        'buttonEffectImage tornadoEffect';
-
-    button.appendChild(car);
-    button.appendChild(tornado);
-
-    setTimeout(() => {
-
-        car.remove();
-        tornado.remove();
-
-    }, 4500);
-}
-
-
-tabButtons.forEach(
-    button => {
-
-        button.addEventListener(
-            'pointerenter',
-            () => {
-                startButtonEarthquake(button);
-            }
-        );
-
-        button.addEventListener(
-            'pointerleave',
-            () => {
-                stopButtonEarthquake(button);
-            }
-        );
-
-        button.addEventListener(
-            'click',
-            () => {
-                playButtonAnimation(button);
-            }
-        );
-    }
-);
-
-
-function startNormalButtonWiggle(button) {
-
-    if (
-        button.classList.contains(
-            'tabButton'
-        )
-    ) {
-        return;
-    }
-
-    button.classList.add(
-        'normalButtonWiggle'
-    );
-}
-
-
-function stopNormalButtonWiggle(button) {
-
-    button.classList.remove(
-        'normalButtonWiggle'
-    );
-}
-
-
-normalButtons.forEach(
-    button => {
-
-        if (
-            button.classList.contains(
-                'hidden'
-            )
-        ) {
-            return;
-        }
-
-        button.addEventListener(
-            'pointerenter',
-            () => {
-                startNormalButtonWiggle(button);
-            }
-        );
-
-        button.addEventListener(
-            'pointerleave',
-            () => {
-                stopNormalButtonWiggle(button);
-            }
-        );
-
-        button.addEventListener(
-            'focus',
-            () => {
-                startNormalButtonWiggle(button);
-            }
-        );
-
-        button.addEventListener(
-            'blur',
-            () => {
-                stopNormalButtonWiggle(button);
-            }
-        );
-    }
-);
-
-
-const RNG_RARITY_COLORS = {
-
-    common: '#dce7f0',
-    uncommon: '#4fd1c5',
-    rare: '#4da6ff',
-    legendary: '#ffd84d'
-
-};
-
+} 
+	 
+generateButton.addEventListener('click', () => { 
+    switchTab(generateButton, generateScreen); 
+}); 
+	 
+leaderboardsButton.addEventListener('click', () => { 
+    switchTab(leaderboardsButton, leaderboardsScreen); 
+}); 
+	 
+cardsButton.addEventListener('click', () => { 
+    switchTab(cardsButton, cardsScreen); 
+}); 
+	 
+const scrollRail = document.querySelector('.scrollRail'); 
+	 
+function updateScrollRail() { 
+    if (!scrollRail) { 
+        return; 
+    } 
+	 
+    const pageHeight = Math.max( 
+        document.documentElement.scrollHeight, 
+        document.body.scrollHeight, 
+        mainScreen.scrollHeight, 
+        window.innerHeight 
+    ); 
+	 
+    const spacing = 250; 
+    const edgeInset = 36; 
+    const positions = []; 
+	 
+    const usableHeight = Math.max( 
+        0, 
+        pageHeight - (edgeInset * 2) 
+    ); 
+	 
+    const indicatorCount = Math.max( 
+        1, 
+        Math.floor(usableHeight / spacing) + 1 
+    ); 
+	 
+    if (indicatorCount === 1) { 
+        positions.push(pageHeight / 2); 
+    } else { 
+        for (let i = 0; i < indicatorCount; i++) { 
+            positions.push(edgeInset + (i * spacing)); 
+        } 
+    } 
+	 
+    scrollRail.style.height = `${pageHeight}px`; 
+    scrollRail.innerHTML = ''; 
+	 
+    for (let i = 0; i < positions.length; i++) { 
+        const indicator = document.createElement('div'); 
+        indicator.className = 'scrollIndicator'; 
+        indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>'; 
+        indicator.style.top = `${positions[i]}px`; 
+	 
+        if (positions.length === 1) { 
+            indicator.classList.add('singleScrollIndicator'); 
+        } else if (i === 0) { 
+            indicator.classList.add('firstScrollIndicator'); 
+        } else if (i === positions.length - 1) { 
+            indicator.classList.add('lastScrollIndicator'); 
+        } 
+	 
+        scrollRail.appendChild(indicator); 
+    } 
+} 
+	 
+updateScrollRail(); 
+window.addEventListener('resize', updateScrollRail); 
+	 
+if (typeof ResizeObserver !== 'undefined') { 
+    const scrollResizeObserver = new ResizeObserver(() => { 
+        updateScrollRail(); 
+    }); 
+	 
+    scrollResizeObserver.observe(mainScreen); 
+    scrollResizeObserver.observe(document.body); 
+} 
+	 
+const tabButtons = document.querySelectorAll('.tabButton'); 
+const buttonShakeStates = new Map();
+const TAB_BUTTON_NORMAL_WIGGLE_DURATION = 450; 
+	 
+function startButtonEarthquake(button) { 
+    if (buttonShakeStates.has(button)) { 
+        return; 
+    } 
+	 
+    const state = { 
+        active: true, 
+        animationFrame: null, 
+        startedAt: performance.now(), 
+        normalWiggleActive: true 
+    }; 
+	 
+    buttonShakeStates.set(button, state); 
+    button.classList.add('normalButtonWiggle'); 
+	 
+    function shakeFrame(now) { 
+        if (!state.active) { 
+            return; 
+        } 
+	 
+        const elapsed = now - state.startedAt; 
+        let x = 0; 
+        let y = 0; 
+        let angle = 0; 
+	 
+        if (elapsed < TAB_BUTTON_NORMAL_WIGGLE_DURATION) { 
+            state.animationFrame = requestAnimationFrame(shakeFrame); 
+            return; 
+        } 
+	 
+        if (state.normalWiggleActive) { 
+            state.normalWiggleActive = false; 
+            button.classList.remove('normalButtonWiggle'); 
+        } 
+	 
+        const earthquakeElapsed = 
+            elapsed - TAB_BUTTON_NORMAL_WIGGLE_DURATION; 
+	 
+        if (earthquakeElapsed < 5000) { 
+            const progress = Math.min(earthquakeElapsed / 5000, 1); 
+            const tilt = 0.2 + progress * 1.3; 
+            angle = Math.sin(earthquakeElapsed / 140) * tilt; 
+        } else { 
+            const progress = Math.min((earthquakeElapsed - 5000) / 5000, 1); 
+            const intensity = 0.25 + progress * 0.75; 
+            x = (Math.random() - 0.5) * 1.35 * intensity; 
+            y = (Math.random() - 0.5) * 1.35 * intensity; 
+            angle = (Math.random() - 0.5) * 0.3 * intensity; 
+        } 
+	 
+        button.style.transform = 
+            `translate(${x}px, ${y}px) rotate(${angle}deg)`; 
+	 
+        state.animationFrame = requestAnimationFrame(shakeFrame); 
+    } 
+	 
+    state.animationFrame = requestAnimationFrame(shakeFrame); 
+} 
+	 
+function stopButtonEarthquake(button) { 
+    const state = buttonShakeStates.get(button); 
+    if (!state) { 
+        return; 
+    } 
+	 
+    state.active = false; 
+	 
+    if (state.animationFrame) { 
+        cancelAnimationFrame(state.animationFrame); 
+    } 
+	 
+    button.classList.remove('normalButtonWiggle'); 
+    button.style.transform = ''; 
+    buttonShakeStates.delete(button); 
+} 
+	 
+function playButtonAnimation(button) { 
+    stopButtonEarthquake(button); 
+	 
+    button.querySelectorAll('.buttonEffectImage').forEach(image => { 
+        image.remove(); 
+    }); 
+	 
+    button.classList.remove('clickJerk'); 
+	 
+    void button.offsetWidth; 
+	 
+    button.classList.add('clickJerk'); 
+	 
+    const car = document.createElement('img'); 
+    car.className = 'buttonEffectImage carEffect'; 
+    car.src = './carvector.png'; 
+    car.alt = ''; 
+	 
+    const tornado = document.createElement('img'); 
+    tornado.className = 'buttonEffectImage tornadoEffect'; 
+    tornado.src = './tornadovector.png'; 
+    tornado.alt = ''; 
+	 
+    button.appendChild(car); 
+    button.appendChild(tornado); 
+	 
+    button.addEventListener('animationend', () => { 
+        button.classList.remove('clickJerk'); 
+    }, { once: true }); 
+	 
+    tornado.addEventListener('animationend', () => { 
+        car.remove(); 
+        tornado.remove(); 
+    }, { once: true }); 
+} 
+	 
+tabButtons.forEach(button => { 
+    button.addEventListener('pointerenter', () => { 
+        startButtonEarthquake(button); 
+    }); 
+	 
+    button.addEventListener('pointerleave', () => { 
+        stopButtonEarthquake(button); 
+    }); 
+	 
+    button.addEventListener('click', () => { 
+        playButtonAnimation(button); 
+    }); 
+}); 
+	 
+function startNormalButtonWiggle(button) { 
+    if (!button || button.classList.contains('tabButton')) { 
+        return; 
+    } 
+	 
+    button.classList.add('normalButtonWiggle'); 
+} 
+	 
+function stopNormalButtonWiggle(button) { 
+    if (!button) { 
+        return; 
+    } 
+	 
+    button.classList.remove('normalButtonWiggle'); 
+} 
+	 
+const RNG_RARITY_COLORS = { 
+    common: "#dce7f0", 
+    uncommon: "#4fd1c5", 
+    rare: "#4da6ff", 
+    legendary: "#ffd84d" 
+}; 
 
 const RNG_RARITY_GRADIENTS = {
-
     common:
-        'linear-gradient(135deg, #304b65 0%, #354653 46%, #31383d 100%)',
-
+        `linear-gradient(
+            135deg,
+            #557590 0%,
+            #4a6981 28%,
+            #435d70 55%,
+            #3d5363 78%,
+            #374a58 100%
+        )`,
     uncommon:
-        'linear-gradient(135deg, #205f5c 0%, #2b4f53 46%, #313b40 100%)',
-
+        `linear-gradient(
+            135deg,
+            #247b79 0%,
+            #286f72 28%,
+            #2d626b 55%,
+            #315664 78%,
+            #344b59 100%
+        )`,
     rare:
-        'linear-gradient(135deg, #21598a 0%, #2d485f 46%, #303b43 100%)',
-
+        `linear-gradient(
+            135deg,
+            #2468a3 0%,
+            #285f97 28%,
+            #2e587f 55%,
+            #334f6e 78%,
+            #37485b 100%
+        )`,
     legendary:
-        'linear-gradient(135deg, #695719 0%, #50472f 46%, #343a3e 100%)'
-
+        `linear-gradient(
+            135deg,
+            #7b671f 0%,
+            #6c5d2c 28%,
+            #5d5234 55%,
+            #4e4839 78%,
+            #41403d 100%
+        )`
 };
 
-
 const RNG_RANDOM_CHARACTERS =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
 
 const RNG_RARITY_THEME_CLASSES = [
     'rng-rarity-common',
@@ -885,7 +924,6 @@ const RNG_RARITY_THEME_CLASSES = [
     'rng-rarity-rare',
     'rng-rarity-legendary'
 ];
-
 
 const RNG_SCRAMBLE_DURATION = 5000;
 const RNG_APPEAR_DURATION = 700;
@@ -897,338 +935,279 @@ const RNG_LIFETIME_FADE_DURATION = 260;
 const RNG_LIFETIME_ROLL_DURATION = 2000;
 const RNG_LIFETIME_DIGIT_STAGGER = 0;
 const RNG_LIFETIME_VISIBLE_STEPS = 1;
-const RNG_RECORD_WIGGLE_DURATION = 2800;
-const RNG_RECORD_WIGGLE_AMPLITUDE = 100;
-const RNG_RECORD_WIGGLE_ROTATION = 24;
-
-
-let rngRequestPending = false;
-let rngRollLoadingPending = false;
-let rngResultPanel = null;
+const RNG_RECORD_WIGGLE_DURATION = 1350;
+const RNG_RECORD_WIGGLE_AMPLITUDE = 8;
+const RNG_RECORD_WIGGLE_ROTATION = 3.5;
+	 
+let rngRequestPending = false; 
+let rngRollLoadingPending = false; 
+let rngResultPanel = null; 
 let rngScrambleElement = null;
-let rngScrambleTimer = null;
-let rngScrambleProgressTimer = null;
-let rngCountdownTimer = null;
-let rngDailyStatus = null;
-let rngDailyMessage = null;
-let rngDailyCountdown = null;
-let rngDailyActionArea = null;
+let rngScrambleTimer = null; 
+let rngScrambleProgressTimer = null; 
+let rngCountdownTimer = null; 
+let rngDailyStatus = null; 
+let rngDailyMessage = null; 
+let rngDailyCountdown = null; 
+let rngDailyActionArea = null; 
 let rngTopControlArea = null;
 let rngControlSlot = null;
-let rngServerTimeBase = null;
-let rngPerformanceTimeBase = null;
-let rngNextResetTimestamp = null;
-let rngLocalRollState = null;
-let rngFrontendInitialized = false;
+let rngServerTimeBase = null; 
+let rngPerformanceTimeBase = null; 
+let rngNextResetTimestamp = null; 
+let rngLocalRollState = null; 
+let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false;
 let rngPendingLifetimeScore = null;
 let rngLifetimeAnimationActive = false;
 let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = [];
 let rngRecordCardWiggleFrame = null;
-let rngRngTimeRefreshTimer = null;
 let rngStoredResultScrollPending = false;
+	 
+function getRandomRngCharacter() { 
+    const index = Math.floor( 
+        Math.random() * RNG_RANDOM_CHARACTERS.length 
+    ); 
+	 
+    return RNG_RANDOM_CHARACTERS[index]; 
+} 
+	 
+function syncRngServerClock( 
+    serverTime, 
+    nextReset 
+) { 
+    if ( 
+        typeof serverTime !== 'number' || 
+        !Number.isFinite(serverTime) || 
+        !nextReset || 
+        typeof nextReset.timestamp !== 'number' || 
+        !Number.isFinite(nextReset.timestamp) 
+    ) { 
+        return; 
+    } 
+	 
+    rngServerTimeBase = 
+        serverTime; 
+	 
+    rngPerformanceTimeBase = 
+        performance.now(); 
+	 
+    rngNextResetTimestamp = 
+        nextReset.timestamp; 
 
-
-function getRandomRngCharacter() {
-
-    return RNG_RANDOM_CHARACTERS[
-        Math.floor(
-            Math.random() *
-            RNG_RANDOM_CHARACTERS.length
-        )
-    ];
-}
-
-
-function syncRngServerClock(
-    serverTime,
-    nextReset
-) {
-
-    if (
-        typeof serverTime !== 'number' ||
-        !Number.isFinite(serverTime) ||
-        !nextReset ||
-        typeof nextReset.timestamp !== 'number' ||
-        !Number.isFinite(nextReset.timestamp)
-    ) {
-        return;
-    }
-
-    rngServerTimeBase =
-        serverTime;
-
-    rngPerformanceTimeBase =
-        performance.now();
-
-    rngNextResetTimestamp =
-        nextReset.timestamp;
-
-    saveLocalRngRollState(
-        rngNextResetTimestamp
-    );
-
-    if (
-        rngRngTimeRefreshTimer
-    ) {
-        clearTimeout(
-            rngRngTimeRefreshTimer
-        );
-    }
-
-    rngRngTimeRefreshTimer =
-        setTimeout(
-            () => {
-                requestRngServerTime();
-            },
-            1000
-        );
-
-    if (
-        !rngFrontendInitialized
-    ) {
-
-        rngFrontendInitialized =
-            true;
-
-        initializeRngFrontend();
-
-    } else {
-
-        updateRngDailyCountdown();
-
-        if (
-            !getRngNextRollTimestamp() &&
-            !rngResultPanel &&
-            !rngScrambleElement &&
-            !rngRequestPending &&
-            !rngRollLoadingPending
-        ) {
-            initializeRngGenerateButton();
-        }
-    }
-
-    maybePlayRngLaunchFlash();
-}
-
-
-function getRngServerNow() {
-
-    if (
-        typeof rngServerTimeBase !== 'number' ||
-        !Number.isFinite(
-            rngServerTimeBase
-        ) ||
-        typeof rngPerformanceTimeBase !== 'number' ||
-        !Number.isFinite(
-            rngPerformanceTimeBase
-        )
-    ) {
-        return null;
-    }
-
-    return (
-        rngServerTimeBase +
-        (
-            performance.now() -
-            rngPerformanceTimeBase
-        )
-    );
-}
-
-
-function formatRngCountdown(
-    milliseconds
-) {
-
-    const totalSeconds =
-        Math.max(
-            0,
-            Math.ceil(
-                milliseconds /
-                1000
-            )
-        );
-
-    const days =
-        Math.floor(
-            totalSeconds /
-            86400
-        );
-
-    const hours =
-        Math.floor(
-            (
-                totalSeconds %
-                86400
-            ) /
-            3600
-        );
-
-    const minutes =
-        Math.floor(
-            (
-                totalSeconds %
-                3600
-            ) /
-            60
-        );
-
-    const seconds =
-        totalSeconds %
-        60;
-
-    if (days > 0) {
-
-        return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
-    }
-
-    return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
-}
-
-
-function sanitizeRngStoredResult(
-    payload
-) {
-
-    if (
-        !payload ||
-        typeof payload !== 'object'
-    ) {
-        return null;
-    }
-
-    return {
-
-        record:
-            typeof payload.record === 'string'
-                ? payload.record
-                : '',
-
-        rarity:
-            typeof payload.rarity === 'string'
-                ? payload.rarity
-                : 'common',
-
-        points:
-            typeof payload.points === 'number' &&
-            Number.isFinite(payload.points)
-                ? payload.points
-                : 0,
-
-        lifetimeRecordScore:
-            typeof payload.lifetimeRecordScore === 'number' &&
-            Number.isFinite(payload.lifetimeRecordScore)
-                ? payload.lifetimeRecordScore
-                : typeof payload.lifetimeScore === 'number' &&
-                  Number.isFinite(payload.lifetimeScore)
-                    ? payload.lifetimeScore
-                    : typeof payload.totalScore === 'number' &&
-                      Number.isFinite(payload.totalScore)
-                        ? payload.totalScore
-                        : 0,
-
-        timesRolled:
-            typeof payload.timesRolled === 'number' &&
-            Number.isFinite(payload.timesRolled)
-                ? payload.timesRolled
-                : typeof payload.rollCount === 'number' &&
-                  Number.isFinite(payload.rollCount)
-                    ? payload.rollCount
-                    : 0,
-
-        modifiers:
-            payload.modifiers ?? []
-
-    };
-}
-
-
+    if (!rngFrontendInitialized) { 
+        rngLocalRollState = 
+            loadLocalRngRollState(); 
+        initializeRngFrontend(); 
+    } 
+	 
+    updateRngDailyCountdown(); 
+    maybePlayRngLaunchFlash(); 
+} 
+	 
+function getRngServerNow() { 
+    if ( 
+        typeof rngServerTimeBase !== 'number' || 
+        typeof rngPerformanceTimeBase !== 'number' 
+    ) { 
+        return null; 
+    } 
+	 
+    return ( 
+        rngServerTimeBase + 
+        ( 
+            performance.now() - 
+            rngPerformanceTimeBase 
+        ) 
+    ); 
+} 
+	 
+function formatRngCountdown(milliseconds) { 
+    const totalSeconds = Math.max( 
+        0, 
+        Math.ceil(milliseconds / 1000) 
+    ); 
+	 
+    const hours = Math.floor( 
+        totalSeconds / 3600 
+    ); 
+	 
+    const minutes = Math.floor( 
+        (totalSeconds % 3600) / 60 
+    ); 
+	 
+    const seconds = 
+        totalSeconds % 60; 
+	 
+    return [ 
+        String(hours).padStart(2, '0'), 
+        String(minutes).padStart(2, '0'), 
+        String(seconds).padStart(2, '0') 
+    ].join(':'); 
+} 
+	 
+function sanitizeRngStoredResult(payload) { 
+    if ( 
+        !payload || 
+        typeof payload !== 'object' 
+    ) { 
+        return null; 
+    } 
+	 
+    return { 
+        record: payload.record ?? '', 
+        rarity: payload.rarity ?? 'Unknown', 
+        points: payload.points ?? '0', 
+        lifetimeRecordScore: 
+            payload.lifetimeRecordScore ?? 
+            payload.lifetimeScore ?? 
+            payload.lifetime_record_score ?? 
+            '0', 
+        timesRolled: 
+            payload.timesRolled ?? 
+            payload.times_rolled ?? 
+            1, 
+        modifiers: payload.modifiers ?? [] 
+    }; 
+} 
+	 
 function loadLocalRngRollState() {
-
     try {
-
         const stored =
             localStorage.getItem(
                 RNG_LOCAL_ROLL_STORAGE_KEY
             );
 
         if (!stored) {
-            rngLocalRollState = null;
-            return;
+            return null;
         }
 
-        const timestamp =
+        const numericTimestamp =
             Number(stored);
 
         if (
-            !Number.isFinite(
-                timestamp
+            Number.isFinite(
+                numericTimestamp
             )
         ) {
-            rngLocalRollState = null;
-            return;
+            return {
+                nextRollTimestamp:
+                    numericTimestamp
+            };
         }
 
-        rngLocalRollState =
-            timestamp;
+        const payload =
+            JSON.parse(stored);
 
+        if (
+            !payload ||
+            typeof payload !== 'object'
+        ) {
+            localStorage.removeItem(
+                RNG_LOCAL_ROLL_STORAGE_KEY
+            );
+
+            return null;
+        }
+
+        const nextRollTimestamp =
+            Number(
+                payload.nextRollTimestamp
+            );
+
+        if (
+            !Number.isFinite(
+                nextRollTimestamp
+            )
+        ) {
+            localStorage.removeItem(
+                RNG_LOCAL_ROLL_STORAGE_KEY
+            );
+
+            return null;
+        }
+
+        const lastRollTimestamp =
+            Number(
+                payload.lastRollTimestamp
+            );
+
+        if (
+            Number.isFinite(
+                lastRollTimestamp
+            )
+        ) {
+            return {
+                nextRollTimestamp,
+                lastRollTimestamp
+            };
+        }
+
+        return {
+            nextRollTimestamp
+        };
     } catch (err) {
-
-        rngLocalRollState = null;
-
+        return null;
     }
-}
+} 
+	 
+function saveLocalRngRollState(payload) { 
+    if ( 
+        !payload || 
+        typeof payload.nextRollTimestamp !== 'number' || 
+        !Number.isFinite(payload.nextRollTimestamp) 
+    ) { 
+        return; 
+    } 
 
+    const lastRollTimestamp =
+        typeof payload.lastRollTimestamp === 'number' &&
+        Number.isFinite(payload.lastRollTimestamp)
+            ? payload.lastRollTimestamp
+            : (
+                typeof rngLocalRollState?.lastRollTimestamp === 'number' &&
+                Number.isFinite(rngLocalRollState.lastRollTimestamp)
+                    ? rngLocalRollState.lastRollTimestamp
+                    : null
+            );
 
-function saveLocalRngRollState(
-    timestamp
-) {
+    rngLocalRollState = {
+        nextRollTimestamp:
+            payload.nextRollTimestamp
+    };
 
     if (
-        typeof timestamp !== 'number' ||
-        !Number.isFinite(timestamp)
+        lastRollTimestamp !== null
     ) {
-        return;
+        rngLocalRollState.lastRollTimestamp =
+            lastRollTimestamp;
     }
-
-    rngLocalRollState =
-        timestamp;
 
     try {
-
         localStorage.setItem(
             RNG_LOCAL_ROLL_STORAGE_KEY,
-            String(timestamp)
+            JSON.stringify(
+                rngLocalRollState
+            )
         );
-
     } catch (err) {
-        return;
-    }
-}
-
-
-function clearLocalRngRollState() {
-
+    } 
+} 
+	 
+function clearLocalRngRollState() { 
     rngLocalRollState = null;
 
     try {
-
         localStorage.removeItem(
             RNG_LOCAL_ROLL_STORAGE_KEY
         );
-
     } catch (err) {
-        return;
     }
-}
-
+} 
 
 function loadLocalRngResult() {
-
     try {
-
         const stored =
             localStorage.getItem(
                 RNG_LOCAL_RESULT_STORAGE_KEY
@@ -1238,27 +1217,18 @@ function loadLocalRngResult() {
             return null;
         }
 
-        const parsed =
-            JSON.parse(
-                stored
-            );
+        const payload =
+            JSON.parse(stored);
 
         return sanitizeRngStoredResult(
-            parsed
+            payload
         );
-
     } catch (err) {
-
         return null;
-
     }
 }
 
-
-function saveLocalRngResult(
-    payload
-) {
-
+function saveLocalRngResult(payload) {
     const sanitized =
         sanitizeRngStoredResult(
             payload
@@ -1269,54 +1239,86 @@ function saveLocalRngResult(
     }
 
     try {
-
         localStorage.setItem(
             RNG_LOCAL_RESULT_STORAGE_KEY,
             JSON.stringify(
                 sanitized
             )
         );
-
     } catch (err) {
-        return;
     }
 }
 
-
 function clearLocalRngResult() {
-
     try {
-
         localStorage.removeItem(
             RNG_LOCAL_RESULT_STORAGE_KEY
         );
-
     } catch (err) {
-        return;
     }
 }
-
 
 function getRngNextRollTimestamp() {
-
-    if (
-        typeof rngNextResetTimestamp === 'number' &&
-        Number.isFinite(
-            rngNextResetTimestamp
-        ) &&
-        rngNextResetTimestamp > 0
-    ) {
-        return rngNextResetTimestamp;
-    }
-
-    return null;
+    return rngLocalRollState?.nextRollTimestamp ??
+        null;
 }
 
+function isRngCooldownActive() {
+    const nextRollTimestamp =
+        getRngNextRollTimestamp();
+
+    const serverNow =
+        getRngServerNow();
+
+    if (
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp) ||
+        typeof rngNextResetTimestamp !== 'number' ||
+        !Number.isFinite(rngNextResetTimestamp) ||
+        typeof serverNow !== 'number' ||
+        !Number.isFinite(serverNow)
+    ) {
+        return false;
+    }
+
+    if (
+        nextRollTimestamp !==
+        rngNextResetTimestamp
+    ) {
+        return false;
+    }
+
+    if (
+        nextRollTimestamp <=
+        serverNow
+    ) {
+        return false;
+    }
+
+    const lastRollTimestamp =
+        Number(
+            rngLocalRollState?.lastRollTimestamp
+        );
+
+    if (
+        Number.isFinite(
+            lastRollTimestamp
+        )
+    ) {
+        return (
+            lastRollTimestamp <=
+            serverNow
+        );
+    }
+
+    return Boolean(
+        loadLocalRngResult()
+    );
+}
 
 function createRngTopControlArea() {
-
     if (rngTopControlArea) {
-        return rngTopControlArea;
+        return;
     }
 
     rngTopControlArea =
@@ -1325,11 +1327,44 @@ function createRngTopControlArea() {
     rngTopControlArea.className =
         'rngTopControlArea';
 
+    rngTopControlArea.style.height =
+        'auto';
+
+    rngTopControlArea.style.minHeight =
+        '86px';
+
+    rngTopControlArea.style.display =
+        'flex';
+
+    rngTopControlArea.style.flexDirection =
+        'column';
+
+    rngTopControlArea.style.alignItems =
+        'center';
+
+    rngTopControlArea.style.justifyContent =
+        'flex-start';
+
+    rngTopControlArea.style.overflow =
+        'visible';
+
     rngControlSlot =
         document.createElement('div');
 
+    rngControlSlot.className =
+        'rngControlSlot';
+
     rngControlSlot.style.width =
-        '100%';
+        '350px';
+
+    rngControlSlot.style.minWidth =
+        '350px';
+
+    rngControlSlot.style.maxWidth =
+        '350px';
+
+    rngControlSlot.style.height =
+        '86px';
 
     rngControlSlot.style.minHeight =
         '86px';
@@ -1343,8 +1378,8 @@ function createRngTopControlArea() {
     rngControlSlot.style.justifyContent =
         'center';
 
-    rngControlSlot.style.boxSizing =
-        'border-box';
+    rngControlSlot.style.flexShrink =
+        '0';
 
     rngTopControlArea.appendChild(
         rngControlSlot
@@ -1353,63 +1388,59 @@ function createRngTopControlArea() {
     generateScreen.appendChild(
         rngTopControlArea
     );
-
-    return rngTopControlArea;
 }
 
+function createRngDailyStatus() { 
+    if (rngDailyStatus) { 
+        return; 
+    } 
 
-function createRngDailyStatus() {
+    createRngTopControlArea();
+	 
+    rngDailyStatus = 
+        document.createElement('div'); 
+	 
+    rngDailyStatus.className = 
+        'rngDailyStatus'; 
 
-    if (rngDailyStatus) {
-        return rngDailyStatus;
-    }
+    rngDailyStatus.style.color =
+        '#8a8f94';
+	 
+    rngDailyMessage = 
+        document.createElement('div'); 
+	 
+    rngDailyMessage.className = 
+        'rngDailyMessage'; 
 
-    rngDailyStatus =
-        document.createElement('div');
+    rngDailyMessage.style.color =
+        '#8a8f94';
+	 
+    rngDailyMessage.textContent = 
+        'Next roll in'; 
+	 
+    rngDailyCountdown = 
+        document.createElement('div'); 
 
-    rngDailyStatus.className =
-        'rngDailyStatus';
+    rngDailyCountdown.className = 
+        'rngDailyCountdown'; 
 
-    rngDailyMessage =
-        document.createElement('div');
-
-    rngDailyMessage.className =
-        'rngDailyMessage';
-
-    rngDailyCountdown =
-        document.createElement('div');
-
-    rngDailyCountdown.className =
-        'rngDailyCountdown';
-
-    rngDailyMessage.textContent =
-        'Next record available in';
-
-    rngDailyStatus.appendChild(
-        rngDailyMessage
-    );
-
-    rngDailyStatus.appendChild(
-        rngDailyCountdown
-    );
-
-    rngControlSlot.appendChild(
-        rngDailyStatus
-    );
-
-    return rngDailyStatus;
-}
-
-
-function updateRngDailyCountdown() {
-
-    if (
-        !rngDailyStatus ||
-        !rngDailyCountdown
-    ) {
-        return;
-    }
-
+    rngDailyCountdown.style.color =
+        '#8a8f94';
+	 
+    rngDailyStatus.appendChild( 
+        rngDailyMessage 
+    ); 
+	 
+    rngDailyStatus.appendChild( 
+        rngDailyCountdown 
+    ); 
+	 
+    rngControlSlot.appendChild( 
+        rngDailyStatus 
+    ); 
+} 
+	 
+function updateRngDailyCountdown() { 
     const nextRollTimestamp =
         getRngNextRollTimestamp();
 
@@ -1417,33 +1448,46 @@ function updateRngDailyCountdown() {
         getRngServerNow();
 
     if (
-        !nextRollTimestamp ||
         typeof serverNow !== 'number' ||
         !Number.isFinite(serverNow)
     ) {
-
         stopRngDailyCountdown();
+        hideRngDailyStatus();
+        return false;
+    }
 
-        rngDailyStatus.classList.add(
-            'hidden'
-        );
+    if (
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp) ||
+        !isRngCooldownActive()
+    ) {
+        stopRngDailyCountdown();
+        hideRngDailyStatus();
 
-        if (
-            rngDailyActionArea
-        ) {
-            return;
+        if (rngResultPanel) {
+            clearRngLifetimeAnimation();
+            clearRngRecordCardWiggle();
+            rngResultPanel.remove();
+            rngResultPanel = null;
         }
 
+        if (rngScrambleElement) {
+            rngScrambleElement.remove();
+            rngScrambleElement = null;
+        }
+
+        clearLocalRngResult();
+        clearLocalRngRollState();
+        clearRngRarityTheme();
+
         if (
-            !rngResultPanel &&
-            !rngScrambleElement &&
             !rngRequestPending &&
             !rngRollLoadingPending
         ) {
             initializeRngGenerateButton();
         }
 
-        return;
+        return false;
     }
 
     const remaining =
@@ -1453,170 +1497,125 @@ function updateRngDailyCountdown() {
     if (
         remaining <= 0
     ) {
+        stopRngDailyCountdown();
 
-        handleRngCooldownExpired();
+        clearLocalRngRollState();
+        clearLocalRngResult();
+        hideRngDailyStatus();
+        clearRngRarityTheme();
 
-        return;
+        if (rngResultPanel) {
+            clearRngLifetimeAnimation();
+            clearRngRecordCardWiggle();
+            rngResultPanel.remove();
+            rngResultPanel = null;
+        }
+
+        if (rngScrambleElement) {
+            rngScrambleElement.remove();
+            rngScrambleElement = null;
+        }
+
+        if (
+            !rngRequestPending &&
+            !rngRollLoadingPending
+        ) {
+            initializeRngGenerateButton();
+        }
+
+        return false;
     }
 
-    rngDailyStatus.classList.remove(
-        'hidden'
-    );
+    createRngDailyStatus();
 
     rngDailyMessage.textContent =
-        'Next record available in';
+        'Next roll in';
 
     rngDailyCountdown.textContent =
         formatRngCountdown(
             remaining
         );
 
-    if (
-        !rngCountdownTimer
-    ) {
+    rngDailyMessage.style.color =
+        '#8a8f94';
 
-        rngCountdownTimer =
-            setInterval(
-                () => {
+    rngDailyCountdown.style.color =
+        '#8a8f94';
 
-                    const currentNextRoll =
-                        getRngNextRollTimestamp();
+    showRngDailyStatus();
+    startRngDailyCountdown();
 
-                    const currentServerNow =
-                        getRngServerNow();
-
-                    if (
-                        !currentNextRoll ||
-                        typeof currentServerNow !== 'number'
-                    ) {
-
-                        stopRngDailyCountdown();
-
-                        rngDailyStatus.classList.add(
-                            'hidden'
-                        );
-
-                        initializeRngGenerateButton();
-
-                        return;
-                    }
-
-                    const currentRemaining =
-                        currentNextRoll -
-                        currentServerNow;
-
-                    if (
-                        currentRemaining <= 0
-                    ) {
-
-                        handleRngCooldownExpired();
-
-                        return;
-                    }
-
-                    rngDailyStatus.classList.remove(
-                        'hidden'
-                    );
-
-                    rngDailyCountdown.textContent =
-                        formatRngCountdown(
-                            currentRemaining
-                        );
-
-                },
-                250
-            );
-    }
-}
-
-
-function startRngDailyCountdown() {
-    updateRngDailyCountdown();
-}
-
-
-function stopRngDailyCountdown() {
-
-    if (rngCountdownTimer) {
-
-        clearInterval(
-            rngCountdownTimer
-        );
-
-        rngCountdownTimer =
-            null;
-    }
-}
-
-
-function hideRngDailyStatus() {
-
+    return true;
+} 
+	 
+function startRngDailyCountdown() { 
     stopRngDailyCountdown();
 
-    if (rngDailyStatus) {
-        rngDailyStatus.classList.add(
-            'hidden'
-        );
+    rngCountdownTimer =
+        setInterval(() => {
+            updateRngDailyCountdown();
+        }, 1000);
+} 
+	 
+function stopRngDailyCountdown() { 
+    if (!rngCountdownTimer) { 
+        return; 
+    } 
+	 
+    clearInterval( 
+        rngCountdownTimer 
+    ); 
+	 
+    rngCountdownTimer = null; 
+} 
+	 
+function hideRngDailyStatus() { 
+    if (!rngDailyStatus) { 
+        return; 
+    } 
+	 
+    rngDailyStatus.classList.add( 
+        'hidden' 
+    ); 
+} 
+	 
+function showRngDailyStatus() { 
+    if (!rngDailyStatus) {
+        return;
     }
-}
 
-
-function showRngDailyStatus() {
-
-    if (rngDailyStatus) {
-        rngDailyStatus.classList.remove(
-            'hidden'
-        );
-    }
-}
-
-
-function clearRngRarityTheme() {
-
-    RNG_RARITY_THEME_CLASSES.forEach(
-        className => {
-            document.body.classList.remove(
-                className
-            );
-        }
+    rngDailyStatus.classList.remove(
+        'hidden'
     );
+} 
+	 
+function clearRngRarityTheme() {
+    if (!document.body) {
+        return;
+    }
+
+    RNG_RARITY_THEME_CLASSES.forEach(className => {
+        document.body.classList.remove(className);
+    });
 
     document.body.style.background = '';
 }
 
-
-function normalizeRngRarity(
-    rarity
-) {
-
-    if (
-        typeof rarity !== 'string'
-    ) {
-        return 'common';
+function normalizeRngRarity(rarity) {
+    if (typeof rarity !== 'string') {
+        return 'unknown';
     }
 
-    const normalized =
-        rarity
-            .trim()
-            .toLowerCase();
+    const normalized = rarity.trim().toLowerCase();
 
-    if (
-        RNG_RARITY_THEME_CLASSES
-            .includes(
-                `rng-rarity-${normalized}`
-            )
-    ) {
-        return normalized;
+    if (!RNG_RARITY_COLORS[normalized]) {
+        return 'unknown';
     }
 
-    return 'common';
+    return normalized;
 }
 
-
-function getRngDisplayRarity(
-    payload
-) {
-
+function getRngDisplayRarity(payload) {
     const baseRarity =
         normalizeRngRarity(
             payload &&
@@ -1624,124 +1623,149 @@ function getRngDisplayRarity(
         );
 
     /*
-    FUTURE MODIFIER-BASED RARITY PROCESSING
+    // FUTURE MODIFIER-BASED RARITY PROCESSING
+
+    let rarityTier =
+        baseRarity === 'common'
+            ? 0
+            : baseRarity === 'uncommon'
+                ? 1
+                : baseRarity === 'rare'
+                    ? 2
+                    : baseRarity === 'legendary'
+                        ? 3
+                        : -1;
+
+    if (
+        rarityTier >= 0 &&
+        Array.isArray(payload?.modifiers)
+    ) {
+        payload.modifiers.forEach(modifier => {
+            // Future modifier processing will determine
+            // whether a modifier increases rarity here.
+        });
+    }
+
+    const rarityByTier = [
+        'common',
+        'uncommon',
+        'rare',
+        'legendary'
+    ];
+
+    if (rarityTier >= 0) {
+        return rarityByTier[
+            Math.min(
+                rarityTier,
+                rarityByTier.length - 1
+            )
+        ];
+    }
     */
 
     return baseRarity;
 }
 
-
-function applyRngRarityTheme(
-    rarity
-) {
-
-    const normalized =
-        normalizeRngRarity(
-            rarity
-        );
-
+function applyRngRarityTheme(rarity) {
     clearRngRarityTheme();
 
-    document.body.classList.add(
-        `rng-rarity-${normalized}`
-    );
+    const normalized = normalizeRngRarity(rarity);
+
+    if (
+        normalized !== 'unknown'
+    ) {
+        document.body.classList.add(
+            `rng-rarity-${normalized}`
+        );
+
+        if (
+            RNG_RARITY_GRADIENTS[normalized]
+        ) {
+            document.body.style.background =
+                RNG_RARITY_GRADIENTS[normalized];
+        }
+    }
+
+    return normalized;
 }
 
-
-function getRngRarityGradient(
-    rarity
-) {
-
+function getRngRarityGradient(rarity) {
     const normalized =
         normalizeRngRarity(
             rarity
         );
 
     return (
-        RNG_RARITY_GRADIENTS[
-            normalized
-        ] ||
-        RNG_RARITY_GRADIENTS.common
+        RNG_RARITY_GRADIENTS[normalized] ??
+        ''
     );
 }
 
-
-function playRngLaunchFlash() {
-
-    const existing =
-        document.querySelector(
-            '.rngLaunchFlash'
-        );
-
-    if (existing) {
-        existing.remove();
-    }
-
-    const flash =
-        document.createElement('div');
-
-    flash.className =
-        'rngLaunchFlash';
-
-    document.body.appendChild(
-        flash
-    );
-
-    flash.addEventListener(
-        'animationend',
-        () => {
-            flash.remove();
-        },
-        {
-            once: true
-        }
-    );
-}
-
+function playRngLaunchFlash() { 
+    const existingFlash = 
+        document.querySelector( 
+            '.rngLaunchFlash' 
+        ); 
+	 
+    if (existingFlash) { 
+        existingFlash.remove(); 
+    } 
+	 
+    const flash = 
+        document.createElement('div'); 
+	 
+    flash.className = 
+        'rngLaunchFlash'; 
+	 
+    document.body.appendChild( 
+        flash 
+    ); 
+	 
+    flash.addEventListener( 
+        'animationend', 
+        () => { 
+            flash.remove(); 
+        }, 
+        { once: true } 
+    ); 
+} 
 
 function requestRngLaunchFlash() {
     rngLaunchFlashPending = true;
+    maybePlayRngLaunchFlash();
+}
+	 
+function maybePlayRngLaunchFlash() { 
+    if ( 
+        !rngLaunchFlashPending || 
+        !mainScreen || 
+        mainScreen.classList.contains('hidden') 
+    ) { 
+        return; 
+    } 
+	 
+    rngLaunchFlashPending = false; 
+    playRngLaunchFlash(); 
 }
 
-
-function maybePlayRngLaunchFlash() {
-
-    if (!rngLaunchFlashPending) {
-        return;
-    }
-
-    rngLaunchFlashPending = false;
-
-    playRngLaunchFlash();
-}
-
-
-function scrollRngResultIntoView(
-    element
-) {
-
+function scrollRngResultIntoView(element) {
     if (!element) {
         return;
     }
 
-    requestAnimationFrame(
-        () => {
-
-            element.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-                inline: 'center'
-            });
-
-        }
-    );
+    requestAnimationFrame(() => {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        });
+    });
 }
 
-
 function clearRngRecordCardWiggle() {
-
-    if (rngRecordCardWiggleFrame) {
-
+    if (
+        rngRecordCardWiggleFrame
+    ) {
         cancelAnimationFrame(
             rngRecordCardWiggleFrame
         );
@@ -1749,258 +1773,125 @@ function clearRngRecordCardWiggle() {
         rngRecordCardWiggleFrame =
             null;
     }
-
-    document
-        .querySelectorAll(
-            '.rngRecordCard'
-        )
-        .forEach(
-            card => {
-                card.style.transform = '';
-            }
-        );
 }
-
 
 function startRngRecordCardWiggle(
     card
 ) {
-
-    clearRngRecordCardWiggle();
-
     if (!card) {
         return;
     }
 
-    const startTime =
+    clearRngRecordCardWiggle();
+
+    const startedAt =
         performance.now();
 
-    function animate(now) {
-
+    function wiggleFrame(now) {
         if (
-            !document.body.contains(
-                card
-            )
+            !card.parentElement
         ) {
             rngRecordCardWiggleFrame =
                 null;
+
             return;
         }
 
         const elapsed =
             now -
-            startTime;
+            startedAt;
 
-        if (
-            elapsed >=
-            RNG_RECORD_WIGGLE_DURATION
-        ) {
+        const cycleAngle =
+            (elapsed /
+                RNG_RECORD_WIGGLE_DURATION) *
+            Math.PI *
+            2;
 
-            card.style.transform = '';
-
-            rngRecordCardWiggleFrame =
-                null;
-
-            return;
-        }
-
-        const progress =
-            elapsed /
-            RNG_RECORD_WIGGLE_DURATION;
-
-        const envelope =
+        const wave =
             Math.sin(
-                Math.PI *
-                Math.min(
-                    progress,
-                    1
-                )
+                cycleAngle
             );
 
-        const sineA =
+        const secondaryWave =
             Math.sin(
-                elapsed *
-                0.035
-            );
-
-        const sineB =
-            Math.sin(
-                elapsed *
-                0.071
+                cycleAngle *
+                    2 +
+                    Math.PI /
+                        2
             );
 
         const x =
-            (
-                (
-                    sineA *
-                    0.72
-                ) +
-                (
-                    sineB *
-                    0.28
-                )
-            ) *
-            RNG_RECORD_WIGGLE_AMPLITUDE *
-            envelope;
-
-        const rotation =
-            (
-                (
-                    sineA *
-                    0.75
-                ) +
-                (
-                    sineB *
-                    0.25
-                )
-            ) *
-            RNG_RECORD_WIGGLE_ROTATION *
-            envelope;
+            wave *
+            RNG_RECORD_WIGGLE_AMPLITUDE;
 
         const y =
-            Math.sin(
-                elapsed *
-                0.047
-            ) *
-            30 *
-            envelope;
+            secondaryWave *
+            1.8;
+
+        const rotation =
+            wave *
+            RNG_RECORD_WIGGLE_ROTATION;
 
         card.style.transform =
             `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
 
         rngRecordCardWiggleFrame =
             requestAnimationFrame(
-                animate
+                wiggleFrame
             );
     }
 
     rngRecordCardWiggleFrame =
         requestAnimationFrame(
-            animate
+            wiggleFrame
         );
 }
 
-
-function handleRngCooldownExpired() {
-
-    stopRngDailyCountdown();
-
-    rngNextResetTimestamp = null;
-
-    clearLocalRngRollState();
-
-    hideRngDailyStatus();
-
-    if (rngScrambleTimer) {
-        clearTimeout(rngScrambleTimer);
-        rngScrambleTimer = null;
-    }
-
-    if (rngScrambleProgressTimer) {
-        clearInterval(rngScrambleProgressTimer);
-        rngScrambleProgressTimer = null;
-    }
-
-    if (rngScrambleElement) {
-        rngScrambleElement.remove();
-        rngScrambleElement = null;
-    }
-
-    if (rngResultPanel) {
-        rngResultPanel.remove();
-        rngResultPanel = null;
-    }
-
-    clearLocalRngResult();
-
-    clearRngRecordCardWiggle();
-
-    clearRngRarityTheme();
-
-    if (
-        currentTab === 'generate' &&
-        !rngRequestPending &&
-        !rngRollLoadingPending
-    ) {
-        initializeRngGenerateButton();
-    }
-
-    updateScrollRail();
-}
-
-
 function handleRngGenerateTabActivation() {
-
-    const nextRollTimestamp =
-        getRngNextRollTimestamp();
-
-    const serverNow =
-        getRngServerNow();
-
     if (
-        nextRollTimestamp &&
-        typeof serverNow === 'number'
+        !generateScreen ||
+        generateScreen.classList.contains('hidden')
     ) {
-
-        if (
-            serverNow >=
-            nextRollTimestamp
-        ) {
-
-            handleRngCooldownExpired();
-
-            return;
-        }
-
-        if (rngResultPanel) {
-
-            const card =
-                rngResultPanel.querySelector(
-                    '.rngRecordCard'
-                );
-
-            if (card) {
-
-                const rarity =
-                    card.dataset.rngRarity ||
-                    'common';
-
-                applyRngRarityTheme(
-                    rarity
-                );
-
-                startRngRecordCardWiggle(
-                    card
-                );
-
-                requestRngLaunchFlash();
-                maybePlayRngLaunchFlash();
-            }
-
-        } else if (
-            rngScrambleElement
-        ) {
-
-            return;
-
-        } else {
-
-            updateRngDailyCountdown();
-        }
-
         return;
     }
-
-    hideRngDailyStatus();
 
     if (
         rngResultPanel
     ) {
-        rngResultPanel.remove();
-        rngResultPanel = null;
+        const card =
+            rngResultPanel.querySelector(
+                '.rngRecordCard'
+            );
+
+        if (card) {
+
+            applyRngRarityTheme(
+                card.classList.contains('rng-rarity-common')
+                    ? 'common'
+                    : card.classList.contains('rng-rarity-uncommon')
+                        ? 'uncommon'
+                        : card.classList.contains('rng-rarity-rare')
+                            ? 'rare'
+                            : card.classList.contains('rng-rarity-legendary')
+                                ? 'legendary'
+                                : 'unknown'
+            );
+
+            if (!rngRecordCardWiggleFrame) {
+                startRngRecordCardWiggle(card);
+            }
+
+            requestRngLaunchFlash();
+        }
+
+        return;
     }
 
-    clearRngRarityTheme();
+    if (rngScrambleElement) {
+        return;
+    }
+
+    updateRngDailyCountdown();
 
     if (
         !rngRequestPending &&
@@ -2009,162 +1900,145 @@ function handleRngGenerateTabActivation() {
         initializeRngGenerateButton();
     }
 }
-
-
+	 
 function animateRngRecordCard(
     card,
     onLifetimeLabelShown = null
-) {
-
-    if (!card) {
-        return;
-    }
+) { 
+    if (!card) { 
+        return; 
+    } 
 
     clearRngRecordCardWiggle();
+	 
+    const childElements = 
+        card.querySelectorAll( 
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers' 
+        ); 
 
-    const elements =
-        card.querySelectorAll(
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'
-        );
+    const elements = [
+        card,
+        ...childElements
+    ];
 
-    let lifetimeAnimationTriggered =
-        false;
+    const finalElement =
+        elements[
+            elements.length - 1
+        ];
 
-    elements.forEach(
-        (
-            element,
-            index
-        ) => {
+    elements.forEach( 
+        (element, index) => { 
 
-            element.classList.remove(
-                'rngResultPopIn'
-            );
-
-            element.style.opacity =
-                '0';
-
-            element.style.transform =
-                'translateY(12px) scale(0.88)';
-
-            element.style.setProperty(
-                '--rng-pop-delay',
-                `${index * RNG_POP_INTERVAL}ms`
-            );
-
-            void element.offsetWidth;
-
-            element.classList.add(
-                'rngResultPopIn'
-            );
-
-            element.addEventListener(
-                'animationend',
-                event => {
-
-                    if (
-                        event.animationName !==
-                        'rngResultPopIn'
-                    ) {
-                        return;
-                    }
-
-                    if (
-                        element.classList.contains(
-                            'rngLifetimeStatValue'
-                        ) &&
-                        !lifetimeAnimationTriggered
-                    ) {
-
-                        lifetimeAnimationTriggered =
-                            true;
-
+            if (
+                onLifetimeLabelShown &&
+                element.classList.contains(
+                    'rngStatLabel'
+                ) &&
+                element.textContent ===
+                    'Lifetime Score'
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
                         if (
-                            typeof onLifetimeLabelShown ===
-                            'function'
+                            event.animationName ===
+                            'rngResultPopIn'
                         ) {
                             onLifetimeLabelShown();
                         }
-                    }
+                    },
+                    { once: true }
+                );
+            }
 
-                    element.classList.remove(
-                        'rngResultPopIn'
-                    );
+            if (
+                element ===
+                finalElement
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName !==
+                            'rngResultPopIn'
+                        ) {
+                            return;
+                        }
 
-                    element.style.opacity =
-                        '1';
+                        card.classList.remove(
+                            'rngResultPopIn'
+                        );
 
-                    element.style.transform =
-                        'none';
+                        card.classList.remove(
+                            'rngRecordCardFinalPop'
+                        );
 
-                },
-                {
-                    once: true
-                }
-            );
-        }
-    );
+                        card.style.opacity =
+                            '1';
 
-    const finalDelay =
-        (
-            elements.length -
-            1
-        ) *
-        RNG_POP_INTERVAL +
-        RNG_POP_DURATION;
+                        card.style.transform =
+                            'none';
 
-    setTimeout(
-        () => {
+                        playRngLaunchFlash();
 
-            card.classList.remove(
-                'rngRecordCardFinalPop'
-            );
+                        void card.offsetWidth;
 
-            void card.offsetWidth;
+                        card.classList.add(
+                            'rngRecordCardFinalPop'
+                        );
 
-            card.classList.add(
-                'rngRecordCardFinalPop'
-            );
+                        card.addEventListener(
+                            'animationend',
+                            finalPopEvent => {
+                                if (
+                                    finalPopEvent.animationName !==
+                                    'rngRecordCardFinalPop'
+                                ) {
+                                    return;
+                                }
 
-            card.addEventListener(
-                'animationend',
-                event => {
+                                startRngRecordCardWiggle(
+                                    card
+                                );
+                            },
+                            { once: true }
+                        );
+                    },
+                    { once: true }
+                );
+            }
 
-                    if (
-                        event.animationName !==
-                        'rngRecordCardFinalPop'
-                    ) {
-                        return;
-                    }
+            element.style.setProperty( 
+                '--rng-pop-delay', 
+                `${index * (RNG_POP_INTERVAL / 1000)}s` 
+            ); 
 
-                    card.classList.remove(
-                        'rngRecordCardFinalPop'
-                    );
+            element.style.animationDuration =
+                `${RNG_POP_DURATION}ms`;
 
-                    card.style.transform =
-                        '';
+            element.classList.remove( 
+                'rngResultPopIn' 
+            ); 
 
-                    startRngRecordCardWiggle(
-                        card
-                    );
+            element.style.opacity = 
+                '0'; 
 
-                    playRngLaunchFlash();
+            element.style.transform = 
+                'translateY(12px) scale(0.88)'; 
 
-                },
-                {
-                    once: true
-                }
-            );
+            void element.offsetWidth; 
 
-        },
-        finalDelay
-    );
-}
-
-
+            element.classList.add( 
+                'rngResultPopIn' 
+            ); 
+        } 
+    ); 
+} 
+	 
 function clearRngLifetimeAnimation() {
-
-    if (rngLifetimeRollTimer) {
-
+    if (
+        rngLifetimeRollTimer
+    ) {
         clearTimeout(
             rngLifetimeRollTimer
         );
@@ -2174,98 +2048,100 @@ function clearRngLifetimeAnimation() {
     }
 
     rngLifetimeAnimationFrames.forEach(
-        frame => {
+        frameId => {
             cancelAnimationFrame(
-                frame
+                frameId
             );
         }
     );
 
-    rngLifetimeAnimationFrames = [];
+    rngLifetimeAnimationFrames =
+        [];
 
     rngLifetimeAnimationActive =
         false;
 }
 
-
-function resetDailyRngFrontend() {
-
-    stopRngDailyCountdown();
-
-    clearLocalRngRollState();
+function resetDailyRngFrontend() { 
+    stopRngDailyCountdown(); 
+    clearLocalRngRollState(); 
     clearLocalRngResult();
-
-    rngNextResetTimestamp =
-        null;
-
-    rngPendingLifetimeScore =
-        null;
+    clearRngRarityTheme();
 
     clearRngLifetimeAnimation();
     clearRngRecordCardWiggle();
-
-    if (rngScrambleTimer) {
-        clearTimeout(rngScrambleTimer);
-        rngScrambleTimer = null;
-    }
+    rngPendingLifetimeScore = null;
 
     if (rngScrambleProgressTimer) {
-        clearInterval(rngScrambleProgressTimer);
+        clearInterval(
+            rngScrambleProgressTimer
+        );
+
         rngScrambleProgressTimer = null;
+    }
+
+    if (rngScrambleTimer) {
+        clearInterval(
+            rngScrambleTimer
+        );
+
+        rngScrambleTimer = null;
     }
 
     if (rngScrambleElement) {
         rngScrambleElement.remove();
         rngScrambleElement = null;
     }
-
-    if (rngResultPanel) {
-        rngResultPanel.remove();
-        rngResultPanel = null;
-    }
-
-    if (rngDailyActionArea) {
-        rngDailyActionArea.remove();
-        rngDailyActionArea = null;
-    }
-
-    clearRngRarityTheme();
-
-    hideRngDailyStatus();
-
-    requestRngServerTime();
-
-    if (
-        currentTab === 'generate'
-    ) {
-        initializeRngGenerateButton();
-    }
-
-    updateScrollRail();
-}
-
-
-function markRngRollComplete(
-    payload
-) {
-
+	 
+    if (rngResultPanel) { 
+        rngResultPanel.remove(); 
+        rngResultPanel = null; 
+    } 
+	 
+    hideRngDailyStatus(); 
+	 
+    if (rngDailyActionArea) { 
+        rngDailyActionArea.remove(); 
+        rngDailyActionArea = null; 
+    } 
+	 
+    requestRngServerTime(); 
+    initializeRngGenerateButton();
+    updateScrollRail(); 
+} 
+	 
+function markRngRollComplete(payload) { 
     saveLocalRngResult(
         payload
     );
 
     if (
         typeof rngNextResetTimestamp === 'number' &&
-        Number.isFinite(
-            rngNextResetTimestamp
-        )
+        Number.isFinite(rngNextResetTimestamp)
     ) {
+        const serverNow =
+            getRngServerNow();
+
+        const statePayload = {
+            nextRollTimestamp:
+                rngNextResetTimestamp
+        };
+
+        if (
+            typeof serverNow === 'number' &&
+            Number.isFinite(serverNow)
+        ) {
+            statePayload.lastRollTimestamp =
+                serverNow;
+        }
+
         saveLocalRngRollState(
-            rngNextResetTimestamp
+            statePayload
         );
     }
 
     rngLocalRollState =
-        rngNextResetTimestamp;
+        loadLocalRngRollState();
 
     updateRngDailyCountdown();
 
@@ -2273,17 +2149,13 @@ function markRngRollComplete(
         payload
     );
 
-    if (rngDailyActionArea) {
-        rngDailyActionArea.remove();
-        rngDailyActionArea = null;
-    }
+    if (rngDailyActionArea) { 
+        rngDailyActionArea.remove(); 
+        rngDailyActionArea = null; 
+    } 
 }
 
-
-function getRngLifetimePayloadScore(
-    payload
-) {
-
+function getRngLifetimePayloadScore(payload) {
     if (
         !payload ||
         typeof payload !== 'object'
@@ -2291,239 +2163,395 @@ function getRngLifetimePayloadScore(
         return null;
     }
 
-    const score =
-        payload.lifetimeRecordScore ??
-        payload.lifetimeScore ??
-        payload.totalScore;
+    const value =
+        Number(
+            payload.lifetimeRecordScore ??
+            payload.lifetimeScore ??
+            payload.lifetime_record_score
+        );
 
     if (
-        typeof score !== 'number' ||
-        !Number.isFinite(score)
+        !Number.isFinite(value)
     ) {
         return null;
     }
 
-    return score;
-}
-
-
-function getRngLifetimeStatValueElement() {
-
-    if (!rngResultPanel) {
-        return null;
-    }
-
-    return rngResultPanel.querySelector(
-        '.rngLifetimeScoreValue'
+    return Math.round(
+        value
     );
 }
 
+function getRngLifetimeStatValueElement() {
+    if (
+        !rngResultPanel
+    ) {
+        return null;
+    }
+
+    const statLabels =
+        rngResultPanel.querySelectorAll(
+            '.rngStatLabel'
+        );
+
+    for (
+        const statLabel of statLabels
+    ) {
+        if (
+            !statLabel.textContent
+                .toLowerCase()
+                .includes(
+                    'lifetime'
+                )
+        ) {
+            continue;
+        }
+
+        const stat =
+            statLabel.parentElement;
+
+        if (!stat) {
+            return null;
+        }
+
+        return stat.querySelector(
+            '.rngStatValue'
+        );
+    }
+
+    return null;
+}
 
 function createRngLifetimeDigitFace(
-    value
+    digit
 ) {
-
     const face =
-        document.createElement('div');
+        document.createElement('span');
 
     face.className =
         'rngLifetimeDigitFace';
 
     face.textContent =
-        value;
+        String(
+            (
+                Number(digit) +
+                10
+            ) %
+            10
+        );
 
     return face;
 }
 
-
 function getRngLifetimeReelDigit(
-    value
+    baseDigit,
+    offset
 ) {
-
-    const numeric =
-        Number(
-            value
-        );
-
-    if (
-        !Number.isFinite(
-            numeric
-        )
-    ) {
-        return '0';
-    }
-
-    return String(
-        Math.abs(
-            Math.trunc(
-                numeric
-            )
+    return (
+        (
+            baseDigit +
+            offset
         ) %
+        10 +
         10
-    );
+    ) % 10;
 }
 
-
 function createRngLifetimeDigitReel(
-    digit,
-    nextDigit,
-    steps
+    oldDigit,
+    targetDigit,
+    delay,
+    onFinished
 ) {
+    const digitFrame =
+        document.createElement('span');
 
-    const wrapper =
-        document.createElement('div');
-
-    wrapper.className =
+    digitFrame.className =
         'rngLifetimeDigit';
 
     const strip =
-        document.createElement('div');
+        document.createElement('span');
 
     strip.className =
         'rngLifetimeDigitStrip';
 
-    const visibleFaces =
-        Math.max(
-            1,
-            steps
+    const numericOldDigit =
+        Number(
+            oldDigit
         );
 
-    strip.appendChild(
-        createRngLifetimeDigitFace(
-            digit
-        )
-    );
+    const numericTargetDigit =
+        Number(
+            targetDigit
+        );
+
+    const forwardSteps =
+        (
+            numericTargetDigit -
+            numericOldDigit +
+            10
+        ) %
+        10;
+
+    const totalFaces =
+        forwardSteps +
+        3;
 
     for (
-        let i = 0;
-        i < visibleFaces;
-        i++
+        let index = 0;
+        index < totalFaces;
+        index++
     ) {
+        const digit =
+            getRngLifetimeReelDigit(
+                numericOldDigit,
+                index -
+                    RNG_LIFETIME_VISIBLE_STEPS
+            );
 
         strip.appendChild(
             createRngLifetimeDigitFace(
-                getRngLifetimeReelDigit(
-                    Number(digit) +
-                    i +
-                    1
-                )
+                digit
             )
         );
     }
 
-    strip.appendChild(
-        createRngLifetimeDigitFace(
-            nextDigit
-        )
-    );
-
-    wrapper.appendChild(
+    digitFrame.appendChild(
         strip
     );
 
     return {
-        wrapper,
-        strip
+        digitFrame,
+        strip,
+        oldDigit:
+            numericOldDigit,
+        targetDigit:
+            numericTargetDigit,
+        forwardSteps,
+        delay,
+        onFinished
     };
 }
 
-
 function updateRngLifetimeDigitFaces(
-    strip,
-    digit,
-    nextDigit,
-    steps
+    reel,
+    translateY,
+    faceHeight,
+    frameHeight
 ) {
-
-    while (
-        strip.children.length < steps + 2
-    ) {
-
-        strip.appendChild(
-            createRngLifetimeDigitFace(
-                '0'
-            )
-        );
-    }
+    const centerY =
+        frameHeight /
+        2;
 
     const faces =
-        strip.children;
-
-    if (faces[0]) {
-        faces[0].textContent =
-            digit;
-    }
+        reel.strip.children;
 
     for (
-        let i = 1;
-        i <= steps;
-        i++
+        let index = 0;
+        index < faces.length;
+        index++
     ) {
+        const face =
+            faces[index];
 
-        if (faces[i]) {
+        const faceTop =
+            translateY +
+            (
+                index *
+                faceHeight
+            );
 
-            faces[i].textContent =
-                getRngLifetimeReelDigit(
-                    Number(digit) +
-                    i
+        const faceCenter =
+            faceTop +
+            (
+                faceHeight /
+                2
+            );
+
+        const distance =
+            Math.abs(
+                faceCenter -
+                centerY
+            );
+
+        const fadeStart =
+            faceHeight *
+            1.2;
+
+        const fadeEnd =
+            faceHeight *
+            2;
+
+        let opacity = 1;
+
+        if (
+            distance >
+            fadeStart
+        ) {
+            opacity =
+                Math.max(
+                    0,
+                    1 -
+                        (
+                            (
+                                distance -
+                                fadeStart
+                            ) /
+                            (
+                                fadeEnd -
+                                fadeStart
+                            )
+                        )
                 );
         }
-    }
 
-    if (
-        faces[steps + 1]
-    ) {
-        faces[steps + 1].textContent =
-            nextDigit;
+        face.style.opacity =
+            String(
+                opacity
+            );
     }
 }
-
 
 function easeRngLifetimeRoll(
     progress
 ) {
+    const clamped =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                progress
+            )
+        );
 
     return (
         1 -
         Math.pow(
             1 -
-            progress,
+                clamped,
             3
         )
     );
 }
 
-
 function startRngLifetimeDigitReel(
     reel,
-    digit,
-    nextDigit,
-    startTime,
-    duration
+    faceHeight,
+    frameHeight,
+    onGlobalFrame
 ) {
+    const centerOffset =
+        (
+            frameHeight -
+            faceHeight
+        ) / 2;
 
-    const startOffset =
-        0;
+    const startIndex =
+        RNG_LIFETIME_VISIBLE_STEPS;
 
-    const faceHeight =
-        18;
+    const endIndex =
+        startIndex +
+        reel.forwardSteps;
+
+    const startTranslate =
+        centerOffset -
+        (
+            startIndex *
+            faceHeight
+        );
+
+    const endTranslate =
+        centerOffset -
+        (
+            endIndex *
+            faceHeight
+        );
+
+    reel.strip.style.transform =
+        `translateY(${startTranslate}px)`;
+
+    updateRngLifetimeDigitFaces(
+        reel,
+        startTranslate,
+        faceHeight,
+        frameHeight
+    );
+
+    let startedAt =
+        null;
+
+    let frameId =
+        null;
+
+    function complete() {
+        if (
+            frameId
+        ) {
+            cancelAnimationFrame(
+                frameId
+            );
+        }
+
+        reel.strip.style.transform =
+            `translateY(${endTranslate}px)`;
+
+        updateRngLifetimeDigitFaces(
+            reel,
+            endTranslate,
+            faceHeight,
+            frameHeight
+        );
+
+        reel.onFinished();
+    }
 
     function animate(now) {
+        if (
+            startedAt === null
+        ) {
+            startedAt =
+                now;
+        }
+
+        const elapsed =
+            now -
+            startedAt;
 
         if (
-            !rngLifetimeAnimationActive
+            elapsed <
+            reel.delay
         ) {
+            frameId =
+                requestAnimationFrame(
+                    animate
+                );
+
+            rngLifetimeAnimationFrames.push(
+                frameId
+            );
+
             return;
         }
 
+        if (
+            reel.forwardSteps ===
+            0
+        ) {
+            complete();
+            return;
+        }
+
+        const localElapsed =
+            elapsed -
+            reel.delay;
+
+        const duration =
+            RNG_LIFETIME_ROLL_DURATION;
+
         const progress =
             Math.min(
-                1,
-                (
-                    now -
-                    startTime
-                ) /
-                duration
+                localElapsed /
+                    duration,
+                1
             );
 
         const eased =
@@ -2531,121 +2559,182 @@ function startRngLifetimeDigitReel(
                 progress
             );
 
-        const offset =
-            startOffset +
+        const currentTranslate =
+            startTranslate +
             (
                 (
-                    RNG_LIFETIME_VISIBLE_STEPS +
-                    1
+                    endTranslate -
+                    startTranslate
                 ) *
-                faceHeight *
                 eased
             );
 
-        reel.style.transform =
-            `translateY(-${offset}px)`;
+        reel.strip.style.transform =
+            `translateY(${currentTranslate}px)`;
+
+        updateRngLifetimeDigitFaces(
+            reel,
+            currentTranslate,
+            faceHeight,
+            frameHeight
+        );
 
         if (
-            progress < 1
+            onGlobalFrame
         ) {
+            onGlobalFrame();
+        }
 
-            const frame =
-                requestAnimationFrame(
-                    animate
-                );
-
-            rngLifetimeAnimationFrames.push(
-                frame
-            );
-
+        if (
+            progress >= 1
+        ) {
+            complete();
             return;
         }
 
-        reel.style.transform =
-            `translateY(-${(
-                (
-                    RNG_LIFETIME_VISIBLE_STEPS +
-                    1
-                ) *
-                faceHeight
-            )}px)`;
+        frameId =
+            requestAnimationFrame(
+                animate
+            );
+
+        rngLifetimeAnimationFrames.push(
+            frameId
+        );
     }
 
-    const frame =
+    frameId =
         requestAnimationFrame(
             animate
         );
 
     rngLifetimeAnimationFrames.push(
-        frame
+        frameId
     );
 }
-
 
 function animateRngLifetimeScore(
     element,
     oldScore,
     newScore
 ) {
+    if (
+        !element ||
+        typeof oldScore !== 'number' ||
+        !Number.isFinite(oldScore) ||
+        typeof newScore !== 'number' ||
+        !Number.isFinite(newScore)
+    ) {
+        return;
+    }
 
-    if (!element) {
+    const normalizedOldScore =
+        Math.max(
+            0,
+            Math.round(
+                oldScore
+            )
+        );
+
+    const normalizedNewScore =
+        Math.max(
+            0,
+            Math.round(
+                newScore
+            )
+        );
+
+    const oldText =
+        String(
+            normalizedOldScore
+        );
+
+    const newText =
+        String(
+            normalizedNewScore
+        );
+
+    if (
+        oldText === newText
+    ) {
+        const normalValue =
+            element.querySelector(
+                '.rngLifetimeNormalValue'
+            );
+
+        if (normalValue) {
+            normalValue.textContent =
+                newText;
+
+            normalValue.style.opacity =
+                '1';
+        } else {
+            element.textContent =
+                newText;
+        }
+
+        element.setAttribute(
+            'data-rng-lifetime-score',
+            newText
+        );
+
+        element.setAttribute(
+            'aria-label',
+            newText
+        );
+
         return;
     }
 
     clearRngLifetimeAnimation();
 
-    const oldValue =
-        Number(
-            oldScore
-        );
+    element.classList.add(
+        'rngLifetimeScoreValue'
+    );
 
-    const newValue =
-        Number(
-            newScore
-        );
-
-    if (
-        !Number.isFinite(oldValue) ||
-        !Number.isFinite(newValue)
-    ) {
-        return;
-    }
-
-    if (
-        oldValue ===
-        newValue
-    ) {
-
-        element.textContent =
-            String(
-                Math.trunc(
-                    newValue
-                )
-            );
-
-        return;
-    }
-
-    const normalValue =
+    let normalValue =
         element.querySelector(
             '.rngLifetimeNormalValue'
-        ) ||
-        document.createElement('span');
-
-    normalValue.className =
-        'rngLifetimeNormalValue';
-
-    normalValue.textContent =
-        String(
-            Math.trunc(
-                oldValue
-            )
         );
 
-    element.innerHTML = '';
+    if (!normalValue) {
+        element.textContent =
+            '';
 
-    element.appendChild(
-        normalValue
+        normalValue =
+            document.createElement('span');
+
+        normalValue.className =
+            'rngLifetimeNormalValue';
+
+        element.appendChild(
+            normalValue
+        );
+    }
+
+    normalValue.textContent =
+        oldText;
+
+    normalValue.style.opacity =
+        '0';
+
+    element.setAttribute(
+        'data-rng-lifetime-score',
+        oldText
+    );
+
+    element.setAttribute(
+        'data-rng-lifetime-old-score',
+        oldText
+    );
+
+    element.setAttribute(
+        'data-rng-lifetime-target-score',
+        newText
+    );
+
+    element.setAttribute(
+        'aria-label',
+        newText
     );
 
     const wheel =
@@ -2654,75 +2743,120 @@ function animateRngLifetimeScore(
     wheel.className =
         'rngLifetimeWheel';
 
-    const oldString =
-        String(
-            Math.trunc(
-                Math.abs(
-                    oldValue
-                )
-            )
-        );
+    wheel.setAttribute(
+        'aria-hidden',
+        'true'
+    );
 
-    const newString =
-        String(
-            Math.trunc(
-                Math.abs(
-                    newValue
-                )
-            )
-        );
-
-    const digitLength =
+    const wheelLength =
         Math.max(
-            oldString.length,
-            newString.length
+            oldText.length,
+            newText.length
         );
 
-    const paddedOld =
-        oldString.padStart(
-            digitLength,
+    const oldPadded =
+        oldText.padStart(
+            wheelLength,
             '0'
         );
 
-    const paddedNew =
-        newString.padStart(
-            digitLength,
+    const newPadded =
+        newText.padStart(
+            wheelLength,
             '0'
         );
 
-    for (
-        let i = 0;
-        i < digitLength;
-        i++
-    ) {
+    let completedDigits =
+        0;
 
-        const currentDigit =
-            paddedOld[i];
+    const digitReels = [];
 
-        const nextDigit =
-            paddedNew[i];
+    function finishDigit() {
+        completedDigits++;
 
-        const reelData =
-            createRngLifetimeDigitReel(
-                currentDigit,
-                nextDigit,
-                RNG_LIFETIME_VISIBLE_STEPS
-            );
+        if (
+            completedDigits <
+            digitReels.length
+        ) {
+            return;
+        }
 
-        wheel.appendChild(
-            reelData.wrapper
+        normalValue.textContent =
+            newText;
+
+        element.setAttribute(
+            'data-rng-lifetime-score',
+            newText
         );
 
-        updateRngLifetimeDigitFaces(
-            reelData.strip,
-            currentDigit,
-            nextDigit,
-            RNG_LIFETIME_VISIBLE_STEPS
+        element.setAttribute(
+            'aria-label',
+            newText
+        );
+
+        wheel.style.opacity =
+            '0';
+
+        window.setTimeout(
+            () => {
+                if (
+                    wheel.parentElement
+                ) {
+                    wheel.remove();
+                }
+
+                normalValue.style.opacity =
+                    '1';
+
+                rngLifetimeAnimationFrames =
+                    [];
+
+                rngLifetimeAnimationActive =
+                    false;
+            },
+            RNG_LIFETIME_FADE_DURATION
         );
     }
 
-    wheel.style.opacity =
-        '1';
+    for (
+        let index = 0;
+        index < wheelLength;
+        index++
+    ) {
+        const oldDigit =
+            Number(
+                oldPadded[index]
+            );
+
+        const targetDigit =
+            Number(
+                newPadded[index]
+            );
+
+        const delay =
+            (
+                wheelLength -
+                1 -
+                index
+            ) *
+            RNG_LIFETIME_DIGIT_STAGGER;
+
+        const reel =
+            createRngLifetimeDigitReel(
+                oldDigit,
+                targetDigit,
+                delay,
+                finishDigit
+            );
+
+        wheel.appendChild(
+            reel.digitFrame
+        );
+
+        digitReels.push(
+            reel
+        );
+    }
 
     element.appendChild(
         wheel
@@ -2731,185 +2865,221 @@ function animateRngLifetimeScore(
     rngLifetimeAnimationActive =
         true;
 
-    rngLifetimeRollTimer =
-        setTimeout(
-            () => {
+    requestAnimationFrame(() => {
+        wheel.style.opacity =
+            '1';
+    });
 
-                const startTime =
-                    performance.now();
+    window.setTimeout(
+        () => {
+            if (
+                !wheel.parentElement
+            ) {
+                return;
+            }
 
-                const reels =
-                    wheel.querySelectorAll(
-                        '.rngLifetimeDigitStrip'
-                    );
-
-                reels.forEach(
-                    (
-                        reel,
-                        index
-                    ) => {
-
-                        startRngLifetimeDigitReel(
-                            reel,
-                            paddedOld[index],
-                            paddedNew[index],
-                            startTime +
-                            (
-                                index *
-                                RNG_LIFETIME_DIGIT_STAGGER
-                            ),
-                            RNG_LIFETIME_ROLL_DURATION
-                        );
-                    }
+            const sampleDigit =
+                wheel.querySelector(
+                    '.rngLifetimeDigit'
                 );
 
-                setTimeout(
+            const sampleFace =
+                wheel.querySelector(
+                    '.rngLifetimeDigitFace'
+                );
+
+            if (
+                !sampleDigit ||
+                !sampleFace
+            ) {
+                return;
+            }
+
+            const faceHeight =
+                sampleFace.getBoundingClientRect().height;
+
+            const frameHeight =
+                sampleDigit.getBoundingClientRect().height;
+
+            if (
+                !Number.isFinite(
+                    faceHeight
+                ) ||
+                faceHeight <= 0 ||
+                !Number.isFinite(
+                    frameHeight
+                ) ||
+                frameHeight <= 0
+            ) {
+                normalValue.textContent =
+                    newText;
+
+                wheel.style.opacity =
+                    '0';
+
+                window.setTimeout(
                     () => {
+                        wheel.remove();
 
-                        wheel.style.opacity =
-                            '0';
+                        normalValue.style.opacity =
+                            '1';
 
-                        setTimeout(
-                            () => {
-
-                                if (
-                                    wheel.parentNode
-                                ) {
-                                    wheel.remove();
-                                }
-
-                                normalValue.textContent =
-                                    String(
-                                        Math.trunc(
-                                            newValue
-                                        )
-                                    );
-
-                                element.dataset.rngLifetimeConfirmedScore =
-                                    String(
-                                        newValue
-                                    );
-
-                                rngLifetimeAnimationActive =
-                                    false;
-
-                            },
-                            RNG_LIFETIME_FADE_DURATION
-                        );
-
+                        rngLifetimeAnimationActive =
+                            false;
                     },
-                    RNG_LIFETIME_ROLL_DURATION
+                    RNG_LIFETIME_FADE_DURATION
                 );
 
-            },
-            270
-        );
-}
+                return;
+            }
 
+            digitReels.forEach(
+                reel => {
+                    startRngLifetimeDigitReel(
+                        reel,
+                        faceHeight,
+                        frameHeight
+                    );
+                }
+            );
+        },
+        270
+    );
+}
 
 function scheduleRngLifetimeScoreAnimation(
     payload
 ) {
-
-    const newScore =
-        getRngLifetimePayloadScore(
-            payload
-        );
-
     if (
-        typeof newScore !== 'number'
+        typeof rngPendingLifetimeScore !== 'number' ||
+        !Number.isFinite(
+            rngPendingLifetimeScore
+        )
     ) {
         return;
     }
 
+    if (
+        rngLifetimeRollTimer
+    ) {
+        clearTimeout(
+            rngLifetimeRollTimer
+        );
+
+        rngLifetimeRollTimer =
+            null;
+    }
+
+    const targetScore =
+        rngPendingLifetimeScore;
+
     rngLifetimeRollTimer =
-        setTimeout(
-            () => {
+        setTimeout(() => {
+            rngLifetimeRollTimer =
+                null;
 
-                const element =
-                    getRngLifetimeStatValueElement();
+            if (
+                !rngResultPanel
+            ) {
+                return;
+            }
 
-                if (!element) {
-                    return;
-                }
+            const lifetimeValueElement =
+                getRngLifetimeStatValueElement();
 
-                const normalValue =
-                    element.querySelector(
-                        '.rngLifetimeNormalValue'
-                    );
+            if (
+                !lifetimeValueElement
+            ) {
+                return;
+            }
 
-                const currentScore =
-                    normalValue
-                        ? Number(
-                            normalValue.textContent
-                        )
-                        : Number(
-                            element.textContent
-                        );
-
-                if (
-                    !Number.isFinite(
-                        currentScore
-                    )
-                ) {
-                    return;
-                }
-
-                animateRngLifetimeScore(
-                    element,
-                    currentScore,
-                    newScore
+            const currentScore =
+                getRngLifetimePayloadScore(
+                    payload
                 );
 
-            },
-            RNG_LIFETIME_ROLL_DELAY
-        );
+            if (
+                currentScore === null
+            ) {
+                return;
+            }
+
+            rngPendingLifetimeScore =
+                null;
+
+            animateRngLifetimeScore(
+                lifetimeValueElement,
+                currentScore,
+                targetScore
+            );
+        }, RNG_LIFETIME_ROLL_DELAY);
 }
+ 
+function sendRngLifetimeUpdate(payload) {
+    if (
+        !payload ||
+        typeof payload !== 'object'
+    ) {
+        return;
+    }
 
-
-function sendRngLifetimeUpdate(
-    payload
-) {
-
-    const lifetimeScore =
+    const currentLifetime =
         getRngLifetimePayloadScore(
             payload
         );
 
     const points =
-        payload &&
-        typeof payload.points === 'number' &&
-        Number.isFinite(
+        Number(
             payload.points
-        )
-            ? payload.points
-            : 0;
+        );
 
-    const currentLifetime =
-        lifetimeScore !== null
-            ? lifetimeScore
-            : 0;
+    if (
+        currentLifetime === null ||
+        !Number.isFinite(points)
+    ) {
+        console.error(
+            "❌ Could not calculate new RNG lifetime score."
+        );
+
+        return;
+    }
 
     const newLifetimeScore =
         currentLifetime +
         points;
 
+    if (
+        !Number.isFinite(newLifetimeScore)
+    ) {
+        console.error(
+            "❌ Could not calculate new RNG lifetime score."
+        );
+
+        return;
+    }
+
     rngPendingLifetimeScore =
-        newLifetimeScore;
+        Math.round(
+            newLifetimeScore
+        );
 
     if (
         !socket ||
         socket.readyState !==
             WebSocket.OPEN
     ) {
-        console.log(
-            "Lifetime update skipped because socket is not open."
+        rngPendingLifetimeScore =
+            null;
+
+        console.error(
+            "❌ Could not send RNG lifetime update because socket is not open."
         );
+
         return;
     }
 
-    const request =
-        {
+    socket.send(
+        JSON.stringify({
             protocol: "cardgame",
             version: 1,
             request: "rng_lifetime_update",
@@ -2917,114 +3087,58 @@ function sendRngLifetimeUpdate(
                 score:
                     newLifetimeScore
             }
-        };
+        })
+    );
 
     console.log(
-        "Sending RNG lifetime update:",
-        request
-    );
-
-    socket.send(
-        JSON.stringify(
-            request
-        )
-    );
-
-    scheduleRngLifetimeScoreAnimation(
-        payload
+        `📈 RNG lifetime score update sent: ${currentLifetime} + ${points} = ${newLifetimeScore}`
     );
 }
 
-
-function applyRngLifetimeUpdateResult(
-    score
-) {
-
-    if (
-        typeof score !== 'number' ||
-        !Number.isFinite(
-            score
-        )
-    ) {
-        return;
-    }
-
-    rngPendingLifetimeScore =
-        score;
-
-    const stored =
+function applyRngLifetimeUpdateResult(score) {
+    const storedResult =
         loadLocalRngResult();
 
     if (
-        stored
+        storedResult
     ) {
-
-        stored.lifetimeRecordScore =
+        storedResult.lifetimeRecordScore =
             score;
 
         saveLocalRngResult(
-            stored
+            storedResult
         );
     }
 
-    const element =
+    const lifetimeValueElement =
         getRngLifetimeStatValueElement();
 
-    if (element) {
-
-        element.dataset.rngLifetimeConfirmedScore =
-            String(
-                score
-            );
-
-        const normalValue =
-            element.querySelector(
-                '.rngLifetimeNormalValue'
-            );
-
-        if (
-            normalValue &&
-            !rngLifetimeAnimationActive
-        ) {
-
-            normalValue.textContent =
-                String(
-                    Math.trunc(
-                        score
-                    )
-                );
-        }
-    }
-}
-
-
-function applyDailyRollState(
-    payload
-) {
-    return;
-}
-
-
-function renderStoredRngResult(
-    payload
-) {
-
-    if (!payload) {
+    if (
+        !lifetimeValueElement
+    ) {
         return;
     }
 
-    const nextRollTimestamp =
-        getRngNextRollTimestamp();
-
-    const serverNow =
-        getRngServerNow();
-
+    lifetimeValueElement.setAttribute(
+        'data-rng-lifetime-confirmed-score',
+        String(
+            Math.round(
+                score
+            )
+        )
+    );
+}
+	 
+function applyDailyRollState(state) { 
+    return; 
+} 
+	 
+function renderStoredRngResult(payload) { 
     if (
-        !nextRollTimestamp ||
-        typeof serverNow !== 'number' ||
-        serverNow >= nextRollTimestamp
+        !payload ||
+        typeof payload !== 'object' ||
+        payload.record === undefined
     ) {
-        clearLocalRngResult();
         return;
     }
 
@@ -3033,267 +3147,226 @@ function renderStoredRngResult(
         rngScrambleElement = null;
     }
 
-    if (rngResultPanel) {
-        rngResultPanel.remove();
-        rngResultPanel = null;
-    }
+    clearRngRecordCardWiggle();
 
-    const rarity =
+    if (rngResultPanel) { 
+        rngResultPanel.remove(); 
+        rngResultPanel = null; 
+    } 
+
+    const displayRarity =
         getRngDisplayRarity(
             payload
         );
 
     applyRngRarityTheme(
-        rarity
+        displayRarity
     );
-
-    rngResultPanel =
-        document.createElement('div');
-
-    rngResultPanel.className =
-        'rngResultPanel';
-
-    const card =
-        createRngRecordCard(
-            payload
-        );
-
-    rngResultPanel.appendChild(
-        card
-    );
-
-    generateScreen.appendChild(
-        rngResultPanel
-    );
+	 
+    rngResultPanel = 
+        document.createElement('div'); 
+	 
+    rngResultPanel.className = 
+        'rngResultPanel'; 
+	 
+    generateScreen.appendChild( 
+        rngResultPanel 
+    ); 
+	 
+    rngResultPanel.appendChild( 
+        createRngRecordCard( 
+            payload, 
+            String( 
+                payload.record ?? '' 
+            ) 
+        ) 
+    ); 
+	 
+    const card = 
+        rngResultPanel.querySelector( 
+            '.rngRecordCard' 
+        ); 
+	 
+    animateRngRecordCard(card);
 
     if (
         mainScreen.classList.contains(
             'hidden'
         )
     ) {
-
         rngStoredResultScrollPending =
             true;
-
+    } else {
+        scrollRngResultIntoView(card);
     }
 
-    animateRngRecordCard(
-        card
-    );
-
-    updateScrollRail();
-}
-
-
-function normalizeRngModifiers(
-    modifiers
-) {
+    updateScrollRail(); 
+} 
+	 
+function normalizeRngModifiers(modifiers) { 
+    if (Array.isArray(modifiers)) { 
+        return modifiers.map((modifier, index) => { 
+            if ( 
+                modifier && 
+                typeof modifier === 'object' && 
+                !Array.isArray(modifier) 
+            ) { 
+                const label = 
+                    modifier.name ?? 
+                    modifier.modifier ?? 
+                    modifier.type ?? 
+                    modifier.id ?? 
+                    `Modifier ${index + 1}`; 
+	 
+                const detailEntries = Object.entries(modifier) 
+                    .filter(([key]) => { 
+                        return !['name', 'modifier', 'type', 'id'].includes(key); 
+                    }); 
+	 
+                let detail = ''; 
+	 
+                if (detailEntries.length === 1) { 
+                    detail = formatRngValue(detailEntries[0][1]); 
+                } else if (detailEntries.length > 1) { 
+                    detail = detailEntries 
+                        .map(([key, value]) => { 
+                            return `${key}: ${formatRngValue(value)}`; 
+                        }) 
+                        .join(' • '); 
+                } 
+	 
+                return { 
+                    label: String(label), 
+                    value: detail 
+                }; 
+            } 
+	 
+            return { 
+                label: `Modifier ${index + 1}`, 
+                value: formatRngValue(modifier) 
+            }; 
+        }); 
+    } 
+	 
+    if ( 
+        modifiers && 
+        typeof modifiers === 'object' && 
+        !Array.isArray(modifiers) 
+    ) { 
+        return Object.entries(modifiers).map(([key, value]) => { 
+            if ( 
+                value && 
+                typeof value === 'object' && 
+                !Array.isArray(value) 
+            ) { 
+                const entries = Object.entries(value); 
+	 
+                const detail = entries 
+                    .map(([entryKey, entryValue]) => { 
+                        return `${entryKey}: ${formatRngValue(entryValue)}`; 
+                    }) 
+                    .join(' • '); 
+	 
+                return { 
+                    label: key, 
+                    value: detail 
+                }; 
+            } 
+	 
+            return { 
+                label: key, 
+                value: formatRngValue(value) 
+            }; 
+        }); 
+    } 
+	 
+    if ( 
+        modifiers !== undefined && 
+        modifiers !== null && 
+        modifiers !== '' 
+    ) { 
+        return [{ 
+            label: 'Modifier', 
+            value: formatRngValue(modifiers) 
+        }]; 
+    } 
+	 
+    return []; 
+} 
+	 
+function formatRngValue(value) { 
+    if (value === null || value === undefined) { 
+        return ''; 
+    } 
+	 
+    if (typeof value === 'string') { 
+        return value; 
+    } 
+	 
+    if ( 
+        typeof value === 'number' || 
+        typeof value === 'boolean' 
+    ) { 
+        return String(value); 
+    } 
+	 
+    try { 
+        return JSON.stringify(value); 
+    } catch (err) { 
+        return String(value); 
+    } 
+} 
+	 
+function getRngRarityColor(rarity) { 
+    if (typeof rarity !== 'string') { 
+        return '#edf6fb'; 
+    } 
+	 
+    return RNG_RARITY_COLORS[ 
+        rarity.trim().toLowerCase() 
+    ] ?? '#edf6fb'; 
+} 
+	 
+function createRngStat(label, value, valueColor = null) { 
+    const stat = document.createElement('div'); 
+    stat.className = 'rngStat'; 
+	 
+    const statLabel = document.createElement('div'); 
+    statLabel.className = 'rngStatLabel'; 
+    statLabel.textContent = label; 
 
     if (
-        Array.isArray(
-            modifiers
+        String(label).toLowerCase().includes(
+            'lifetime'
         )
     ) {
-
-        return modifiers.map(
-            modifier => {
-
-                if (
-                    modifier &&
-                    typeof modifier === 'object'
-                ) {
-
-                    return {
-                        label:
-                            modifier.label ??
-                            modifier.name ??
-                            'Modifier',
-
-                        value:
-                            modifier.value ??
-                            modifier.description ??
-                            ''
-                    };
-                }
-
-                return {
-                    label:
-                        'Modifier',
-
-                    value:
-                        modifier
-                };
-            }
-        );
-    }
-
-    if (
-        modifiers &&
-        typeof modifiers === 'object'
-    ) {
-
-        return Object.entries(
-            modifiers
-        ).map(
-            (
-                [
-                    key,
-                    value
-                ]
-            ) => ({
-                label: key,
-                value
-            })
-        );
-    }
-
-    if (
-        modifiers !== null &&
-        modifiers !== undefined &&
-        modifiers !== ''
-    ) {
-
-        return [{
-            label:
-                'Modifier',
-            value:
-                modifiers
-        }];
-    }
-
-    return [];
-}
-
-
-function formatRngValue(
-    value
-) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return '—';
-    }
-
-    if (
-        typeof value === 'number' &&
-        Number.isFinite(
-            value
-        )
-    ) {
-        return value.toLocaleString();
-    }
-
-    return String(
-        value
-    );
-}
-
-
-function getRngRarityColor(
-    rarity
-) {
-
-    const normalized =
-        normalizeRngRarity(
-            rarity
-        );
-
-    return (
-        RNG_RARITY_COLORS[
-            normalized
-        ] ||
-        RNG_RARITY_COLORS.common
-    );
-}
-
-
-function createRngStat(
-    label,
-    value,
-    options = {}
-) {
-
-    const stat =
-        document.createElement('div');
-
-    stat.className =
-        'rngStat';
-
-    const labelElement =
-        document.createElement('div');
-
-    labelElement.className =
-        'rngStatLabel';
-
-    const valueElement =
-        document.createElement('div');
-
-    valueElement.className =
-        'rngStatValue';
-
-    labelElement.textContent =
-        label;
-
-    const isLifetime =
-        options.lifetime === true;
-
-    if (isLifetime) {
-
         stat.classList.add(
             'rngLifetimeStat'
         );
 
-        labelElement.classList.add(
+        stat.style.position =
+            'relative';
+
+        statLabel.classList.add(
             'rngLifetimeStatLabel'
         );
-
-        valueElement.classList.add(
-            'rngLifetimeStatValue'
-        );
-
     }
+	 
+    const statValue = document.createElement('div'); 
+    statValue.className = 'rngStatValue'; 
+
+    statValue.style.overflowWrap =
+        'anywhere';
+
+    statValue.style.wordBreak =
+        'break-word';
 
     if (
-        options.rarity === true
+        String(label).toLowerCase().includes(
+            'lifetime'
+        )
     ) {
-
-        stat.classList.add(
-            'rngRarityStat'
-        );
-
-        valueElement.classList.add(
-            'rngRarityValue'
-        );
-
-        const normalizedRarity =
-            normalizeRngRarity(
-                value
-            );
-
-        valueElement.dataset.rngRarity =
-            normalizedRarity;
-
-        stat.dataset.rngRarity =
-            normalizedRarity;
-
-        if (
-            normalizedRarity === 'rare' ||
-            normalizedRarity === 'legendary'
-        ) {
-
-            valueElement.classList.add(
-                'rngRarityShiny'
-            );
-        }
-    }
-
-    if (
-        isLifetime
-    ) {
-
-        valueElement.classList.add(
+        statValue.classList.add(
             'rngLifetimeScoreValue'
         );
 
@@ -3303,364 +3376,340 @@ function createRngStat(
         normalValue.className =
             'rngLifetimeNormalValue';
 
-        normalValue.textContent =
-            formatRngValue(
+        const initialLifetime =
+            Number(
                 value
             );
 
-        valueElement.appendChild(
+        if (
+            Number.isFinite(
+                initialLifetime
+            )
+        ) {
+            normalValue.textContent =
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                );
+
+            statValue.setAttribute(
+                'data-rng-lifetime-score',
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                )
+            );
+
+            statValue.setAttribute(
+                'aria-label',
+                String(
+                    Math.round(
+                        initialLifetime
+                    )
+                )
+            );
+        } else {
+            normalValue.textContent =
+                formatRngValue(
+                    value
+                );
+        }
+
+        statValue.appendChild(
             normalValue
         );
-
-        valueElement.setAttribute(
-            'aria-label',
-            `Total Score ${formatRngValue(value)}`
-        );
-
     } else {
-
-        valueElement.textContent =
+        statValue.textContent =
             formatRngValue(
                 value
             );
     }
+	 
+    if (valueColor) { 
+        statValue.style.color = valueColor; 
+        statValue.style.textShadow = 
+            `0 0 8px ${valueColor}55`; 
+    } 
+	 
+    stat.appendChild( 
+        statLabel 
+    ); 
 
-    if (
-        options.rarity === true
-    ) {
-
-        valueElement.style.color =
-            getRngRarityColor(
-                value
-            );
-    }
-
-    stat.appendChild(
-        labelElement
-    );
-
-    stat.appendChild(
-        valueElement
-    );
-
-    return stat;
-}
-
-
-function createRngRecordCard(
-    payload
-) {
-
-    const card =
-        document.createElement('div');
-
-    const rarity =
+    stat.appendChild( 
+        statValue 
+    ); 
+	 
+    return stat; 
+} 
+	 
+function createRngRecordCard(payload, recordText) { 
+    const card = document.createElement('div'); 
+    card.className = 'rngRecordCard'; 
+	 
+    const displayRarity =
         getRngDisplayRarity(
             payload
         );
 
-    card.className =
-        `rngRecordCard rng-rarity-${rarity}`;
-
-    card.dataset.rngRarity =
-        rarity;
-
-    card.style.background =
-        getRngRarityGradient(
-            rarity
+    const normalizedRarity =
+        normalizeRngRarity(
+            displayRarity
         );
 
-    const header =
-        document.createElement('div');
+    if (normalizedRarity !== 'unknown') {
+        card.classList.add(
+            `rng-rarity-${normalizedRarity}`
+        );
 
-    header.className =
-        'rngRecordHeader';
+        const rarityGradient =
+            getRngRarityGradient(
+                normalizedRarity
+            );
 
-    const recordLabel =
-        document.createElement('div');
+        if (
+            rarityGradient
+        ) {
+            card.style.background =
+                rarityGradient;
+        }
+    }
+	 
+    const recordHeader = document.createElement('div'); 
+    recordHeader.className = 'rngRecordHeader'; 
+	 
+    const recordLabel = document.createElement('div'); 
+    recordLabel.className = 'rngRecordLabel'; 
+    recordLabel.textContent = 'Record'; 
 
-    recordLabel.className =
-        'rngRecordLabel';
-
-    recordLabel.textContent =
-        'Record';
-
-    const recordValue =
-        document.createElement('div');
-
-    recordValue.className =
-        'rngRecordValue';
-
-    recordValue.textContent =
-        typeof payload.record === 'string'
-            ? payload.record
-            : '';
-
-    header.appendChild(
-        recordLabel
-    );
-
-    header.appendChild(
-        recordValue
-    );
-
-    const stats =
-        document.createElement('div');
-
-    stats.className =
-        'rngStats';
-
+    recordLabel.style.fontSize =
+        '28px';
+	 
+    const recordValue = document.createElement('div'); 
+    recordValue.className = 'rngRecordValue'; 
+    recordValue.textContent = recordText; 
+	 
+    recordHeader.appendChild(recordLabel); 
+    recordHeader.appendChild(recordValue); 
+    card.appendChild(recordHeader); 
+	 
+    const stats = document.createElement('div'); 
+    stats.className = 'rngStats'; 
+	 
     const rarityStat =
-        createRngStat(
-            'Rarity',
-            rarity,
-            {
-                rarity: true
-            }
+        createRngStat( 
+            'Rarity', 
+            displayRarity !== 'unknown'
+                ? displayRarity
+                : payload.rarity ?? 'Unknown', 
+            getRngRarityColor(displayRarity) 
         );
 
-    const points =
-        typeof payload.points === 'number' &&
-        Number.isFinite(
-            payload.points
-        )
-            ? payload.points
-            : 0;
-
-    const lifetimeScore =
-        getRngLifetimePayloadScore(
-            payload
+    const rarityValue =
+        rarityStat.querySelector(
+            '.rngStatValue'
         );
 
-    const timesRolled =
-        typeof payload.timesRolled === 'number' &&
-        Number.isFinite(
-            payload.timesRolled
-        )
-            ? payload.timesRolled
-            : typeof payload.rollCount === 'number' &&
-              Number.isFinite(
-                payload.rollCount
-              )
-                ? payload.rollCount
-                : 0;
+    if (rarityValue) {
+        rarityValue.classList.add(
+            'rngRarityValue'
+        );
+    }
 
     stats.appendChild(
         rarityStat
-    );
-
-    stats.appendChild(
-        createRngStat(
-            'Points',
-            points
-        )
-    );
+    ); 
+	 
+    stats.appendChild( 
+        createRngStat( 
+            'Points', 
+            payload.points ?? '0' 
+        ) 
+    ); 
 
     stats.appendChild(
         createRngStat(
             'Lifetime Score',
-            lifetimeScore ?? 0,
-            {
-                lifetime: true
-            }
+            payload.lifetimeRecordScore ??
+                payload.lifetimeScore ??
+                payload.lifetime_record_score ??
+                '0'
         )
     );
 
     stats.appendChild(
         createRngStat(
             'Times Rolled',
-            timesRolled
+            payload.timesRolled ??
+                payload.times_rolled ??
+                1
         )
-    );
-
-    const modifiersSection =
-        document.createElement('div');
-
-    modifiersSection.className =
-        'rngModifiersSection';
-
-    const modifiersTitle =
-        document.createElement('div');
-
-    modifiersTitle.className =
-        'rngModifiersTitle';
-
-    modifiersTitle.textContent =
-        'Modifiers';
-
-    modifiersSection.appendChild(
-        modifiersTitle
-    );
-
-    const modifiers =
-        normalizeRngModifiers(
-            payload.modifiers
-        );
-
-    if (
-        modifiers.length > 0
-    ) {
-
-        const modifiersContainer =
-            document.createElement('div');
-
-        modifiersContainer.className =
-            'rngModifiers';
-
-        modifiers.forEach(
-            modifier => {
-
-                const modifierElement =
-                    document.createElement('div');
-
-                modifierElement.className =
-                    'rngModifier';
-
-                const name =
-                    document.createElement('div');
-
-                name.className =
-                    'rngModifierName';
-
-                name.textContent =
-                    String(
-                        modifier.label
-                    );
-
-                const modifierValue =
-                    document.createElement('div');
-
-                modifierValue.className =
-                    'rngModifierValue';
-
-                modifierValue.textContent =
-                    formatRngValue(
-                        modifier.value
-                    );
-
-                modifierElement.appendChild(
-                    name
-                );
-
-                modifierElement.appendChild(
-                    modifierValue
-                );
-
-                modifiersContainer.appendChild(
-                    modifierElement
-                );
-            }
-        );
-
-        modifiersSection.appendChild(
-            modifiersContainer
-        );
-
-    } else {
-
-        const noModifiers =
-            document.createElement('div');
-
-        noModifiers.className =
-            'rngNoModifiers';
-
-        noModifiers.textContent =
-            'No modifiers';
-
-        modifiersSection.appendChild(
-            noModifiers
-        );
-    }
-
-    card.appendChild(
-        header
-    );
-
-    card.appendChild(
-        stats
-    );
-
-    card.appendChild(
-        modifiersSection
-    );
-
-    return card;
-}
-
-
-function showRngRecordResult(
-    payload
-) {
-
-    stopRngDailyCountdown();
-
-    if (rngScrambleTimer) {
-        clearTimeout(rngScrambleTimer);
-        rngScrambleTimer = null;
-    }
-
-    if (rngScrambleProgressTimer) {
-        clearInterval(rngScrambleProgressTimer);
-        rngScrambleProgressTimer = null;
-    }
-
+    ); 
+	 
+    card.appendChild(stats); 
+	 
+    const modifiersSection = document.createElement('div'); 
+    modifiersSection.className = 'rngModifiersSection'; 
+	 
+    const modifiersTitle = document.createElement('div'); 
+    modifiersTitle.className = 'rngModifiersTitle'; 
+    modifiersTitle.textContent = 'Modifiers'; 
+	 
+    modifiersSection.appendChild( 
+        modifiersTitle 
+    ); 
+	 
+    const modifiersGrid = document.createElement('div'); 
+    modifiersGrid.className = 'rngModifiers'; 
+	 
+    const modifiers = normalizeRngModifiers( 
+        payload.modifiers 
+    ); 
+	 
+    if (modifiers.length === 0) { 
+        const none = document.createElement('div'); 
+        none.className = 'rngNoModifiers'; 
+        none.textContent = 'No modifiers'; 
+        modifiersGrid.appendChild(none); 
+    } else { 
+        modifiers.forEach(modifier => { 
+            const modifierCard = document.createElement('div'); 
+            modifierCard.className = 'rngModifier'; 
+	 
+            const modifierName = document.createElement('div'); 
+            modifierName.className = 'rngModifierName'; 
+            modifierName.textContent = modifier.label; 
+	 
+            const modifierValue = document.createElement('div'); 
+            modifierValue.className = 'rngModifierValue'; 
+            modifierValue.textContent = modifier.value; 
+	 
+            modifierCard.appendChild(modifierName); 
+            modifierCard.appendChild(modifierValue); 
+            modifiersGrid.appendChild(modifierCard); 
+        }); 
+    } 
+	 
+    modifiersSection.appendChild(modifiersGrid); 
+    card.appendChild(modifiersSection); 
+	 
+    return card; 
+} 
+	 
+function showRngRecordResult(payload) { 
+    if (rngScrambleTimer) { 
+        clearInterval(rngScrambleTimer); 
+        rngScrambleTimer = null; 
+    } 
+	 
+    if (rngScrambleProgressTimer) { 
+        clearInterval(rngScrambleProgressTimer); 
+        rngScrambleProgressTimer = null; 
+    } 
+	 
     if (rngScrambleElement) {
         rngScrambleElement.remove();
         rngScrambleElement = null;
     }
 
-    if (rngResultPanel) {
-        rngResultPanel.remove();
-        rngResultPanel = null;
-    }
+    if (rngResultPanel) { 
+        rngResultPanel.remove(); 
+        rngResultPanel = null; 
+    } 
+	 
+    if ( 
+        !payload || 
+        typeof payload !== 'object' || 
+        payload.record === undefined 
+    ) { 
+        errorMessage.textContent = 
+            "⚠️ Invalid RNG result structure."; 
+        errorMessage.classList.remove("hidden"); 
+        initializeRngGenerateButton();
+        return; 
+    } 
 
-    if (
-        !payload ||
-        typeof payload !== 'object'
-    ) {
-
-        errorMessage.textContent =
-            '⚠️ Invalid RNG result payload.';
-
-        errorMessage.classList.remove(
-            'hidden'
-        );
-
-        return;
-    }
-
-    const sanitized =
-        sanitizeRngStoredResult(
+    const displayRarity =
+        getRngDisplayRarity(
             payload
         );
 
-    if (!sanitized) {
-
-        errorMessage.textContent =
-            '⚠️ Invalid RNG result payload.';
-
-        errorMessage.classList.remove(
-            'hidden'
-        );
-
-        return;
-    }
-
-    const rarity =
-        getRngDisplayRarity(
-            sanitized
-        );
-
     applyRngRarityTheme(
-        rarity
+        displayRarity
     );
 
-    const record =
-        typeof sanitized.record === 'string'
-            ? sanitized.record
-            : '';
+    createRngTopControlArea();
+	 
+    const scramble = 
+        document.createElement('div'); 
+	 
+    scramble.className = 
+        'rngScramble'; 
 
-    if (!record) {
+    scramble.style.display =
+        'flex';
+
+    scramble.style.alignItems =
+        'center';
+
+    scramble.style.justifyContent =
+        'center';
+
+    scramble.style.visibility =
+        'visible';
+
+    scramble.style.opacity =
+        '1';
+
+    scramble.style.background =
+        'transparent';
+
+    scramble.style.border =
+        '0';
+
+    scramble.style.boxShadow =
+        'none';
+
+    scramble.style.position =
+        'relative';
+
+    scramble.style.zIndex =
+        '2';
+
+    scramble.style.width =
+        '350px';
+
+    scramble.style.minWidth =
+        '350px';
+
+    scramble.style.maxWidth =
+        '350px';
+
+    scramble.style.minHeight =
+        '58px';
+
+    scramble.style.margin =
+        '0 auto';
+
+    scramble.style.flexShrink =
+        '0';
+
+    rngScrambleElement =
+        scramble;
+
+    rngTopControlArea.appendChild(
+        scramble
+    );
+
+    void scramble.offsetWidth;
+
+    updateScrollRail();
+	 
+    const recordText = String(payload.record); 
+	 
+    if (recordText.length === 0) { 
+        scramble.textContent = ''; 
 
         rngResultPanel =
             document.createElement('div');
@@ -3668,26 +3717,20 @@ function showRngRecordResult(
         rngResultPanel.className =
             'rngResultPanel';
 
-        const card =
-            createRngRecordCard(
-                sanitized
-            );
-
-        rngResultPanel.appendChild(
-            card
-        );
-
         generateScreen.appendChild(
             rngResultPanel
         );
+	 
+        const card = 
+            createRngRecordCard( 
+                payload, 
+                recordText 
+            ); 
+	 
+        rngResultPanel.appendChild(card); 
 
-        if (
-            currentTab === 'generate'
-        ) {
-
-            scrollRngResultIntoView(
-                card
-            );
+        if (currentTab === 'generate') {
+            scrollRngResultIntoView(card);
         }
 
         requestRngLaunchFlash();
@@ -3696,7 +3739,115 @@ function showRngRecordResult(
             card,
             () => {
                 scheduleRngLifetimeScoreAnimation(
-                    sanitized
+                    payload
+                );
+            }
+        );
+	 
+        updateScrollRail(); 
+        initializeRngGenerateButton();
+        rngScrambleElement = null;
+        scramble.remove();
+        return; 
+    } 
+	 
+    const scrambleCharacters = 
+        new Array( 
+            recordText.length 
+        ).fill(''); 
+	 
+    let appearedCount = 0; 
+    let lockedCount = 0; 
+	 
+    function renderScramble() { 
+        let output = ''; 
+	 
+        for ( 
+            let i = 0; 
+            i < recordText.length; 
+            i++ 
+        ) { 
+            if (i < lockedCount) { 
+                output += recordText[i]; 
+            } else if (i < appearedCount) { 
+                output += scrambleCharacters[i]; 
+            } else { 
+                output += '\u00A0'; 
+            } 
+        } 
+	 
+        scramble.textContent = output; 
+    } 
+	 
+    function rapidlyScramble() { 
+        for ( 
+            let i = lockedCount; 
+            i < appearedCount; 
+            i++ 
+        ) { 
+            scrambleCharacters[i] = 
+                getRandomRngCharacter(); 
+        } 
+	 
+        renderScramble(); 
+    } 
+
+    function finishRngScramble() {
+        if (rngScrambleProgressTimer) {
+            clearInterval(
+                rngScrambleProgressTimer
+            );
+
+            rngScrambleProgressTimer = null;
+        }
+
+        if (rngScrambleTimer) {
+            clearInterval(
+                rngScrambleTimer
+            );
+
+            rngScrambleTimer = null;
+        }
+
+        lockedCount =
+            recordText.length;
+
+        appearedCount =
+            recordText.length;
+
+        scramble.textContent =
+            recordText;
+
+        rngResultPanel =
+            document.createElement('div');
+
+        rngResultPanel.className =
+            'rngResultPanel';
+
+        generateScreen.appendChild(
+            rngResultPanel
+        );
+
+        const card =
+            createRngRecordCard(
+                payload,
+                recordText
+            );
+
+        rngResultPanel.appendChild(
+            card
+        );
+
+        if (currentTab === 'generate') {
+            scrollRngResultIntoView(card);
+        }
+        requestRngLaunchFlash();
+
+        animateRngRecordCard(
+            card,
+            () => {
+                scheduleRngLifetimeScoreAnimation(
+                    payload
                 );
             }
         );
@@ -3704,694 +3855,331 @@ function showRngRecordResult(
         updateRngDailyCountdown();
         updateScrollRail();
 
-        return;
+        rngScrambleElement = null;
+
+        scramble.remove();
+    }
+	 
+    appearedCount =
+        1;
+
+    for (
+        let i = 0;
+        i < appearedCount;
+        i++
+    ) {
+        scrambleCharacters[i] =
+            getRandomRngCharacter();
     }
 
-    rngScrambleElement =
-        document.createElement('div');
+    renderScramble();
 
-    rngScrambleElement.className =
-        'rngScramble';
-
-    rngScrambleElement.textContent =
-        '';
-
-    generateScreen.appendChild(
-        rngScrambleElement
-    );
-
-    const recordCharacters =
-        Array.from(
-            record
-        );
-
-    let displayedCharacters =
-        recordCharacters.map(
-            () => ''
-        );
-
-    const startedAt =
+    const scrambleStartTime =
         performance.now();
 
     rngScrambleProgressTimer =
-        setInterval(
-            () => {
+        setInterval(() => {
+            const elapsed =
+                performance.now() -
+                scrambleStartTime;
 
-                const elapsed =
-                    performance.now() -
-                    startedAt;
+            const totalProgress =
+                Math.min(
+                    elapsed /
+                        RNG_SCRAMBLE_DURATION,
+                    1
+                );
 
-                const progress =
+            if (
+                elapsed <
+                RNG_APPEAR_DURATION
+            ) {
+                const appearanceProgress =
                     Math.min(
-                        1,
                         elapsed /
-                        RNG_SCRAMBLE_DURATION
+                            RNG_APPEAR_DURATION,
+                        1
                     );
 
-                const visibleCount =
+                appearedCount =
+                    Math.min(
+                        recordText.length,
+                        Math.max(
+                            1,
+                            Math.ceil(
+                                appearanceProgress *
+                                    recordText.length
+                            )
+                        )
+                    );
+
+                lockedCount = 0;
+            } else {
+                appearedCount =
+                    recordText.length;
+
+                const unscrambleDuration =
+                    RNG_SCRAMBLE_DURATION -
+                    RNG_APPEAR_DURATION;
+
+                const unscrambleElapsed =
+                    Math.min(
+                        elapsed -
+                            RNG_APPEAR_DURATION,
+                        unscrambleDuration
+                    );
+
+                const unscrambleProgress =
+                    Math.min(
+                        unscrambleElapsed /
+                            unscrambleDuration,
+                        1
+                    );
+
+                lockedCount =
                     Math.floor(
-                        recordCharacters.length *
-                        progress
+                        unscrambleProgress *
+                            recordText.length
                     );
-
-                displayedCharacters =
-                    recordCharacters.map(
-                        (
-                            character,
-                            index
-                        ) => {
-
-                            if (
-                                index <
-                                visibleCount
-                            ) {
-                                return character;
-                            }
-
-                            return getRandomRngCharacter();
-                        }
-                    );
-
-                rngScrambleElement.textContent =
-                    displayedCharacters.join('');
-
-                if (
-                    progress >= 1
-                ) {
-
-                    clearInterval(
-                        rngScrambleProgressTimer
-                    );
-
-                    rngScrambleProgressTimer =
-                        null;
-
-                    finishRngScramble(
-                        sanitized
-                    );
-                }
-
-            },
-            RNG_SCRAMBLE_TICK
-        );
-
-    rngScrambleTimer =
-        setTimeout(
-            () => {
-
-                if (
-                    rngScrambleProgressTimer
-                ) {
-
-                    clearInterval(
-                        rngScrambleProgressTimer
-                    );
-
-                    rngScrambleProgressTimer =
-                        null;
-                }
-
-                finishRngScramble(
-                    sanitized
-                );
-
-            },
-            RNG_SCRAMBLE_DURATION +
-            100
-        );
-}
-
-
-function finishRngScramble(
-    payload
-) {
-
-    if (rngScrambleTimer) {
-
-        clearTimeout(
-            rngScrambleTimer
-        );
-
-        rngScrambleTimer =
-            null;
-    }
-
-    if (rngScrambleProgressTimer) {
-
-        clearInterval(
-            rngScrambleProgressTimer
-        );
-
-        rngScrambleProgressTimer =
-            null;
-    }
-
-    if (!rngScrambleElement) {
-        return;
-    }
-
-    const scramble =
-        rngScrambleElement;
-
-    const record =
-        typeof payload.record === 'string'
-            ? payload.record
-            : '';
-
-    scramble.textContent =
-        record;
-
-    setTimeout(
-        () => {
-
-            if (
-                scramble !==
-                rngScrambleElement
-            ) {
-                return;
             }
 
-            scramble.remove();
-            rngScrambleElement = null;
-
-            rngResultPanel =
-                document.createElement('div');
-
-            rngResultPanel.className =
-                'rngResultPanel';
-
-            const card =
-                createRngRecordCard(
-                    payload
-                );
-
-            rngResultPanel.appendChild(
-                card
-            );
-
-            generateScreen.appendChild(
-                rngResultPanel
-            );
+            rapidlyScramble();
 
             if (
-                currentTab === 'generate'
+                totalProgress >= 1
             ) {
-
-                scrollRngResultIntoView(
-                    card
-                );
+                finishRngScramble();
             }
-
-            animateRngRecordCard(
-                card,
-                () => {
-                    scheduleRngLifetimeScoreAnimation(
-                        payload
-                    );
-                }
-            );
-
-            updateRngDailyCountdown();
-            updateScrollRail();
-
-            requestRngLaunchFlash();
-
-            maybePlayRngLaunchFlash();
-
-        },
-        RNG_APPEAR_DURATION
-    );
-}
-
-
-function initializeRngGenerateButton() {
-
-    const nextRollTimestamp =
-        getRngNextRollTimestamp();
-
-    const serverNow =
-        getRngServerNow();
+        }, RNG_SCRAMBLE_TICK);
+} 
+	 
+function initializeRngGenerateButton() { 
+    if (!generateScreen) { 
+        return; 
+    } 
 
     if (
-        nextRollTimestamp &&
-        typeof serverNow === 'number'
-    ) {
-
-        if (
-            serverNow >=
-            nextRollTimestamp
-        ) {
-
-            handleRngCooldownExpired();
-
-            return;
-        }
-
-        updateRngDailyCountdown();
-
-        return;
-    }
-
-    if (
-        rngDailyActionArea ||
-        rngRequestPending ||
-        rngRollLoadingPending
+        isRngCooldownActive()
     ) {
         return;
     }
+	 
+    if (rngDailyActionArea) { 
+        return; 
+    } 
+	 
+    if (rngRequestPending) { 
+        return; 
+    } 
 
-    if (
-        rngDailyStatus
-    ) {
-        hideRngDailyStatus();
-    }
-
-    rngDailyActionArea =
-        document.createElement('div');
-
-    rngDailyActionArea.className =
-        'rngActionArea';
-
-    const button =
-        document.createElement('button');
-
-    button.type =
-        'button';
-
-    button.id =
-        'generateRecordButton';
-
-    button.className =
-        'rngGenerateButton';
-
-    button.textContent =
-        'Generate Record';
-
-    rngDailyActionArea.appendChild(
-        button
-    );
-
-    rngControlSlot.appendChild(
-        rngDailyActionArea
-    );
-
-    button.addEventListener(
-        'pointerenter',
-        () => {
-            startNormalButtonWiggle(
-                button
-            );
-        }
-    );
-
-    button.addEventListener(
-        'pointerleave',
-        () => {
-            stopNormalButtonWiggle(
-                button
-            );
-        }
-    );
-
-    button.addEventListener(
-        'focus',
-        () => {
-            startNormalButtonWiggle(
-                button
-            );
-        }
-    );
-
-    button.addEventListener(
-        'blur',
-        () => {
-            stopNormalButtonWiggle(
-                button
-            );
-        }
-    );
-
-    button.addEventListener(
-        'click',
-        () => {
-
-            if (
-                rngRequestPending ||
-                rngRollLoadingPending
-            ) {
-                return;
-            }
-
-            rngDailyActionArea.remove();
-
-            rngDailyActionArea =
-                null;
-
-            rngRollLoadingPending =
-                true;
-
-            errorMessage.classList.add(
-                'hidden'
-            );
-
-            startRngRollLoading(
-                () => {
-
-                    rngRollLoadingPending =
-                        false;
-
-                    beginRngRollRequest();
-
-                }
-            );
-        }
-    );
-}
-
-
-function beginRngRollRequest() {
-
-    const nextRollTimestamp =
-        getRngNextRollTimestamp();
-
-    const serverNow =
-        getRngServerNow();
-
-    if (
-        typeof serverNow !== 'number'
-    ) {
-
-        errorMessage.textContent =
-            "⚠️ Cannot verify server time.";
-
-        errorMessage.classList.remove(
-            "hidden"
-        );
-
-        initializeRngGenerateButton();
-
+    if (rngRollLoadingPending) {
         return;
     }
-
-    if (
-        nextRollTimestamp &&
-        serverNow <
-        nextRollTimestamp
-    ) {
-
-        updateRngDailyCountdown();
-
-        return;
-    }
-
-    if (
-        nextRollTimestamp &&
-        serverNow >=
-        nextRollTimestamp
-    ) {
-
-        handleRngCooldownExpired();
-    }
-
-    if (
-        rngRequestPending
-    ) {
-        return;
-    }
-
-    if (
-        !socket ||
-        socket.readyState !==
-            WebSocket.OPEN
-    ) {
-
-        errorMessage.textContent =
-            "⚠️ Action Cancelled: Socket is not open.";
-
-        errorMessage.classList.remove(
-            "hidden"
-        );
-
-        initializeRngGenerateButton();
-
-        return;
-    }
-
-    rngRequestPending =
-        true;
-
-    socket.send(
-        JSON.stringify({
-            protocol: "cardgame",
-            version: 1,
-            request: "rng_go"
-        })
-    );
-}
-
-
-function initializeRngFrontend() {
-
-    loadLocalRngRollState();
 
     createRngTopControlArea();
-    createRngDailyStatus();
+	 
+    const actionArea = 
+        document.createElement('div'); 
+	 
+    actionArea.className = 
+        'rngActionArea'; 
+	 
+    const button = 
+        document.createElement('button'); 
+	 
+    button.id = 
+        'generateRecordButton'; 
+	 
+    button.className = 
+        'rngGenerateButton'; 
+	 
+    button.type = 
+        'button'; 
+	 
+    button.textContent = 
+        'Generate Record'; 
+	 
+    actionArea.appendChild( 
+        button 
+    ); 
+	 
+    rngControlSlot.appendChild( 
+        actionArea 
+    ); 
+	 
+    rngDailyActionArea = 
+        actionArea; 
+	 
+    button.addEventListener( 
+        'pointerenter', 
+        () => { 
+            startNormalButtonWiggle( 
+                button 
+            ); 
+        } 
+    ); 
+	 
+    button.addEventListener( 
+        'pointerleave', 
+        () => { 
+            stopNormalButtonWiggle( 
+                button 
+            ); 
+        } 
+    ); 
+	 
+    button.addEventListener( 
+        'focus', 
+        () => { 
+            startNormalButtonWiggle( 
+                button 
+            ); 
+        } 
+    ); 
+	 
+    button.addEventListener( 
+        'blur', 
+        () => { 
+            stopNormalButtonWiggle( 
+                button 
+            ); 
+        } 
+    ); 
+	 
+    button.addEventListener( 
+        'click', 
+        () => { 
+            actionArea.remove(); 
+            rngDailyActionArea = null; 
+	 
+            rngRollLoadingPending = true;
+            errorMessage.classList.add(
+                "hidden"
+            );
 
-    hideRngDailyStatus();
+            startRngRollLoading(() => {
+                rngRollLoadingPending = false;
+                beginRngRollRequest();
+            });
+        } 
+    ); 
+} 
 
-    clearRngRarityTheme();
+function beginRngRollRequest() {
+    const nextRollTimestamp =
+        getRngNextRollTimestamp();
+
+    const serverNow =
+        getRngServerNow();
+
+    if (
+        typeof nextRollTimestamp !== 'number' ||
+        !Number.isFinite(nextRollTimestamp) ||
+        typeof serverNow !== 'number' ||
+        !Number.isFinite(serverNow)
+    ) {
+        if (
+            typeof serverNow !== 'number' ||
+            !Number.isFinite(serverNow)
+        ) {
+            rngRequestPending = false;
+
+            errorMessage.textContent =
+                "⚠️ Action Cancelled: Server time has not been synchronized yet.";
+
+            errorMessage.classList.remove(
+                "hidden"
+            );
+
+            initializeRngGenerateButton();
+            return;
+        }
+    }
+
+    if (
+        isRngCooldownActive()
+    ) {
+        updateRngDailyCountdown();
+        return;
+    }
+
+    rngRequestPending = true;
+
+    if ( 
+        !socket || 
+        socket.readyState !== 
+            WebSocket.OPEN 
+    ) { 
+        rngRequestPending = false; 
+	 
+        errorMessage.textContent = 
+            "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner."; 
+	 
+        errorMessage.classList.remove( 
+            "hidden" 
+        ); 
+	 
+        initializeRngGenerateButton(); 
+        return; 
+    } 
+	 
+    socket.send( 
+        JSON.stringify({ 
+            protocol: "cardgame", 
+            version: 1, 
+            request: "rng_go" 
+        }) 
+    ); 
+}
+	 
+function initializeRngFrontend() { 
+    if ( 
+        !generateScreen || 
+        rngFrontendInitialized 
+    ) { 
+        return; 
+    } 
+	 
+    rngFrontendInitialized = true; 
+
+    if (!rngLocalRollState) {
+        rngLocalRollState =
+            loadLocalRngRollState();
+    }
+	 
+    createRngTopControlArea();
+    createRngDailyStatus(); 
+    hideRngDailyStatus(); 
+    clearRngRarityTheme(); 
 
     const storedResult =
         loadLocalRngResult();
 
-    const nextRollTimestamp =
-        getRngNextRollTimestamp();
-
-    const serverNow =
-        getRngServerNow();
-
-    const cooldownActive =
-        Boolean(
-            nextRollTimestamp &&
-            typeof serverNow === 'number' &&
-            serverNow <
-                nextRollTimestamp
-        );
-
     if (
-        cooldownActive &&
-        storedResult
+        storedResult &&
+        isRngCooldownActive()
     ) {
-
         renderStoredRngResult(
             storedResult
         );
-
-    } else {
-
-        if (
-            !cooldownActive
-        ) {
-            clearLocalRngResult();
-        }
-
-        updateRngDailyCountdown();
-
-        if (
-            !rngRequestPending &&
-            !rngRollLoadingPending &&
-            !rngResultPanel &&
-            !rngScrambleElement
-        ) {
-            initializeRngGenerateButton();
-        }
+    } else if (
+        storedResult
+    ) {
+        clearLocalRngResult();
     }
 
-    updateRngDailyCountdown();
-    updateScrollRail();
-
-    requestRngLaunchFlash();
-}
-
-
-function initializeRngMusic() {
-
-    const music =
-        document.getElementById(
-            'activityMusic'
-        );
-
-    const toggleButton =
-        document.getElementById(
-            'musicToggleButton'
-        );
+    updateRngDailyCountdown(); 
 
     if (
-        !music
+        !rngResultPanel &&
+        !rngRequestPending &&
+        !rngRollLoadingPending
     ) {
-        return;
+        initializeRngGenerateButton();
     }
 
-    music.loop =
-        true;
-
-    music.volume =
-        0.5;
-
-    let muted =
-        music.muted;
-
-    function updateMusicButton() {
-
-        if (
-            !toggleButton
-        ) {
-            return;
-        }
-
-        toggleButton.setAttribute(
-            'aria-label',
-            muted
-                ? 'Unmute music'
-                : 'Mute music'
-        );
-
-        toggleButton.setAttribute(
-            'aria-pressed',
-            muted
-                ? 'true'
-                : 'false'
-        );
-
-        toggleButton.textContent =
-            muted
-                ? '🔇'
-                : '🔊';
-    }
-
-
-    function attemptMusicPlayback() {
-
-        music.loop =
-            true;
-
-        music.volume =
-            0.5;
-
-        if (
-            muted
-        ) {
-            music.muted =
-                true;
-
-            return;
-        }
-
-        music.muted =
-            false;
-
-        const promise =
-            music.play();
-
-        if (
-            promise &&
-            typeof promise.catch ===
-                'function'
-        ) {
-
-            promise.catch(
-                () => {
-                    return;
-                }
-            );
-        }
-    }
-
-
-    if (
-        toggleButton
-    ) {
-
-        toggleButton.addEventListener(
-            'click',
-            event => {
-
-                event.preventDefault();
-
-                muted =
-                    !muted;
-
-                music.muted =
-                    muted;
-
-                if (
-                    !muted
-                ) {
-                    attemptMusicPlayback();
-                } else {
-                    music.pause();
-                }
-
-                updateMusicButton();
-            }
-        );
-    }
-
-
-    document.addEventListener(
-        'pointerdown',
-        () => {
-
-            if (
-                !muted
-            ) {
-                attemptMusicPlayback();
-            }
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    document.addEventListener(
-        'keydown',
-        () => {
-
-            if (
-                !muted
-            ) {
-                attemptMusicPlayback();
-            }
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    music.addEventListener(
-        'ended',
-        () => {
-
-            if (
-                music.loop &&
-                !muted
-            ) {
-                attemptMusicPlayback();
-            }
-        }
-    );
-
-
-    updateMusicButton();
-    attemptMusicPlayback();
+    maybePlayRngLaunchFlash(); 
 }
-
-
-initializeRngMusic();
 
 
 /*
@@ -4404,137 +4192,6 @@ THROUGH THE END MARKER BELOW.
 
 PRESS CTRL + SHIFT + R TO ROLL DURING COOLDOWN.
 */
-
-const rngTestOriginalSyncRngServerClock =
-    syncRngServerClock;
-
-const rngTestOriginalMarkRngRollComplete =
-    markRngRollComplete;
-
-let rngTestHasRolled =
-    false;
-
-let rngTestNextResetTimestamp =
-    null;
-
-try {
-
-    localStorage.removeItem(
-        RNG_LOCAL_ROLL_STORAGE_KEY
-    );
-
-    localStorage.removeItem(
-        RNG_LOCAL_RESULT_STORAGE_KEY
-    );
-
-} catch (err) {
-
-    console.log(
-        "Temporary RNG test storage reset failed."
-    );
-}
-
-
-syncRngServerClock =
-    function (
-        serverTime,
-        nextReset
-    ) {
-
-        rngTestOriginalSyncRngServerClock(
-            serverTime,
-            nextReset
-        );
-
-        if (
-            !rngTestHasRolled
-        ) {
-
-            rngTestNextResetTimestamp =
-                null;
-
-            rngNextResetTimestamp =
-                null;
-
-            clearLocalRngRollState();
-            clearLocalRngResult();
-
-            if (rngResultPanel) {
-                rngResultPanel.remove();
-                rngResultPanel = null;
-            }
-
-            hideRngDailyStatus();
-
-            clearRngRarityTheme();
-
-            if (
-                currentTab === 'generate' &&
-                !rngRequestPending &&
-                !rngRollLoadingPending
-            ) {
-                initializeRngGenerateButton();
-            }
-
-            updateScrollRail();
-
-            return;
-        }
-
-        if (
-            typeof rngTestNextResetTimestamp === 'number' &&
-            Number.isFinite(
-                rngTestNextResetTimestamp
-            )
-        ) {
-
-            rngNextResetTimestamp =
-                rngTestNextResetTimestamp;
-
-            saveLocalRngRollState(
-                rngTestNextResetTimestamp
-            );
-
-            updateRngDailyCountdown();
-        }
-    };
-
-
-markRngRollComplete =
-    function (
-        payload
-    ) {
-
-        rngTestOriginalMarkRngRollComplete(
-            payload
-        );
-
-        const serverNow =
-            getRngServerNow();
-
-        if (
-            typeof serverNow === 'number' &&
-            Number.isFinite(serverNow)
-        ) {
-
-            rngTestHasRolled =
-                true;
-
-            rngTestNextResetTimestamp =
-                serverNow +
-                60000;
-
-            rngNextResetTimestamp =
-                rngTestNextResetTimestamp;
-
-            saveLocalRngRollState(
-                rngTestNextResetTimestamp
-            );
-
-            updateRngDailyCountdown();
-        }
-    };
-
 
 document.addEventListener(
     'keydown',
@@ -4617,5 +4274,4 @@ document.addEventListener(
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY.
 EVERYTHING BELOW/OUTSIDE THIS BLOCK IS REAL CODE.
-============================================================
-*/
+============================================================*/

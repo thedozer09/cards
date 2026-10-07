@@ -1,17 +1,11 @@
 * {
-
     box-sizing: border-box;
-
 }
 
 html,
-
 body {
-
     margin: 0;
-
     min-height: 100%;
-
 }
 
 body {
@@ -23,131 +17,26 @@ body {
     color: #f5f9fd;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #3f6085 0%,
-
             #36577e 26%,
-
             #2d4e76 52%,
-
             #29466d 76%,
-
             #244064 100%
-
         );
 
     -webkit-font-smoothing: antialiased;
-
     -moz-osx-font-smoothing: grayscale;
-
-    transition:
-
-        background 0.35s ease;
-
-}
-
-body.rng-rarity-common {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #3f6085 0%,
-
-            #36577e 28%,
-
-            #2f5378 54%,
-
-            #2b4a70 78%,
-
-            #264468 100%
-
-        );
-
-}
-
-body.rng-rarity-uncommon {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #256c6a 0%,
-
-            #285f65 28%,
-
-            #2c555e 54%,
-
-            #2d4d59 78%,
-
-            #294652 100%
-
-        );
-
-}
-
-body.rng-rarity-rare {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #225e97 0%,
-
-            #28588c 28%,
-
-            #2c507d 54%,
-
-            #30496f 78%,
-
-            #2f4563 100%
-
-        );
-
-}
-
-body.rng-rarity-legendary {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #725d18 0%,
-
-            #655323 28%,
-
-            #584c2e 54%,
-
-            #4d4434 78%,
-
-            #433d39 100%
-
-        );
 
 }
 
 button {
-
     font: inherit;
-
 }
 
 .hidden {
-
     display: none !important;
-
 }
 
 .loadingScreen {
@@ -211,9 +100,7 @@ button {
 @keyframes loadingSpin {
 
     to {
-
         transform: rotate(360deg);
-
     }
 
 }
@@ -251,25 +138,16 @@ button {
     border-radius: 25px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #102b4b 0%,
-
             #172f49 42%,
-
             #242e35 72%,
-
             #2d3236 100%
-
         );
 
     box-shadow:
-
         0 14px 34px rgba(2, 10, 20, 0.36),
-
         inset 0 1px 0 rgba(181, 208, 228, 0.06);
 
 }
@@ -289,17 +167,11 @@ button {
     border-radius: 999px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #476f92 0%,
-
             #3d6385 50%,
-
             #335775 100%
-
         );
 
     color: #ffffff;
@@ -313,17 +185,12 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 6px 15px rgba(2, 14, 27, 0.3),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease;
 
 }
@@ -331,25 +198,17 @@ button {
 .tabButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #527ca0 0%,
-
             #477098 50%,
-
             #3b6485 100%
-
         );
 
     border-color: rgba(201, 222, 237, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.34),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 }
@@ -371,17 +230,11 @@ button {
 .tabButton.active {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #5b83a5 0%,
-
             #4d7395 50%,
-
             #406788 100%
-
         );
 
     border-color: rgba(213, 230, 241, 0.38);
@@ -389,9 +242,7 @@ button {
     color: #ffffff;
 
     box-shadow:
-
         0 8px 20px rgba(2, 14, 27, 0.38),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.11);
 
 }
@@ -414,15 +265,35 @@ button {
 
 @keyframes clickJerk {
 
-    0% { transform: translate(0, 0) rotate(0deg); }
+    0% {
 
-    22% { transform: translate(-3px, 1px) rotate(-1deg); }
+        transform: translate(0, 0) rotate(0deg);
 
-    45% { transform: translate(3px, -1px) rotate(1deg); }
+    }
 
-    68% { transform: translate(-2px, 0) rotate(-0.5deg); }
+    22% {
 
-    100% { transform: translate(0, 0) rotate(0deg); }
+        transform: translate(-3px, 1px) rotate(-1deg);
+
+    }
+
+    45% {
+
+        transform: translate(3px, -1px) rotate(1deg);
+
+    }
+
+    68% {
+
+        transform: translate(-2px, 0) rotate(-0.5deg);
+
+    }
+
+    100% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
 
 }
 
@@ -449,7 +320,6 @@ button {
     height: 82px;
 
     animation:
-
         carDrive 3s linear forwards;
 
 }
@@ -461,7 +331,6 @@ button {
     height: 90px;
 
     animation:
-
         tornadoChase 3s linear 1s forwards;
 
 }
@@ -634,141 +503,9 @@ button {
 
 }
 
-.musicToggleButton {
-
-    position: fixed;
-
-    top: 16px;
-
-    left: 16px;
-
-    z-index: 100001;
-
-    width: 42px;
-
-    height: 42px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 0;
-
-    border: 1px solid rgba(190, 214, 231, 0.24);
-
-    border-radius: 50%;
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            rgba(18, 43, 71, 0.95) 0%,
-
-            rgba(37, 46, 52, 0.95) 100%
-
-        );
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    line-height: 1;
-
-    cursor: pointer;
-
-    box-shadow:
-
-        0 8px 18px rgba(2, 10, 20, 0.32),
-
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-    transition:
-
-        background 0.18s ease,
-
-        border-color 0.18s ease,
-
-        box-shadow 0.18s ease,
-
-        transform 0.18s ease;
-
-}
-
-.musicToggleButton:hover {
-
-    border-color: rgba(211, 230, 242, 0.38);
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            rgba(29, 57, 87, 0.98) 0%,
-
-            rgba(48, 57, 64, 0.98) 100%
-
-        );
-
-    box-shadow:
-
-        0 10px 21px rgba(2, 10, 20, 0.38),
-
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-
-    transform: translateY(-1px);
-
-}
-
-.musicToggleButton:active {
-
-    transform: translateY(1px);
-
-}
-
-.musicToggleButton:focus-visible {
-
-    outline: 3px solid rgba(168, 202, 225, 0.46);
-
-    outline-offset: 3px;
-
-}
-
-.rngTopControlArea {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
-
-    min-height: 86px;
-
-    height: 86px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin: 0 auto;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-}
-
 .rngActionArea {
 
-    width: 100%;
-
-    height: 86px;
+    min-height: 260px;
 
     display: flex;
 
@@ -776,13 +513,7 @@ button {
 
     justify-content: center;
 
-    margin: 0;
-
-    padding: 10px 0;
-
-    box-sizing: border-box;
-
-    background: transparent;
+    padding: 28px;
 
 }
 
@@ -799,17 +530,11 @@ button {
     border-radius: 14px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #416e98 0%,
-
             #365f87 52%,
-
             #2e5278 100%
-
         );
 
     color: #ffffff;
@@ -823,19 +548,13 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 7px 16px rgba(2, 14, 27, 0.28),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease,
-
         transform 0.18s ease;
 
 }
@@ -843,25 +562,17 @@ button {
 .rngGenerateButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #4c7da8 0%,
-
             #3e6b93 52%,
-
             #345c82 100%
-
         );
 
     border-color: rgba(207, 226, 239, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.32),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     transform: translateY(-1px);
@@ -874,95 +585,34 @@ button {
 
 }
 
-.rngDailyStatus {
+.rngResultPanel {
 
     width: 100%;
 
-    height: 86px;
+    margin-top: 24px;
 
-    min-height: 86px;
+    padding: 34px 32px 42px;
 
-    margin: 0;
+    border: 1px solid rgba(144, 176, 199, 0.18);
 
-    padding: 8px 0;
+    border-radius: 24px;
 
-    display: flex;
+    background:
+        linear-gradient(
+            135deg,
+            #14385f 0%,
+            #1c354d 42%,
+            #293237 76%,
+            #303538 100%
+        );
 
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    color: #949a9f;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: 0;
-
-    box-shadow: none;
-
-}
-
-.rngDailyMessage {
-
-    color: #949a9f;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-}
-
-.rngDailyCountdown {
-
-    margin-top: 4px;
-
-    color: #898f94;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.04em;
-
-}
-
-.rngResultPanel {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
-
-    margin: 0 auto;
-
-    padding: 0;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: 0;
-
-    box-shadow: none;
-
-    overflow: visible;
+    box-shadow:
+        0 16px 34px rgba(2, 10, 20, 0.3),
+        inset 0 1px 0 rgba(183, 211, 229, 0.06);
 
 }
 
 .rngScramble {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
 
     min-height: 58px;
 
@@ -972,165 +622,50 @@ button {
 
     justify-content: center;
 
-    margin: 0 auto;
-
-    padding: 10px 0 24px;
-
-    box-sizing: border-box;
-
-    position: relative;
-
-    z-index: 2;
+    padding: 8px 0 24px;
 
     color: #21b7ff;
 
     font-family: "Courier New", Courier, monospace;
 
-    font-size: 29px;
+    font-size: 32px;
 
     font-weight: 900;
 
-    letter-spacing: 2.4px;
-
-    line-height: 1.2;
+    letter-spacing: 3px;
 
     text-align: center;
 
     text-shadow:
-
         0 0 8px rgba(33, 183, 255, 0.24);
 
     word-break: break-all;
-
-    overflow-wrap: anywhere;
-
-    visibility: visible;
-
-    opacity: 1;
-
-    background: transparent;
-
-    border: 0;
 
 }
 
 .rngRecordCard {
 
-    position: relative;
+    width: min(680px, 100%);
 
-    width: 350px;
+    margin: 10px auto 0;
 
-    min-width: 350px;
-
-    max-width: 350px;
-
-    margin: 0 auto;
-
-    padding: 24px;
-
-    box-sizing: border-box;
+    padding: 28px;
 
     border: 1px solid rgba(190, 214, 231, 0.2);
 
     border-radius: 20px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #203e5e 0%,
-
             #253845 46%,
-
             #313739 100%
-
         );
 
     box-shadow:
-
         0 14px 28px rgba(2, 10, 20, 0.28),
-
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
-
-    overflow: hidden;
-
-    transform-origin: center center;
-
-    will-change: transform;
-
-}
-
-.rngRecordCard.rng-rarity-common {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #304b65 0%,
-
-            #354653 46%,
-
-            #31383d 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-uncommon {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #205f5c 0%,
-
-            #2b4f53 46%,
-
-            #313b40 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-rare {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #21598a 0%,
-
-            #2d485f 46%,
-
-            #303b43 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-legendary {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #695719 0%,
-
-            #50472f 46%,
-
-            #343a3e 100%
-
-        );
 
 }
 
@@ -1144,11 +679,9 @@ button {
 
     gap: 6px;
 
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 
     text-align: center;
-
-    background: transparent;
 
 }
 
@@ -1156,11 +689,11 @@ button {
 
     color: rgba(193, 215, 229, 0.62);
 
-    font-size: 14px;
+    font-size: 10px;
 
     font-weight: 800;
 
-    letter-spacing: 1.4px;
+    letter-spacing: 1.6px;
 
     text-transform: uppercase;
 
@@ -1168,149 +701,69 @@ button {
 
 .rngRecordValue {
 
-    width: 100%;
-
-    max-width: 100%;
-
     color: #f3f8fc;
 
     font-family: "Courier New", Courier, monospace;
 
-    font-size: 24px;
+    font-size: 26px;
 
     font-weight: 900;
 
-    letter-spacing: 1px;
-
-    line-height: 1.15;
-
-    text-align: center;
+    letter-spacing: 1.5px;
 
     word-break: break-all;
-
-    overflow-wrap: anywhere;
 
 }
 
 .rngStats {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: grid;
 
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 12px;
 
-    margin-bottom: 18px;
-
-    background: transparent;
+    margin-bottom: 24px;
 
 }
 
 .rngStat {
 
-    position: relative;
-
-    min-width: 0;
-
-    min-height: 72px;
+    min-height: 78px;
 
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
-
     justify-content: center;
 
-    gap: 5px;
+    gap: 7px;
 
-    padding: 10px 11px;
+    padding: 15px 16px;
 
-    border: 0;
+    border: 1px solid rgba(176, 204, 223, 0.14);
 
-    border-radius: 0;
+    border-radius: 14px;
 
-    background: transparent;
-
-    overflow: visible;
-
-    text-align: center;
+    background: rgba(8, 25, 41, 0.28);
 
 }
 
 .rngStatLabel {
 
-    width: 100%;
-
     color: rgba(190, 211, 226, 0.6);
 
-    font-size: 14px;
+    font-size: 9px;
 
     font-weight: 800;
 
-    letter-spacing: 1.1px;
-
-    line-height: 1.2;
-
-    text-align: center;
+    letter-spacing: 1.3px;
 
     text-transform: uppercase;
 
 }
 
-.rngLifetimeStatLabel {
-
-    position: relative;
-
-    left: 0;
-
-    white-space: normal;
-
-    font-size: 0;
-
-    letter-spacing: 1.1px;
-
-    line-height: 1.2;
-
-    overflow: visible;
-
-    text-align: center;
-
-}
-
-.rngLifetimeStatLabel::before {
-
-    content: "Total";
-
-    display: block;
-
-    font-size: 14px;
-
-    line-height: 1.2;
-
-}
-
-.rngLifetimeStatLabel::after {
-
-    content: "Score";
-
-    display: block;
-
-    font-size: 14px;
-
-    line-height: 1.2;
-
-}
-
 .rngStatValue {
-
-    position: relative;
-
-    width: 100%;
 
     color: #edf6fb;
 
@@ -1318,467 +771,29 @@ button {
 
     font-weight: 800;
 
-    line-height: 21px;
-
-    min-height: 21px;
-
-    text-align: center;
-
     overflow-wrap: anywhere;
-
-}
-
-.rngLifetimeStatValue {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    height: 21px;
-
-    min-height: 21px;
-
-    overflow: visible;
-
-}
-
-.rngLifetimeScoreValue {
-
-    position: relative;
-
-    top: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 100%;
-
-    height: 21px;
-
-    min-height: 21px;
-
-    white-space: nowrap;
-
-    overflow: visible;
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-    line-height: 21px;
-
-    font-variant-numeric: tabular-nums;
-
-    transform: translateX(0);
-
-}
-
-.rngLifetimeNormalValue {
-
-    position: relative;
-
-    z-index: 1;
-
-    display: inline-block;
-
-    line-height: 21px;
-
-    height: 21px;
-
-    min-height: 21px;
-
-    font-size: inherit;
-
-    font-weight: inherit;
-
-    font-variant-numeric: tabular-nums;
-
-}
-
-.rngLifetimeWheel {
-
-    position: absolute;
-
-    top: 50%;
-
-    left: 50%;
-
-    z-index: 2;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: max-content;
-
-    height: 54px;
-
-    min-height: 54px;
-
-    transform:
-
-        translate(
-
-            -50%,
-
-            -50%
-
-        );
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition:
-
-        opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
-
-    white-space: nowrap;
-
-}
-
-.rngLifetimeDigit {
-
-    position: relative;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 0.62em;
-
-    height: 54px;
-
-    min-height: 54px;
-
-    overflow: hidden;
-
-    flex-shrink: 0;
-
-    mask-image:
-
-        linear-gradient(
-
-            to bottom,
-
-            transparent 0%,
-
-            rgba(0, 0, 0, 0.72) 18%,
-
-            #000000 31%,
-
-            #000000 69%,
-
-            rgba(0, 0, 0, 0.72) 82%,
-
-            transparent 100%
-
-        );
-
-    -webkit-mask-image:
-
-        linear-gradient(
-
-            to bottom,
-
-            transparent 0%,
-
-            rgba(0, 0, 0, 0.72) 18%,
-
-            #000000 31%,
-
-            #000000 69%,
-
-            rgba(0, 0, 0, 0.72) 82%,
-
-            transparent 100%
-
-        );
-
-}
-
-.rngLifetimeDigitStrip {
-
-    position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    width: 100%;
-
-    height: max-content;
-
-    will-change: transform;
-
-}
-
-.rngLifetimeDigitFace {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 100%;
-
-    height: 18px;
-
-    min-height: 18px;
-
-    line-height: 18px;
-
-    text-align: center;
-
-    flex-shrink: 0;
-
-    font-size: inherit;
-
-    font-weight: inherit;
-
-    font-family: inherit;
-
-    font-variant-numeric: tabular-nums;
-
-    backface-visibility: hidden;
-
-    transform-origin: center center;
-
-}
-
-.rngRarityStat {
-
-    position: relative;
-
-    overflow: visible;
-
-}
-
-.rngRarityStat::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 50px;
-
-    height: 28px;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    filter: blur(8px);
-
-    opacity: 0.42;
-
-    pointer-events: none;
-
-    z-index: 0;
-
-}
-
-.rngRarityStat[data-rng-rarity="common"]::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse,
-
-            rgba(220, 231, 240, 0.42) 0%,
-
-            rgba(220, 231, 240, 0.16) 42%,
-
-            rgba(220, 231, 240, 0) 100%
-
-        );
-
-}
-
-.rngRarityStat[data-rng-rarity="uncommon"]::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse,
-
-            rgba(79, 209, 197, 0.5) 0%,
-
-            rgba(79, 209, 197, 0.18) 42%,
-
-            rgba(79, 209, 197, 0) 100%
-
-        );
-
-}
-
-.rngRarityStat[data-rng-rarity="rare"]::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse,
-
-            rgba(77, 166, 255, 0.66) 0%,
-
-            rgba(77, 166, 255, 0.22) 42%,
-
-            rgba(77, 166, 255, 0) 100%
-
-        );
-
-}
-
-.rngRarityStat[data-rng-rarity="legendary"]::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse,
-
-            rgba(255, 216, 77, 0.72) 0%,
-
-            rgba(255, 216, 77, 0.25) 42%,
-
-            rgba(255, 216, 77, 0) 100%
-
-        );
-
-}
-
-.rngRarityStat .rngStatLabel,
-
-.rngRarityStat .rngStatValue {
-
-    position: relative;
-
-    z-index: 1;
-
-}
-
-.rngRarityShiny {
-
-    background-size: 220% 100%;
-
-    -webkit-background-clip: text;
-
-    background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    background-image:
-
-        linear-gradient(
-
-            120deg,
-
-            currentColor 0%,
-
-            currentColor 28%,
-
-            #ffffff 42%,
-
-            currentColor 55%,
-
-            currentColor 100%
-
-        );
-
-    animation:
-
-        rngRarityShine 2.1s ease-in-out infinite;
-
-    text-shadow: none;
-
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityShiny {
-
-    color: #4da6ff;
-
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityShiny {
-
-    color: #ffd84d;
-
-}
-
-@keyframes rngRarityShine {
-
-    0% {
-
-        background-position: 160% 50%;
-
-    }
-
-    50% {
-
-        background-position: -20% 50%;
-
-    }
-
-    100% {
-
-        background-position: 160% 50%;
-
-    }
 
 }
 
 .rngModifiersSection {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
-
-    gap: 9px;
-
-    background: transparent;
+    gap: 12px;
 
 }
 
 .rngModifiersTitle {
 
-    width: 100%;
-
     color: #dbeaf4;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 900;
 
-    letter-spacing: 1.1px;
-
-    text-align: center;
+    letter-spacing: 1.2px;
 
     text-transform: uppercase;
 
@@ -1786,51 +801,37 @@ button {
 
 .rngModifiers {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: grid;
 
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 
-    gap: 7px;
-
-    background: transparent;
+    gap: 10px;
 
 }
 
 .rngModifier {
 
-    min-width: 0;
+    min-height: 74px;
 
-    min-height: 60px;
+    padding: 14px 15px;
 
-    padding: 10px 0;
+    border: 1px solid rgba(176, 204, 223, 0.14);
 
-    border: 0;
+    border-radius: 13px;
 
-    border-radius: 0;
-
-    background: transparent;
-
-    overflow: hidden;
-
-    text-align: center;
+    background: rgba(8, 25, 41, 0.3);
 
 }
 
 .rngModifierName {
 
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 
     color: #f0f6fa;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 800;
-
-    text-align: center;
 
     overflow-wrap: anywhere;
 
@@ -1844,73 +845,23 @@ button {
 
     line-height: 1.4;
 
-    text-align: center;
-
     overflow-wrap: anywhere;
 
 }
 
 .rngNoModifiers {
 
-    width: 100%;
+    padding: 18px;
 
-    padding: 14px;
+    border: 1px dashed rgba(176, 204, 223, 0.18);
 
-    border: 0;
+    border-radius: 13px;
 
-    border-radius: 0;
-
-    color: rgba(155, 165, 172, 0.68);
+    color: rgba(200, 218, 230, 0.56);
 
     font-size: 12px;
 
     text-align: center;
-
-    background: transparent;
-
-}
-
-.rngRecordCard.rngRecordCardFinalPop {
-
-    animation:
-
-        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-
-}
-
-@keyframes rngRecordCardFinalPop {
-
-    0% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
-
-    45% {
-
-        opacity: 1;
-
-        transform: translateY(-4px) scale(1.07);
-
-    }
-
-    70% {
-
-        opacity: 1;
-
-        transform: translateY(1px) scale(0.985);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
 
 }
 
@@ -1920,13 +871,22 @@ button {
 
     padding: 32px;
 
-    border: 0;
+    border: 1px solid rgba(136, 164, 188, 0.18);
 
-    border-radius: 0;
+    border-radius: 26px;
 
-    background: transparent;
+    background:
+        linear-gradient(
+            135deg,
+            #102a49 0%,
+            #172f47 38%,
+            #242d34 70%,
+            #303438 100%
+        );
 
-    box-shadow: none;
+    box-shadow:
+        0 19px 44px rgba(2, 10, 20, 0.38),
+        inset 0 1px 0 rgba(177, 203, 222, 0.05);
 
 }
 
@@ -2053,15 +1013,10 @@ button {
     border-radius: 15px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #122b47 0%,
-
             #252e34 100%
-
         );
 
     color: #ffffff;
@@ -2071,128 +1026,6 @@ button {
     line-height: 1.45;
 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-
-}
-
-.normalButtonWiggle {
-
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-
-}
-
-@keyframes normalButtonWiggle {
-
-    0%,
-
-    100% {
-
-        transform: translateX(0);
-
-    }
-
-    25% {
-
-        transform: translateX(-3px);
-
-    }
-
-    75% {
-
-        transform: translateX(3px);
-
-    }
-
-}
-
-.rngLaunchFlash {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 99999;
-
-    pointer-events: none;
-
-    background: #ffffff;
-
-    animation:
-
-        rngLaunchFlash 0.6s ease-out forwards;
-
-}
-
-@keyframes rngLaunchFlash {
-
-    0% {
-
-        opacity: 0;
-
-    }
-
-    12% {
-
-        opacity: 1;
-
-    }
-
-    38% {
-
-        opacity: 1;
-
-    }
-
-    100% {
-
-        opacity: 0;
-
-    }
-
-}
-
-.rngResultPopIn {
-
-    animation:
-
-        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-
-    animation-delay: var(--rng-pop-delay, 0s);
-
-}
-
-@keyframes rngResultPopIn {
-
-    0% {
-
-        opacity: 0;
-
-        transform: translateY(12px) scale(0.88);
-
-    }
-
-    55% {
-
-        opacity: 1;
-
-        transform: translateY(-3px) scale(1.025);
-
-    }
-
-    78% {
-
-        opacity: 1;
-
-        transform: translateY(1px) scale(0.995);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
 
 }
 
@@ -2242,25 +1075,11 @@ button {
 
     }
 
-    .musicToggleButton {
+    .rngActionArea {
 
-        top: 12px;
+        min-height: 230px;
 
-        left: 12px;
-
-        width: 38px;
-
-        height: 38px;
-
-        font-size: 16px;
-
-    }
-
-    .rngTopControlArea {
-
-        min-height: 86px;
-
-        height: 86px;
+        padding: 20px;
 
     }
 
@@ -2276,11 +1095,17 @@ button {
 
     }
 
+    .rngResultPanel {
+
+        padding: 28px 20px 34px;
+
+        border-radius: 21px;
+
+    }
+
     .rngScramble {
 
         min-height: 48px;
-
-        padding: 8px 0 20px;
 
         font-size: 24px;
 
@@ -2296,7 +1121,7 @@ button {
 
     .rngStats {
 
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
 
     }
 
@@ -2305,6 +1130,8 @@ button {
         min-height: 360px;
 
         padding: 24px;
+
+        border-radius: 21px;
 
     }
 
@@ -2394,25 +1221,11 @@ button {
 
     }
 
-    .musicToggleButton {
+    .rngActionArea {
 
-        top: 9px;
+        min-height: 210px;
 
-        left: 9px;
-
-        width: 35px;
-
-        height: 35px;
-
-        font-size: 15px;
-
-    }
-
-    .rngTopControlArea {
-
-        min-height: 86px;
-
-        height: 86px;
+        padding: 16px;
 
     }
 
@@ -2428,39 +1241,35 @@ button {
 
     }
 
+    .rngResultPanel {
+
+        padding: 24px 15px 28px;
+
+    }
+
     .rngScramble {
 
-        min-height: 52px;
+        font-size: 20px;
 
-        padding: 8px 0 20px;
-
-        font-size: 21px;
-
-        letter-spacing: 1.7px;
+        letter-spacing: 1.4px;
 
     }
 
     .rngRecordCard {
 
-        padding: 20px;
+        padding: 18px;
 
     }
 
     .rngRecordValue {
 
-        font-size: 22px;
+        font-size: 21px;
 
     }
 
     .tabScreen {
 
         padding: 20px;
-
-    }
-
-    .tabScreen h1 {
-
-        font-size: 24px;
 
     }
 
@@ -2493,6 +1302,627 @@ button {
     .error {
 
         right: 58px;
+
+    }
+
+    .tabHeader {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .rngResultPanel {
+        width: min(100%, 500px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .rngRecordCard {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+}
+
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.rngDailyStatus {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 18px;
+    text-align: center;
+    color: #8a8f94;
+}
+
+.rngDailyMessage {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.rngDailyCountdown {
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.normalButtonWiggle {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+@keyframes normalButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+.rngLaunchFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    animation: rngLaunchFlash 0.5s ease-out forwards;
+}
+
+@keyframes rngLaunchFlash {
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.rngResultPopIn {
+    animation: rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--rng-pop-delay, 0s);
+}
+
+@keyframes rngResultPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.88);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Lifetime Record Score wheel */
+.rngLifetimeScoreValue {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 21px;
+    min-height: 21px;
+    white-space: nowrap;
+    overflow: visible;
+    font-size: inherit;
+    line-height: 21px;
+    font-variant-numeric: tabular-nums;
+}
+
+.rngLifetimeNormalValue {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    line-height: 21px;
+}
+
+.rngLifetimeWheel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    height: 54px;
+    min-height: 54px;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
+    white-space: nowrap;
+}
+
+.rngLifetimeDigit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.62em;
+    height: 54px;
+    min-height: 54px;
+    overflow: hidden;
+    flex-shrink: 0;
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 18%,
+        #000000 37%,
+        #000000 63%,
+        rgba(0, 0, 0, 0.35) 82%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 18%,
+        #000000 37%,
+        #000000 63%,
+        rgba(0, 0, 0, 0.35) 82%,
+        transparent 100%
+    );
+}
+
+.rngLifetimeDigitStrip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: max-content;
+    will-change: transform;
+}
+
+.rngLifetimeDigitFace {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 18px;
+    min-height: 18px;
+    line-height: 18px;
+    text-align: center;
+    flex-shrink: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    backface-visibility: hidden;
+    transform-origin: center center;
+}
+
+/* Fixed result assembly */
+.rngResultPanel,
+.rngScramble,
+.rngRecordCard,
+.rngDailyStatus {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngResultPanel,
+.rngScramble,
+.rngRecordCard,
+.rngDailyStatus {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Record title */
+.rngRecordLabel {
+    font-size: 28px;
+    white-space: nowrap;
+}
+
+/* Lifetime Score only */
+.rngLifetimeStatLabel {
+    position: relative;
+    left: -6px;
+    z-index: 3;
+    font-size: 14px !important;
+    letter-spacing: 1.1px !important;
+    white-space: nowrap;
+    text-align: center;
+    overflow: visible;
+}
+
+.rngLifetimeScoreValue {
+    left: -10px;
+    top: 10px;
+}
+
+.rngLifetimeWheel {
+    left: calc(50% - 10px);
+}
+
+.musicToggleButton {
+
+    position: fixed;
+
+    top: 14px;
+
+    left: 14px;
+
+    z-index: 100000;
+
+    width: 42px;
+
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid rgba(190, 214, 231, 0.22);
+
+    border-radius: 12px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #203e5e 0%,
+
+            #253845 52%,
+
+            #313739 100%
+
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 7px 16px rgba(2, 14, 27, 0.28),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+
+        background 0.18s ease,
+
+        border-color 0.18s ease,
+
+        box-shadow 0.18s ease,
+
+        transform 0.18s ease;
+
+}
+
+.musicToggleButton:hover {
+
+    border-color: rgba(207, 226, 239, 0.34);
+
+    box-shadow:
+
+        0 9px 19px rgba(2, 14, 27, 0.34),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+
+}
+
+.musicToggleButton:active {
+
+    transform: translateY(1px);
+
+}
+
+.musicToggleButton:focus-visible {
+
+    outline: 3px solid rgba(168, 202, 225, 0.46);
+
+    outline-offset: 3px;
+
+}
+
+.rngRarityValue {
+
+    position: relative;
+
+    z-index: 1;
+
+    display: inline-block !important;
+
+    width: max-content !important;
+
+    max-width: none !important;
+
+    min-width: 0;
+
+    white-space: nowrap;
+
+    overflow: visible;
+
+}
+
+.rngRarityValue::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    width: 132%;
+
+    height: 170%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 999px;
+
+    filter: blur(10px);
+
+    opacity: 0.72;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(220, 231, 240, 0.42) 0%,
+
+            rgba(220, 231, 240, 0.18) 44%,
+
+            rgba(220, 231, 240, 0) 78%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(79, 209, 197, 0.52) 0%,
+
+            rgba(79, 209, 197, 0.2) 44%,
+
+            rgba(79, 209, 197, 0) 78%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(77, 166, 255, 0.62) 0%,
+
+            rgba(77, 166, 255, 0.24) 44%,
+
+            rgba(77, 166, 255, 0) 80%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(255, 216, 77, 0.7) 0%,
+
+            rgba(255, 216, 77, 0.28) 44%,
+
+            rgba(255, 216, 77, 0) 80%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue,
+.rngRecordCard.rng-rarity-legendary .rngRarityValue {
+
+    color: transparent !important;
+
+    text-shadow: none !important;
+
+    background-clip: text;
+
+    -webkit-background-clip: text;
+
+    background-size: 220% 100%;
+
+    background-position: 200% 50%;
+
+    animation:
+
+        rngRarityShine 2.6s ease-in-out infinite;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue {
+
+    background-image:
+
+        linear-gradient(
+
+            105deg,
+
+            #4da6ff 0%,
+
+            #4da6ff 34%,
+
+            #ffffff 48%,
+
+            #4da6ff 62%,
+
+            #4da6ff 100%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue {
+
+    background-image:
+
+        linear-gradient(
+
+            105deg,
+
+            #ffd84d 0%,
+
+            #ffd84d 34%,
+
+            #fff9c4 48%,
+
+            #ffd84d 62%,
+
+            #ffd84d 100%
+
+        );
+
+}
+
+@keyframes rngRarityShine {
+
+    0% {
+
+        background-position: 200% 50%;
+
+    }
+
+    55%,
+    100% {
+
+        background-position: -20% 50%;
+
+    }
+
+}
+
+.rngRecordCard {
+
+    position: relative;
+
+    transform-origin: center center;
+
+    will-change: transform;
+
+}
+
+@media (max-width: 430px) {
+
+    .musicToggleButton {
+
+        top: 10px;
+
+        left: 10px;
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 16px;
 
     }
 
