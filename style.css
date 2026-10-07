@@ -25,8 +25,9 @@ body {
             #29466d 76%,
             #244064 100%
         );
-    background-repeat: no-repeat;
+    background-repeat: no-repeat !important;
     background-size: 100% 100% !important;
+    background-attachment: scroll !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition:
@@ -43,6 +44,9 @@ body.rng-rarity-common {
             #3d5363 78%,
             #374a58 100%
         );
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: scroll !important;
 }
 
 body.rng-rarity-uncommon {
@@ -55,6 +59,9 @@ body.rng-rarity-uncommon {
             #315664 78%,
             #344b59 100%
         );
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: scroll !important;
 }
 
 body.rng-rarity-rare {
@@ -67,6 +74,9 @@ body.rng-rarity-rare {
             #334f6e 78%,
             #37485b 100%
         );
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: scroll !important;
 }
 
 body.rng-rarity-legendary {
@@ -79,6 +89,9 @@ body.rng-rarity-legendary {
             #4e4839 78%,
             #41403d 100%
         );
+    background-repeat: no-repeat !important;
+    background-size: 100% 100% !important;
+    background-attachment: scroll !important;
 }
 
 button {
@@ -1044,23 +1057,23 @@ button {
 @keyframes musicButtonWiggle {
     0%,
     100% {
-        transform: translateX(0) rotate(0deg);
+        transform: translateX(0);
     }
 
     20% {
-        transform: translateX(-3px) rotate(-1.2deg);
+        transform: translateX(-4px);
     }
 
     40% {
-        transform: translateX(3px) rotate(1.2deg);
+        transform: translateX(4px);
     }
 
     60% {
-        transform: translateX(-3px) rotate(-1deg);
+        transform: translateX(-4px);
     }
 
     80% {
-        transform: translateX(3px) rotate(1deg);
+        transform: translateX(4px);
     }
 }
 
@@ -1093,11 +1106,26 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 165%;
-    height: 210%;
+    width: 170%;
+    height: 230%;
     transform: translate(-50%, -50%);
     border-radius: 999px;
-    filter: blur(6px);
+    filter: blur(7px);
+    opacity: 1;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.rngRarityValue::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 62%;
+    height: 54%;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    filter: blur(4px);
     opacity: 1;
     pointer-events: none;
     z-index: -1;
@@ -1107,57 +1135,101 @@ button {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(245, 250, 255, 0.95) 0%,
-            rgba(225, 237, 246, 0.72) 22%,
-            rgba(220, 231, 240, 0.36) 48%,
-            rgba(220, 231, 240, 0) 82%
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(245, 250, 255, 0.84) 18%,
+            rgba(225, 237, 246, 0.58) 42%,
+            rgba(220, 231, 240, 0.22) 64%,
+            rgba(220, 231, 240, 0) 84%
         );
     box-shadow:
-        0 0 24px 9px rgba(220, 231, 240, 0.34);
+        0 0 30px 12px rgba(220, 231, 240, 0.42);
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityValue::after {
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(245, 250, 255, 0.9) 32%,
+            rgba(220, 231, 240, 0) 100%
+        );
 }
 
 .rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(115, 255, 237, 0.98) 0%,
-            rgba(79, 209, 197, 0.74) 22%,
-            rgba(79, 209, 197, 0.38) 48%,
-            rgba(79, 209, 197, 0) 82%
+            rgba(170, 255, 245, 1) 0%,
+            rgba(115, 255, 237, 0.92) 18%,
+            rgba(79, 209, 197, 0.62) 42%,
+            rgba(79, 209, 197, 0.24) 64%,
+            rgba(79, 209, 197, 0) 84%
         );
     box-shadow:
-        0 0 24px 9px rgba(79, 209, 197, 0.38);
+        0 0 30px 12px rgba(79, 209, 197, 0.46);
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityValue::after {
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(195, 255, 249, 1) 0%,
+            rgba(115, 255, 237, 0.9) 32%,
+            rgba(79, 209, 197, 0) 100%
+        );
 }
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(150, 211, 255, 1) 0%,
-            rgba(77, 166, 255, 0.82) 22%,
-            rgba(77, 166, 255, 0.42) 48%,
-            rgba(77, 166, 255, 0) 82%
+            rgba(190, 230, 255, 1) 0%,
+            rgba(150, 211, 255, 0.96) 18%,
+            rgba(77, 166, 255, 0.72) 42%,
+            rgba(77, 166, 255, 0.3) 64%,
+            rgba(77, 166, 255, 0) 84%
         );
     box-shadow:
-        0 0 26px 10px rgba(77, 166, 255, 0.45);
+        0 0 34px 14px rgba(77, 166, 255, 0.54);
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue::after {
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(235, 249, 255, 1) 0%,
+            rgba(177, 222, 255, 0.98) 30%,
+            rgba(77, 166, 255, 0) 100%
+        );
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(255, 242, 150, 1) 0%,
-            rgba(255, 216, 77, 0.86) 22%,
-            rgba(255, 216, 77, 0.44) 48%,
-            rgba(255, 216, 77, 0) 82%
+            rgba(255, 249, 188, 1) 0%,
+            rgba(255, 242, 150, 1) 18%,
+            rgba(255, 216, 77, 0.78) 42%,
+            rgba(255, 216, 77, 0.34) 64%,
+            rgba(255, 216, 77, 0) 84%
         );
     box-shadow:
-        0 0 28px 11px rgba(255, 216, 77, 0.5);
+        0 0 36px 15px rgba(255, 216, 77, 0.58);
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255, 255, 226, 1) 0%,
+            rgba(255, 244, 168, 1) 30%,
+            rgba(255, 216, 77, 0) 100%
+        );
 }
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue,
 .rngRecordCard.rng-rarity-legendary .rngRarityValue {
-    background-size: 240% 100%;
+    background-size: 300% 100%;
     background-position: 240% 0;
     background-repeat: no-repeat;
     background-clip: text;
@@ -1174,9 +1246,9 @@ button {
             110deg,
             #4da6ff 0%,
             #4da6ff 34%,
-            #dff3ff 46%,
+            #dff3ff 44%,
             #ffffff 50%,
-            #dff3ff 54%,
+            #dff3ff 56%,
             #4da6ff 66%,
             #4da6ff 100%
         );
@@ -1188,9 +1260,9 @@ button {
             110deg,
             #ffd84d 0%,
             #ffd84d 34%,
-            #fff8c4 46%,
+            #fff8c4 44%,
             #ffffff 50%,
-            #fff8c4 54%,
+            #fff8c4 56%,
             #ffd84d 66%,
             #ffd84d 100%
         );
