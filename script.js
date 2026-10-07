@@ -3,32 +3,32 @@ const screen2 = document.getElementById('screen2');
 const testButton = document.getElementById('testButton'); 
 const rngButton = document.getElementById('rngButton'); 
 const errorMessage = document.getElementById('errorMessage'); 
- 
+	 
 let socket = null; 
- 
+	 
 function initializeWebSocket() { 
     const socketUrl = `wss://${window.location.host}/ws`; 
      
     console.log("Connecting directly to Discord Proxy route:", socketUrl); 
     socket = new WebSocket(socketUrl); 
- 
+	 
     socket.addEventListener('open', () => { 
         console.log("Connected to card game backend"); 
         errorMessage.classList.add("hidden"); 
- 
+         
         requestRngServerTime(); 
     }); 
- 
+	 
     socket.addEventListener('message', event => { 
         try { 
             const data = JSON.parse(event.data); 
             console.log("Backend message:", data); 
- 
+	 
             if (data.type === "connected") { 
                 console.log("Card game connection established"); 
                 return; 
             } 
- 
+	 
             if (data.type === "time_result") { 
                 if ( 
                     !data.data || 
@@ -40,80 +40,80 @@ function initializeWebSocket() {
                 ) { 
                     errorMessage.textContent = 
                         "⚠️ Invalid server time response."; 
- 
+	 
                     errorMessage.classList.remove( 
                         "hidden" 
                     ); 
- 
+	 
                     return; 
                 } 
- 
+	 
                 syncRngServerClock( 
                     data.data.serverTime, 
                     data.data.nextReset 
                 ); 
- 
+	 
                 return; 
             } 
- 
+	 
             if (data.type === "rng_result") { 
                 if (!data.data || typeof data.data !== 'object') { 
                     errorMessage.textContent = "⚠️ Invalid RNG result structure."; 
                     errorMessage.classList.remove("hidden"); 
                     return; 
                 } 
- 
+	 
                 rngRequestPending = false; 
                 errorMessage.classList.add("hidden"); 
                 markRngRollComplete(data.data); 
                 showRngRecordResult(data.data); 
                 return; 
             } 
- 
+	 
             if (data.type === "daily_roll_state") { 
                 return; 
             } 
- 
+	 
             if (data.type === "rng_error") { 
                 rngRequestPending = false; 
- 
+	 
                 const message = 
                     data.data && 
                     typeof data.data.message === 'string' 
                         ? data.data.message 
                         : "Failed to generate an RNG record."; 
- 
+	 
                 errorMessage.textContent = `❌ RNG Error: ${message}`; 
                 errorMessage.classList.remove("hidden"); 
                 initializeRngGenerateButton(); 
                 return; 
             } 
- 
+	 
             if (data.type === "request_error") { 
                 rngRequestPending = false; 
- 
+	 
                 const message = 
                     data.data && 
                     typeof data.data.message === 'string' 
                         ? data.data.message 
                         : "Rear request processing failed."; 
- 
+	 
                 errorMessage.textContent = `❌ Server Error: ${message}`; 
                 errorMessage.classList.remove("hidden"); 
                 initializeRngGenerateButton(); 
                 return; 
             } 
- 
+	 
             if (data.type === "rng_test") { 
                 return; 
             } 
- 
+	 
         } catch (err) { 
             errorMessage.textContent = "⚠️ Invalid game response structural frame."; 
             errorMessage.classList.remove("hidden"); 
         } 
     }); 
- 
+	 
     socket.addEventListener('close', (event) => { 
         console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`); 
          
@@ -126,7 +126,7 @@ function initializeWebSocket() {
         } 
         errorMessage.classList.remove("hidden"); 
     }); 
- 
+	 
     socket.addEventListener('error', (err) => { 
         console.error("WebSocket Error Stack:", err); 
          
@@ -138,7 +138,7 @@ function initializeWebSocket() {
         errorMessage.classList.remove("hidden"); 
     }); 
 } 
- 
+	 
 function requestRngServerTime() { 
     if ( 
         !socket || 
@@ -147,7 +147,7 @@ function requestRngServerTime() {
     ) { 
         return; 
     } 
- 
+	 
     socket.send( 
         JSON.stringify({ 
             protocol: "cardgame", 
@@ -156,12 +156,12 @@ function requestRngServerTime() {
         }) 
     ); 
 } 
- 
+	 
 testButton.addEventListener('click', () => { 
     screen1.classList.add('hidden'); 
     screen2.classList.remove('hidden'); 
 }); 
- 
+	 
 rngButton.addEventListener('click', () => { 
     if (!socket || socket.readyState !== WebSocket.OPEN) { 
         let stateText = "UNKNOWN"; 
@@ -169,21 +169,21 @@ rngButton.addEventListener('click', () => {
         else if (socket.readyState === WebSocket.CONNECTING) stateText = "CONNECTING"; 
         else if (socket.readyState === WebSocket.CLOSING) statusText = "CLOSING"; 
         else if (socket.readyState === WebSocket.CLOSED) stateText = "CLOSED"; 
- 
+	 
         errorMessage.textContent = `⚠️ Action Cancelled: Socket State is [${stateText}]. Check the error log banner.`; 
         errorMessage.classList.remove("hidden"); 
         return; 
     } 
- 
+	 
     socket.send(JSON.stringify({ 
         protocol: "cardgame", 
         version: 1, 
         request: "rng_test" 
     })); 
 }); 
- 
+	 
 initializeWebSocket(); 
- 
+	 
 const loadingScreen = document.getElementById('loadingScreen'); 
 const mainScreen = document.getElementById('mainScreen'); 
 const generateButton = document.getElementById('generateButton'); 
@@ -192,19 +192,19 @@ const cardsButton = document.getElementById('cardsButton');
 const generateScreen = document.getElementById('generateScreen'); 
 const leaderboardsScreen = document.getElementById('leaderboardsScreen'); 
 const cardsScreen = document.getElementById('cardsScreen'); 
- 
+	 
 const screenHeaders = document.querySelectorAll('.tabHeader'); 
- 
+	 
 screenHeaders.forEach(header => { 
     header.remove(); 
 }); 
- 
+	 
 setTimeout(() => { 
     loadingScreen.classList.add('hidden'); 
     mainScreen.classList.remove('hidden'); 
     maybePlayRngLaunchFlash(); 
 }, 3000); 
- 
+	 
 function switchTab(button, screen) { 
     generateButton.classList.remove('active'); 
     leaderboardsButton.classList.remove('active'); 
@@ -221,47 +221,47 @@ function switchTab(button, screen) {
         clearRngRarityTheme();
     }
 } 
- 
+	 
 generateButton.addEventListener('click', () => { 
     switchTab(generateButton, generateScreen); 
 }); 
- 
+	 
 leaderboardsButton.addEventListener('click', () => { 
     switchTab(leaderboardsButton, leaderboardsScreen); 
 }); 
- 
+	 
 cardsButton.addEventListener('click', () => { 
     switchTab(cardsButton, cardsScreen); 
 }); 
- 
+	 
 const scrollRail = document.querySelector('.scrollRail'); 
- 
+	 
 function updateScrollRail() { 
     if (!scrollRail) { 
         return; 
     } 
- 
+	 
     const pageHeight = Math.max( 
         document.documentElement.scrollHeight, 
         document.body.scrollHeight, 
         mainScreen.scrollHeight, 
         window.innerHeight 
     ); 
- 
+	 
     const spacing = 250; 
     const edgeInset = 36; 
     const positions = []; 
- 
+	 
     const usableHeight = Math.max( 
         0, 
         pageHeight - (edgeInset * 2) 
     ); 
- 
+	 
     const indicatorCount = Math.max( 
         1, 
         Math.floor(usableHeight / spacing) + 1 
     ); 
- 
+	 
     if (indicatorCount === 1) { 
         positions.push(pageHeight / 2); 
     } else { 
@@ -269,16 +269,16 @@ function updateScrollRail() {
             positions.push(edgeInset + (i * spacing)); 
         } 
     } 
- 
+	 
     scrollRail.style.height = `${pageHeight}px`; 
     scrollRail.innerHTML = ''; 
- 
+	 
     for (let i = 0; i < positions.length; i++) { 
         const indicator = document.createElement('div'); 
         indicator.className = 'scrollIndicator'; 
         indicator.innerHTML = '<span>→</span><strong>SCROLL</strong><span>←</span>'; 
         indicator.style.top = `${positions[i]}px`; 
- 
+	 
         if (positions.length === 1) { 
             indicator.classList.add('singleScrollIndicator'); 
         } else if (i === 0) { 
@@ -286,49 +286,49 @@ function updateScrollRail() {
         } else if (i === positions.length - 1) { 
             indicator.classList.add('lastScrollIndicator'); 
         } 
- 
+	 
         scrollRail.appendChild(indicator); 
     } 
 } 
- 
+	 
 updateScrollRail(); 
 window.addEventListener('resize', updateScrollRail); 
- 
+	 
 if (typeof ResizeObserver !== 'undefined') { 
     const scrollResizeObserver = new ResizeObserver(() => { 
         updateScrollRail(); 
     }); 
- 
+	 
     scrollResizeObserver.observe(mainScreen); 
     scrollResizeObserver.observe(document.body); 
 } 
- 
+	 
 const tabButtons = document.querySelectorAll('.tabButton'); 
 const buttonShakeStates = new Map(); 
- 
+	 
 function startButtonEarthquake(button) { 
     if (buttonShakeStates.has(button)) { 
         return; 
     } 
- 
+	 
     const state = { 
         active: true, 
         animationFrame: null, 
         startedAt: performance.now() 
     }; 
- 
+	 
     buttonShakeStates.set(button, state); 
- 
+	 
     function shakeFrame(now) { 
         if (!state.active) { 
             return; 
         } 
- 
+	 
         const elapsed = now - state.startedAt; 
         let x = 0; 
         let y = 0; 
         let angle = 0; 
- 
+	 
         if (elapsed < 5000) { 
             const progress = Math.min(elapsed / 5000, 1); 
             const tilt = 0.2 + progress * 1.3; 
@@ -340,98 +340,98 @@ function startButtonEarthquake(button) {
             y = (Math.random() - 0.5) * 1.35 * intensity; 
             angle = (Math.random() - 0.5) * 0.3 * intensity; 
         } 
- 
+	 
         button.style.transform = 
             `translate(${x}px, ${y}px) rotate(${angle}deg)`; 
- 
+	 
         state.animationFrame = requestAnimationFrame(shakeFrame); 
     } 
- 
+	 
     state.animationFrame = requestAnimationFrame(shakeFrame); 
 } 
- 
+	 
 function stopButtonEarthquake(button) { 
     const state = buttonShakeStates.get(button); 
     if (!state) { 
         return; 
     } 
- 
+	 
     state.active = false; 
- 
+	 
     if (state.animationFrame) { 
         cancelAnimationFrame(state.animationFrame); 
     } 
- 
+	 
     button.style.transform = ''; 
     buttonShakeStates.delete(button); 
 } 
- 
+	 
 function playButtonAnimation(button) { 
     stopButtonEarthquake(button); 
- 
+	 
     button.querySelectorAll('.buttonEffectImage').forEach(image => { 
         image.remove(); 
     }); 
- 
+	 
     button.classList.remove('clickJerk'); 
- 
+	 
     void button.offsetWidth; 
- 
+	 
     button.classList.add('clickJerk'); 
- 
+	 
     const car = document.createElement('img'); 
     car.className = 'buttonEffectImage carEffect'; 
     car.src = './carvector.png'; 
     car.alt = ''; 
- 
+	 
     const tornado = document.createElement('img'); 
     tornado.className = 'buttonEffectImage tornadoEffect'; 
     tornado.src = './tornadovector.png'; 
     tornado.alt = ''; 
- 
+	 
     button.appendChild(car); 
     button.appendChild(tornado); 
- 
+	 
     button.addEventListener('animationend', () => { 
         button.classList.remove('clickJerk'); 
     }, { once: true }); 
- 
+	 
     tornado.addEventListener('animationend', () => { 
         car.remove(); 
         tornado.remove(); 
     }, { once: true }); 
 } 
- 
+	 
 tabButtons.forEach(button => { 
     button.addEventListener('pointerenter', () => { 
         startButtonEarthquake(button); 
     }); 
- 
+	 
     button.addEventListener('pointerleave', () => { 
         stopButtonEarthquake(button); 
     }); 
- 
+	 
     button.addEventListener('click', () => { 
         playButtonAnimation(button); 
     }); 
 }); 
- 
+	 
 function startNormalButtonWiggle(button) { 
     if (!button || button.classList.contains('tabButton')) { 
         return; 
     } 
- 
+	 
     button.classList.add('normalButtonWiggle'); 
 } 
- 
+	 
 function stopNormalButtonWiggle(button) { 
     if (!button) { 
         return; 
     } 
- 
+	 
     button.classList.remove('normalButtonWiggle'); 
 } 
- 
+	 
 const RNG_RARITY_COLORS = { 
     common: "#dce7f0", 
     uncommon: "#4fd1c5", 
@@ -448,8 +448,10 @@ const RNG_RARITY_THEME_CLASSES = [
 
 const RNG_SCRAMBLE_DURATION = 5000;
 const RNG_APPEAR_DURATION = 700;
-const RNG_SCRAMBLE_TICK = 100;
- 
+const RNG_SCRAMBLE_TICK = 50;
+const RNG_POP_INTERVAL = 400;
+const RNG_POP_DURATION = 350;
+	 
 let rngRequestPending = false; 
 let rngResultPanel = null; 
 let rngScrambleTimer = null; 
@@ -466,15 +468,15 @@ let rngNextResetTimestamp = null;
 let rngLocalRollState = null; 
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false; 
- 
+	 
 function getRandomRngCharacter() { 
     const index = Math.floor( 
         Math.random() * rngRandomCharacters.length 
     ); 
- 
+	 
     return rngRandomCharacters[index]; 
 } 
- 
+	 
 function syncRngServerClock( 
     serverTime, 
     nextReset 
@@ -488,25 +490,25 @@ function syncRngServerClock(
     ) { 
         return; 
     } 
- 
+	 
     rngServerTimeBase = 
         serverTime; 
- 
+	 
     rngPerformanceTimeBase = 
         performance.now(); 
- 
+	 
     rngNextResetTimestamp = 
         nextReset.timestamp; 
- 
+	 
     if (!rngFrontendInitialized) { 
         rngLocalRollState = null; 
         initializeRngFrontend(); 
     } 
- 
+	 
     updateRngDailyCountdown(); 
     maybePlayRngLaunchFlash(); 
 } 
- 
+	 
 function getRngServerNow() { 
     if ( 
         typeof rngServerTimeBase !== 'number' || 
@@ -514,7 +516,7 @@ function getRngServerNow() {
     ) { 
         return null; 
     } 
- 
+	 
     return ( 
         rngServerTimeBase + 
         ( 
@@ -523,31 +525,31 @@ function getRngServerNow() {
         ) 
     ); 
 } 
- 
+	 
 function formatRngCountdown(milliseconds) { 
     const totalSeconds = Math.max( 
         0, 
         Math.ceil(milliseconds / 1000) 
     ); 
- 
+	 
     const hours = Math.floor( 
         totalSeconds / 3600 
     ); 
- 
+	 
     const minutes = Math.floor( 
         (totalSeconds % 3600) / 60 
     ); 
- 
+	 
     const seconds = 
         totalSeconds % 60; 
- 
+	 
     return [ 
         String(hours).padStart(2, '0'), 
         String(minutes).padStart(2, '0'), 
         String(seconds).padStart(2, '0') 
     ].join(':'); 
 } 
- 
+	 
 function sanitizeRngStoredResult(payload) { 
     if ( 
         !payload || 
@@ -555,7 +557,7 @@ function sanitizeRngStoredResult(payload) {
     ) { 
         return null; 
     } 
- 
+	 
     return { 
         record: payload.record ?? '', 
         rarity: payload.rarity ?? 'Unknown', 
@@ -563,19 +565,19 @@ function sanitizeRngStoredResult(payload) {
         modifiers: payload.modifiers ?? [] 
     }; 
 } 
- 
+	 
 function loadLocalRngRollState() { 
     return null; 
 } 
- 
+	 
 function saveLocalRngRollState(payload) { 
     rngLocalRollState = null; 
 } 
- 
+	 
 function clearLocalRngRollState() { 
     rngLocalRollState = null; 
 } 
- 
+	 
 function createRngTopControlArea() {
     if (rngTopControlArea) {
         return;
@@ -598,75 +600,75 @@ function createRngDailyStatus() {
     } 
 
     createRngTopControlArea();
- 
+	 
     rngDailyStatus = 
         document.createElement('div'); 
- 
+	 
     rngDailyStatus.className = 
         'rngDailyStatus'; 
- 
+	 
     rngDailyMessage = 
         document.createElement('div'); 
- 
+	 
     rngDailyMessage.className = 
         'rngDailyMessage'; 
- 
+	 
     rngDailyMessage.textContent = 
         'You already rolled today.'; 
- 
+	 
     rngDailyCountdown = 
         document.createElement('div'); 
- 
+	 
     rngDailyCountdown.className = 
         'rngDailyCountdown'; 
- 
+	 
     rngDailyStatus.appendChild( 
         rngDailyMessage 
     ); 
- 
+	 
     rngDailyStatus.appendChild( 
         rngDailyCountdown 
     ); 
- 
+	 
     rngTopControlArea.appendChild( 
         rngDailyStatus 
     ); 
 } 
- 
+	 
 function updateRngDailyCountdown() { 
     hideRngDailyStatus(); 
 } 
- 
+	 
 function startRngDailyCountdown() { 
     stopRngDailyCountdown(); 
 } 
- 
+	 
 function stopRngDailyCountdown() { 
     if (!rngCountdownTimer) { 
         return; 
     } 
- 
+	 
     clearInterval( 
         rngCountdownTimer 
     ); 
- 
+	 
     rngCountdownTimer = null; 
 } 
- 
+	 
 function hideRngDailyStatus() { 
     if (!rngDailyStatus) { 
         return; 
     } 
- 
+	 
     rngDailyStatus.classList.add( 
         'hidden' 
     ); 
 } 
- 
+	 
 function showRngDailyStatus() { 
     hideRngDailyStatus(); 
 } 
- 
+	 
 function clearRngRarityTheme() {
     if (!document.body) {
         return;
@@ -712,21 +714,21 @@ function playRngLaunchFlash() {
         document.querySelector( 
             '.rngLaunchFlash' 
         ); 
- 
+	 
     if (existingFlash) { 
         existingFlash.remove(); 
     } 
- 
+	 
     const flash = 
         document.createElement('div'); 
- 
+	 
     flash.className = 
         'rngLaunchFlash'; 
- 
+	 
     document.body.appendChild( 
         flash 
     ); 
- 
+	 
     flash.addEventListener( 
         'animationend', 
         () => { 
@@ -740,7 +742,7 @@ function requestRngLaunchFlash() {
     rngLaunchFlashPending = true;
     maybePlayRngLaunchFlash();
 }
- 
+	 
 function maybePlayRngLaunchFlash() { 
     if ( 
         !rngLaunchFlashPending || 
@@ -749,7 +751,7 @@ function maybePlayRngLaunchFlash() {
     ) { 
         return; 
     } 
- 
+	 
     rngLaunchFlashPending = false; 
     playRngLaunchFlash(); 
 }
@@ -811,59 +813,70 @@ function handleRngGenerateTabActivation() {
         initializeRngGenerateButton();
     }
 }
- 
+	 
 function animateRngRecordCard(card) { 
     if (!card) { 
         return; 
     } 
- 
-    const elements = 
+	 
+    const childElements = 
         card.querySelectorAll( 
-            '.rngRecordHeader, .rngStat, .rngModifiersTitle, .rngModifier, .rngNoModifiers' 
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers' 
         ); 
- 
+
+    const elements = [
+        card,
+        ...childElements
+    ];
+
     elements.forEach( 
         (element, index) => { 
             element.style.setProperty( 
                 '--rng-pop-delay', 
-                `${index * 0.2}s` 
+                `${index * (RNG_POP_INTERVAL / 1000)}s` 
             ); 
- 
+
             element.classList.remove( 
                 'rngResultPopIn' 
             ); 
- 
+
+            element.style.opacity = 
+                '0'; 
+
+            element.style.transform = 
+                'translateY(12px) scale(0.88)'; 
+
             void element.offsetWidth; 
- 
+
             element.classList.add( 
                 'rngResultPopIn' 
             ); 
         } 
     ); 
 } 
- 
+	 
 function resetDailyRngFrontend() { 
     stopRngDailyCountdown(); 
     clearLocalRngRollState(); 
     clearRngRarityTheme();
- 
+	 
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
         rngResultPanel = null; 
     } 
- 
+	 
     hideRngDailyStatus(); 
- 
+	 
     if (rngDailyActionArea) { 
         rngDailyActionArea.remove(); 
         rngDailyActionArea = null; 
     } 
- 
+	 
     requestRngServerTime(); 
     initializeRngGenerateButton();
     updateScrollRail(); 
 } 
- 
+	 
 function markRngRollComplete(payload) { 
     clearLocalRngRollState();
     hideRngDailyStatus();
@@ -873,11 +886,11 @@ function markRngRollComplete(payload) {
         rngDailyActionArea = null; 
     } 
 } 
- 
+	 
 function applyDailyRollState(state) { 
     return; 
 } 
- 
+	 
 function renderStoredRngResult(payload) { 
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
@@ -887,17 +900,17 @@ function renderStoredRngResult(payload) {
     applyRngRarityTheme(
         payload && payload.rarity
     );
- 
+	 
     rngResultPanel = 
         document.createElement('div'); 
- 
+	 
     rngResultPanel.className = 
         'rngResultPanel'; 
- 
+	 
     generateScreen.appendChild( 
         rngResultPanel 
     ); 
- 
+	 
     rngResultPanel.appendChild( 
         createRngRecordCard( 
             payload, 
@@ -906,18 +919,18 @@ function renderStoredRngResult(payload) {
             ) 
         ) 
     ); 
- 
+	 
     const card = 
         rngResultPanel.querySelector( 
             '.rngRecordCard' 
         ); 
- 
+	 
     scrollRngResultIntoView(card);
     requestRngLaunchFlash();
     animateRngRecordCard(card); 
     updateScrollRail(); 
 } 
- 
+	 
 function normalizeRngModifiers(modifiers) { 
     if (Array.isArray(modifiers)) { 
         return modifiers.map((modifier, index) => { 
@@ -932,14 +945,14 @@ function normalizeRngModifiers(modifiers) {
                     modifier.type ?? 
                     modifier.id ?? 
                     `Modifier ${index + 1}`; 
- 
+	 
                 const detailEntries = Object.entries(modifier) 
                     .filter(([key]) => { 
                         return !['name', 'modifier', 'type', 'id'].includes(key); 
                     }); 
- 
+	 
                 let detail = ''; 
- 
+	 
                 if (detailEntries.length === 1) { 
                     detail = formatRngValue(detailEntries[0][1]); 
                 } else if (detailEntries.length > 1) { 
@@ -949,20 +962,20 @@ function normalizeRngModifiers(modifiers) {
                         }) 
                         .join(' • '); 
                 } 
- 
+	 
                 return { 
                     label: String(label), 
                     value: detail 
                 }; 
             } 
- 
+	 
             return { 
                 label: `Modifier ${index + 1}`, 
                 value: formatRngValue(modifier) 
             }; 
         }); 
     } 
- 
+	 
     if ( 
         modifiers && 
         typeof modifiers === 'object' && 
@@ -975,26 +988,26 @@ function normalizeRngModifiers(modifiers) {
                 !Array.isArray(value) 
             ) { 
                 const entries = Object.entries(value); 
- 
+	 
                 const detail = entries 
                     .map(([entryKey, entryValue]) => { 
                         return `${entryKey}: ${formatRngValue(entryValue)}`; 
                     }) 
                     .join(' • '); 
- 
+	 
                 return { 
                     label: key, 
                     value: detail 
                 }; 
             } 
- 
+	 
             return { 
                 label: key, 
                 value: formatRngValue(value) 
             }; 
         }); 
     } 
- 
+	 
     if ( 
         modifiers !== undefined && 
         modifiers !== null && 
@@ -1005,71 +1018,71 @@ function normalizeRngModifiers(modifiers) {
             value: formatRngValue(modifiers) 
         }]; 
     } 
- 
+	 
     return []; 
 } 
- 
+	 
 function formatRngValue(value) { 
     if (value === null || value === undefined) { 
         return ''; 
     } 
- 
+	 
     if (typeof value === 'string') { 
         return value; 
     } 
- 
+	 
     if ( 
         typeof value === 'number' || 
         typeof value === 'boolean' 
     ) { 
         return String(value); 
     } 
- 
+	 
     try { 
         return JSON.stringify(value); 
     } catch (err) { 
         return String(value); 
     } 
 } 
- 
+	 
 function getRngRarityColor(rarity) { 
     if (typeof rarity !== 'string') { 
         return '#edf6fb'; 
     } 
- 
+	 
     return RNG_RARITY_COLORS[ 
         rarity.trim().toLowerCase() 
     ] ?? '#edf6fb'; 
 } 
- 
+	 
 function createRngStat(label, value, valueColor = null) { 
     const stat = document.createElement('div'); 
     stat.className = 'rngStat'; 
- 
+	 
     const statLabel = document.createElement('div'); 
     statLabel.className = 'rngStatLabel'; 
     statLabel.textContent = label; 
- 
+	 
     const statValue = document.createElement('div'); 
     statValue.className = 'rngStatValue'; 
     statValue.textContent = formatRngValue(value); 
- 
+	 
     if (valueColor) { 
         statValue.style.color = valueColor; 
         statValue.style.textShadow = 
             `0 0 8px ${valueColor}55`; 
     } 
- 
+	 
     stat.appendChild(statLabel); 
     stat.appendChild(statValue); 
- 
+	 
     return stat; 
 } 
- 
+	 
 function createRngRecordCard(payload, recordText) { 
     const card = document.createElement('div'); 
     card.className = 'rngRecordCard'; 
- 
+	 
     const rarity = 
         typeof payload.rarity === 'string' 
             ? payload.rarity.trim().toLowerCase() 
@@ -1083,25 +1096,25 @@ function createRngRecordCard(payload, recordText) {
             `rng-rarity-${normalizedRarity}`
         );
     }
- 
+	 
     const recordHeader = document.createElement('div'); 
     recordHeader.className = 'rngRecordHeader'; 
- 
+	 
     const recordLabel = document.createElement('div'); 
     recordLabel.className = 'rngRecordLabel'; 
     recordLabel.textContent = 'Record'; 
- 
+	 
     const recordValue = document.createElement('div'); 
     recordValue.className = 'rngRecordValue'; 
     recordValue.textContent = recordText; 
- 
+	 
     recordHeader.appendChild(recordLabel); 
     recordHeader.appendChild(recordValue); 
     card.appendChild(recordHeader); 
- 
+	 
     const stats = document.createElement('div'); 
     stats.className = 'rngStats'; 
- 
+	 
     stats.appendChild( 
         createRngStat( 
             'Rarity', 
@@ -1109,32 +1122,34 @@ function createRngRecordCard(payload, recordText) {
             getRngRarityColor(rarity) 
         ) 
     ); 
- 
+	 
     stats.appendChild( 
         createRngStat( 
             'Points', 
             payload.points ?? '0' 
         ) 
     ); 
- 
+	 
     card.appendChild(stats); 
- 
+	 
     const modifiersSection = document.createElement('div'); 
     modifiersSection.className = 'rngModifiersSection'; 
- 
+	 
     const modifiersTitle = document.createElement('div'); 
     modifiersTitle.className = 'rngModifiersTitle'; 
     modifiersTitle.textContent = 'Modifiers'; 
- 
-    modifiersSection.appendChild(modifiersTitle); 
- 
+	 
+    modifiersSection.appendChild( 
+        modifiersTitle 
+    ); 
+	 
     const modifiersGrid = document.createElement('div'); 
     modifiersGrid.className = 'rngModifiers'; 
- 
+	 
     const modifiers = normalizeRngModifiers( 
         payload.modifiers 
     ); 
- 
+	 
     if (modifiers.length === 0) { 
         const none = document.createElement('div'); 
         none.className = 'rngNoModifiers'; 
@@ -1144,43 +1159,43 @@ function createRngRecordCard(payload, recordText) {
         modifiers.forEach(modifier => { 
             const modifierCard = document.createElement('div'); 
             modifierCard.className = 'rngModifier'; 
- 
+	 
             const modifierName = document.createElement('div'); 
             modifierName.className = 'rngModifierName'; 
             modifierName.textContent = modifier.label; 
- 
+	 
             const modifierValue = document.createElement('div'); 
             modifierValue.className = 'rngModifierValue'; 
             modifierValue.textContent = modifier.value; 
- 
+	 
             modifierCard.appendChild(modifierName); 
             modifierCard.appendChild(modifierValue); 
             modifiersGrid.appendChild(modifierCard); 
         }); 
     } 
- 
+	 
     modifiersSection.appendChild(modifiersGrid); 
     card.appendChild(modifiersSection); 
- 
+	 
     return card; 
 } 
- 
+	 
 function showRngRecordResult(payload) { 
     if (rngScrambleTimer) { 
         clearInterval(rngScrambleTimer); 
         rngScrambleTimer = null; 
     } 
- 
+	 
     if (rngScrambleProgressTimer) { 
         clearInterval(rngScrambleProgressTimer); 
         rngScrambleProgressTimer = null; 
     } 
- 
+	 
     if (rngResultPanel) { 
         rngResultPanel.remove(); 
         rngResultPanel = null; 
     } 
- 
+	 
     if ( 
         !payload || 
         typeof payload !== 'object' || 
@@ -1196,50 +1211,53 @@ function showRngRecordResult(payload) {
     applyRngRarityTheme(
         payload.rarity
     );
- 
+	 
     rngResultPanel = document.createElement('div'); 
     rngResultPanel.className = 'rngResultPanel'; 
- 
+	 
     const scramble = document.createElement('div'); 
     scramble.className = 'rngScramble'; 
- 
+    scramble.style.visibility = 'visible';
+    scramble.style.opacity = '1';
+    scramble.style.display = 'flex';
+	 
     rngResultPanel.appendChild(scramble); 
     generateScreen.appendChild(rngResultPanel); 
 
-    scrollRngResultIntoView(rngResultPanel);
- 
+    scrollRngResultIntoView(scramble);
+	 
     const recordText = String(payload.record); 
- 
+	 
     if (recordText.length === 0) { 
         scramble.textContent = ''; 
- 
+	 
         const card = 
             createRngRecordCard( 
                 payload, 
                 recordText 
             ); 
- 
+	 
         rngResultPanel.appendChild(card); 
         scrollRngResultIntoView(card);
         requestRngLaunchFlash();
         animateRngRecordCard(card); 
- 
+	 
         updateScrollRail(); 
         initializeRngGenerateButton();
         return; 
     } 
- 
+	 
     const scrambleCharacters = 
         new Array( 
             recordText.length 
         ).fill(''); 
- 
+	 
     let appearedCount = 0; 
     let lockedCount = 0; 
- 
+	 
     function renderScramble() { 
         let output = ''; 
- 
+	 
         for ( 
             let i = 0; 
             i < recordText.length; 
@@ -1253,10 +1271,10 @@ function showRngRecordResult(payload) {
                 output += '\u00A0'; 
             } 
         } 
- 
+	 
         scramble.textContent = output; 
     } 
- 
+	 
     function rapidlyScramble() { 
         for ( 
             let i = lockedCount; 
@@ -1266,7 +1284,7 @@ function showRngRecordResult(payload) {
             scrambleCharacters[i] = 
                 getRandomRngCharacter(); 
         } 
- 
+	 
         renderScramble(); 
     } 
 
@@ -1316,12 +1334,12 @@ function showRngRecordResult(payload) {
         initializeRngGenerateButton();
         updateScrollRail();
     }
- 
+	 
     scramble.textContent = 
         '\u00A0'.repeat( 
             recordText.length 
         ); 
- 
+	 
     const scrambleStartTime =
         performance.now();
 
@@ -1400,54 +1418,54 @@ function showRngRecordResult(payload) {
             }
         }, RNG_SCRAMBLE_TICK);
 } 
- 
+	 
 function initializeRngGenerateButton() { 
     if (!generateScreen) { 
         return; 
     } 
- 
+	 
     if (rngDailyActionArea) { 
         return; 
     } 
- 
+	 
     if (rngRequestPending) { 
         return; 
     } 
 
     createRngTopControlArea();
- 
+	 
     const actionArea = 
         document.createElement('div'); 
- 
+	 
     actionArea.className = 
         'rngActionArea'; 
- 
+	 
     const button = 
         document.createElement('button'); 
- 
+	 
     button.id = 
         'generateRecordButton'; 
- 
+	 
     button.className = 
         'rngGenerateButton'; 
- 
+	 
     button.type = 
         'button'; 
- 
+	 
     button.textContent = 
         'Generate Record'; 
- 
+	 
     actionArea.appendChild( 
         button 
     ); 
- 
+	 
     rngTopControlArea.appendChild( 
         actionArea 
     ); 
- 
+	 
     rngDailyActionArea = 
         actionArea; 
- 
+	 
     button.addEventListener( 
         'pointerenter', 
         () => { 
@@ -1456,7 +1474,7 @@ function initializeRngGenerateButton() {
             ); 
         } 
     ); 
- 
+	 
     button.addEventListener( 
         'pointerleave', 
         () => { 
@@ -1465,7 +1483,7 @@ function initializeRngGenerateButton() {
             ); 
         } 
     ); 
- 
+	 
     button.addEventListener( 
         'focus', 
         () => { 
@@ -1474,7 +1492,7 @@ function initializeRngGenerateButton() {
             ); 
         } 
     ); 
- 
+	 
     button.addEventListener( 
         'blur', 
         () => { 
@@ -1483,33 +1501,33 @@ function initializeRngGenerateButton() {
             ); 
         } 
     ); 
- 
+	 
     button.addEventListener( 
         'click', 
         () => { 
             actionArea.remove(); 
             rngDailyActionArea = null; 
- 
+	 
             rngRequestPending = true; 
- 
+	 
             if ( 
                 !socket || 
                 socket.readyState !== 
                     WebSocket.OPEN 
             ) { 
                 rngRequestPending = false; 
- 
+	 
                 errorMessage.textContent = 
                     "⚠️ Action Cancelled: Socket State is [NOT_OPEN]. Check the error log banner."; 
- 
+	 
                 errorMessage.classList.remove( 
                     "hidden" 
                 ); 
- 
+	 
                 initializeRngGenerateButton(); 
                 return; 
             } 
- 
+	 
             socket.send( 
                 JSON.stringify({ 
                     protocol: "cardgame", 
@@ -1520,7 +1538,7 @@ function initializeRngGenerateButton() {
         } 
     ); 
 } 
- 
+	 
 function initializeRngFrontend() { 
     if ( 
         !generateScreen || 
@@ -1528,13 +1546,13 @@ function initializeRngFrontend() {
     ) { 
         return; 
     } 
- 
+	 
     rngFrontendInitialized = true; 
- 
+	 
     createRngTopControlArea();
     createRngDailyStatus(); 
     hideRngDailyStatus(); 
-    clearRngRarityTheme();
+    clearRngRarityTheme(); 
     initializeRngGenerateButton(); 
 
     updateRngDailyCountdown(); 
