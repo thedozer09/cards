@@ -969,7 +969,6 @@ let rngLocalRollState = null;
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false;
 let rngPendingLifetimeScore = null;
-let rngLifetimeRollStartScore = null;
 let rngLifetimeAnimationActive = false;
 let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = [];
@@ -1431,7 +1430,7 @@ function createRngDailyStatus() {
 	 
     rngDailyCountdown = 
         document.createElement('div'); 
-
+	 
     rngDailyCountdown.className = 
         'rngDailyCountdown'; 
 
@@ -1941,6 +1940,28 @@ function animateRngRecordCard(
         (element, index) => { 
 
             if (
+                onLifetimeLabelShown &&
+                element.classList.contains(
+                    'rngStatLabel'
+                ) &&
+                element.textContent ===
+                    'Lifetime Score'
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName ===
+                            'rngResultPopIn'
+                        ) {
+                            onLifetimeLabelShown();
+                        }
+                    },
+                    { once: true }
+                );
+            }
+
+            if (
                 element ===
                 finalElement
             ) {
@@ -1989,12 +2010,6 @@ function animateRngRecordCard(
                                 startRngRecordCardWiggle(
                                     card
                                 );
-
-                                if (
-                                    onLifetimeLabelShown
-                                ) {
-                                    onLifetimeLabelShown();
-                                }
                             },
                             { once: true }
                         );
@@ -2055,9 +2070,6 @@ function clearRngLifetimeAnimation() {
 
     rngLifetimeAnimationActive =
         false;
-
-    rngLifetimeRollStartScore =
-        null;
 }
 
 function resetDailyRngFrontend() { 
@@ -2971,25 +2983,6 @@ function scheduleRngLifetimeScoreAnimation(
     const targetScore =
         rngPendingLifetimeScore;
 
-    const currentScore =
-        typeof rngLifetimeRollStartScore === 'number' &&
-        Number.isFinite(
-            rngLifetimeRollStartScore
-        )
-            ? rngLifetimeRollStartScore
-            : getRngLifetimePayloadScore(
-                payload
-            );
-
-    if (
-        typeof currentScore !== 'number' ||
-        !Number.isFinite(
-            currentScore
-        )
-    ) {
-        return;
-    }
-
     rngLifetimeRollTimer =
         setTimeout(() => {
             rngLifetimeRollTimer =
@@ -3010,10 +3003,18 @@ function scheduleRngLifetimeScoreAnimation(
                 return;
             }
 
-            rngPendingLifetimeScore =
-                null;
+            const currentScore =
+                getRngLifetimePayloadScore(
+                    payload
+                );
 
-            rngLifetimeRollStartScore =
+            if (
+                currentScore === null
+            ) {
+                return;
+            }
+
+            rngPendingLifetimeScore =
                 null;
 
             animateRngLifetimeScore(
@@ -3066,9 +3067,6 @@ function sendRngLifetimeUpdate(payload) {
 
         return;
     }
-
-    rngLifetimeRollStartScore =
-        currentLifetime;
 
     rngPendingLifetimeScore =
         Math.round(
@@ -3139,31 +3137,6 @@ function applyRngLifetimeUpdateResult(score) {
             )
         )
     );
-
-    if (
-        typeof rngLifetimeRollStartScore === 'number' &&
-        Number.isFinite(
-            rngLifetimeRollStartScore
-        ) &&
-        Math.round(
-            rngLifetimeRollStartScore
-        ) !==
-            Math.round(
-                score
-            )
-    ) {
-        rngPendingLifetimeScore =
-            Math.round(
-                score
-            );
-
-        scheduleRngLifetimeScoreAnimation(
-            {
-                lifetimeRecordScore:
-                    rngLifetimeRollStartScore
-            }
-        );
-    }
 }
 	 
 function applyDailyRollState(state) { 
@@ -3878,7 +3851,6 @@ function showRngRecordResult(payload) {
         if (currentTab === 'generate') {
             scrollRngResultIntoView(card);
         }
-
         requestRngLaunchFlash();
 
         animateRngRecordCard(
