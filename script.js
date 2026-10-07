@@ -779,8 +779,8 @@ const RNG_POP_INTERVAL = 400;
 const RNG_POP_DURATION = 650;
 const RNG_LIFETIME_ROLL_DELAY = 3000;
 const RNG_LIFETIME_FADE_DURATION = 260;
-const RNG_LIFETIME_DIGIT_STEP_DURATION = 280;
-const RNG_LIFETIME_DIGIT_STAGGER = 120;
+const RNG_LIFETIME_ROLL_DURATION = 2000;
+const RNG_LIFETIME_DIGIT_STAGGER = 0;
 const RNG_LIFETIME_VISIBLE_STEPS = 1;
 	 
 let rngRequestPending = false; 
@@ -1962,8 +1962,7 @@ function startRngLifetimeDigitReel(
         (
             frameHeight -
             faceHeight
-        ) /
-        2;
+        ) / 2;
 
     const startIndex =
         RNG_LIFETIME_VISIBLE_STEPS;
@@ -2065,8 +2064,7 @@ function startRngLifetimeDigitReel(
             reel.delay;
 
         const duration =
-            reel.forwardSteps *
-            RNG_LIFETIME_DIGIT_STEP_DURATION;
+            RNG_LIFETIME_ROLL_DURATION;
 
         const progress =
             Math.min(
@@ -2185,6 +2183,9 @@ function animateRngLifetimeScore(
         if (normalValue) {
             normalValue.textContent =
                 newText;
+
+            normalValue.style.opacity =
+                '1';
         } else {
             element.textContent =
                 newText;
@@ -2231,6 +2232,9 @@ function animateRngLifetimeScore(
 
     normalValue.textContent =
         oldText;
+
+    normalValue.style.opacity =
+        '0';
 
     element.setAttribute(
         'data-rng-lifetime-score',
@@ -2319,6 +2323,9 @@ function animateRngLifetimeScore(
                 ) {
                     wheel.remove();
                 }
+
+                normalValue.style.opacity =
+                    '1';
 
                 rngLifetimeAnimationFrames =
                     [];
@@ -2432,6 +2439,10 @@ function animateRngLifetimeScore(
                 window.setTimeout(
                     () => {
                         wheel.remove();
+
+                        normalValue.style.opacity =
+                            '1';
+
                         rngLifetimeAnimationActive =
                             false;
                     },
@@ -2829,6 +2840,16 @@ function createRngStat(label, value, valueColor = null) {
     const statLabel = document.createElement('div'); 
     statLabel.className = 'rngStatLabel'; 
     statLabel.textContent = label; 
+
+    if (
+        String(label).toLowerCase().includes(
+            'lifetime record'
+        )
+    ) {
+        statLabel.classList.add(
+            'rngLifetimeStatLabel'
+        );
+    }
 	 
     const statValue = document.createElement('div'); 
     statValue.className = 'rngStatValue'; 

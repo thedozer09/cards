@@ -1112,6 +1112,8 @@ button {
 
     flex-direction: column;
 
+    align-items: center;
+
     justify-content: center;
 
     gap: 5px;
@@ -1126,9 +1128,13 @@ button {
 
     overflow: hidden;
 
+    text-align: center;
+
 }
 
 .rngStatLabel {
+
+    width: 100%;
 
     color: rgba(190, 211, 226, 0.6);
 
@@ -1140,13 +1146,27 @@ button {
 
     line-height: 1.2;
 
+    text-align: center;
+
     text-transform: uppercase;
+
+}
+
+.rngLifetimeStatLabel {
+
+    white-space: nowrap;
+
+    font-size: 10px;
+
+    letter-spacing: 0.7px;
 
 }
 
 .rngStatValue {
 
     position: relative;
+
+    width: 100%;
 
     color: #edf6fb;
 
@@ -1157,6 +1177,8 @@ button {
     line-height: 21px;
 
     min-height: 21px;
+
+    text-align: center;
 
     overflow-wrap: anywhere;
 
@@ -1372,6 +1394,8 @@ button {
 
     flex-direction: column;
 
+    align-items: center;
+
     gap: 9px;
 
     background: transparent;
@@ -1380,6 +1404,8 @@ button {
 
 .rngModifiersTitle {
 
+    width: 100%;
+
     color: #dbeaf4;
 
     font-size: 14px;
@@ -1387,6 +1413,8 @@ button {
     font-weight: 900;
 
     letter-spacing: 1.1px;
+
+    text-align: center;
 
     text-transform: uppercase;
 
@@ -1424,6 +1452,8 @@ button {
 
     overflow: hidden;
 
+    text-align: center;
+
 }
 
 .rngModifierName {
@@ -1435,6 +1465,8 @@ button {
     font-size: 14px;
 
     font-weight: 800;
+
+    text-align: center;
 
     overflow-wrap: anywhere;
 
@@ -1448,11 +1480,15 @@ button {
 
     line-height: 1.4;
 
+    text-align: center;
+
     overflow-wrap: anywhere;
 
 }
 
 .rngNoModifiers {
+
+    width: 100%;
 
     padding: 14px;
 
