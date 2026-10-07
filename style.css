@@ -1156,9 +1156,9 @@ button {
 
     white-space: nowrap;
 
-    font-size: 10px;
+    font-size: 14px;
 
-    letter-spacing: 0.7px;
+    letter-spacing: 1.1px;
 
 }
 
@@ -1187,6 +1187,8 @@ button {
 .rngLifetimeScoreValue {
 
     position: relative;
+
+    top: 10px;
 
     display: inline-flex;
 
@@ -1503,6 +1505,50 @@ button {
     text-align: center;
 
     background: transparent;
+
+}
+
+.rngRecordCard.rngRecordCardFinalPop {
+
+    animation:
+
+        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+
+}
+
+@keyframes rngRecordCardFinalPop {
+
+    0% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+    45% {
+
+        opacity: 1;
+
+        transform: translateY(-4px) scale(1.07);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform: translateY(1px) scale(0.985);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
 
 }
 

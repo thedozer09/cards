@@ -1523,6 +1523,11 @@ function animateRngRecordCard(
         ...childElements
     ];
 
+    const finalElement =
+        elements[
+            elements.length - 1
+        ];
+
     elements.forEach( 
         (element, index) => { 
 
@@ -1532,7 +1537,7 @@ function animateRngRecordCard(
                     'rngStatLabel'
                 ) &&
                 element.textContent ===
-                    'Lifetime Record Score'
+                    'Lifetime Score'
             ) {
                 element.addEventListener(
                     'animationend',
@@ -1543,6 +1548,44 @@ function animateRngRecordCard(
                         ) {
                             onLifetimeLabelShown();
                         }
+                    },
+                    { once: true }
+                );
+            }
+
+            if (
+                element ===
+                finalElement
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName !==
+                            'rngResultPopIn'
+                        ) {
+                            return;
+                        }
+
+                        card.classList.remove(
+                            'rngResultPopIn'
+                        );
+
+                        card.classList.remove(
+                            'rngRecordCardFinalPop'
+                        );
+
+                        card.style.opacity =
+                            '1';
+
+                        card.style.transform =
+                            'none';
+
+                        void card.offsetWidth;
+
+                        card.classList.add(
+                            'rngRecordCardFinalPop'
+                        );
                     },
                     { once: true }
                 );
@@ -1720,8 +1763,11 @@ function getRngLifetimeStatValueElement() {
         const statLabel of statLabels
     ) {
         if (
-            statLabel.textContent !==
-            'Lifetime Record Score'
+            !statLabel.textContent
+                .toLowerCase()
+                .includes(
+                    'lifetime'
+                )
         ) {
             continue;
         }
@@ -1809,7 +1855,8 @@ function createRngLifetimeDigitReel(
             numericTargetDigit -
             numericOldDigit +
             10
-        ) % 10;
+        ) %
+        10;
 
     const totalFaces =
         forwardSteps +
@@ -2843,7 +2890,7 @@ function createRngStat(label, value, valueColor = null) {
 
     if (
         String(label).toLowerCase().includes(
-            'lifetime record'
+            'lifetime'
         )
     ) {
         statLabel.classList.add(
@@ -2862,7 +2909,7 @@ function createRngStat(label, value, valueColor = null) {
 
     if (
         String(label).toLowerCase().includes(
-            'lifetime record'
+            'lifetime'
         )
     ) {
         statValue.classList.add(
@@ -3012,7 +3059,7 @@ function createRngRecordCard(payload, recordText) {
 
     stats.appendChild(
         createRngStat(
-            'Lifetime Record Score',
+            'Lifetime Score',
             payload.lifetimeRecordScore ??
                 payload.lifetimeScore ??
                 payload.lifetime_record_score ??
