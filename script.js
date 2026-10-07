@@ -23,18 +23,10 @@ function updateActivityMusicButton() {
             'aria-label',
             'Unmute music'
         );
-        musicToggleButton.setAttribute(
-            'title',
-            'Unmute music'
-        );
     } else {
         musicToggleButton.textContent = '🔊';
         musicToggleButton.setAttribute(
             'aria-label',
-            'Mute music'
-        );
-        musicToggleButton.setAttribute(
-            'title',
             'Mute music'
         );
     }
@@ -107,6 +99,24 @@ function initializeActivityMusic() {
     if (
         musicToggleButton
     ) {
+        musicToggleButton.addEventListener(
+            'pointerenter',
+            () => {
+                startNormalButtonWiggle(
+                    musicToggleButton
+                );
+            }
+        );
+
+        musicToggleButton.addEventListener(
+            'pointerleave',
+            () => {
+                stopNormalButtonWiggle(
+                    musicToggleButton
+                );
+            }
+        );
+
         musicToggleButton.addEventListener(
             'click',
             () => {
@@ -959,6 +969,7 @@ let rngLocalRollState = null;
 let rngFrontendInitialized = false; 
 let rngLaunchFlashPending = false;
 let rngPendingLifetimeScore = null;
+let rngLifetimeRollStartScore = null;
 let rngLifetimeAnimationActive = false;
 let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = [];
@@ -1930,28 +1941,6 @@ function animateRngRecordCard(
         (element, index) => { 
 
             if (
-                onLifetimeLabelShown &&
-                element.classList.contains(
-                    'rngStatLabel'
-                ) &&
-                element.textContent ===
-                    'Lifetime Score'
-            ) {
-                element.addEventListener(
-                    'animationend',
-                    event => {
-                        if (
-                            event.animationName ===
-                            'rngResultPopIn'
-                        ) {
-                            onLifetimeLabelShown();
-                        }
-                    },
-                    { once: true }
-                );
-            }
-
-            if (
                 element ===
                 finalElement
             ) {
@@ -2000,6 +1989,12 @@ function animateRngRecordCard(
                                 startRngRecordCardWiggle(
                                     card
                                 );
+
+                                if (
+                                    onLifetimeLabelShown
+                                ) {
+                                    onLifetimeLabelShown();
+                                }
                             },
                             { once: true }
                         );
@@ -2060,6 +2055,9 @@ function clearRngLifetimeAnimation() {
 
     rngLifetimeAnimationActive =
         false;
+
+    rngLifetimeRollStartScore =
+        null;
 }
 
 function resetDailyRngFrontend() { 
@@ -2973,6 +2971,25 @@ function scheduleRngLifetimeScoreAnimation(
     const targetScore =
         rngPendingLifetimeScore;
 
+    const currentScore =
+        typeof rngLifetimeRollStartScore === 'number' &&
+        Number.isFinite(
+            rngLifetimeRollStartScore
+        )
+            ? rngLifetimeRollStartScore
+            : getRngLifetimePayloadScore(
+                payload
+            );
+
+    if (
+        typeof currentScore !== 'number' ||
+        !Number.isFinite(
+            currentScore
+        )
+    ) {
+        return;
+    }
+
     rngLifetimeRollTimer =
         setTimeout(() => {
             rngLifetimeRollTimer =
@@ -2993,18 +3010,10 @@ function scheduleRngLifetimeScoreAnimation(
                 return;
             }
 
-            const currentScore =
-                getRngLifetimePayloadScore(
-                    payload
-                );
-
-            if (
-                currentScore === null
-            ) {
-                return;
-            }
-
             rngPendingLifetimeScore =
+                null;
+
+            rngLifetimeRollStartScore =
                 null;
 
             animateRngLifetimeScore(
@@ -3014,7 +3023,7 @@ function scheduleRngLifetimeScoreAnimation(
             );
         }, RNG_LIFETIME_ROLL_DELAY);
 }
- 
+
 function sendRngLifetimeUpdate(payload) {
     if (
         !payload ||
@@ -3057,6 +3066,9 @@ function sendRngLifetimeUpdate(payload) {
 
         return;
     }
+
+    rngLifetimeRollStartScore =
+        currentLifetime;
 
     rngPendingLifetimeScore =
         Math.round(
@@ -3127,6 +3139,31 @@ function applyRngLifetimeUpdateResult(score) {
             )
         )
     );
+
+    if (
+        typeof rngLifetimeRollStartScore === 'number' &&
+        Number.isFinite(
+            rngLifetimeRollStartScore
+        ) &&
+        Math.round(
+            rngLifetimeRollStartScore
+        ) !==
+            Math.round(
+                score
+            )
+    ) {
+        rngPendingLifetimeScore =
+            Math.round(
+                score
+            );
+
+        scheduleRngLifetimeScoreAnimation(
+            {
+                lifetimeRecordScore:
+                    rngLifetimeRollStartScore
+            }
+        );
+    }
 }
 	 
 function applyDailyRollState(state) { 
@@ -3841,6 +3878,7 @@ function showRngRecordResult(payload) {
         if (currentTab === 'generate') {
             scrollRngResultIntoView(card);
         }
+
         requestRngLaunchFlash();
 
         animateRngRecordCard(
@@ -4274,4 +4312,5 @@ document.addEventListener(
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY.
 EVERYTHING BELOW/OUTSIDE THIS BLOCK IS REAL CODE.
-============================================================*/
+============================================================
+*/
