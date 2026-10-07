@@ -1,17 +1,11 @@
 * {
-
     box-sizing: border-box;
-
 }
 
 html,
-
 body {
-
     margin: 0;
-
     min-height: 100%;
-
 }
 
 body {
@@ -23,131 +17,26 @@ body {
     color: #f5f9fd;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #3f6085 0%,
-
             #36577e 26%,
-
             #2d4e76 52%,
-
             #29466d 76%,
-
             #244064 100%
-
         );
 
     -webkit-font-smoothing: antialiased;
-
     -moz-osx-font-smoothing: grayscale;
-
-    transition:
-
-        background 0.35s ease;
-
-}
-
-body.rng-rarity-common {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #557590 0%,
-
-            #4a6981 28%,
-
-            #435d70 55%,
-
-            #3d5363 78%,
-
-            #374a58 100%
-
-        );
-
-}
-
-body.rng-rarity-uncommon {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #247b79 0%,
-
-            #286f72 28%,
-
-            #2d626b 55%,
-
-            #315664 78%,
-
-            #344b59 100%
-
-        );
-
-}
-
-body.rng-rarity-rare {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #2468a3 0%,
-
-            #285f97 28%,
-
-            #2e587f 55%,
-
-            #334f6e 78%,
-
-            #37485b 100%
-
-        );
-
-}
-
-body.rng-rarity-legendary {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #7b671f 0%,
-
-            #6c5d2c 28%,
-
-            #5d5234 55%,
-
-            #4e4839 78%,
-
-            #41403d 100%
-
-        );
 
 }
 
 button {
-
     font: inherit;
-
 }
 
 .hidden {
-
     display: none !important;
-
 }
 
 .loadingScreen {
@@ -211,9 +100,7 @@ button {
 @keyframes loadingSpin {
 
     to {
-
         transform: rotate(360deg);
-
     }
 
 }
@@ -251,25 +138,16 @@ button {
     border-radius: 25px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #102b4b 0%,
-
             #172f49 42%,
-
             #242e35 72%,
-
             #2d3236 100%
-
         );
 
     box-shadow:
-
         0 14px 34px rgba(2, 10, 20, 0.36),
-
         inset 0 1px 0 rgba(181, 208, 228, 0.06);
 
 }
@@ -289,17 +167,11 @@ button {
     border-radius: 999px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #476f92 0%,
-
             #3d6385 50%,
-
             #335775 100%
-
         );
 
     color: #ffffff;
@@ -313,17 +185,12 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 6px 15px rgba(2, 14, 27, 0.3),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease;
 
 }
@@ -331,25 +198,17 @@ button {
 .tabButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #527ca0 0%,
-
             #477098 50%,
-
             #3b6485 100%
-
         );
 
     border-color: rgba(201, 222, 237, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.34),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 }
@@ -371,17 +230,11 @@ button {
 .tabButton.active {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #5b83a5 0%,
-
             #4d7395 50%,
-
             #406788 100%
-
         );
 
     border-color: rgba(213, 230, 241, 0.38);
@@ -389,9 +242,7 @@ button {
     color: #ffffff;
 
     box-shadow:
-
         0 8px 20px rgba(2, 14, 27, 0.38),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.11);
 
 }
@@ -414,15 +265,35 @@ button {
 
 @keyframes clickJerk {
 
-    0% { transform: translate(0, 0) rotate(0deg); }
+    0% {
 
-    22% { transform: translate(-3px, 1px) rotate(-1deg); }
+        transform: translate(0, 0) rotate(0deg);
 
-    45% { transform: translate(3px, -1px) rotate(1deg); }
+    }
 
-    68% { transform: translate(-2px, 0) rotate(-0.5deg); }
+    22% {
 
-    100% { transform: translate(0, 0) rotate(0deg); }
+        transform: translate(-3px, 1px) rotate(-1deg);
+
+    }
+
+    45% {
+
+        transform: translate(3px, -1px) rotate(1deg);
+
+    }
+
+    68% {
+
+        transform: translate(-2px, 0) rotate(-0.5deg);
+
+    }
+
+    100% {
+
+        transform: translate(0, 0) rotate(0deg);
+
+    }
 
 }
 
@@ -449,7 +320,6 @@ button {
     height: 82px;
 
     animation:
-
         carDrive 3s linear forwards;
 
 }
@@ -461,7 +331,6 @@ button {
     height: 90px;
 
     animation:
-
         tornadoChase 3s linear 1s forwards;
 
 }
@@ -634,37 +503,9 @@ button {
 
 }
 
-.rngTopControlArea {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
-
-    min-height: 86px;
-
-    height: 86px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin: 0 auto;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-}
-
 .rngActionArea {
 
-    width: 100%;
-
-    height: 86px;
+    min-height: 260px;
 
     display: flex;
 
@@ -672,13 +513,7 @@ button {
 
     justify-content: center;
 
-    margin: 0;
-
-    padding: 10px 0;
-
-    box-sizing: border-box;
-
-    background: transparent;
+    padding: 28px;
 
 }
 
@@ -695,17 +530,11 @@ button {
     border-radius: 14px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #416e98 0%,
-
             #365f87 52%,
-
             #2e5278 100%
-
         );
 
     color: #ffffff;
@@ -719,19 +548,13 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 7px 16px rgba(2, 14, 27, 0.28),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease,
-
         transform 0.18s ease;
 
 }
@@ -739,25 +562,17 @@ button {
 .rngGenerateButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #4c7da8 0%,
-
             #3e6b93 52%,
-
             #345c82 100%
-
         );
 
     border-color: rgba(207, 226, 239, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.32),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     transform: translateY(-1px);
@@ -770,95 +585,34 @@ button {
 
 }
 
-.rngDailyStatus {
+.rngResultPanel {
 
     width: 100%;
 
-    height: 86px;
+    margin-top: 24px;
 
-    min-height: 86px;
+    padding: 34px 32px 42px;
 
-    margin: 0;
+    border: 1px solid rgba(144, 176, 199, 0.18);
 
-    padding: 8px 0;
+    border-radius: 24px;
 
-    display: flex;
+    background:
+        linear-gradient(
+            135deg,
+            #14385f 0%,
+            #1c354d 42%,
+            #293237 76%,
+            #303538 100%
+        );
 
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    color: #949a9f;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: 0;
-
-    box-shadow: none;
-
-}
-
-.rngDailyMessage {
-
-    color: #949a9f;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-}
-
-.rngDailyCountdown {
-
-    margin-top: 4px;
-
-    color: #898f94;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    letter-spacing: 0.04em;
-
-}
-
-.rngResultPanel {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
-
-    margin: 0 auto;
-
-    padding: 0;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: 0;
-
-    box-shadow: none;
-
-    overflow: visible;
+    box-shadow:
+        0 16px 34px rgba(2, 10, 20, 0.3),
+        inset 0 1px 0 rgba(183, 211, 229, 0.06);
 
 }
 
 .rngScramble {
-
-    width: 350px;
-
-    min-width: 350px;
-
-    max-width: 350px;
 
     min-height: 58px;
 
@@ -868,159 +622,50 @@ button {
 
     justify-content: center;
 
-    margin: 0 auto;
-
-    padding: 10px 0 24px;
-
-    box-sizing: border-box;
-
-    position: relative;
-
-    z-index: 2;
+    padding: 8px 0 24px;
 
     color: #21b7ff;
 
     font-family: "Courier New", Courier, monospace;
 
-    font-size: 29px;
+    font-size: 32px;
 
     font-weight: 900;
 
-    letter-spacing: 2.4px;
-
-    line-height: 1.2;
+    letter-spacing: 3px;
 
     text-align: center;
 
     text-shadow:
-
         0 0 8px rgba(33, 183, 255, 0.24);
 
     word-break: break-all;
-
-    overflow-wrap: anywhere;
-
-    visibility: visible;
-
-    opacity: 1;
-
-    background: transparent;
-
-    border: 0;
 
 }
 
 .rngRecordCard {
 
-    width: 350px;
+    width: min(680px, 100%);
 
-    min-width: 350px;
+    margin: 10px auto 0;
 
-    max-width: 350px;
-
-    margin: 0 auto;
-
-    padding: 24px;
-
-    box-sizing: border-box;
+    padding: 28px;
 
     border: 1px solid rgba(190, 214, 231, 0.2);
 
     border-radius: 20px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #203e5e 0%,
-
             #253845 46%,
-
             #313739 100%
-
         );
 
     box-shadow:
-
         0 14px 28px rgba(2, 10, 20, 0.28),
-
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
-
-    overflow: hidden;
-
-}
-
-.rngRecordCard.rng-rarity-common {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #304b65 0%,
-
-            #354653 46%,
-
-            #31383d 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-uncommon {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #205f5c 0%,
-
-            #2b4f53 46%,
-
-            #313b40 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-rare {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #21598a 0%,
-
-            #2d485f 46%,
-
-            #303b43 100%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-legendary {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #695719 0%,
-
-            #50472f 46%,
-
-            #343a3e 100%
-
-        );
 
 }
 
@@ -1034,11 +679,9 @@ button {
 
     gap: 6px;
 
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 
     text-align: center;
-
-    background: transparent;
 
 }
 
@@ -1046,11 +689,11 @@ button {
 
     color: rgba(193, 215, 229, 0.62);
 
-    font-size: 14px;
+    font-size: 10px;
 
     font-weight: 800;
 
-    letter-spacing: 1.4px;
+    letter-spacing: 1.6px;
 
     text-transform: uppercase;
 
@@ -1058,115 +701,69 @@ button {
 
 .rngRecordValue {
 
-    width: 100%;
-
-    max-width: 100%;
-
     color: #f3f8fc;
 
     font-family: "Courier New", Courier, monospace;
 
-    font-size: 24px;
+    font-size: 26px;
 
     font-weight: 900;
 
-    letter-spacing: 1px;
-
-    line-height: 1.15;
-
-    text-align: center;
+    letter-spacing: 1.5px;
 
     word-break: break-all;
-
-    overflow-wrap: anywhere;
 
 }
 
 .rngStats {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: grid;
 
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 12px;
 
-    margin-bottom: 18px;
-
-    background: transparent;
+    margin-bottom: 24px;
 
 }
 
 .rngStat {
 
-    position: relative;
-
-    min-width: 0;
-
-    min-height: 72px;
+    min-height: 78px;
 
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
-
     justify-content: center;
 
-    gap: 5px;
+    gap: 7px;
 
-    padding: 10px 11px;
+    padding: 15px 16px;
 
-    border: 0;
+    border: 1px solid rgba(176, 204, 223, 0.14);
 
-    border-radius: 0;
+    border-radius: 14px;
 
-    background: transparent;
-
-    overflow: hidden;
-
-    text-align: center;
+    background: rgba(8, 25, 41, 0.28);
 
 }
 
 .rngStatLabel {
 
-    width: 100%;
-
     color: rgba(190, 211, 226, 0.6);
 
-    font-size: 14px;
+    font-size: 9px;
 
     font-weight: 800;
 
-    letter-spacing: 1.1px;
-
-    line-height: 1.2;
-
-    text-align: center;
+    letter-spacing: 1.3px;
 
     text-transform: uppercase;
 
 }
 
-.rngLifetimeStatLabel {
-
-    white-space: nowrap;
-
-    font-size: 14px;
-
-    letter-spacing: 1.1px;
-
-}
-
 .rngStatValue {
-
-    position: relative;
-
-    width: 100%;
 
     color: #edf6fb;
 
@@ -1174,249 +771,29 @@ button {
 
     font-weight: 800;
 
-    line-height: 21px;
-
-    min-height: 21px;
-
-    text-align: center;
-
     overflow-wrap: anywhere;
-
-}
-
-.rngLifetimeScoreValue {
-
-    position: relative;
-
-    top: 10px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 100%;
-
-    height: 21px;
-
-    min-height: 21px;
-
-    white-space: nowrap;
-
-    overflow: visible;
-
-    font-size: inherit;
-
-    line-height: 21px;
-
-    font-variant-numeric: tabular-nums;
-
-}
-
-.rngLifetimeNormalValue {
-
-    position: relative;
-
-    z-index: 1;
-
-    display: inline-block;
-
-    line-height: 21px;
-
-}
-
-.rngLifetimeWheel {
-
-    position: absolute;
-
-    top: 50%;
-
-    left: 50%;
-
-    z-index: 2;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: max-content;
-
-    height: 54px;
-
-    min-height: 54px;
-
-    transform:
-
-        translate(
-
-            -50%,
-
-            -50%
-
-        );
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition:
-
-        opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
-
-    white-space: nowrap;
-
-}
-
-.rngLifetimeDigit {
-
-    position: relative;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 0.62em;
-
-    height: 54px;
-
-    min-height: 54px;
-
-    overflow: hidden;
-
-    flex-shrink: 0;
-
-    mask-image:
-
-        linear-gradient(
-
-            to bottom,
-
-            transparent 0%,
-
-            rgba(0, 0, 0, 0.72) 18%,
-
-            #000000 31%,
-
-            #000000 69%,
-
-            rgba(0, 0, 0, 0.72) 82%,
-
-            transparent 100%
-
-        );
-
-    -webkit-mask-image:
-
-        linear-gradient(
-
-            to bottom,
-
-            transparent 0%,
-
-            rgba(0, 0, 0, 0.72) 18%,
-
-            #000000 31%,
-
-            #000000 69%,
-
-            rgba(0, 0, 0, 0.72) 82%,
-
-            transparent 100%
-
-        );
-
-}
-
-.rngLifetimeDigitStrip {
-
-    position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    width: 100%;
-
-    height: max-content;
-
-    will-change: transform;
-
-}
-
-.rngLifetimeDigitFace {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 100%;
-
-    height: 18px;
-
-    min-height: 18px;
-
-    line-height: 18px;
-
-    text-align: center;
-
-    flex-shrink: 0;
-
-    font-size: inherit;
-
-    font-weight: inherit;
-
-    font-family: inherit;
-
-    font-variant-numeric: tabular-nums;
-
-    backface-visibility: hidden;
-
-    transform-origin: center center;
 
 }
 
 .rngModifiersSection {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
-
-    gap: 9px;
-
-    background: transparent;
+    gap: 12px;
 
 }
 
 .rngModifiersTitle {
 
-    width: 100%;
-
     color: #dbeaf4;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 900;
 
-    letter-spacing: 1.1px;
-
-    text-align: center;
+    letter-spacing: 1.2px;
 
     text-transform: uppercase;
 
@@ -1424,51 +801,37 @@ button {
 
 .rngModifiers {
 
-    width: 100%;
-
-    max-width: 100%;
-
     display: grid;
 
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 
-    gap: 7px;
-
-    background: transparent;
+    gap: 10px;
 
 }
 
 .rngModifier {
 
-    min-width: 0;
+    min-height: 74px;
 
-    min-height: 60px;
+    padding: 14px 15px;
 
-    padding: 10px 0;
+    border: 1px solid rgba(176, 204, 223, 0.14);
 
-    border: 0;
+    border-radius: 13px;
 
-    border-radius: 0;
-
-    background: transparent;
-
-    overflow: hidden;
-
-    text-align: center;
+    background: rgba(8, 25, 41, 0.3);
 
 }
 
 .rngModifierName {
 
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 
     color: #f0f6fa;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 800;
-
-    text-align: center;
 
     overflow-wrap: anywhere;
 
@@ -1482,73 +845,23 @@ button {
 
     line-height: 1.4;
 
-    text-align: center;
-
     overflow-wrap: anywhere;
 
 }
 
 .rngNoModifiers {
 
-    width: 100%;
+    padding: 18px;
 
-    padding: 14px;
+    border: 1px dashed rgba(176, 204, 223, 0.18);
 
-    border: 0;
+    border-radius: 13px;
 
-    border-radius: 0;
-
-    color: rgba(155, 165, 172, 0.68);
+    color: rgba(200, 218, 230, 0.56);
 
     font-size: 12px;
 
     text-align: center;
-
-    background: transparent;
-
-}
-
-.rngRecordCard.rngRecordCardFinalPop {
-
-    animation:
-
-        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-
-}
-
-@keyframes rngRecordCardFinalPop {
-
-    0% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
-
-    45% {
-
-        opacity: 1;
-
-        transform: translateY(-4px) scale(1.07);
-
-    }
-
-    70% {
-
-        opacity: 1;
-
-        transform: translateY(1px) scale(0.985);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
 
 }
 
@@ -1558,13 +871,22 @@ button {
 
     padding: 32px;
 
-    border: 0;
+    border: 1px solid rgba(136, 164, 188, 0.18);
 
-    border-radius: 0;
+    border-radius: 26px;
 
-    background: transparent;
+    background:
+        linear-gradient(
+            135deg,
+            #102a49 0%,
+            #172f47 38%,
+            #242d34 70%,
+            #303438 100%
+        );
 
-    box-shadow: none;
+    box-shadow:
+        0 19px 44px rgba(2, 10, 20, 0.38),
+        inset 0 1px 0 rgba(177, 203, 222, 0.05);
 
 }
 
@@ -1691,15 +1013,10 @@ button {
     border-radius: 15px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #122b47 0%,
-
             #252e34 100%
-
         );
 
     color: #ffffff;
@@ -1709,128 +1026,6 @@ button {
     line-height: 1.45;
 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-
-}
-
-.normalButtonWiggle {
-
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-
-}
-
-@keyframes normalButtonWiggle {
-
-    0%,
-
-    100% {
-
-        transform: translateX(0);
-
-    }
-
-    25% {
-
-        transform: translateX(-3px);
-
-    }
-
-    75% {
-
-        transform: translateX(3px);
-
-    }
-
-}
-
-.rngLaunchFlash {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 99999;
-
-    pointer-events: none;
-
-    background: #ffffff;
-
-    animation:
-
-        rngLaunchFlash 0.6s ease-out forwards;
-
-}
-
-@keyframes rngLaunchFlash {
-
-    0% {
-
-        opacity: 0;
-
-    }
-
-    12% {
-
-        opacity: 1;
-
-    }
-
-    38% {
-
-        opacity: 1;
-
-    }
-
-    100% {
-
-        opacity: 0;
-
-    }
-
-}
-
-.rngResultPopIn {
-
-    animation:
-
-        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-
-    animation-delay: var(--rng-pop-delay, 0s);
-
-}
-
-@keyframes rngResultPopIn {
-
-    0% {
-
-        opacity: 0;
-
-        transform: translateY(12px) scale(0.88);
-
-    }
-
-    55% {
-
-        opacity: 1;
-
-        transform: translateY(-3px) scale(1.025);
-
-    }
-
-    78% {
-
-        opacity: 1;
-
-        transform: translateY(1px) scale(0.995);
-
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform: translateY(0) scale(1);
-
-    }
 
 }
 
@@ -1880,11 +1075,11 @@ button {
 
     }
 
-    .rngTopControlArea {
+    .rngActionArea {
 
-        min-height: 86px;
+        min-height: 230px;
 
-        height: 86px;
+        padding: 20px;
 
     }
 
@@ -1900,11 +1095,17 @@ button {
 
     }
 
+    .rngResultPanel {
+
+        padding: 28px 20px 34px;
+
+        border-radius: 21px;
+
+    }
+
     .rngScramble {
 
         min-height: 48px;
-
-        padding: 8px 0 20px;
 
         font-size: 24px;
 
@@ -1920,7 +1121,7 @@ button {
 
     .rngStats {
 
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
 
     }
 
@@ -1929,6 +1130,8 @@ button {
         min-height: 360px;
 
         padding: 24px;
+
+        border-radius: 21px;
 
     }
 
@@ -2018,11 +1221,11 @@ button {
 
     }
 
-    .rngTopControlArea {
+    .rngActionArea {
 
-        min-height: 86px;
+        min-height: 210px;
 
-        height: 86px;
+        padding: 16px;
 
     }
 
@@ -2038,39 +1241,35 @@ button {
 
     }
 
+    .rngResultPanel {
+
+        padding: 24px 15px 28px;
+
+    }
+
     .rngScramble {
 
-        min-height: 52px;
+        font-size: 20px;
 
-        padding: 8px 0 20px;
-
-        font-size: 21px;
-
-        letter-spacing: 1.7px;
+        letter-spacing: 1.4px;
 
     }
 
     .rngRecordCard {
 
-        padding: 20px;
+        padding: 18px;
 
     }
 
     .rngRecordValue {
 
-        font-size: 22px;
+        font-size: 21px;
 
     }
 
     .tabScreen {
 
         padding: 20px;
-
-    }
-
-    .tabScreen h1 {
-
-        font-size: 24px;
 
     }
 
@@ -2106,4 +1305,336 @@ button {
 
     }
 
+.tabHeader {
+    justify-content: center;
+    text-align: center;
+}
+
+.rngResultPanel {
+    width: min(100%, 500px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rngRecordCard {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.rngDailyStatus {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 18px;
+    text-align: center;
+    color: #8a8f94;
+}
+
+.rngDailyMessage {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.rngDailyCountdown {
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.normalButtonWiggle {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+@keyframes normalButtonWiggle {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
+}
+
+.rngLaunchFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    animation: rngLaunchFlash 0.5s ease-out forwards;
+}
+
+@keyframes rngLaunchFlash {
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.rngResultPanel {
+    width: 250px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.rngScramble {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngRecordCard {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngStats,
+.rngModifiersSection,
+.rngModifiers {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.rngResultPopIn {
+    animation: rngResultPopIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--rng-pop-delay, 0s);
+}
+
+@keyframes rngResultPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.88);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+}
+/* Record card alignment */
+.rngRecordLabel {
+    font-size: 28px;
+    white-space: nowrap;
+}
+
+.rngStat {
+    align-items: center;
+    text-align: center;
+}
+
+.rngStatLabel {
+    font-size: 14px;
+    letter-spacing: 0.55px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.rngStatValue {
+    text-align: center;
+    line-height: 21px;
+    min-height: 21px;
+    font-size: 18px;
+}
+
+.rngStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rngStats .rngStat:nth-child(3) .rngStatLabel {
+    font-size: 14px;
+    letter-spacing: 1.1px;
+}
+
+.rngModifiersTitle {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.rngModifierName {
+    font-size: 14px;
+}
+
+.rngLifetimeStat {
+    position: relative;
+    left: 0 !important;
+}
+
+.rngLifetimeStatLabel {
+    font-size: 14px !important;
+    letter-spacing: 1.1px !important;
+    white-space: nowrap;
+    text-align: center;
+    overflow: visible;
+}
+
+/* Lifetime Record Score wheel */
+.rngLifetimeScoreValue {
+    position: relative;
+    left: -10px;
+    top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 21px;
+    min-height: 21px;
+    white-space: nowrap;
+    overflow: visible;
+    font-size: inherit;
+    line-height: 21px;
+    font-variant-numeric: tabular-nums;
+}
+
+.rngLifetimeNormalValue {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    line-height: 21px;
+}
+
+.rngLifetimeWheel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    height: 54px;
+    min-height: 54px;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
+    white-space: nowrap;
+}
+
+.rngLifetimeDigit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.62em;
+    height: 54px;
+    min-height: 54px;
+    overflow: hidden;
+    flex-shrink: 0;
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 18%,
+        #000000 37%,
+        #000000 63%,
+        rgba(0, 0, 0, 0.35) 82%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 18%,
+        #000000 37%,
+        #000000 63%,
+        rgba(0, 0, 0, 0.35) 82%,
+        transparent 100%
+    );
+}
+
+.rngLifetimeDigitStrip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: max-content;
+    will-change: transform;
+}
+
+.rngLifetimeDigitFace {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 18px;
+    min-height: 18px;
+    line-height: 18px;
+    text-align: center;
+    flex-shrink: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    backface-visibility: hidden;
+    transform-origin: center center;
+}
+
+/* Fixed result assembly */
+.rngResultPanel,
+.rngScramble,
+.rngRecordCard,
+.rngDailyStatus {
+    width: 250px;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+
+.rngResultPanel,
+.rngScramble,
+.rngRecordCard,
+.rngDailyStatus {
+    margin-left: auto;
+    margin-right: auto;
 }
