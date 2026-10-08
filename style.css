@@ -1174,11 +1174,13 @@ button {
 
 }
 
-.rngStat:nth-child(1) .rngStatValue {
+.rngStat:nth-child(1) .rngStatValue,
+
+.rngStat:nth-child(2) .rngStatValue {
 
     position: absolute;
 
-    top: 47px;
+    top: 33px;
 
     left: 0;
 
@@ -1296,6 +1298,10 @@ button {
 
     z-index: 3;
 
+    opacity: 1;
+
+    transition: opacity 160ms ease;
+
 }
 
 .rngLifetimeStatLabel::before {
@@ -1319,6 +1325,14 @@ button {
     font-size: 14px;
 
     line-height: 1.2;
+
+}
+
+.rngLifetimeUpdating .rngLifetimeStatLabel {
+
+    opacity: 0;
+
+    pointer-events: none;
 
 }
 
@@ -2434,21 +2448,31 @@ button {
 
     left: 50%;
 
-    width: calc(100% + 38px);
+    width: calc(100% + 46px);
 
-    height: 175%;
+    height: 190%;
 
     transform: translate(-50%, -50%);
 
     border-radius: 999px;
 
-    filter: blur(10px);
+    filter: blur(8px);
 
-    opacity: 0.42;
+    opacity: 1;
 
     pointer-events: none;
 
-    z-index: -1;
+    z-index: 0;
+
+}
+
+.rngRarityValue {
+
+    text-shadow:
+
+        0 0 7px currentColor,
+
+        0 0 15px currentColor;
 
 }
 
@@ -2478,7 +2502,7 @@ button {
 
             #4da6ff 38%,
 
-            #ffffff 48%,
+            rgba(255, 255, 255, 0.72) 48%,
 
             #4da6ff 58%,
 
@@ -2516,7 +2540,7 @@ button {
 
             #ffd84d 38%,
 
-            #fff9c4 48%,
+            rgba(255, 255, 255, 0.76) 48%,
 
             #ffd84d 58%,
 
@@ -2548,11 +2572,13 @@ button {
 
             ellipse at center,
 
-            rgba(220, 231, 240, 0.52) 0%,
+            rgba(220, 231, 240, 0.82) 0%,
 
-            rgba(220, 231, 240, 0.19) 42%,
+            rgba(220, 231, 240, 0.46) 32%,
 
-            rgba(220, 231, 240, 0) 78%
+            rgba(220, 231, 240, 0.18) 58%,
+
+            rgba(220, 231, 240, 0) 82%
 
         );
 
@@ -2566,11 +2592,13 @@ button {
 
             ellipse at center,
 
-            rgba(79, 209, 197, 0.62) 0%,
+            rgba(79, 209, 197, 0.9) 0%,
 
-            rgba(79, 209, 197, 0.22) 42%,
+            rgba(79, 209, 197, 0.5) 32%,
 
-            rgba(79, 209, 197, 0) 78%
+            rgba(79, 209, 197, 0.2) 58%,
+
+            rgba(79, 209, 197, 0) 82%
 
         );
 
@@ -2584,11 +2612,13 @@ button {
 
             ellipse at center,
 
-            rgba(77, 166, 255, 0.72) 0%,
+            rgba(77, 166, 255, 0.95) 0%,
 
-            rgba(77, 166, 255, 0.25) 42%,
+            rgba(77, 166, 255, 0.55) 32%,
 
-            rgba(77, 166, 255, 0) 80%
+            rgba(77, 166, 255, 0.22) 58%,
+
+            rgba(77, 166, 255, 0) 82%
 
         );
 
@@ -2602,11 +2632,13 @@ button {
 
             ellipse at center,
 
-            rgba(255, 216, 77, 0.78) 0%,
+            rgba(255, 216, 77, 0.98) 0%,
 
-            rgba(255, 216, 77, 0.27) 42%,
+            rgba(255, 216, 77, 0.58) 32%,
 
-            rgba(255, 216, 77, 0) 80%
+            rgba(255, 216, 77, 0.24) 58%,
+
+            rgba(255, 216, 77, 0) 82%
 
         );
 
