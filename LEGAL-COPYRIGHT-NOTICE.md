@@ -3,7 +3,7 @@
 ### Copyright Notice
 Copyright © 2026 Hunter Games Studios. All rights reserved.
 
-All items in this repository are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
+All items in this repository (excluding music) are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
 
 Music by Koizeay; not the property of Hunter Games Studios.
 
