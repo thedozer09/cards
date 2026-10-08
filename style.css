@@ -734,12 +734,12 @@ button {
     display: inline-block;
     line-height: 21px;
     font-size: 18px;
-    transform: translateY(25px);
+    transform: translateY(0);
 }
 
 .rngLifetimeWheel {
     position: absolute;
-    top: calc(50% + 8px);
+    top: 50%;
     left: 50%;
     z-index: 2;
     display: flex;
@@ -810,7 +810,7 @@ button {
 
 .rngLifetimeDigitFace {
     position: relative;
-    top: 17px;
+    top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1098,7 +1098,7 @@ button {
         0 9px 19px rgba(2, 14, 27, 0.34),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation:
-        musicButtonWiggle 1.92s ease-in-out infinite;
+        musicButtonWiggle 3.84s ease-in-out infinite;
 }
 
 @keyframes musicButtonWiggle {
@@ -1158,7 +1158,7 @@ button {
     transform: translate(-50%, -50%);
     border-radius: 999px;
     filter: blur(8px);
-    opacity: 0.5;
+    opacity: 0.25;
     pointer-events: none;
     z-index: -1;
 }
@@ -1173,7 +1173,7 @@ button {
     transform: translate(-50%, -50%);
     border-radius: 999px;
     filter: blur(5px);
-    opacity: 0.5;
+    opacity: 0.25;
     pointer-events: none;
     z-index: -1;
 }
@@ -1530,11 +1530,11 @@ button {
     }
 
     .rngLifetimeNormalValue {
-        transform: translateY(25px);
+        transform: translateY(0);
     }
 
     .rngLifetimeDigitFace {
-        top: 17px;
+        top: 0;
     }
 
     .rngLifetimeScoreValue {

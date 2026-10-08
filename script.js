@@ -14,6 +14,10 @@ function updateActivityMusicButton() {
         return;
     }
 
+    musicToggleButton.removeAttribute(
+        'title'
+    );
+
     if (
         activityMusic &&
         activityMusic.muted
@@ -23,18 +27,10 @@ function updateActivityMusicButton() {
             'aria-label',
             'Unmute music'
         );
-        musicToggleButton.setAttribute(
-            'title',
-            'Unmute music'
-        );
     } else {
         musicToggleButton.textContent = '🔊';
         musicToggleButton.setAttribute(
             'aria-label',
-            'Mute music'
-        );
-        musicToggleButton.setAttribute(
-            'title',
             'Mute music'
         );
     }
@@ -264,7 +260,7 @@ function initializeWebSocket() {
         } else if (event.code === 1015) { 
             errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that backend container port didn't accept."; 
         } else { 
-            errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'None'}`; 
+            errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'Game had a issue keeping a stable connection, please reconnect.'}`; 
         } 
         errorMessage.classList.remove("hidden"); 
     }); 
