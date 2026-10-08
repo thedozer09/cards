@@ -1328,6 +1328,14 @@ button {
 
 }
 
+.rngLifetimeStat:has(.rngLifetimeWheel) .rngLifetimeStatLabel {
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
 .rngLifetimeUpdating .rngLifetimeStatLabel {
 
     opacity: 0;
@@ -1396,7 +1404,7 @@ button {
 
     position: absolute;
 
-    top: 74.5px;
+    top: 24px;
 
     left: 0;
 
@@ -1426,7 +1434,7 @@ button {
 
     position: absolute;
 
-    top: 10px;
+    top: -1.5px;
 
     left: 50%;
 
