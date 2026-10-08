@@ -1,1549 +1,2630 @@
 * {
+
     box-sizing: border-box;
+
 }
 
 html,
+
 body {
+
     margin: 0;
-    min-height: 100%;
-}
 
-html {
     min-height: 100%;
-    background: #244064;
+
 }
 
 body {
-    position: relative;
+
     min-height: 100vh;
+
     font-family: Arial, Helvetica, sans-serif;
+
     color: #f5f9fd;
-    background: transparent !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition:
-        background 0.35s ease;
-    isolation: isolate;
-}
 
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    min-height: 100%;
-    z-index: -1;
     background:
+
         linear-gradient(
+
             135deg,
+
             #3f6085 0%,
+
             #36577e 26%,
+
             #2d4e76 52%,
+
             #29466d 76%,
+
             #244064 100%
+
         );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    pointer-events: none;
+
+    -webkit-font-smoothing: antialiased;
+
+    -moz-osx-font-smoothing: grayscale;
+
+    transition:
+
+        background 0.35s ease;
+
 }
 
-body.rng-rarity-common::before {
+body.rng-rarity-common {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #557590 0%,
+
             #4a6981 28%,
+
             #435d70 55%,
+
             #3d5363 78%,
+
             #374a58 100%
+
         );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+
 }
 
-body.rng-rarity-uncommon::before {
+body.rng-rarity-uncommon {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #247b79 0%,
+
             #286f72 28%,
+
             #2d626b 55%,
+
             #315664 78%,
+
             #344b59 100%
+
         );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+
 }
 
-body.rng-rarity-rare::before {
+body.rng-rarity-rare {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #2468a3 0%,
+
             #285f97 28%,
+
             #2e587f 55%,
+
             #334f6e 78%,
+
             #37485b 100%
+
         );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+
 }
 
-body.rng-rarity-legendary::before {
+body.rng-rarity-legendary {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #7b671f 0%,
+
             #6c5d2c 28%,
+
             #5d5234 55%,
+
             #4e4839 78%,
+
             #41403d 100%
+
         );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+
 }
 
 button {
+
     font: inherit;
+
 }
 
 .hidden {
+
     display: none !important;
+
 }
 
 .loadingScreen {
+
     min-height: 100vh;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     padding: 24px;
+
 }
 
 .loadingContent {
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 18px;
+
 }
 
 .loadingContent h1 {
+
     margin: 0;
+
     color: #dce7f0;
+
     font-size: 28px;
+
     font-weight: 600;
+
     letter-spacing: -0.4px;
+
 }
 
 .loadingSpinner {
+
     width: 34px;
+
     height: 34px;
+
     border: 3px solid rgba(200, 218, 234, 0.2);
+
     border-top-color: #dbe8f2;
+
     border-radius: 50%;
+
     animation: loadingSpin 0.9s linear infinite;
+
 }
 
 @keyframes loadingSpin {
+
     to {
+
         transform: rotate(360deg);
+
     }
+
 }
 
 .mainScreen {
-    position: relative;
+
     min-height: 100vh;
+
     padding: 24px 88px 24px 24px;
+
 }
 
 .activityContainer {
+
     width: min(1050px, 100%);
+
     margin: 0 auto;
+
 }
 
 .navigation {
+
     display: grid;
+
     grid-template-columns: repeat(3, minmax(0, 1fr));
+
     gap: 11px;
+
     margin-bottom: 15px;
+
     padding: 15px;
+
     border: 1px solid rgba(138, 166, 191, 0.2);
+
     border-radius: 25px;
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #102b4b 0%,
+
             #172f49 42%,
+
             #242e35 72%,
+
             #2d3236 100%
+
         );
+
     box-shadow:
+
         0 14px 34px rgba(2, 10, 20, 0.36),
+
         inset 0 1px 0 rgba(181, 208, 228, 0.06);
+
 }
 
 .tabButton {
+
     min-height: 48px;
+
     padding: 0 21px;
+
     position: relative;
+
     overflow: visible;
+
     border: 1px solid rgba(170, 196, 216, 0.2);
+
     border-radius: 999px;
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #476f92 0%,
+
             #3d6385 50%,
+
             #335775 100%
+
         );
+
     color: #ffffff;
+
     font-size: 16px;
+
     font-weight: 800;
+
     letter-spacing: 0.85px;
+
     cursor: pointer;
+
     box-shadow:
+
         0 6px 15px rgba(2, 14, 27, 0.3),
+
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
     transition:
+
         background 0.18s ease,
+
         border-color 0.18s ease,
+
         box-shadow 0.18s ease;
+
 }
 
 .tabButton:hover {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #527ca0 0%,
+
             #477098 50%,
+
             #3b6485 100%
+
         );
+
     border-color: rgba(201, 222, 237, 0.34);
+
     box-shadow:
+
         0 9px 19px rgba(2, 14, 27, 0.34),
+
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
 }
 
 .tabButton:active {
+
     transform: none;
+
 }
 
 .tabButton:focus-visible {
+
     outline: 3px solid rgba(168, 202, 225, 0.46);
+
     outline-offset: 3px;
+
 }
 
 .tabButton.active {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #5b83a5 0%,
+
             #4d7395 50%,
+
             #406788 100%
+
         );
+
     border-color: rgba(213, 230, 241, 0.38);
+
     color: #ffffff;
+
     box-shadow:
+
         0 8px 20px rgba(2, 14, 27, 0.38),
+
         inset 0 1px 0 rgba(255, 255, 255, 0.11);
+
 }
 
 .tabLabel {
+
     position: relative;
+
     z-index: 4;
+
     pointer-events: none;
+
 }
 
 .tabButton.clickJerk {
+
     animation: clickJerk 0.2s cubic-bezier(0.22, 0.8, 0.25, 1);
+
 }
 
 @keyframes clickJerk {
+
     0% { transform: translate(0, 0) rotate(0deg); }
+
     22% { transform: translate(-3px, 1px) rotate(-1deg); }
+
     45% { transform: translate(3px, -1px) rotate(1deg); }
+
     68% { transform: translate(-2px, 0) rotate(-0.5deg); }
+
     100% { transform: translate(0, 0) rotate(0deg); }
+
 }
 
 .buttonEffectImage {
+
     position: absolute;
+
     top: 50%;
+
     object-fit: contain;
+
     pointer-events: none;
+
     z-index: 3;
+
     opacity: 0;
+
 }
 
 .carEffect {
+
     width: 82px;
+
     height: 82px;
+
     animation:
+
         carDrive 3s linear forwards;
+
 }
 
 .tornadoEffect {
+
     width: 90px;
+
     height: 90px;
+
     animation:
+
         tornadoChase 3s linear 1s forwards;
+
 }
 
 @keyframes carDrive {
+
     0% {
+
         left: 0;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(-0.8deg);
+
     }
 
     20% {
+
         left: 20%;
+
         opacity: 1;
+
         transform: translateY(calc(-50% - 1px)) rotate(0.3deg);
+
     }
 
     40% {
+
         left: 40%;
+
         opacity: 1;
+
         transform: translateY(calc(-50% + 1px)) rotate(-0.25deg);
+
     }
 
     60% {
+
         left: 60%;
+
         opacity: 1;
+
         transform: translateY(calc(-50% - 0.8px)) rotate(0.2deg);
+
     }
 
     80% {
+
         left: 80%;
+
         opacity: 1;
+
         transform: translateY(calc(-50% + 0.8px)) rotate(-0.2deg);
+
     }
 
     93.33% {
+
         left: calc(93.33% - 7.73px);
+
         opacity: 1;
+
         transform: translateY(calc(-50% - 1px)) rotate(0.15deg);
+
     }
 
     96.67% {
+
         left: calc(96.67% - 7.73px);
+
         opacity: 0.45;
+
         transform: translateY(calc(-50% + 0.5px)) rotate(-0.1deg);
+
     }
 
     100% {
+
         left: calc(100% - 82px);
+
         opacity: 0;
+
         transform: translateY(-50%) rotate(0deg);
+
     }
+
 }
 
 @keyframes tornadoChase {
+
     0% {
+
         left: 0;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(-2deg);
+
     }
 
     20% {
+
         left: 20%;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(3deg);
+
     }
 
     40% {
+
         left: 40%;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(-3deg);
+
     }
 
     60% {
+
         left: 60%;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(2.5deg);
+
     }
 
     80% {
+
         left: 80%;
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(-2.5deg);
+
     }
 
     93.33% {
+
         left: calc(93.33% - 8.4px);
+
         opacity: 1;
+
         transform: translateY(-50%) rotate(3deg);
+
     }
 
     96.67% {
+
         left: calc(96.67% - 8.4px);
+
         opacity: 0.45;
+
         transform: translateY(-50%) rotate(-1deg);
+
     }
 
     100% {
+
         left: calc(100% - 90px);
+
         opacity: 0;
+
         transform: translateY(-50%) rotate(0deg);
+
     }
+
 }
 
 .rngTopControlArea {
+
     width: 350px;
+
     min-width: 350px;
+
     max-width: 350px;
+
     min-height: 86px;
+
     height: 86px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     margin: 0 auto;
+
     box-sizing: border-box;
+
     background: transparent;
+
 }
 
 .rngActionArea {
+
     width: 100%;
+
     height: 86px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     margin: 0;
+
     padding: 10px 0;
+
     box-sizing: border-box;
+
     background: transparent;
+
 }
 
 .rngGenerateButton {
+
     min-width: 190px;
+
     min-height: 52px;
+
     padding: 0 28px;
+
     border: 1px solid rgba(185, 211, 230, 0.24);
+
     border-radius: 14px;
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #416e98 0%,
+
             #365f87 52%,
+
             #2e5278 100%
+
         );
+
     color: #ffffff;
+
     font-size: 16px;
+
     font-weight: 800;
+
     letter-spacing: 0.5px;
+
     cursor: pointer;
+
     box-shadow:
+
         0 7px 16px rgba(2, 14, 27, 0.28),
+
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
     transition:
+
         background 0.18s ease,
+
         border-color 0.18s ease,
+
         box-shadow 0.18s ease,
+
         transform 0.18s ease;
+
 }
 
 .rngGenerateButton:hover {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #4c7da8 0%,
+
             #3e6b93 52%,
+
             #345c82 100%
+
         );
+
     border-color: rgba(207, 226, 239, 0.34);
+
     box-shadow:
+
         0 9px 19px rgba(2, 14, 27, 0.32),
+
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
     transform: translateY(-1px);
+
 }
 
 .rngGenerateButton:active {
+
     transform: translateY(1px);
+
 }
 
 .rngDailyStatus {
+
     width: 100%;
+
     height: 86px;
+
     min-height: 86px;
+
     margin: 0;
+
     padding: 8px 0;
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
+
     text-align: center;
+
     color: #949a9f;
+
     box-sizing: border-box;
+
     background: transparent;
+
     border: 0;
+
     box-shadow: none;
+
 }
 
 .rngDailyMessage {
+
     color: #949a9f;
+
     font-size: 14px;
+
     line-height: 1.4;
+
 }
 
 .rngDailyCountdown {
+
     margin-top: 4px;
+
     color: #898f94;
+
     font-size: 15px;
+
     font-weight: 600;
+
     letter-spacing: 0.04em;
+
 }
 
 .rngResultPanel {
+
     width: 350px;
+
     min-width: 350px;
+
     max-width: 350px;
+
     margin: 0 auto;
+
     padding: 0;
+
     box-sizing: border-box;
+
     background: transparent;
+
     border: 0;
+
     box-shadow: none;
+
     overflow: visible;
+
 }
 
 .rngScramble {
+
     width: 350px;
+
     min-width: 350px;
+
     max-width: 350px;
+
     min-height: 58px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     margin: 0 auto;
+
     padding: 10px 0 24px;
+
     box-sizing: border-box;
+
     position: relative;
+
     z-index: 2;
+
     color: #21b7ff;
+
     font-family: "Courier New", Courier, monospace;
+
     font-size: 29px;
+
     font-weight: 900;
+
     letter-spacing: 2.4px;
+
     line-height: 1.2;
+
     text-align: center;
+
     text-shadow:
+
         0 0 8px rgba(33, 183, 255, 0.24);
+
     word-break: break-all;
+
     overflow-wrap: anywhere;
+
     visibility: visible;
+
     opacity: 1;
+
     background: transparent;
+
     border: 0;
+
 }
 
 .rngRecordCard {
+
     position: relative;
+
     transform-origin: center center;
+
     will-change: transform;
+
     width: 350px;
+
     min-width: 350px;
+
     max-width: 350px;
+
     margin: 0 auto;
+
     padding: 24px;
+
     box-sizing: border-box;
+
     border: 1px solid rgba(190, 214, 231, 0.2);
+
     border-radius: 20px;
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #203e5e 0%,
+
             #253845 46%,
+
             #313739 100%
+
         );
+
     box-shadow:
+
         0 14px 28px rgba(2, 10, 20, 0.28),
+
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
+
     overflow: hidden;
+
 }
 
 .rngRecordCard.rng-rarity-common {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #304b65 0%,
+
             #354653 46%,
+
             #31383d 100%
+
         );
+
 }
 
 .rngRecordCard.rng-rarity-uncommon {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #205f5c 0%,
+
             #2b4f53 46%,
+
             #313b40 100%
+
         );
+
 }
 
 .rngRecordCard.rng-rarity-rare {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #21598a 0%,
+
             #2d485f 46%,
+
             #303b43 100%
+
         );
+
 }
 
 .rngRecordCard.rng-rarity-legendary {
+
     background:
+
         linear-gradient(
+
             135deg,
+
             #695719 0%,
+
             #50472f 46%,
+
             #343a3e 100%
+
         );
+
 }
 
 .rngRecordHeader {
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     gap: 6px;
+
     margin-bottom: 18px;
+
     text-align: center;
+
     background: transparent;
+
 }
 
 .rngRecordLabel {
+
     color: rgba(193, 215, 229, 0.62);
+
     font-size: 14px;
+
     font-weight: 800;
+
     letter-spacing: 1.4px;
+
     text-transform: uppercase;
+
 }
 
 .rngRecordValue {
+
     width: 100%;
+
     max-width: 100%;
+
     color: #f3f8fc;
+
     font-family: "Courier New", Courier, monospace;
+
     font-size: 24px;
+
     font-weight: 900;
+
     letter-spacing: 1px;
+
     line-height: 1.15;
+
     text-align: center;
+
     word-break: break-all;
+
     overflow-wrap: anywhere;
+
 }
 
 .rngStats {
+
     width: 100%;
+
     max-width: 100%;
+
     display: grid;
+
     grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 9px;
+
     margin-bottom: 18px;
+
     background: transparent;
+
 }
 
 .rngStat {
+
     position: relative;
+
     min-width: 0;
+
     min-height: 72px;
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 5px;
+
     padding: 10px 11px;
+
     border: 0;
+
     border-radius: 0;
+
     background: transparent;
+
     overflow: visible;
+
     text-align: center;
+
 }
 
-.rngStatLabel {
-    width: 100%;
-    color: rgba(190, 211, 226, 0.6);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 1.1px;
-    line-height: 1.2;
-    text-align: center;
-    text-transform: uppercase;
+.rngStat:nth-child(3),
+
+.rngStat:nth-child(4) {
+
+    min-height: 124px;
+
 }
 
-.rngLifetimeStatLabel {
-    position: relative;
-    left: 0;
-    white-space: normal;
-    font-size: 0;
-    letter-spacing: 1.1px;
-    line-height: 1.2;
-    overflow: visible;
-    text-align: center;
+.rngStat:nth-child(1),
+
+.rngStat:nth-child(2) {
+
+    align-self: start;
+
 }
 
-.rngLifetimeStatLabel::before {
-    content: "Total";
-    display: block;
-    font-size: 14px;
-    line-height: 1.2;
-}
+.rngStat:nth-child(3) .rngStatLabel,
 
-.rngLifetimeStatLabel::after {
-    content: "Score";
-    display: block;
-    font-size: 14px;
-    line-height: 1.2;
-}
+.rngStat:nth-child(4) .rngStatLabel {
 
-.rngStatValue {
-    position: relative;
-    width: 100%;
-    color: #edf6fb;
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 21px;
-    min-height: 21px;
-    text-align: center;
-    overflow-wrap: anywhere;
-}
-
-.rngLifetimeScoreValue {
-    position: relative;
-    top: -6px;
-    left: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 21px;
-    min-height: 21px;
-    white-space: nowrap;
-    overflow: visible;
-    font-size: 18px;
-    line-height: 21px;
-    font-variant-numeric: tabular-nums;
-}
-
-.rngLifetimeNormalValue {
-    position: relative;
-    z-index: 1;
-    display: inline-block;
-    line-height: 21px;
-    font-size: 18px;
-    transform: translateY(0);
-}
-
-.rngLifetimeWheel {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: max-content;
-    height: 72px;
-    min-height: 72px;
-    transform:
-        translate(
-            -50%,
-            -50%
-        );
-    opacity: 0;
-    pointer-events: none;
-    transition:
-        opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
-    white-space: nowrap;
-    font-size: 18px;
-}
 
-.rngLifetimeDigit {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 0.62em;
-    height: 72px;
-    min-height: 72px;
-    overflow: hidden;
-    flex-shrink: 0;
-    mask-image:
-        linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.6) 14%,
-            rgba(0, 0, 0, 0.9) 25%,
-            #000000 34%,
-            #000000 66%,
-            rgba(0, 0, 0, 0.9) 75%,
-            rgba(0, 0, 0, 0.6) 86%,
-            transparent 100%
-        );
-    -webkit-mask-image:
-        linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.6) 14%,
-            rgba(0, 0, 0, 0.9) 25%,
-            #000000 34%,
-            #000000 66%,
-            rgba(0, 0, 0, 0.9) 75%,
-            rgba(0, 0, 0, 0.6) 86%,
-            transparent 100%
-        );
-}
+    top: 10px;
 
-.rngLifetimeDigitStrip {
-    position: absolute;
-    top: 0;
     left: 0;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: max-content;
-    will-change: transform;
-}
 
-.rngLifetimeDigitFace {
-    position: relative;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 0;
+
     width: 100%;
-    height: 18px;
-    min-height: 18px;
-    line-height: 18px;
-    text-align: center;
-    flex-shrink: 0;
-    font-size: 18px;
-    font-weight: 800;
-    font-family: inherit;
-    font-variant-numeric: tabular-nums;
-    backface-visibility: hidden;
-    transform-origin: center center;
+
+    height: 34px;
+
+    margin: 0;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
 }
 
 .rngStat:nth-child(4) .rngStatValue {
-    top: 8px;
-}
 
-.rngModifiersSection {
+    position: absolute;
+
+    top: 74.5px;
+
+    left: 0;
+
+    right: 0;
+
     width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 9px;
-    background: transparent;
-}
 
-.rngModifiersTitle {
-    width: 100%;
-    color: #dbeaf4;
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 1.1px;
-    text-align: center;
-    text-transform: uppercase;
-}
+    height: 21px;
 
-.rngModifiers {
-    width: 100%;
-    max-width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 7px;
-    background: transparent;
-}
+    min-height: 21px;
 
-.rngModifier {
-    min-width: 0;
-    min-height: 60px;
-    padding: 10px 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    overflow: hidden;
-    text-align: center;
-}
-
-.rngModifierName {
-    margin-bottom: 5px;
-    color: #f0f6fa;
-    font-size: 14px;
-    font-weight: 800;
-    text-align: center;
-    overflow-wrap: anywhere;
-}
-
-.rngModifierValue {
-    color: rgba(203, 220, 231, 0.76);
-    font-size: 12px;
-    line-height: 1.4;
-    text-align: center;
-    overflow-wrap: anywhere;
-}
-
-.rngNoModifiers {
-    width: 100%;
-    padding: 14px;
-    border: 0;
-    border-radius: 0;
-    color: rgba(155, 165, 172, 0.68);
-    font-size: 12px;
-    text-align: center;
-    background: transparent;
-}
-
-.rngResultPopIn {
-    animation:
-        rngResultPopIn 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.08) var(--rng-pop-delay, 0s) both;
-}
-
-@keyframes rngResultPopIn {
-    0% {
-        opacity: 0;
-        transform: translateY(12px) scale(0.88);
-    }
-
-    45% {
-        opacity: 1;
-        transform: translateY(-3px) scale(1.06);
-    }
-
-    70% {
-        opacity: 1;
-        transform: translateY(1px) scale(0.985);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.rngRecordCard.rngRecordCardFinalPop {
-    animation:
-        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
-}
-
-@keyframes rngRecordCardFinalPop {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    45% {
-        opacity: 1;
-        transform: translateY(-4px) scale(1.07);
-    }
-
-    70% {
-        opacity: 1;
-        transform: translateY(1px) scale(0.985);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.tabScreen {
-    min-height: 430px;
-    padding: 32px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-}
-
-.tabHeader {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.tabEyebrow {
-    color: rgba(184, 207, 224, 0.6);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.4px;
-}
-
-.tabScreen h1 {
     margin: 0;
-    color: #e8f1f7;
-    font-size: 31px;
-    font-weight: 700;
-    letter-spacing: -0.7px;
+
 }
 
-.scrollRail {
-    position: absolute;
-    top: 0;
-    right: 17px;
-    width: 55px;
-    min-height: 100vh;
-    pointer-events: none;
-    overflow: visible;
-    z-index: 10;
-}
+.rngStatLabel {
 
-.scrollIndicator {
-    position: absolute;
-    left: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: max-content;
-    color: rgba(197, 216, 230, 0.58);
-    font-size: 9px;
-    font-weight: 800;
-    white-space: nowrap;
-    transform: translateX(-50%) rotate(90deg);
-}
+    width: 100%;
 
-.scrollIndicator strong {
-    font-size: 10px;
-    letter-spacing: 1.4px;
-    color: rgba(216, 229, 239, 0.66);
-}
+    color: rgba(190, 211, 226, 0.6);
 
-.scrollIndicator span {
-    color: rgba(178, 204, 222, 0.64);
-    font-size: 12px;
-}
-
-.error {
-    position: fixed;
-    left: 20px;
-    right: 86px;
-    bottom: 20px;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 14px 18px;
-    border: 1px solid rgba(177, 205, 225, 0.18);
-    border-radius: 15px;
-    background:
-        linear-gradient(
-            135deg,
-            #122b47 0%,
-            #252e34 100%
-        );
-    color: #ffffff;
     font-size: 14px;
-    line-height: 1.45;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-}
 
-.normalButtonWiggle {
-    animation: normalButtonWiggle 0.45s ease-in-out infinite;
-}
+    font-weight: 800;
 
-@keyframes normalButtonWiggle {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
+    letter-spacing: 1.1px;
 
-    25% {
-        transform: translateX(-3px);
-    }
+    line-height: 1.2;
 
-    75% {
-        transform: translateX(3px);
-    }
-}
+    text-align: center;
 
-.musicToggleButton {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    z-index: 100000;
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    border: 1px solid rgba(190, 214, 231, 0.22);
-    border-radius: 12px;
-    background:
-        linear-gradient(
-            135deg,
-            #203e5e 0%,
-            #253845 52%,
-            #313739 100%
-        );
-    color: #ffffff;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    box-shadow:
-        0 7px 16px rgba(2, 14, 27, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    transition:
-        background 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
-}
+    text-transform: uppercase;
 
-.musicToggleButton:hover {
-    border-color: rgba(207, 226, 239, 0.34);
-    box-shadow:
-        0 9px 19px rgba(2, 14, 27, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation:
-        musicButtonWiggle 3.84s ease-in-out infinite;
-}
-
-@keyframes musicButtonWiggle {
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    20% {
-        transform: translateX(-4px);
-    }
-
-    40% {
-        transform: translateX(4px);
-    }
-
-    60% {
-        transform: translateX(-4px);
-    }
-
-    80% {
-        transform: translateX(4px);
-    }
-}
-
-.musicToggleButton:active {
-    transform: none;
-}
-
-.musicToggleButton:focus-visible {
-    outline: 3px solid rgba(168, 202, 225, 0.46);
-    outline-offset: 3px;
-}
-
-.rngRarityValue {
-    position: relative;
-    z-index: 1;
-    display: inline-block;
-    width: max-content;
-    max-width: none;
-    white-space: nowrap;
-    overflow: visible;
-    isolation: isolate;
-}
-
-.rngStat:has(.rngRarityValue) {
-    overflow: visible;
-}
-
-.rngRarityValue::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 210%;
-    height: 285%;
-    transform: translate(-50%, -50%);
-    border-radius: 999px;
-    filter: blur(8px);
-    opacity: 0.25;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.rngRarityValue::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 82%;
-    height: 68%;
-    transform: translate(-50%, -50%);
-    border-radius: 999px;
-    filter: blur(5px);
-    opacity: 0.25;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 255, 255, 1) 0%,
-            rgba(255, 255, 255, 0.94) 16%,
-            rgba(245, 250, 255, 0.76) 36%,
-            rgba(225, 237, 246, 0.4) 58%,
-            rgba(220, 231, 240, 0) 86%
-        );
-    box-shadow:
-        0 0 42px 18px rgba(240, 247, 255, 0.56);
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityValue::after {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 255, 255, 1) 0%,
-            rgba(255, 255, 255, 0.98) 28%,
-            rgba(245, 250, 255, 0.56) 52%,
-            rgba(220, 231, 240, 0) 100%
-        );
-    box-shadow:
-        0 0 26px 10px rgba(255, 255, 255, 0.42);
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(200, 255, 248, 1) 0%,
-            rgba(145, 255, 242, 0.98) 16%,
-            rgba(79, 209, 197, 0.78) 38%,
-            rgba(79, 209, 197, 0.38) 58%,
-            rgba(79, 209, 197, 0) 86%
-        );
-    box-shadow:
-        0 0 44px 18px rgba(79, 209, 197, 0.62);
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue::after {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(225, 255, 251, 1) 0%,
-            rgba(185, 255, 247, 1) 26%,
-            rgba(115, 255, 237, 0.72) 52%,
-            rgba(79, 209, 197, 0) 100%
-        );
-    box-shadow:
-        0 0 28px 11px rgba(115, 255, 237, 0.48);
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(220, 242, 255, 1) 0%,
-            rgba(170, 220, 255, 1) 16%,
-            rgba(77, 166, 255, 0.86) 38%,
-            rgba(77, 166, 255, 0.46) 58%,
-            rgba(77, 166, 255, 0) 86%
-        );
-    box-shadow:
-        0 0 48px 19px rgba(77, 166, 255, 0.7);
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue::after {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 255, 255, 1) 0%,
-            rgba(226, 248, 255, 1) 24%,
-            rgba(177, 222, 255, 0.86) 48%,
-            rgba(77, 166, 255, 0) 100%
-        );
-    box-shadow:
-        0 0 32px 12px rgba(206, 239, 255, 0.62);
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 255, 215, 1) 0%,
-            rgba(255, 249, 180, 1) 15%,
-            rgba(255, 226, 86, 0.9) 38%,
-            rgba(255, 216, 77, 0.5) 58%,
-            rgba(255, 216, 77, 0) 86%
-        );
-    box-shadow:
-        0 0 52px 20px rgba(255, 216, 77, 0.74);
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 255, 238, 1) 0%,
-            rgba(255, 253, 210, 1) 24%,
-            rgba(255, 244, 168, 0.92) 48%,
-            rgba(255, 216, 77, 0) 100%
-        );
-    box-shadow:
-        0 0 36px 13px rgba(255, 241, 164, 0.62);
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue,
-.rngRecordCard.rng-rarity-legendary .rngRarityValue {
-    background-size: 300% 100%;
-    background-position: 240% 0;
-    background-repeat: no-repeat;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent !important;
-    animation:
-        rngRarityShine 2.2s linear infinite;
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue {
-    background-image:
-        linear-gradient(
-            110deg,
-            #4da6ff 0%,
-            #4da6ff 34%,
-            #dff3ff 44%,
-            #ffffff 50%,
-            #dff3ff 56%,
-            #4da6ff 66%,
-            #4da6ff 100%
-        );
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue {
-    background-image:
-        linear-gradient(
-            110deg,
-            #ffd84d 0%,
-            #ffd84d 34%,
-            #fff8c4 44%,
-            #ffffff 50%,
-            #fff8c4 56%,
-            #ffd84d 66%,
-            #ffd84d 100%
-        );
-}
-
-@keyframes rngRarityShine {
-    0% {
-        background-position: 240% 0;
-    }
-
-    100% {
-        background-position: -40% 0;
-    }
 }
 
 .rngLifetimeStatLabel {
+
+    position: absolute;
+
+    top: 10px;
+
     left: 0;
+
+    right: 0;
+
+    width: 100%;
+
+    height: 34px;
+
+    white-space: normal;
+
+    font-size: 0;
+
+    letter-spacing: 1.1px;
+
+    line-height: 1.2;
+
+    overflow: visible;
+
     text-align: center;
+
+    z-index: 3;
+
+}
+
+.rngLifetimeStatLabel::before {
+
+    content: "Total";
+
+    display: block;
+
+    font-size: 14px;
+
+    line-height: 1.2;
+
+}
+
+.rngLifetimeStatLabel::after {
+
+    content: "Score";
+
+    display: block;
+
+    font-size: 14px;
+
+    line-height: 1.2;
+
+}
+
+.rngStatValue {
+
+    position: relative;
+
+    width: 100%;
+
+    color: #edf6fb;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    line-height: 21px;
+
+    min-height: 21px;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
 }
 
 .rngLifetimeScoreValue {
-    top: -6px;
+
+    position: absolute;
+
+    top: 0;
+
     left: 0;
-    font-size: 18px;
+
+    right: 0;
+
+    display: block;
+
+    width: 100%;
+
+    height: 124px;
+
+    min-height: 124px;
+
+    margin: 0;
+
+    white-space: nowrap;
+
+    overflow: visible;
+
+    font-size: inherit;
+
+    line-height: 21px;
+
+    font-variant-numeric: tabular-nums;
+
+    transform-origin: center 85px;
+
+}
+
+.rngLifetimeNormalValue {
+
+    position: absolute;
+
+    top: 74.5px;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 21px;
+
+    min-height: 21px;
+
+    line-height: 21px;
+
     text-align: center;
+
+}
+
+.rngLifetimeWheel {
+
+    position: absolute;
+
+    top: 49px;
+
+    left: 50%;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: max-content;
+
+    height: 72px;
+
+    min-height: 72px;
+
+    transform:
+
+        translateX(
+
+            -50%
+
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+
+        opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
+
+    white-space: nowrap;
+
+}
+
+.rngLifetimeDigit {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 0.62em;
+
+    height: 72px;
+
+    min-height: 72px;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+    mask-image:
+
+        linear-gradient(
+
+            to bottom,
+
+            transparent 0%,
+
+            rgba(0, 0, 0, 0.72) 18%,
+
+            #000000 31%,
+
+            #000000 69%,
+
+            rgba(0, 0, 0, 0.72) 82%,
+
+            transparent 100%
+
+        );
+
+    -webkit-mask-image:
+
+        linear-gradient(
+
+            to bottom,
+
+            transparent 0%,
+
+            rgba(0, 0, 0, 0.72) 18%,
+
+            #000000 31%,
+
+            #000000 69%,
+
+            rgba(0, 0, 0, 0.72) 82%,
+
+            transparent 100%
+
+        );
+
+}
+
+.rngLifetimeDigitStrip {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    height: max-content;
+
+    will-change: transform;
+
+}
+
+.rngLifetimeDigitFace {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 18px;
+
+    min-height: 18px;
+
+    line-height: 18px;
+
+    text-align: center;
+
+    flex-shrink: 0;
+
+    font-size: inherit;
+
+    font-weight: inherit;
+
+    font-family: inherit;
+
+    font-variant-numeric: tabular-nums;
+
+    backface-visibility: hidden;
+
+    transform-origin: center center;
+
+}
+
+.rngModifiersSection {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 9px;
+
+    background: transparent;
+
+}
+
+.rngModifiersTitle {
+
+    width: 100%;
+
+    color: #dbeaf4;
+
+    font-size: 14px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.1px;
+
+    text-align: center;
+
+    text-transform: uppercase;
+
+}
+
+.rngModifiers {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 7px;
+
+    background: transparent;
+
+}
+
+.rngModifier {
+
+    min-width: 0;
+
+    min-height: 60px;
+
+    padding: 10px 0;
+
+    border: 0;
+
+    border-radius: 0;
+
+    background: transparent;
+
+    overflow: hidden;
+
+    text-align: center;
+
+}
+
+.rngModifierName {
+
+    margin-bottom: 5px;
+
+    color: #f0f6fa;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
+}
+
+.rngModifierValue {
+
+    color: rgba(203, 220, 231, 0.76);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
+}
+
+.rngNoModifiers {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: 0;
+
+    border-radius: 0;
+
+    color: rgba(155, 165, 172, 0.68);
+
+    font-size: 12px;
+
+    text-align: center;
+
+    background: transparent;
+
+}
+
+.rngRecordCard.rngRecordCardFinalPop {
+
+    animation:
+
+        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+
+}
+
+@keyframes rngRecordCardFinalPop {
+
+    0% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+    45% {
+
+        opacity: 1;
+
+        transform: translateY(-4px) scale(1.07);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform: translateY(1px) scale(0.985);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}
+
+.tabScreen {
+
+    min-height: 430px;
+
+    padding: 32px;
+
+    border: 0;
+
+    border-radius: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+
+}
+
+.tabHeader {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.tabEyebrow {
+
+    color: rgba(184, 207, 224, 0.6);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
+}
+
+.tabScreen h1 {
+
+    margin: 0;
+
+    color: #e8f1f7;
+
+    font-size: 31px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.7px;
+
+}
+
+.scrollRail {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 17px;
+
+    width: 55px;
+
+    min-height: 100vh;
+
+    pointer-events: none;
+
+    overflow: visible;
+
+    z-index: 10;
+
+}
+
+.scrollIndicator {
+
+    position: absolute;
+
+    left: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    width: max-content;
+
+    color: rgba(197, 216, 230, 0.58);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    transform: translateX(-50%) rotate(90deg);
+
+}
+
+.scrollIndicator strong {
+
+    font-size: 10px;
+
+    letter-spacing: 1.4px;
+
+    color: rgba(216, 229, 239, 0.66);
+
+}
+
+.scrollIndicator span {
+
+    color: rgba(178, 204, 222, 0.64);
+
+    font-size: 12px;
+
+}
+
+.error {
+
+    position: fixed;
+
+    left: 20px;
+
+    right: 86px;
+
+    bottom: 20px;
+
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    padding: 14px 18px;
+
+    border: 1px solid rgba(177, 205, 225, 0.18);
+
+    border-radius: 15px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #122b47 0%,
+
+            #252e34 100%
+
+        );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+
+}
+
+.normalButtonWiggle {
+
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+
+}
+
+@keyframes normalButtonWiggle {
+
+    0%,
+
+    100% {
+
+        transform: translateX(0);
+
+    }
+
+    25% {
+
+        transform: translateX(-3px);
+
+    }
+
+    75% {
+
+        transform: translateX(3px);
+
+    }
+
+}
+
+.rngLaunchFlash {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    pointer-events: none;
+
+    background: #ffffff;
+
+    animation:
+
+        rngLaunchFlash 0.6s ease-out forwards;
+
+}
+
+@keyframes rngLaunchFlash {
+
+    0% {
+
+        opacity: 0;
+
+    }
+
+    12% {
+
+        opacity: 1;
+
+    }
+
+    38% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+    }
+
+}
+
+.rngResultPopIn {
+
+    animation:
+
+        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+
+    animation-delay: var(--rng-pop-delay, 0s);
+
+}
+
+@keyframes rngResultPopIn {
+
+    0% {
+
+        opacity: 0;
+
+        transform: translateY(12px) scale(0.88);
+
+    }
+
+    55% {
+
+        opacity: 1;
+
+        transform: translateY(-3px) scale(1.025);
+
+    }
+
+    78% {
+
+        opacity: 1;
+
+        transform: translateY(1px) scale(0.995);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
 }
 
 @media (max-width: 700px) {
 
     .mainScreen {
+
         padding: 16px 66px 16px 16px;
+
     }
 
     .navigation {
+
         gap: 7px;
+
         padding: 11px;
+
         border-radius: 22px;
+
     }
 
     .tabButton {
+
         min-height: 44px;
+
         padding: 0 9px;
+
         font-size: 11px;
+
         letter-spacing: 0.4px;
+
     }
 
     .buttonEffectImage {
+
         width: 64px;
+
         height: 64px;
+
     }
 
     .tornadoEffect {
+
         width: 72px;
+
         height: 72px;
+
     }
 
     .rngTopControlArea {
+
         min-height: 86px;
+
         height: 86px;
+
     }
 
     .rngGenerateButton {
+
         min-width: 170px;
+
         min-height: 48px;
+
         padding: 0 22px;
+
         font-size: 14px;
+
     }
 
     .rngScramble {
+
         min-height: 48px;
+
         padding: 8px 0 20px;
+
         font-size: 24px;
+
         letter-spacing: 2px;
+
     }
 
     .rngRecordCard {
+
         padding: 22px;
+
     }
 
     .rngStats {
+
         grid-template-columns: repeat(2, minmax(0, 1fr));
+
     }
 
     .tabScreen {
+
         min-height: 360px;
+
         padding: 24px;
+
     }
 
     .tabScreen h1 {
+
         font-size: 26px;
+
     }
 
     .scrollRail {
+
         right: 12px;
+
         width: 44px;
+
     }
 
     .scrollIndicator {
+
         gap: 4px;
+
         font-size: 8px;
+
     }
 
     .scrollIndicator strong {
+
         font-size: 8px;
+
         letter-spacing: 1px;
+
     }
 
     .scrollIndicator span {
+
         font-size: 10px;
+
     }
 
     .error {
+
         right: 68px;
+
     }
+
 }
 
 @media (max-width: 430px) {
 
     .mainScreen {
+
         padding-right: 55px;
+
     }
 
     .navigation {
+
         gap: 5px;
+
         padding: 9px;
+
     }
 
     .tabButton {
+
         min-height: 40px;
+
         padding: 0 6px;
+
         font-size: 9px;
+
     }
 
     .buttonEffectImage {
+
         width: 54px;
+
         height: 54px;
+
     }
 
     .tornadoEffect {
+
         width: 62px;
+
         height: 62px;
+
     }
 
     .rngTopControlArea {
+
         min-height: 86px;
+
         height: 86px;
+
     }
 
     .rngGenerateButton {
+
         min-width: 155px;
+
         min-height: 44px;
+
         padding: 0 18px;
+
         font-size: 13px;
+
     }
 
     .rngScramble {
+
         min-height: 52px;
+
         padding: 8px 0 20px;
+
         font-size: 21px;
+
         letter-spacing: 1.7px;
+
     }
 
     .rngRecordCard {
+
         padding: 20px;
+
     }
 
     .rngRecordValue {
+
         font-size: 22px;
+
     }
 
     .tabScreen {
+
         padding: 20px;
+
     }
 
     .tabScreen h1 {
+
         font-size: 24px;
+
     }
 
     .scrollRail {
+
         right: 8px;
+
         width: 38px;
+
     }
 
     .scrollIndicator {
+
         gap: 3px;
+
     }
 
     .scrollIndicator strong {
+
         font-size: 7px;
+
     }
 
     .scrollIndicator span {
+
         font-size: 9px;
+
     }
 
     .error {
+
         right: 58px;
+
     }
+}
+
+.musicToggleButton {
+
+    position: fixed;
+
+    top: 14px;
+
+    left: 14px;
+
+    z-index: 100000;
+
+    width: 42px;
+
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid rgba(190, 214, 231, 0.22);
+
+    border-radius: 12px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #203e5e 0%,
+
+            #253845 52%,
+
+            #313739 100%
+
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 7px 16px rgba(2, 14, 27, 0.28),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+
+        background 0.18s ease,
+
+        border-color 0.18s ease,
+
+        box-shadow 0.18s ease,
+
+        transform 0.18s ease;
+
+}
+
+.musicToggleButton:hover {
+
+    border-color: rgba(207, 226, 239, 0.34);
+
+    box-shadow:
+
+        0 9px 19px rgba(2, 14, 27, 0.34),
+
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    transform: translateY(-1px);
+
+    animation: musicButtonWiggle 3.84s ease-in-out infinite;
+
+}
+
+.musicToggleButton:active {
+
+    transform: translateY(1px);
+
+}
+
+.musicToggleButton:focus-visible {
+
+    outline: 3px solid rgba(168, 202, 225, 0.46);
+
+    outline-offset: 3px;
+
+}
+
+@keyframes musicButtonWiggle {
+
+    0%,
+
+    100% {
+
+        transform: translateX(0);
+
+    }
+
+    25% {
+
+        transform: translateX(-3px);
+
+    }
+
+    75% {
+
+        transform: translateX(3px);
+
+    }
+
+}
+
+.rngRarityValue {
+
+    position: relative;
+
+    z-index: 1;
+
+    display: inline-block;
+
+    width: auto;
+
+    max-width: 100%;
+
+    padding: 0 6px;
+
+    overflow: visible;
+
+    white-space: nowrap;
+
+    isolation: isolate;
+
+}
+
+.rngRarityValue::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    width: calc(100% + 38px);
+
+    height: 175%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 999px;
+
+    filter: blur(9px);
+
+    opacity: 0.25;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(220, 231, 240, 0.38) 0%,
+
+            rgba(220, 231, 240, 0.13) 42%,
+
+            rgba(220, 231, 240, 0) 78%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(79, 209, 197, 0.5) 0%,
+
+            rgba(79, 209, 197, 0.17) 42%,
+
+            rgba(79, 209, 197, 0) 78%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(77, 166, 255, 0.62) 0%,
+
+            rgba(77, 166, 255, 0.2) 42%,
+
+            rgba(77, 166, 255, 0) 80%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
+
+    background:
+
+        radial-gradient(
+
+            ellipse at center,
+
+            rgba(255, 216, 77, 0.68) 0%,
+
+            rgba(255, 216, 77, 0.22) 42%,
+
+            rgba(255, 216, 77, 0) 80%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue::after,
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 6px;
+
+    pointer-events: none;
+
+    color: transparent;
+
+    text-shadow: none;
+
+    font: inherit;
+
+    font-size: inherit;
+
+    font-weight: inherit;
+
+    line-height: inherit;
+
+    letter-spacing: inherit;
+
+    white-space: nowrap;
+
+    background-size: 220% 100%;
+
+    background-position: 200% 50%;
+
+    background-clip: text;
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+
+        rngRarityShine 2.6s ease-in-out infinite;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue {
+
+    color: #4da6ff;
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue {
+
+    color: #ffd84d;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityValue::after {
+
+    content: "Rare";
+
+    background-image:
+
+        linear-gradient(
+
+            105deg,
+
+            #4da6ff 0%,
+
+            #4da6ff 34%,
+
+            #ffffff 48%,
+
+            #4da6ff 62%,
+
+            #4da6ff 100%
+
+        );
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
+
+    content: "Legendary";
+
+    background-image:
+
+        linear-gradient(
+
+            105deg,
+
+            #ffd84d 0%,
+
+            #ffd84d 34%,
+
+            #fff9c4 48%,
+
+            #ffd84d 62%,
+
+            #ffd84d 100%
+
+        );
+
+}
+
+@keyframes rngRarityShine {
+
+    0% {
+
+        background-position: 200% 50%;
+
+    }
+
+    55%,
+
+    100% {
+
+        background-position: -20% 50%;
+
+    }
+
+}
+
+@media (max-width: 430px) {
 
     .musicToggleButton {
+
         top: 10px;
+
         left: 10px;
+
         width: 38px;
+
         height: 38px;
+
         font-size: 16px;
-    }
 
-    .rngLifetimeNormalValue {
-        transform: translateY(0);
-    }
-
-    .rngLifetimeDigitFace {
-        top: 0;
-    }
-
-    .rngLifetimeScoreValue {
-        top: -6px;
-        font-size: 18px;
-    }
-
-    .rngStat:nth-child(4) .rngStatValue {
-        top: 8px;
     }
 
 }
