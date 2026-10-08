@@ -5,7 +5,7 @@ Copyright © 2026 Hunter Games Studios. All rights reserved.
 
 All items in this repository (excluding music) are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
 
-Music by Koizeay; not the property of Hunter Games Studios.
+Music by third party; not the property of Hunter Games Studios.
 
 ### Computer Misuse & Security Warning
 This repository is  for backend technical purposes only. Any unauthorized attempts to:
