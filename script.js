@@ -591,7 +591,6 @@ setTimeout(() => {
     loadingScreen.classList.add('hidden');  
     mainScreen.classList.remove('hidden');  
     updateScrollRail(); 
-    startActivityMusic(); 
  
     if ( 
         rngStoredResultScrollPending && 
@@ -657,7 +656,7 @@ const scrollRail = document.querySelector('.scrollRail');
 	  
 function updateScrollRail() {  
     document.documentElement.style.minHeight = '';  
-    document.body.style.minHeight = '';  
+    document.body.style.minHeight = ''; 
  
     const pageHeight = Math.max(  
         document.documentElement.scrollHeight,  
@@ -667,7 +666,7 @@ function updateScrollRail() {
     );  
  
     document.documentElement.style.minHeight = `${pageHeight}px`;  
-    document.body.style.minHeight = `${pageHeight}px`;  
+    document.body.style.minHeight = `${pageHeight}px`; 
  
     if (!scrollRail) {  
         return;  
@@ -1073,6 +1072,8 @@ function sanitizeRngStoredResult(payload) {
             payload.timesRolled ?? 
             payload.times_rolled ?? 
             1, 
+        duplicateRoll: 
+            payload.duplicateRoll === true, 
         modifiers: payload.modifiers ?? [] 
     }; 
 } 
@@ -1588,7 +1589,7 @@ function showRngDailyStatus() {
     if (!rngDailyStatus) { 
         return; 
     } 
- 
+	 
     rngDailyStatus.classList.remove( 
         'hidden' 
     ); 
@@ -1918,7 +1919,7 @@ function animateRngRecordCard(
 	  
     const childElements =  
         card.querySelectorAll(  
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers, .rngDuplicateOverlay'  
         );  
  
     const elements = [ 
@@ -3640,6 +3641,26 @@ function createRngRecordCard(payload, recordText) {
 	  
     modifiersSection.appendChild(modifiersGrid);  
     card.appendChild(modifiersSection);  
+
+    if (payload.duplicateRoll === true) {
+        const duplicateOverlay =
+            document.createElement('div');
+
+        duplicateOverlay.className =
+            'rngDuplicateOverlay';
+
+        duplicateOverlay.textContent =
+            'DUPLICATE';
+
+        duplicateOverlay.setAttribute(
+            'aria-label',
+            'Duplicate roll'
+        );
+
+        card.appendChild(
+            duplicateOverlay
+        );
+    }
 	  
     return card;  
 }  
@@ -3955,6 +3976,7 @@ function showRngRecordResult(payload) {
                     ); 
  
                 lockedCount = 0; 
+ 
             } else { 
                 appearedCount = 
                     recordText.length; 
