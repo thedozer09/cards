@@ -1298,9 +1298,15 @@ button {
 
     z-index: 3;
 
+    visibility: visible;
+
     opacity: 1;
 
-    transition: opacity 160ms ease;
+    transition:
+
+        opacity 160ms ease,
+
+        visibility 0s linear 0s;
 
 }
 
@@ -1328,19 +1334,19 @@ button {
 
 }
 
-.rngLifetimeStat:has(.rngLifetimeWheel) .rngLifetimeStatLabel {
-
-    opacity: 0;
-
-    pointer-events: none;
-
-}
-
 .rngLifetimeUpdating .rngLifetimeStatLabel {
 
+    visibility: hidden;
+
     opacity: 0;
 
     pointer-events: none;
+
+    transition:
+
+        opacity 160ms ease,
+
+        visibility 0s linear 160ms;
 
 }
 
@@ -1363,6 +1369,24 @@ button {
     text-align: center;
 
     overflow-wrap: anywhere;
+
+}
+
+.rngStat:nth-child(4) .rngStatValue,
+
+.rngLifetimeScoreValue,
+
+.rngLifetimeNormalValue,
+
+.rngLifetimeWheel,
+
+.rngLifetimeDigitFace {
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 18px;
+
+    font-weight: 800;
 
 }
 
@@ -1390,7 +1414,9 @@ button {
 
     overflow: visible;
 
-    font-size: inherit;
+    font-size: 18px;
+
+    font-weight: 800;
 
     line-height: 21px;
 
@@ -1451,6 +1477,10 @@ button {
     height: 72px;
 
     min-height: 72px;
+
+    font-size: 18px;
+
+    font-weight: 800;
 
     transform:
 
@@ -1574,11 +1604,11 @@ button {
 
     flex-shrink: 0;
 
-    font-size: inherit;
+    font-size: 18px;
 
-    font-weight: inherit;
+    font-weight: 800;
 
-    font-family: inherit;
+    font-family: Arial, Helvetica, sans-serif;
 
     font-variant-numeric: tabular-nums;
 
