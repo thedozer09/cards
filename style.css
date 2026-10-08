@@ -1152,6 +1152,8 @@ button {
 
     align-self: start;
 
+    gap: 2px;
+
 }
 
 .rngStat:nth-child(3) .rngStatLabel,
@@ -2237,6 +2239,7 @@ button {
         right: 58px;
 
     }
+
 }
 
 .musicToggleButton {
