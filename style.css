@@ -605,6 +605,22 @@ button {
     overflow-wrap: anywhere;
 }
 
+/* Temporary full-rarity placeholder beneath the record name. */
+
+.rngRecordValue::after {
+    content: "N/A";
+    display: block;
+    margin-top: 6px;
+    color: rgba(193, 215, 229, 0.62);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    line-height: 1.15;
+    text-align: center;
+    text-transform: uppercase;
+}
+
 .rngStats {
     width: 100%;
     max-width: 100%;
@@ -663,6 +679,7 @@ button {
     min-height: 21px;
     margin: 0;
     line-height: 21px;
+    text-align: center;
 }
 
 .rngStat:nth-child(3),
@@ -704,6 +721,24 @@ button {
     line-height: 1.2;
     text-align: center;
     text-transform: uppercase;
+}
+
+/* Visually rename the existing Rarity label to Base Rarity. */
+
+.rngRecordCard .rngStats > .rngStat:nth-child(1) > .rngStatLabel {
+    font-size: 0;
+    letter-spacing: 0;
+}
+
+.rngRecordCard .rngStats > .rngStat:nth-child(1) > .rngStatLabel::after {
+    content: "BASE RARITY";
+    display: block;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .rngLifetimeStatLabel {
@@ -1488,69 +1523,13 @@ button {
 
 /* RARITY GLOW AND TEXT SHINE */
 
-.rngRecordCard .rngStat:nth-child(1) {
-    isolation: isolate;
-}
-
-.rngRecordCard .rngStat:nth-child(1) .rngRarityValue {
-    position: absolute;
-    top: 33px;
-    left: 50%;
-    right: auto;
-    width: fit-content;
-    max-width: 100%;
-    height: 21px;
-    min-height: 21px;
-    margin: 0;
-    padding: 0 6px;
-    transform: translateX(-50%);
-    overflow: visible;
-    white-space: nowrap;
-    isolation: isolate;
-    z-index: 2;
-    background: transparent;
-    line-height: 21px;
-    text-shadow: none;
-    -webkit-text-fill-color: currentColor;
-}
-
-/* Keep the first-row Rarity and Points values level. */
-
-.rngRecordCard .rngStats > .rngStat:nth-child(1) > .rngStatValue,
-.rngRecordCard .rngStats > .rngStat:nth-child(2) > .rngStatValue {
-    top: 33px;
-    height: 21px;
-    min-height: 21px;
-    line-height: 21px;
-}
-
 .rngRarityValue {
     position: relative;
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    padding: 0 6px;
-    overflow: visible;
-    white-space: nowrap;
-    background-image: none;
-    line-height: 21px;
+    isolation: isolate;
+    text-align: center;
     text-shadow: none;
+    background-image: none;
     -webkit-text-fill-color: currentColor;
-}
-
-.rngRarityValue::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(100% + 1.2em);
-    height: 2.3em;
-    transform: translate(-50%, -50%);
-    border-radius: 999px;
-    filter: blur(8px);
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: -1;
 }
 
 .rngRecordCard.rng-rarity-common .rngRarityValue {
@@ -1569,7 +1548,30 @@ button {
     color: #ffd84d;
 }
 
+.rngRarityValue::before {
+    content: "";
+    position: absolute;
+    top: calc(50% - 2px);
+    left: 50%;
+    width: max-content;
+    height: 2.3em;
+    padding: 0 0.6em;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    filter: blur(8px);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: -1;
+    color: transparent;
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    white-space: nowrap;
+    box-sizing: content-box;
+}
+
 .rngRecordCard.rng-rarity-common .rngRarityValue::before {
+    content: "Common";
     background:
         radial-gradient(
             ellipse at center,
@@ -1581,6 +1583,7 @@ button {
 }
 
 .rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
+    content: "Uncommon";
     background:
         radial-gradient(
             ellipse at center,
@@ -1592,6 +1595,7 @@ button {
 }
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue::before {
+    content: "Rare";
     background:
         radial-gradient(
             ellipse at center,
@@ -1603,6 +1607,7 @@ button {
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
+    content: "Legendary";
     background:
         radial-gradient(
             ellipse at center,
