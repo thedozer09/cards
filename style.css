@@ -977,6 +977,7 @@ button {
     }
 }
 
+/* DUPLICATE shine remains unchanged. */
 .rngDuplicateOverlay {
     position: absolute;
     inset: 0;
@@ -1476,19 +1477,73 @@ button {
     }
 }
 
+/*
+============================================================
+RARITY TEXT SHINE AND OVAL GLOW
+============================================================
+
+This section handles the visual effects in CSS.
+The existing JavaScript applies .rngRarityValue to the rarity
+value and the appropriate rng-rarity-* class to the card.
+*/
+
 .rngRarityValue {
-    position: relative;
+    --rng-rarity-color: #dce7f0;
+    --rng-rarity-glow: rgba(220, 231, 240, 0.82);
+    position: relative !important;
     z-index: 1;
-    display: inline-block;
-    width: auto;
+    display: inline-block !important;
+    width: auto !important;
     max-width: 100%;
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding: 0 6px;
-    overflow: visible;
+    overflow: visible !important;
     white-space: nowrap;
+    vertical-align: middle;
     isolation: isolate;
+    color: var(--rng-rarity-color) !important;
     text-shadow:
-        0 0 7px currentColor,
-        0 0 15px currentColor;
+        0 0 7px var(--rng-rarity-glow),
+        0 0 15px var(--rng-rarity-glow),
+        0 0 24px var(--rng-rarity-glow) !important;
+    background-color: transparent !important;
+    background-image:
+        linear-gradient(
+            105deg,
+            var(--rng-rarity-color) 0%,
+            var(--rng-rarity-color) 35%,
+            #ffffff 49%,
+            var(--rng-rarity-color) 63%,
+            var(--rng-rarity-color) 100%
+        );
+    background-size: 300% 100%;
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+}
+
+.rng-rarity-common .rngRarityValue,
+.rngRarityValue.rng-rarity-common {
+    --rng-rarity-color: #dce7f0;
+    --rng-rarity-glow: rgba(220, 231, 240, 0.88);
+}
+
+.rng-rarity-uncommon .rngRarityValue,
+.rngRarityValue.rng-rarity-uncommon {
+    --rng-rarity-color: #4fd1c5;
+    --rng-rarity-glow: rgba(79, 209, 197, 0.95);
+}
+
+.rng-rarity-rare .rngRarityValue,
+.rngRarityValue.rng-rarity-rare {
+    --rng-rarity-color: #4da6ff;
+    --rng-rarity-glow: rgba(77, 166, 255, 1);
+}
+
+.rng-rarity-legendary .rngRarityValue,
+.rngRarityValue.rng-rarity-legendary {
+    --rng-rarity-color: #ffd84d;
+    --rng-rarity-glow: rgba(255, 216, 77, 1);
 }
 
 .rngRarityValue::before {
@@ -1496,106 +1551,37 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
+    display: block;
     width: calc(100% + 46px);
     height: 190%;
+    margin: 0;
+    padding: 0;
     transform: translate(-50%, -50%);
+    transform-origin: center center;
+    border: 0;
     border-radius: 999px;
-    filter: blur(8px);
-    opacity: 1;
+    background:
+        radial-gradient(
+            ellipse at center,
+            var(--rng-rarity-glow) 0%,
+            var(--rng-rarity-glow) 28%,
+            transparent 80%
+        );
+    filter: blur(9px);
+    opacity: 0.9;
     pointer-events: none;
     z-index: -1;
 }
 
-.rngRecordCard.rng-rarity-common .rngRarityValue {
-    color: #dce7f0;
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue {
-    color: #4fd1c5;
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue {
-    color: #4da6ff;
-    background-image:
-        linear-gradient(
-            105deg,
-            #4da6ff 0%,
-            #4da6ff 38%,
-            rgba(255, 255, 255, 0.72) 48%,
-            #4da6ff 58%,
-            #4da6ff 100%
-        );
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation:
-        rngRarityShine 4.8s ease-in-out infinite;
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue {
-    color: #ffd84d;
-    background-image:
-        linear-gradient(
-            105deg,
-            #ffd84d 0%,
-            #ffd84d 38%,
-            rgba(255, 255, 255, 0.76) 48%,
-            #ffd84d 58%,
-            #ffd84d 100%
-        );
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation:
-        rngRarityShine 4.8s ease-in-out infinite;
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(220, 231, 240, 0.82) 0%,
-            rgba(220, 231, 240, 0.46) 32%,
-            rgba(220, 231, 240, 0.18) 58%,
-            rgba(220, 231, 240, 0) 82%
-        );
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(79, 209, 197, 0.9) 0%,
-            rgba(79, 209, 197, 0.5) 32%,
-            rgba(79, 209, 197, 0.2) 58%,
-            rgba(79, 209, 197, 0) 82%
-        );
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(77, 166, 255, 0.95) 0%,
-            rgba(77, 166, 255, 0.55) 32%,
-            rgba(77, 166, 255, 0.22) 58%,
-            rgba(77, 166, 255, 0) 82%
-        );
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 216, 77, 0.98) 0%,
-            rgba(255, 216, 77, 0.58) 32%,
-            rgba(255, 216, 77, 0.24) 58%,
-            rgba(255, 216, 77, 0) 82%
-        );
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    .rngRarityValue {
+        color: transparent !important;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent !important;
+        animation: rngRarityShine 4.8s ease-in-out infinite;
+        will-change: background-position;
+    }
 }
 
 .rngRarityValue::after {
@@ -1609,11 +1595,11 @@ button {
     }
 
     58% {
-        background-position: -10% 50%;
+        background-position: 0% 50%;
     }
 
     100% {
-        background-position: -10% 50%;
+        background-position: 0% 50%;
     }
 }
 
