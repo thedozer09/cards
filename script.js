@@ -192,18 +192,18 @@ function initializeWebSocket() {
                     !Number.isFinite(data.data.lifetimeRecordScore)  
                 ) {  
                     errorMessage.textContent =  
-                        "⚠️ Invalid lifetime score update response.";  
+                        "⚠️ Invalid lifetime score update response."; 
 
                     errorMessage.classList.remove(  
                         "hidden"  
-                    );  
+                    ); 
 
                     return;  
-                }  
+                } 
 
                 applyRngLifetimeUpdateResult(  
                     data.data.lifetimeRecordScore  
-                );  
+                ); 
 
                 return;  
             }  
@@ -992,10 +992,10 @@ function syncRngServerClock(
     }  
 
     rngServerTimeBase = 
-        serverTime;  
+        serverTime; 
 
     rngPerformanceTimeBase = 
-        performance.now();  
+        performance.now(); 
 
     rngNextResetTimestamp = 
         nextReset.timestamp; 
@@ -1905,12 +1905,12 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-} 
+}  
 
 function scheduleRngDuplicateReveal(card) { 
     if (!card) { 
         return; 
-    } 
+    }
 
     const duplicateOverlay = 
         card.querySelector( 
@@ -1919,7 +1919,7 @@ function scheduleRngDuplicateReveal(card) {
 
     if (!duplicateOverlay) { 
         return; 
-    } 
+    }
 
     window.setTimeout( 
         () => { 
@@ -1927,20 +1927,20 @@ function scheduleRngDuplicateReveal(card) {
                 !duplicateOverlay.isConnected 
             ) { 
                 return; 
-            } 
+            }
 
             duplicateOverlay.classList.add( 
                 'rngDuplicateVisible' 
-            ); 
+            );
 
-            duplicateOverlay.setAttribute( 
-                'aria-hidden', 
-                'false' 
-            ); 
+            duplicateOverlay.setAttribute(
+                'aria-hidden',
+                'false'
+            );
         }, 
         4000 
     ); 
-} 
+}
 
 function animateRngRecordCard( 
     card, 
@@ -1970,6 +1970,7 @@ function animateRngRecordCard(
     elements.forEach(  
         (element, index) => {  
 
+
             if ( 
                 element.classList.contains( 
                     'rngModifiersTitle' 
@@ -1996,7 +1997,6 @@ function animateRngRecordCard(
                     onModifiersHeaderShown 
                 ); 
             } 
-
             if ( 
                 onLifetimeLabelShown && 
                 element.classList.contains( 
@@ -2067,7 +2067,7 @@ function animateRngRecordCard(
 
                                 startRngRecordCardWiggle( 
                                     card 
-                                ); 
+                                );
                             }, 
                             { once: true } 
                         ); 
@@ -2707,7 +2707,7 @@ function animateRngLifetimeScore(
     ) { 
         if (onComplete) { 
             onComplete(); 
-        } 
+        }
 
         return; 
     } 
@@ -2780,7 +2780,7 @@ function animateRngLifetimeScore(
 
         if (onComplete) { 
             onComplete(); 
-        } 
+        }
 
         return; 
     } 
@@ -2994,7 +2994,7 @@ function animateRngLifetimeScore(
             ) { 
                 if (onComplete) { 
                     onComplete(); 
-                } 
+                }
 
                 return; 
             } 
@@ -3015,7 +3015,7 @@ function animateRngLifetimeScore(
             ) { 
                 if (onComplete) { 
                     onComplete(); 
-                } 
+                }
 
                 return; 
             } 
@@ -3094,7 +3094,7 @@ function scheduleRngLifetimeScoreAnimation(
     ) { 
         if (onComplete) { 
             onComplete(); 
-        } 
+        }
 
         return; 
     } 
@@ -3123,7 +3123,7 @@ function scheduleRngLifetimeScoreAnimation(
             ) { 
                 if (onComplete) { 
                     onComplete(); 
-                } 
+                }
 
                 return; 
             } 
@@ -3136,7 +3136,7 @@ function scheduleRngLifetimeScoreAnimation(
             ) { 
                 if (onComplete) { 
                     onComplete(); 
-                } 
+                }
 
                 return; 
             } 
@@ -3151,7 +3151,7 @@ function scheduleRngLifetimeScoreAnimation(
             ) { 
                 if (onComplete) { 
                     onComplete(); 
-                } 
+                }
 
                 return; 
             } 
@@ -3280,7 +3280,7 @@ function applyRngLifetimeUpdateResult(score) {
             ) 
         ) 
     ); 
-} 
+}  
 
 function applyDailyRollState(state) {  
     return;  
@@ -3488,7 +3488,7 @@ function createRngStat(label, value, valueColor = null) {
 
     const statLabel = document.createElement('div');  
     statLabel.className = 'rngStatLabel';  
-    statLabel.textContent = label; 
+    statLabel.textContent = label;  
 
     if ( 
         String(label).toLowerCase().includes( 
@@ -3658,7 +3658,7 @@ function createRngRecordCard(payload, recordText) {
 
     const rarityStat = 
         createRngStat(  
-            'Rarity',  
+            'Base Rarity',  
             displayRarity !== 'unknown' 
                 ? displayRarity 
                 : payload.rarity ?? 'Unknown',  
@@ -4149,7 +4149,7 @@ function initializeRngGenerateButton() {
 
     if (rngRequestPending) {  
         return;  
-    } 
+    }  
 
     if (rngRollLoadingPending) { 
         return; 
@@ -4329,7 +4329,7 @@ function initializeRngFrontend() {
     createRngTopControlArea();  
     createRngDailyStatus();  
     hideRngDailyStatus();  
-    clearRngRarityTheme();  
+    clearRngRarityTheme(); 
 
     const storedResult = 
         loadLocalRngResult(); 

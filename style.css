@@ -424,7 +424,7 @@ button {
     content: attr(data-rng-full-rarity);
     display: block;
     margin-top: 4px;
-    font-size: 54px;
+    font-size: 53.7px;
     line-height: 1;
 }
 .rngStats {
@@ -523,6 +523,7 @@ button {
     white-space: normal;
     font-size: 0;
     letter-spacing: 1.1px;
+    word-spacing: -1.1px;
     line-height: 1.2;
     overflow: visible;
     text-align: center;
@@ -788,6 +789,20 @@ button {
     transform-origin: center center;
     filter: drop-shadow( 0 0 4px rgba(255, 24, 24, 0.7) ) drop-shadow( 0 0 10px rgba(255, 24, 24, 0.32) );
     animation: none;
+}
+@keyframes rngDuplicatePopIn {
+    0% {
+        opacity: 0;
+        transform: rotate(-14deg) scale(0.35);
+    }
+    65% {
+        opacity: 1;
+        transform: rotate(-14deg) scale(1.12);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(-14deg) scale(1);
+    }
 }
 @keyframes rngDuplicateShine {
     0%, 45% {
@@ -1218,10 +1233,10 @@ button {
     }
 }
 .rngDuplicateOverlay.rngDuplicateVisible {
-    opacity: 0.58;
+    opacity: 0.92;
     visibility: visible;
     transition-delay: 0s;
 }
 .rngDuplicateOverlay.rngDuplicateVisible::before {
-    animation: rngDuplicateShine 4.8s ease-in-out infinite;
+    animation: rngDuplicatePopIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both, rngDuplicateShine 4.8s ease-in-out 420ms infinite;
 }
