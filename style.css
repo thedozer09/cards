@@ -523,7 +523,7 @@ button {
     white-space: normal;
     font-size: 0;
     letter-spacing: 1.1px;
-    word-spacing: -1.1px;
+    word-spacing: normal;
     line-height: 1.2;
     overflow: visible;
     text-align: center;
@@ -533,16 +533,15 @@ button {
     transition: opacity 160ms ease, visibility 0s linear 0s;
 }
 .rngLifetimeStatLabel::before {
-    content: "Total";
+    content: "Total Score";
     display: block;
     font-size: 14px;
     line-height: 1.2;
+    word-spacing: normal;
+    white-space: nowrap;
 }
 .rngLifetimeStatLabel::after {
-    content: "Score";
-    display: block;
-    font-size: 14px;
-    line-height: 1.2;
+    content: none;
 }
 .rngLifetimeUpdating .rngLifetimeStatLabel {
     visibility: hidden;
@@ -1169,6 +1168,7 @@ button {
     z-index: 0;
 }
 .rngRarityValue {
+    -webkit-text-fill-color: currentColor;
     text-shadow: 0 0 7px currentColor, 0 0 15px currentColor;
 }
 .rngRecordCard.rng-rarity-common .rngRarityValue {
@@ -1179,23 +1179,9 @@ button {
 }
 .rngRecordCard.rng-rarity-rare .rngRarityValue {
     color: #4da6ff;
-    background-image: linear-gradient( 105deg, #4da6ff 0%, #4da6ff 38%, rgba(255, 255, 255, 0.72) 48%, #4da6ff 58%, #4da6ff 100% );
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rngRarityShine 4.8s ease-in-out infinite;
 }
 .rngRecordCard.rng-rarity-legendary .rngRarityValue {
     color: #ffd84d;
-    background-image: linear-gradient( 105deg, #ffd84d 0%, #ffd84d 38%, rgba(255, 255, 255, 0.76) 48%, #ffd84d 58%, #ffd84d 100% );
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rngRarityShine 4.8s ease-in-out infinite;
 }
 .rngRecordCard.rng-rarity-common .rngRarityValue::before {
     background: radial-gradient( ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82% );
@@ -1208,6 +1194,30 @@ button {
 }
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
     background: radial-gradient( ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82% );
+}
+.rngRarityShineOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: transparent;
+    font: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: none;
+    background-image: linear-gradient(105deg, transparent 0%, transparent 42%, rgba(255, 255, 255, 0.92) 50%, transparent 58%, transparent 100%);
+    background-size: 300% 100%;
+    background-position: 100% 50%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rngRarityShine 4.8s ease-in-out infinite;
 }
 .rngRarityValue::after {
     content: none;
