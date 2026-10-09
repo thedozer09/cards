@@ -1929,8 +1929,14 @@ function scheduleRngDuplicateReveal(card) {
                 return; 
             } 
 
-            duplicateOverlay.style.opacity = 
-                '0.58'; 
+            duplicateOverlay.classList.add( 
+                'rngDuplicateVisible' 
+            ); 
+
+            duplicateOverlay.setAttribute( 
+                'aria-hidden', 
+                'false' 
+            ); 
         }, 
         4000 
     ); 
@@ -1938,8 +1944,7 @@ function scheduleRngDuplicateReveal(card) {
 
 function animateRngRecordCard( 
     card, 
-    onLifetimeLabelShown = null, 
-    onRevealFinished = null 
+    onLifetimeLabelShown = null 
 ) {  
     if (!card) {  
         return;  
@@ -1964,6 +1969,33 @@ function animateRngRecordCard(
 
     elements.forEach(  
         (element, index) => {  
+
+            if ( 
+                element.classList.contains( 
+                    'rngModifiersTitle' 
+                ) 
+            ) { 
+                const onModifiersHeaderShown = event => { 
+                    if ( 
+                        event.animationName !== 
+                        'rngResultPopIn' 
+                    ) { 
+                        return; 
+                    } 
+
+                    element.removeEventListener( 
+                        'animationend', 
+                        onModifiersHeaderShown 
+                    ); 
+
+                    scheduleRngDuplicateReveal(card); 
+                }; 
+
+                element.addEventListener( 
+                    'animationend', 
+                    onModifiersHeaderShown 
+                ); 
+            } 
 
             if ( 
                 onLifetimeLabelShown && 
@@ -2036,10 +2068,6 @@ function animateRngRecordCard(
                                 startRngRecordCardWiggle( 
                                     card 
                                 ); 
-
-                                if (onRevealFinished) { 
-                                    onRevealFinished(); 
-                                } 
                             }, 
                             { once: true } 
                         ); 
@@ -2964,6 +2992,10 @@ function animateRngLifetimeScore(
             if ( 
                 !wheel.parentElement 
             ) { 
+                if (onComplete) { 
+                    onComplete(); 
+                } 
+
                 return; 
             } 
 
@@ -3309,11 +3341,7 @@ function renderStoredRngResult(payload) {
         ); 
 
     animateRngRecordCard( 
-        card, 
-        null, 
-        () => { 
-            scheduleRngDuplicateReveal(card); 
-        } 
+        card 
     ); 
 
     if ( 
@@ -3460,7 +3488,7 @@ function createRngStat(label, value, valueColor = null) {
 
     const statLabel = document.createElement('div');  
     statLabel.className = 'rngStatLabel';  
-    statLabel.textContent = label;  
+    statLabel.textContent = label; 
 
     if ( 
         String(label).toLowerCase().includes( 
@@ -3616,6 +3644,10 @@ function createRngRecordCard(payload, recordText) {
     const recordValue = document.createElement('div');  
     recordValue.className = 'rngRecordValue';  
     recordValue.textContent = recordText;  
+    recordValue.setAttribute( 
+        'data-rng-full-rarity', 
+        'N/A' 
+    ); 
 
     recordHeader.appendChild(recordLabel);  
     recordHeader.appendChild(recordValue);  
@@ -3725,11 +3757,13 @@ function createRngRecordCard(payload, recordText) {
         const duplicateOverlay =
             document.createElement('div');
 
-        duplicateOverlay.className = 
-            'rngDuplicateOverlay'; 
+        duplicateOverlay.className =
+            'rngDuplicateOverlay';
 
-        duplicateOverlay.style.opacity = 
-            '0'; 
+        duplicateOverlay.setAttribute(
+            'aria-hidden',
+            'true'
+        );
 
         duplicateOverlay.textContent =
             'DUPLICATE';
@@ -3885,10 +3919,7 @@ function showRngRecordResult(payload) {
             card, 
             () => { 
                 scheduleRngLifetimeScoreAnimation( 
-                    payload, 
-                    () => { 
-                        scheduleRngDuplicateReveal(card); 
-                    } 
+                    payload 
                 ); 
             } 
         ); 
@@ -3994,10 +4025,7 @@ function showRngRecordResult(payload) {
             card, 
             () => { 
                 scheduleRngLifetimeScoreAnimation( 
-                    payload, 
-                    () => { 
-                        scheduleRngDuplicateReveal(card); 
-                    } 
+                    payload 
                 ); 
             } 
         ); 
