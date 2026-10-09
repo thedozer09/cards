@@ -605,8 +605,6 @@ button {
     overflow-wrap: anywhere;
 }
 
-/* Temporary full-rarity placeholder beneath the record name. */
-
 .rngRecordValue::after {
     content: "N/A";
     display: block;
@@ -627,7 +625,7 @@ button {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     background: transparent;
 }
 
@@ -722,8 +720,6 @@ button {
     text-align: center;
     text-transform: uppercase;
 }
-
-/* Visually rename the existing Rarity label to Base Rarity. */
 
 .rngRecordCard .rngStats > .rngStat:nth-child(1) > .rngStatLabel {
     font-size: 0;
@@ -930,10 +926,12 @@ button {
 .rngModifiersSection {
     width: 100%;
     max-width: 100%;
+    height: auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
+    gap: 6px;
     background: transparent;
 }
 
@@ -947,11 +945,28 @@ button {
     text-transform: uppercase;
 }
 
+.rngModifiersTitle::after {
+    content: "Modifiers are used to increase rarity and points above Base Rarity.";
+    display: block;
+    max-width: 100%;
+    margin: 5px auto 0;
+    color: rgba(203, 220, 231, 0.76);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
+    text-align: center;
+    text-transform: none;
+}
+
 .rngModifiers {
     width: 100%;
     max-width: 100%;
+    height: auto;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    align-items: stretch;
     gap: 7px;
     background: transparent;
 }
@@ -959,11 +974,12 @@ button {
 .rngModifier {
     min-width: 0;
     min-height: 60px;
+    height: auto;
     padding: 10px 0;
     border: 0;
     border-radius: 0;
     background: transparent;
-    overflow: hidden;
+    overflow-wrap: anywhere;
     text-align: center;
 }
 
@@ -1042,10 +1058,22 @@ button {
     text-align: center;
     white-space: nowrap;
     pointer-events: none;
-    opacity: 0.58;
+    opacity: 0;
     overflow: visible;
     transform-origin: center center;
     text-shadow: none;
+    animation:
+        rngDuplicateReveal 0.01s linear 4.55s forwards;
+}
+
+@keyframes rngDuplicateReveal {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.58;
+    }
 }
 
 .rngDuplicateOverlay::before {
@@ -1084,7 +1112,7 @@ button {
             0 0 10px rgba(255, 24, 24, 0.32)
         );
     animation:
-        rngDuplicateShine 4.8s ease-in-out infinite;
+        rngDuplicateShine 4.8s ease-in-out 4.55s infinite backwards;
 }
 
 @keyframes rngDuplicateShine {
