@@ -1931,12 +1931,7 @@ function scheduleRngDuplicateReveal(card) {
 
             duplicateOverlay.classList.add( 
                 'rngDuplicateVisible' 
-            );
-
-            duplicateOverlay.setAttribute(
-                'aria-hidden',
-                'false'
-            );
+            ); 
         }, 
         4000 
     ); 
@@ -1944,7 +1939,8 @@ function scheduleRngDuplicateReveal(card) {
 
 function animateRngRecordCard( 
     card, 
-    onLifetimeLabelShown = null 
+    onLifetimeLabelShown = null, 
+    onRevealFinished = null 
 ) {  
     if (!card) {  
         return;  
@@ -1970,33 +1966,6 @@ function animateRngRecordCard(
     elements.forEach(  
         (element, index) => {  
 
-
-            if ( 
-                element.classList.contains( 
-                    'rngModifiersTitle' 
-                ) 
-            ) { 
-                const onModifiersHeaderShown = event => { 
-                    if ( 
-                        event.animationName !== 
-                        'rngResultPopIn' 
-                    ) { 
-                        return; 
-                    } 
-
-                    element.removeEventListener( 
-                        'animationend', 
-                        onModifiersHeaderShown 
-                    ); 
-
-                    scheduleRngDuplicateReveal(card); 
-                }; 
-
-                element.addEventListener( 
-                    'animationend', 
-                    onModifiersHeaderShown 
-                ); 
-            } 
             if ( 
                 onLifetimeLabelShown && 
                 element.classList.contains( 
@@ -2068,6 +2037,10 @@ function animateRngRecordCard(
                                 startRngRecordCardWiggle( 
                                     card 
                                 );
+
+                                if (onRevealFinished) { 
+                                    onRevealFinished(); 
+                                } 
                             }, 
                             { once: true } 
                         ); 
@@ -2695,8 +2668,7 @@ function startRngLifetimeDigitReel(
 function animateRngLifetimeScore( 
     element, 
     oldScore, 
-    newScore, 
-    onComplete = null 
+    newScore 
 ) { 
     if ( 
         !element || 
@@ -2705,10 +2677,6 @@ function animateRngLifetimeScore(
         typeof newScore !== 'number' || 
         !Number.isFinite(newScore) 
     ) { 
-        if (onComplete) { 
-            onComplete(); 
-        }
-
         return; 
     } 
 
@@ -2777,10 +2745,6 @@ function animateRngLifetimeScore(
             'aria-label', 
             newText 
         ); 
-
-        if (onComplete) { 
-            onComplete(); 
-        }
 
         return; 
     } 
@@ -2925,10 +2889,6 @@ function animateRngLifetimeScore(
 
                 rngLifetimeAnimationActive = 
                     false; 
-
-                if (onComplete) { 
-                    onComplete(); 
-                } 
             }, 
             RNG_LIFETIME_FADE_DURATION 
         ); 
@@ -2992,10 +2952,6 @@ function animateRngLifetimeScore(
             if ( 
                 !wheel.parentElement 
             ) { 
-                if (onComplete) { 
-                    onComplete(); 
-                }
-
                 return; 
             } 
 
@@ -3013,10 +2969,6 @@ function animateRngLifetimeScore(
                 !sampleDigit || 
                 !sampleFace 
             ) { 
-                if (onComplete) { 
-                    onComplete(); 
-                }
-
                 return; 
             } 
 
@@ -3057,10 +3009,6 @@ function animateRngLifetimeScore(
 
                         rngLifetimeAnimationActive = 
                             false; 
-
-                        if (onComplete) { 
-                            onComplete(); 
-                        } 
                     }, 
                     RNG_LIFETIME_FADE_DURATION 
                 ); 
@@ -3083,8 +3031,7 @@ function animateRngLifetimeScore(
 } 
 
 function scheduleRngLifetimeScoreAnimation( 
-    payload, 
-    onComplete = null 
+    payload 
 ) { 
     if ( 
         typeof rngPendingLifetimeScore !== 'number' || 
@@ -3092,10 +3039,6 @@ function scheduleRngLifetimeScoreAnimation(
             rngPendingLifetimeScore 
         ) 
     ) { 
-        if (onComplete) { 
-            onComplete(); 
-        }
-
         return; 
     } 
 
@@ -3121,10 +3064,6 @@ function scheduleRngLifetimeScoreAnimation(
             if ( 
                 !rngResultPanel 
             ) { 
-                if (onComplete) { 
-                    onComplete(); 
-                }
-
                 return; 
             } 
 
@@ -3134,10 +3073,6 @@ function scheduleRngLifetimeScoreAnimation(
             if ( 
                 !lifetimeValueElement 
             ) { 
-                if (onComplete) { 
-                    onComplete(); 
-                }
-
                 return; 
             } 
 
@@ -3149,10 +3084,6 @@ function scheduleRngLifetimeScoreAnimation(
             if ( 
                 currentScore === null 
             ) { 
-                if (onComplete) { 
-                    onComplete(); 
-                }
-
                 return; 
             } 
 
@@ -3162,8 +3093,7 @@ function scheduleRngLifetimeScoreAnimation(
             animateRngLifetimeScore( 
                 lifetimeValueElement, 
                 currentScore, 
-                targetScore, 
-                onComplete 
+                targetScore 
             ); 
         }, RNG_LIFETIME_ROLL_DELAY); 
 } 
@@ -3341,7 +3271,11 @@ function renderStoredRngResult(payload) {
         ); 
 
     animateRngRecordCard( 
-        card 
+        card, 
+        null, 
+        () => { 
+            scheduleRngDuplicateReveal(card); 
+        } 
     ); 
 
     if ( 
@@ -3674,6 +3608,29 @@ function createRngRecordCard(payload, recordText) {
         rarityValue.classList.add( 
             'rngRarityValue' 
         ); 
+
+        if ( 
+            normalizedRarity === 'rare' || 
+            normalizedRarity === 'legendary' 
+        ) { 
+            const rarityShineOverlay = 
+                document.createElement('span'); 
+
+            rarityShineOverlay.className = 
+                'rngRarityShineOverlay'; 
+
+            rarityShineOverlay.setAttribute( 
+                'aria-hidden', 
+                'true' 
+            ); 
+
+            rarityShineOverlay.textContent = 
+                rarityValue.textContent; 
+
+            rarityValue.appendChild( 
+                rarityShineOverlay 
+            ); 
+        } 
     } 
 
     stats.appendChild( 
@@ -3759,11 +3716,6 @@ function createRngRecordCard(payload, recordText) {
 
         duplicateOverlay.className =
             'rngDuplicateOverlay';
-
-        duplicateOverlay.setAttribute(
-            'aria-hidden',
-            'true'
-        );
 
         duplicateOverlay.textContent =
             'DUPLICATE';
@@ -3921,6 +3873,9 @@ function showRngRecordResult(payload) {
                 scheduleRngLifetimeScoreAnimation( 
                     payload 
                 ); 
+            }, 
+            () => { 
+                scheduleRngDuplicateReveal(card); 
             } 
         ); 
 
@@ -4027,6 +3982,9 @@ function showRngRecordResult(payload) {
                 scheduleRngLifetimeScoreAnimation( 
                     payload 
                 ); 
+            }, 
+            () => { 
+                scheduleRngDuplicateReveal(card); 
             } 
         ); 
 
