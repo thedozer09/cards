@@ -611,7 +611,7 @@ button {
     margin-top: 6px;
     color: rgba(193, 215, 229, 0.62);
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 56px;
     font-weight: 800;
     letter-spacing: 1.4px;
     line-height: 1.15;
@@ -625,7 +625,7 @@ button {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     background: transparent;
 }
 
@@ -747,7 +747,7 @@ button {
     white-space: normal;
     font-size: 0;
     letter-spacing: 1.1px;
-    line-height: 1.2;
+    line-height: 1;
     overflow: visible;
     text-align: center;
     z-index: 3;
@@ -761,15 +761,17 @@ button {
 .rngLifetimeStatLabel::before {
     content: "Total";
     display: block;
+    margin: 0;
     font-size: 14px;
-    line-height: 1.2;
+    line-height: 1;
 }
 
 .rngLifetimeStatLabel::after {
     content: "Score";
     display: block;
+    margin: 0;
     font-size: 14px;
-    line-height: 1.2;
+    line-height: 1;
 }
 
 .rngLifetimeUpdating .rngLifetimeStatLabel {
@@ -1062,18 +1064,10 @@ button {
     overflow: visible;
     transform-origin: center center;
     text-shadow: none;
-    animation:
-        rngDuplicateReveal 0.01s linear 4.55s forwards;
 }
 
-@keyframes rngDuplicateReveal {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 0.58;
-    }
+.rngDuplicateOverlay.rngDuplicateVisible {
+    opacity: 0.58;
 }
 
 .rngDuplicateOverlay::before {
@@ -1111,8 +1105,11 @@ button {
         drop-shadow(
             0 0 10px rgba(255, 24, 24, 0.32)
         );
+}
+
+.rngDuplicateOverlay.rngDuplicateVisible::before {
     animation:
-        rngDuplicateShine 4.8s ease-in-out 4.55s infinite backwards;
+        rngDuplicateShine 4.8s ease-in-out infinite;
 }
 
 @keyframes rngDuplicateShine {
@@ -1445,6 +1442,10 @@ button {
         font-size: 22px;
     }
 
+    .rngRecordValue::after {
+        font-size: 56px;
+    }
+
     .rngDuplicateOverlay {
         height: 100%;
         min-height: 100%;
@@ -1548,8 +1549,6 @@ button {
         transform: translateX(3px);
     }
 }
-
-/* RARITY GLOW AND TEXT SHINE */
 
 .rngRarityValue {
     position: relative;
