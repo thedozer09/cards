@@ -1494,7 +1494,7 @@ button {
 .rngRecordCard .rngStat:nth-child(1)::before {
     content: "";
     position: absolute;
-    top: 18px;
+    top: 20px;
     left: 50%;
     width: 145px;
     height: 42px;
@@ -1521,9 +1521,6 @@ button {
     white-space: nowrap;
     background-image: none;
     -webkit-text-fill-color: currentColor;
-    text-shadow:
-        0 0 7px currentColor,
-        0 0 15px currentColor;
 }
 
 .rngRecordCard.rng-rarity-common .rngRarityValue {
@@ -1622,8 +1619,6 @@ button {
             #4da6ff 58%,
             #4da6ff 100%
         );
-    filter:
-        drop-shadow(0 0 4px rgba(77, 166, 255, 0.65));
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
@@ -1637,8 +1632,6 @@ button {
             #ffd84d 58%,
             #ffd84d 100%
         );
-    filter:
-        drop-shadow(0 0 4px rgba(255, 216, 77, 0.7));
 }
 
 @media (max-width: 430px) {
