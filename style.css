@@ -2636,238 +2636,166 @@ button {
 
 }
 
-.rngRarityValue {
-
-    position: relative;
-
-    z-index: 1;
-
-    display: inline-block;
-
-    width: auto;
-
-    max-width: 100%;
-
-    padding: 0 6px;
-
-    overflow: visible;
-
-    white-space: nowrap;
-
+.rngRecordCard .rngStat:nth-child(1) {
     isolation: isolate;
-
 }
 
-.rngRarityValue::before {
-
+.rngRecordCard .rngStat:nth-child(1)::before {
     content: "";
-
     position: absolute;
-
-    top: 50%;
-
+    top: 22px;
     left: 50%;
-
-    width: calc(100% + 46px);
-
-    height: 190%;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 999px;
-
+    width: 145px;
+    height: 42px;
+    transform: translateX(-50%);
+    border-radius: 50%;
     filter: blur(8px);
-
-    opacity: 1;
-
+    opacity: 0.9;
     pointer-events: none;
-
     z-index: 0;
+}
 
+.rngRecordCard .rngStat:nth-child(1) .rngStatLabel,
+.rngRecordCard .rngStat:nth-child(1) .rngStatValue {
+    z-index: 2;
 }
 
 .rngRarityValue {
-
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 6px;
+    overflow: visible;
+    white-space: nowrap;
+    color: #edf6fb;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
     text-shadow:
-
         0 0 7px currentColor,
-
         0 0 15px currentColor;
-
 }
 
 .rngRecordCard.rng-rarity-common .rngRarityValue {
-
     color: #dce7f0;
-
 }
 
 .rngRecordCard.rng-rarity-uncommon .rngRarityValue {
-
     color: #4fd1c5;
-
 }
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue {
-
     color: #4da6ff;
-
-    background-image:
-
-        linear-gradient(
-
-            105deg,
-
-            #4da6ff 0%,
-
-            #4da6ff 38%,
-
-            rgba(255, 255, 255, 0.72) 48%,
-
-            #4da6ff 58%,
-
-            #4da6ff 100%
-
-        );
-
-    background-size: 300% 100%;
-
-    background-position: 100% 50%;
-
-    background-clip: text;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    animation:
-
-        rngRarityShine 4.8s ease-in-out infinite;
-
+    text-shadow:
+        0 0 7px rgba(77, 166, 255, 0.9),
+        0 0 15px rgba(77, 166, 255, 0.65);
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue {
-
     color: #ffd84d;
-
-    background-image:
-
-        linear-gradient(
-
-            105deg,
-
-            #ffd84d 0%,
-
-            #ffd84d 38%,
-
-            rgba(255, 255, 255, 0.76) 48%,
-
-            #ffd84d 58%,
-
-            #ffd84d 100%
-
-        );
-
-    background-size: 300% 100%;
-
-    background-position: 100% 50%;
-
-    background-clip: text;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    animation:
-
-        rngRarityShine 4.8s ease-in-out infinite;
-
+    text-shadow:
+        0 0 7px rgba(255, 216, 77, 0.95),
+        0 0 15px rgba(255, 216, 77, 0.7);
 }
 
-.rngRecordCard.rng-rarity-common .rngRarityValue::before {
-
+.rngRecordCard.rng-rarity-common .rngStat:nth-child(1)::before {
     background:
-
         radial-gradient(
-
             ellipse at center,
-
             rgba(220, 231, 240, 0.82) 0%,
-
             rgba(220, 231, 240, 0.46) 32%,
-
             rgba(220, 231, 240, 0.18) 58%,
-
             rgba(220, 231, 240, 0) 82%
-
         );
-
 }
 
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
-
+.rngRecordCard.rng-rarity-uncommon .rngStat:nth-child(1)::before {
     background:
-
         radial-gradient(
-
             ellipse at center,
-
             rgba(79, 209, 197, 0.9) 0%,
-
             rgba(79, 209, 197, 0.5) 32%,
-
             rgba(79, 209, 197, 0.2) 58%,
-
             rgba(79, 209, 197, 0) 82%
-
         );
-
 }
 
-.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
-
+.rngRecordCard.rng-rarity-rare .rngStat:nth-child(1)::before {
     background:
-
         radial-gradient(
-
             ellipse at center,
-
             rgba(77, 166, 255, 0.95) 0%,
-
             rgba(77, 166, 255, 0.55) 32%,
-
             rgba(77, 166, 255, 0.22) 58%,
-
             rgba(77, 166, 255, 0) 82%
-
         );
-
 }
 
-.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
-
+.rngRecordCard.rng-rarity-legendary .rngStat:nth-child(1)::before {
     background:
-
         radial-gradient(
-
             ellipse at center,
-
             rgba(255, 216, 77, 0.98) 0%,
-
             rgba(255, 216, 77, 0.58) 32%,
-
             rgba(255, 216, 77, 0.24) 58%,
-
             rgba(255, 216, 77, 0) 82%
-
         );
-
 }
 
-.rngRarityValue::after {
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    .rngRecordCard.rng-rarity-rare .rngRarityValue {
+        background-image:
+            linear-gradient(
+                105deg,
+                #4da6ff 0%,
+                #4da6ff 38%,
+                rgba(255, 255, 255, 0.85) 48%,
+                #4da6ff 58%,
+                #4da6ff 100%
+            );
+        background-size: 300% 100%;
+        background-position: 100% 50%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation:
+            rngRarityShine 4.8s ease-in-out infinite;
+    }
 
-    content: none;
+    .rngRecordCard.rng-rarity-legendary .rngRarityValue {
+        background-image:
+            linear-gradient(
+                105deg,
+                #ffd84d 0%,
+                #ffd84d 38%,
+                rgba(255, 255, 255, 0.9) 48%,
+                #ffd84d 58%,
+                #ffd84d 100%
+            );
+        background-size: 300% 100%;
+        background-position: 100% 50%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation:
+            rngRarityShine 4.8s ease-in-out infinite;
+    }
+}
 
+@keyframes rngRarityShine {
+    0%,
+    45% {
+        background-position: 100% 50%;
+    }
+
+    58% {
+        background-position: -10% 50%;
+    }
+
+    100% {
+        background-position: -10% 50%;
+    }
 }
 
 @keyframes rngRarityShine {
