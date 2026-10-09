@@ -662,6 +662,7 @@ button {
     height: 21px;
     min-height: 21px;
     margin: 0;
+    line-height: 21px;
 }
 
 .rngStat:nth-child(3),
@@ -1491,24 +1492,36 @@ button {
     isolation: isolate;
 }
 
-.rngRecordCard .rngStat:nth-child(1)::before {
-    content: "";
+.rngRecordCard .rngStat:nth-child(1) .rngRarityValue {
     position: absolute;
-    top: 20px;
+    top: 33px;
     left: 50%;
-    width: 145px;
-    height: 42px;
+    right: auto;
+    width: fit-content;
+    max-width: 100%;
+    height: 21px;
+    min-height: 21px;
+    margin: 0;
+    padding: 0 6px;
     transform: translateX(-50%);
-    border-radius: 50%;
-    filter: blur(8px);
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 0;
+    overflow: visible;
+    white-space: nowrap;
+    isolation: isolate;
+    z-index: 2;
+    background: transparent;
+    line-height: 21px;
+    text-shadow: none;
+    -webkit-text-fill-color: currentColor;
 }
 
-.rngRecordCard .rngStat:nth-child(1) .rngStatLabel,
-.rngRecordCard .rngStat:nth-child(1) .rngStatValue {
-    z-index: 2;
+/* Keep the first-row Rarity and Points values level. */
+
+.rngRecordCard .rngStats > .rngStat:nth-child(1) > .rngStatValue,
+.rngRecordCard .rngStats > .rngStat:nth-child(2) > .rngStatValue {
+    top: 33px;
+    height: 21px;
+    min-height: 21px;
+    line-height: 21px;
 }
 
 .rngRarityValue {
@@ -1520,7 +1533,24 @@ button {
     overflow: visible;
     white-space: nowrap;
     background-image: none;
+    line-height: 21px;
+    text-shadow: none;
     -webkit-text-fill-color: currentColor;
+}
+
+.rngRarityValue::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(100% + 1.2em);
+    height: 2.3em;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    filter: blur(8px);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .rngRecordCard.rng-rarity-common .rngRarityValue {
@@ -1539,7 +1569,7 @@ button {
     color: #ffd84d;
 }
 
-.rngRecordCard.rng-rarity-common .rngStat:nth-child(1)::before {
+.rngRecordCard.rng-rarity-common .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
@@ -1550,7 +1580,7 @@ button {
         );
 }
 
-.rngRecordCard.rng-rarity-uncommon .rngStat:nth-child(1)::before {
+.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
@@ -1561,7 +1591,7 @@ button {
         );
 }
 
-.rngRecordCard.rng-rarity-rare .rngStat:nth-child(1)::before {
+.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
@@ -1572,7 +1602,7 @@ button {
         );
 }
 
-.rngRecordCard.rng-rarity-legendary .rngStat:nth-child(1)::before {
+.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
     background:
         radial-gradient(
             ellipse at center,
@@ -1584,6 +1614,7 @@ button {
 }
 
 .rngRarityValue::after {
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -1600,6 +1631,16 @@ button {
     text-align: center;
     white-space: nowrap;
     pointer-events: none;
+    background-image:
+        linear-gradient(
+            105deg,
+            transparent 0%,
+            transparent 43%,
+            rgba(255, 255, 255, 0.95) 48%,
+            rgba(255, 255, 255, 1) 50%,
+            transparent 57%,
+            transparent 100%
+        );
     background-size: 300% 100%;
     background-position: 100% 50%;
     background-clip: text;
@@ -1610,28 +1651,10 @@ button {
 
 .rngRecordCard.rng-rarity-rare .rngRarityValue::after {
     content: "Rare";
-    background-image:
-        linear-gradient(
-            105deg,
-            #4da6ff 0%,
-            #4da6ff 38%,
-            rgba(255, 255, 255, 0.85) 48%,
-            #4da6ff 58%,
-            #4da6ff 100%
-        );
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityValue::after {
     content: "Legendary";
-    background-image:
-        linear-gradient(
-            105deg,
-            #ffd84d 0%,
-            #ffd84d 38%,
-            rgba(255, 255, 255, 0.9) 48%,
-            #ffd84d 58%,
-            #ffd84d 100%
-        );
 }
 
 @media (max-width: 430px) {
