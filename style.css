@@ -1740,6 +1740,50 @@ button {
 
 }
 
+.rngRecordCard.rngRecordCardFinalPop {
+
+    animation:
+
+        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+
+}
+
+@keyframes rngRecordCardFinalPop {
+
+    0% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+    45% {
+
+        opacity: 1;
+
+        transform: translateY(-4px) scale(1.07);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform: translateY(1px) scale(0.985);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}
+
 .rngDuplicateOverlay {
 
     position: absolute;
@@ -1885,6 +1929,288 @@ button {
     100% {
 
         background-position: -10% 50%;
+
+    }
+
+}
+
+.tabScreen {
+
+    min-height: 430px;
+
+    padding: 32px;
+
+    border: 0;
+
+    border-radius: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+
+}
+
+.tabHeader {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.tabEyebrow {
+
+    color: rgba(184, 207, 224, 0.6);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
+}
+
+.tabScreen h1 {
+
+    margin: 0;
+
+    color: #e8f1f7;
+
+    font-size: 31px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.7px;
+
+}
+
+.scrollRail {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 17px;
+
+    width: 55px;
+
+    min-height: 100vh;
+
+    pointer-events: none;
+
+    overflow: visible;
+
+    z-index: 10;
+
+}
+
+.scrollIndicator {
+
+    position: absolute;
+
+    left: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    width: max-content;
+
+    color: rgba(197, 216, 230, 0.58);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    transform: translateX(-50%) rotate(90deg);
+
+}
+
+.scrollIndicator strong {
+
+    font-size: 10px;
+
+    letter-spacing: 1.4px;
+
+    color: rgba(216, 229, 239, 0.66);
+
+}
+
+.scrollIndicator span {
+
+    color: rgba(178, 204, 222, 0.64);
+
+    font-size: 12px;
+
+}
+
+.error {
+
+    position: fixed;
+
+    left: 20px;
+
+    right: 86px;
+
+    bottom: 20px;
+
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    padding: 14px 18px;
+
+    border: 1px solid rgba(177, 205, 225, 0.18);
+
+    border-radius: 15px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #122b47 0%,
+
+            #252e34 100%
+
+        );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+
+}
+
+.normalButtonWiggle {
+
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+
+}
+
+@keyframes normalButtonWiggle {
+
+    0%,
+
+    100% {
+
+        transform: translateX(0);
+
+    }
+
+    25% {
+
+        transform: translateX(-3px);
+
+    }
+
+    75% {
+
+        transform: translateX(3px);
+
+    }
+
+}
+
+.rngLaunchFlash {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    pointer-events: none;
+
+    background: #ffffff;
+
+    animation:
+
+        rngLaunchFlash 0.6s ease-out forwards;
+
+}
+
+@keyframes rngLaunchFlash {
+
+    0% {
+
+        opacity: 0;
+
+    }
+
+    12% {
+
+        opacity: 1;
+
+    }
+
+    38% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+    }
+
+}
+
+.rngResultPopIn {
+
+    animation:
+
+        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+
+    animation-delay: var(--rng-pop-delay, 0s);
+
+}
+
+@keyframes rngResultPopIn {
+
+    0% {
+
+        opacity: 0;
+
+        transform: translateY(12px) scale(0.88);
+
+    }
+
+    55% {
+
+        opacity: 1;
+
+        transform: translateY(-3px) scale(1.025);
+
+    }
+
+    78% {
+
+        opacity: 1;
+
+        transform: translateY(1px) scale(0.995);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
 
     }
 
