@@ -4,23 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Card Game</title>
-    <link rel="stylesheet" href="./style.css?v=120">
+    <link rel="stylesheet" href="./style.css?v=121">
 </head>
 <body>
 
     <audio id="activityMusic" src="./song.mp3" preload="auto" loop></audio>
 
-    <button
-        id="musicToggleButton"
-        class="musicToggleButton"
-        type="button"
-        aria-label="Mute music"
-        aria-pressed="false"
-    >
-        🔊
-    </button>
+    <div id="tosGate" class="tosGate hidden">
+        <div class="tosDialog">
+            <h1>DOWDataLab Card Game Terms</h1>
 
-    <div id="loadingScreen" class="loadingScreen">
+            <p>
+                To use the Card Game, you must agree to the Card Game section of the
+                <a href="https://docs.google.com/document/d/14XsK7T0vSqNUjXQzvCtw7b6adZ5TXSOEdEtu6yZgpxg/edit?usp=sharing"
+                    target="_blank" rel="noopener noreferrer">DOWDataLab Terms of Service<svg
+                        aria-hidden="true"
+                        viewBox="0 0 16 16"
+                        width="12"
+                        height="12"
+                        style="margin-left: 4px; vertical-align: 0.05em;"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    ><path d="M6 3.5H3.5v9h9V10"/><path d="M8 2h6v6"/><path d="M14 2 7 9"/></svg></a>.
+                By selecting <strong>I Agree</strong>, you confirm your agreement to that
+                section specifically. This agreement prompt applies only to the Card Game
+                section, not to the other sections of the Terms of Service.
+            </p>
+
+            <button id="tosAgreeButton" type="button">I Agree</button>
+        </div>
+    </div>
+
+    <div id="loadingScreen" class="loadingScreen hidden">
         <div class="loadingContent">
             <h1>Loading Card Game</h1>
             <div class="loadingSpinner"></div>
@@ -35,7 +53,7 @@
 
             <nav class="navigation">
 
-                <button id="generateButton" class="tabButton active" type="button">
+                <button id="generateButton" class="tabButton" type="button">
                     <span class="tabLabel">Generate</span>
                 </button>
 
@@ -49,7 +67,51 @@
 
             </nav>
 
-            <section id="generateScreen" class="tabScreen">
+            <div class="leftUtilityControls">
+
+                <button
+                    id="musicToggleButton"
+                    class="musicToggleButton"
+                    type="button"
+                    aria-label="Mute music"
+                    aria-pressed="false"
+                >
+                    🔊
+                </button>
+
+                <button id="statsButton" class="statsButton" type="button">
+                    <span class="tabLabel">Stats</span>
+                </button>
+
+            </div>
+
+            <nav id="leaderboardsSubnav" class="subNavigation hidden">
+
+                <div class="subNavigationGroup">
+                    <button id="rngTodayButton" class="subTabButton" type="button">RNG Today</button>
+                    <button id="rngAllTimeButton" class="subTabButton" type="button">RNG All Time</button>
+                </div>
+
+                <div class="subNavigationGroup">
+                    <button id="cardsNetWorthButton" class="subTabButton" type="button">Cards Net Worth</button>
+                    <button id="dailyPackScoreButton" class="subTabButton" type="button">Today's Card Pack Score</button>
+                </div>
+
+            </nav>
+
+            <nav id="cardsSubnav" class="subNavigation hidden">
+
+                <div class="subNavigationGroup">
+                    <button id="openPackButton" class="subTabButton" type="button">Open Pack</button>
+                    <button id="myCollectionButton" class="subTabButton" type="button">My Collection</button>
+                    <button id="tradesButton" class="subTabButton" type="button">Trades</button>
+                </div>
+
+            </nav>
+
+            <section id="statsScreen" class="tabScreen"></section>
+
+            <section id="generateScreen" class="tabScreen hidden">
 
                 <div class="tabHeader">
 
@@ -79,6 +141,8 @@
 
                 </div>
 
+                <div id="leaderboardsContent"></div>
+
             </section>
 
             <section id="cardsScreen" class="tabScreen hidden">
@@ -94,6 +158,8 @@
                     </h1>
 
                 </div>
+
+                <div id="cardsContent"></div>
 
             </section>
 
@@ -111,7 +177,7 @@
 
     <div class="scrollRail"></div>
 
-    <script src="./script.js?v=107"></script>
+    <script src="./script.js?v=108"></script>
 
 </body>
 </html>

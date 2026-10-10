@@ -5,9 +5,14 @@ const rngButton = document.getElementById('rngButton');
 const errorMessage = document.getElementById('errorMessage');  
 const activityMusic = document.getElementById('activityMusic'); 
 const musicToggleButton = document.getElementById('musicToggleButton');  
+const tosGate = document.getElementById('tosGate');
+const tosAgreeButton = document.getElementById('tosAgreeButton');
 
 let socket = null;  
 let activityMusicStarted = false; 
+let tosAcceptanceKnown = false;
+let appLaunchStarted = false;
+let appLaunchTimer = null;
 
 function updateActivityMusicButton() { 
     if (!musicToggleButton) { 
@@ -121,6 +126,134 @@ function initializeActivityMusic() {
     } 
 } 
 
+function showTosGate() {
+    tosAcceptanceKnown = true;
+
+    if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+    }
+
+    if (mainScreen) {
+        mainScreen.classList.add('hidden');
+    }
+
+    if (tosGate) {
+        tosGate.classList.remove('hidden');
+    }
+}
+
+function handleTosStatusMessage(message) {
+    if (!message || typeof message !== 'object') {
+        return false;
+    }
+
+    const messageType =
+        typeof message.type === 'string'
+            ? message.type.toLowerCase().replace(/[\s-]+/g, '_')
+            : '';
+
+    const messageData =
+        message.data && typeof message.data === 'object'
+            ? message.data
+            : message;
+
+    if (
+        messageType === 'tos_accepted' ||
+        messageType === 'tos_acceptance_confirmed'
+    ) {
+        tosAcceptanceKnown = true;
+        showLoadingScreenAndLaunch();
+        return true;
+    }
+
+    if (
+        messageType === 'tos_not_accepted' ||
+        messageType === 'tos_unaccepted' ||
+        messageType === 'tos_required'
+    ) {
+        showTosGate();
+        return true;
+    }
+
+    const acceptanceValue =
+        typeof messageData.accepted === 'boolean'
+            ? messageData.accepted
+            : typeof messageData.tosAccepted === 'boolean'
+                ? messageData.tosAccepted
+                : typeof messageData.tos_accepted === 'boolean'
+                    ? messageData.tos_accepted
+                    : typeof messageData.hasAcceptedTerms === 'boolean'
+                        ? messageData.hasAcceptedTerms
+                        : typeof messageData.acceptedTerms === 'boolean'
+                            ? messageData.acceptedTerms
+                            : null;
+
+    const statusValue =
+        typeof messageData.status === 'string'
+            ? messageData.status.toLowerCase().replace(/[\s-]+/g, '_')
+            : '';
+
+    if (
+        messageType === 'tos_status' ||
+        messageType === 'tos_result' ||
+        messageType === 'connected'
+    ) {
+        if (
+            acceptanceValue === true ||
+            statusValue === 'accepted' ||
+            statusValue === 'tos_accepted'
+        ) {
+            tosAcceptanceKnown = true;
+            showLoadingScreenAndLaunch();
+            return true;
+        }
+
+        if (
+            acceptanceValue === false ||
+            statusValue === 'not_accepted' ||
+            statusValue === 'unaccepted' ||
+            statusValue === 'required' ||
+            statusValue === 'tos_not_accepted'
+        ) {
+            showTosGate();
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function sendTosRequestAndContinue() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        if (errorMessage) {
+            errorMessage.textContent = '⚠️ The connection is not ready yet. Please try again.';
+            errorMessage.classList.remove('hidden');
+        }
+        return;
+    }
+
+    try {
+        socket.send(JSON.stringify({
+            protocol: 'cardgame',
+            version: 1,
+            request: 'tos_request'
+        }));
+
+        tosAcceptanceKnown = true;
+
+        if (tosGate) {
+            tosGate.classList.add('hidden');
+        }
+
+        showLoadingScreenAndLaunch();
+    } catch (err) {
+        if (errorMessage) {
+            errorMessage.textContent = '⚠️ Could not send the Terms of Service request. Please try again.';
+            errorMessage.classList.remove('hidden');
+        }
+    }
+}
+
 function initializeWebSocket() {  
     const socketUrl = `wss://${window.location.host}/ws`;  
 
@@ -139,10 +272,18 @@ function initializeWebSocket() {
             const data = JSON.parse(event.data);  
             console.log("Backend message:", data);  
 
+            if (handleTosStatusMessage(data)) {
+                return;
+            }
+
             if (data.type === "connected") {  
                 console.log("Card game connection established");  
                 return;  
             }  
+
+            if (handleCardGameStatsMessage(data)) {
+                return;
+            }
 
             if (data.type === "time_result") {  
                 if (  
@@ -281,7 +422,7 @@ function requestRngServerTime() {
     if (  
         !socket ||  
         socket.readyState !==  
-            WebSocket.OPEN 
+            WebSocket.OPEN  
     ) {  
         return;  
     }  
@@ -290,7 +431,7 @@ function requestRngServerTime() {
         JSON.stringify({  
             protocol: "cardgame",  
             version: 1,  
-            request: "get_time" 
+            request: "get_time"  
         })  
     );  
 }  
@@ -328,9 +469,22 @@ const mainScreen = document.getElementById('mainScreen');
 const generateButton = document.getElementById('generateButton');  
 const leaderboardsButton = document.getElementById('leaderboardsButton');  
 const cardsButton = document.getElementById('cardsButton');  
+const statsButton = document.getElementById('statsButton');
 const generateScreen = document.getElementById('generateScreen');  
 const leaderboardsScreen = document.getElementById('leaderboardsScreen');  
 const cardsScreen = document.getElementById('cardsScreen');  
+const statsScreen = document.getElementById('statsScreen');
+const leaderboardsSubnav = document.getElementById('leaderboardsSubnav');
+const cardsSubnav = document.getElementById('cardsSubnav');
+const leaderboardsContent = document.getElementById('leaderboardsContent');
+const cardsContent = document.getElementById('cardsContent');
+const rngTodayButton = document.getElementById('rngTodayButton');
+const rngAllTimeButton = document.getElementById('rngAllTimeButton');
+const cardsNetWorthButton = document.getElementById('cardsNetWorthButton');
+const dailyPackScoreButton = document.getElementById('dailyPackScoreButton');
+const openPackButton = document.getElementById('openPackButton');
+const myCollectionButton = document.getElementById('myCollectionButton');
+const tradesButton = document.getElementById('tradesButton');
 
 const screenHeaders = document.querySelectorAll('.tabHeader');  
 
@@ -587,72 +741,498 @@ function startRngRollLoading(callback) {
 
 initializeTabLoadingScreens(); 
 
-setTimeout(() => {  
-    loadingScreen.classList.add('hidden');  
-    mainScreen.classList.remove('hidden');  
-    updateScrollRail(); 
+function showLoadingScreenAndLaunch() {
+    if (appLaunchStarted) {
+        return;
+    }
 
-    if ( 
-        rngStoredResultScrollPending && 
-        rngResultPanel 
-    ) { 
-        rngStoredResultScrollPending = 
-            false; 
+    appLaunchStarted = true;
 
-        scrollRngResultIntoView( 
-            rngResultPanel.querySelector( 
-                '.rngRecordCard' 
-            ) 
-        ); 
-    } 
+    if (tosGate) {
+        tosGate.classList.add('hidden');
+    }
 
-    maybePlayRngLaunchFlash();  
-}, 3000);  
+    loadingScreen.classList.remove('hidden');
+    mainScreen.classList.add('hidden');
 
-function switchTab(button, screen) {  
-    generateButton.classList.remove('active');  
-    leaderboardsButton.classList.remove('active');  
-    cardsButton.classList.remove('active');  
-    generateScreen.classList.add('hidden');  
-    leaderboardsScreen.classList.add('hidden');  
-    cardsScreen.classList.add('hidden');  
-    button.classList.add('active');  
-    screen.classList.remove('hidden');  
+    appLaunchTimer = setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        mainScreen.classList.remove('hidden');
+        statsScreen.classList.remove('hidden');
+        statsButton.classList.add('active');
+        updateScrollRail();
+        requestCardGameStats();
 
-    if (screen === generateScreen) { 
-        handleRngGenerateTabActivation(); 
-    } else if (screen === leaderboardsScreen) { 
-        startTabLoading( 
-            leaderboardsScreen, 
-            'Leaderboards' 
-        ); 
+        if ( 
+            rngStoredResultScrollPending && 
+            rngResultPanel 
+        ) { 
+            rngStoredResultScrollPending = 
+                false; 
 
-        clearRngRarityTheme(); 
-    } else { 
-        startTabLoading( 
-            cardsScreen, 
-            'Cards' 
-        ); 
+            scrollRngResultIntoView( 
+                rngResultPanel.querySelector( 
+                    '.rngRecordCard' 
+                ) 
+            ); 
+        } 
 
-        clearRngRarityTheme(); 
-    } 
+        maybePlayRngLaunchFlash();  
+    }, 3000);
+}
 
-    updateScrollRail(); 
-}  
+if (tosAgreeButton) {
+    tosAgreeButton.addEventListener('click', sendTosRequestAndContinue);
+}
 
-generateButton.addEventListener('click', () => {  
-    switchTab(generateButton, generateScreen);  
-});  
 
-leaderboardsButton.addEventListener('click', () => {  
-    switchTab(leaderboardsButton, leaderboardsScreen);  
-});  
 
-cardsButton.addEventListener('click', () => {  
-    switchTab(cardsButton, cardsScreen);  
-});  
+function hideAllMainScreens() {
+    generateScreen.classList.add('hidden');
+    leaderboardsScreen.classList.add('hidden');
+    cardsScreen.classList.add('hidden');
+    statsScreen.classList.add('hidden');
+}
+
+function setActiveTopButton(button) {
+    generateButton.classList.remove('active');
+    leaderboardsButton.classList.remove('active');
+    cardsButton.classList.remove('active');
+    statsButton.classList.remove('active');
+
+    if (button) {
+        button.classList.add('active');
+    }
+}
+
+function updateSecondaryNavigation(screen) {
+    leaderboardsSubnav.classList.add('hidden');
+    cardsSubnav.classList.add('hidden');
+
+    if (screen === leaderboardsScreen) {
+        leaderboardsSubnav.classList.remove('hidden');
+    } else if (screen === cardsScreen) {
+        cardsSubnav.classList.remove('hidden');
+    }
+}
+
+function switchTab(button, screen) {
+    setActiveTopButton(button);
+    hideAllMainScreens();
+    screen.classList.remove('hidden');
+    updateSecondaryNavigation(screen);
+
+    if (screen === generateScreen) {
+        handleRngGenerateTabActivation();
+    } else if (screen === leaderboardsScreen) {
+        startTabLoading(
+            leaderboardsScreen,
+            'Leaderboards'
+        );
+
+        clearRngRarityTheme();
+    } else if (screen === cardsScreen) {
+        startTabLoading(
+            cardsScreen,
+            'Cards'
+        );
+
+        clearRngRarityTheme();
+    }
+
+    updateScrollRail();
+}
+
+function switchToStats() {
+    setActiveTopButton(statsButton);
+    hideAllMainScreens();
+    statsScreen.classList.remove('hidden');
+    updateSecondaryNavigation(statsScreen);
+    requestCardGameStats();
+    clearRngRarityTheme();
+    updateScrollRail();
+}
+
+function setSubnavSelection(button, parent, content, viewName, headingText) {
+    if (!button || !parent || !content) {
+        return;
+    }
+
+    parent.querySelectorAll('button').forEach(item => {
+        item.classList.remove('active');
+        item.setAttribute('aria-pressed', 'false');
+    });
+
+    button.classList.add('active');
+    button.setAttribute('aria-pressed', 'true');
+    content.dataset.view = viewName;
+
+    let heading = content.querySelector('.subviewHeading');
+
+    if (!heading) {
+        heading = document.createElement('h2');
+        heading.className = 'subviewHeading';
+        content.prepend(heading);
+    }
+
+    heading.textContent = headingText;
+    updateScrollRail();
+}
+
+generateButton.addEventListener('click', () => {
+    switchTab(generateButton, generateScreen);
+});
+
+leaderboardsButton.addEventListener('click', () => {
+    switchTab(leaderboardsButton, leaderboardsScreen);
+    setSubnavSelection(
+        rngTodayButton,
+        leaderboardsSubnav,
+        leaderboardsContent,
+        'rng-today',
+        'RNG Today'
+    );
+});
+
+cardsButton.addEventListener('click', () => {
+    switchTab(cardsButton, cardsScreen);
+    setSubnavSelection(
+        openPackButton,
+        cardsSubnav,
+        cardsContent,
+        'open-pack',
+        'Open Pack'
+    );
+});
+
+statsButton.addEventListener('click', switchToStats);
+
+rngTodayButton.addEventListener('click', () => {
+    setSubnavSelection(
+        rngTodayButton,
+        leaderboardsSubnav,
+        leaderboardsContent,
+        'rng-today',
+        'RNG Today'
+    );
+});
+
+rngAllTimeButton.addEventListener('click', () => {
+    setSubnavSelection(
+        rngAllTimeButton,
+        leaderboardsSubnav,
+        leaderboardsContent,
+        'rng-all-time',
+        'RNG All Time'
+    );
+});
+
+cardsNetWorthButton.addEventListener('click', () => {
+    setSubnavSelection(
+        cardsNetWorthButton,
+        leaderboardsSubnav,
+        leaderboardsContent,
+        'cards-net-worth',
+        'Cards Net Worth'
+    );
+});
+
+dailyPackScoreButton.addEventListener('click', () => {
+    setSubnavSelection(
+        dailyPackScoreButton,
+        leaderboardsSubnav,
+        leaderboardsContent,
+        'daily-pack-score',
+        "Today's Card Pack Score"
+    );
+});
+
+openPackButton.addEventListener('click', () => {
+    setSubnavSelection(
+        openPackButton,
+        cardsSubnav,
+        cardsContent,
+        'open-pack',
+        'Open Pack'
+    );
+});
+
+myCollectionButton.addEventListener('click', () => {
+    setSubnavSelection(
+        myCollectionButton,
+        cardsSubnav,
+        cardsContent,
+        'my-collection',
+        'My Collection'
+    );
+});
+
+tradesButton.addEventListener('click', () => {
+    setSubnavSelection(
+        tradesButton,
+        cardsSubnav,
+        cardsContent,
+        'trades',
+        'Trades'
+    );
+});
 
 const scrollRail = document.querySelector('.scrollRail');  
+
+const statsValueElements = {};
+let cardGameStatsRequested = false;
+let cardGameStatsReceived = false;
+
+function createStatsScreen() {
+    if (!statsScreen || statsScreen.dataset.initialized === 'true') {
+        return;
+    }
+
+    statsScreen.replaceChildren();
+
+    const header = document.createElement('div');
+    header.className = 'statsHeader';
+
+    const eyebrow = document.createElement('div');
+    eyebrow.className = 'tabEyebrow';
+    eyebrow.textContent = 'PROFILE';
+
+    const title = document.createElement('h1');
+    title.textContent = 'Stats';
+
+    header.append(eyebrow, title);
+
+    const profile = document.createElement('div');
+    profile.className = 'statsProfile';
+
+    const avatar = document.createElement('img');
+    avatar.id = 'statsProfileAvatar';
+    avatar.className = 'statsProfileAvatar';
+    avatar.alt = 'Profile picture';
+    avatar.hidden = true;
+
+    const identity = document.createElement('div');
+    identity.className = 'statsProfileIdentity';
+
+    const username = document.createElement('h2');
+    username.id = 'statsProfileUsername';
+    username.textContent = 'Loading profile...';
+
+    identity.appendChild(username);
+    profile.append(avatar, identity);
+
+    const grid = document.createElement('div');
+    grid.className = 'statsGrid';
+
+    const stats = [
+        ['rolls', 'Rolls'],
+        ['recordsDiscovered', 'Records Discovered'],
+        ['cardsOwned', 'Cards Owned'],
+        ['packsOpened', 'Packs Opened'],
+        ['tradesCompleted', 'Trades Completed']
+    ];
+
+    stats.forEach(([key, label]) => {
+        const item = document.createElement('div');
+        item.className = 'statsItem';
+
+        const itemLabel = document.createElement('span');
+        itemLabel.className = 'statsItemLabel';
+        itemLabel.textContent = label;
+
+        const itemValue = document.createElement('span');
+        itemValue.className = 'statsItemValue';
+        itemValue.textContent = '—';
+        itemValue.dataset.stat = key;
+        statsValueElements[key] = itemValue;
+
+        item.append(itemLabel, itemValue);
+        grid.appendChild(item);
+    });
+
+    statsScreen.append(header, profile, grid);
+    statsScreen.dataset.initialized = 'true';
+}
+
+function getFirstDefinedValue(source, keys) {
+    if (!source || typeof source !== 'object') {
+        return undefined;
+    }
+
+    for (const key of keys) {
+        if (source[key] !== undefined && source[key] !== null) {
+            return source[key];
+        }
+    }
+
+    return undefined;
+}
+
+function formatStatsValue(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return value.toLocaleString();
+    }
+
+    if (typeof value === 'string' && value.trim() !== '') {
+        const numericValue = Number(value);
+        return Number.isFinite(numericValue)
+            ? numericValue.toLocaleString()
+            : value;
+    }
+
+    return '—';
+}
+
+function setStatsProfile(profileData) {
+    if (!profileData || typeof profileData !== 'object') {
+        return;
+    }
+
+    const usernameElement = document.getElementById('statsProfileUsername');
+    const avatarElement = document.getElementById('statsProfileAvatar');
+
+    const username = getFirstDefinedValue(profileData, [
+        'username',
+        'globalName',
+        'global_name',
+        'displayName',
+        'display_name',
+        'name'
+    ]);
+
+    if (usernameElement && typeof username === 'string' && username.trim()) {
+        usernameElement.textContent = username;
+    }
+
+    let avatarUrl = getFirstDefinedValue(profileData, [
+        'avatarUrl',
+        'avatarURL',
+        'avatar_url',
+        'avatarUri',
+        'avatar_uri',
+        'avatar'
+    ]);
+
+    const userId = getFirstDefinedValue(profileData, [
+        'userId',
+        'user_id',
+        'discordId',
+        'discord_id',
+        'id'
+    ]);
+
+    if (
+        typeof avatarUrl === 'string' &&
+        !/^https?:\/\//i.test(avatarUrl) &&
+        typeof userId === 'string' &&
+        /^[0-9]+$/.test(userId)
+    ) {
+        avatarUrl = `https://cdn.discordapp.com/avatars/${encodeURIComponent(userId)}/${encodeURIComponent(avatarUrl)}.png?size=128`;
+    }
+
+    if (avatarElement && typeof avatarUrl === 'string') {
+        try {
+            const parsedAvatarUrl = new URL(avatarUrl, window.location.href);
+
+            if (parsedAvatarUrl.protocol === 'https:' || parsedAvatarUrl.protocol === 'http:') {
+                avatarElement.src = parsedAvatarUrl.href;
+                avatarElement.hidden = false;
+                avatarElement.onerror = () => {
+                    avatarElement.hidden = true;
+                };
+            }
+        } catch (err) {
+            avatarElement.hidden = true;
+        }
+    }
+}
+
+function applyCardGameStats(payload) {
+    if (!payload || typeof payload !== 'object') {
+        return;
+    }
+
+    const profileData =
+        payload.profile && typeof payload.profile === 'object'
+            ? payload.profile
+            : payload.user && typeof payload.user === 'object'
+                ? payload.user
+                : payload;
+
+    const statsData =
+        payload.stats && typeof payload.stats === 'object'
+            ? payload.stats
+            : payload.statistics && typeof payload.statistics === 'object'
+                ? payload.statistics
+                : payload;
+
+    setStatsProfile(profileData);
+
+    const statKeys = {
+        rolls: ['rolls', 'totalRolls', 'total_rolls', 'rollCount', 'roll_count'],
+        recordsDiscovered: ['recordsDiscovered', 'records_discovered', 'uniqueRecordsDiscovered', 'unique_records_discovered'],
+        cardsOwned: ['cardsOwned', 'cards_owned', 'ownedCards', 'owned_cards', 'cardCount', 'card_count'],
+        packsOpened: ['packsOpened', 'packs_opened', 'packCount', 'pack_count'],
+        tradesCompleted: ['tradesCompleted', 'trades_completed', 'completedTrades', 'completed_trades']
+    };
+
+    Object.entries(statKeys).forEach(([key, aliases]) => {
+        const value = getFirstDefinedValue(statsData, aliases);
+
+        if (statsValueElements[key] && value !== undefined) {
+            statsValueElements[key].textContent = formatStatsValue(value);
+        }
+    });
+
+    cardGameStatsReceived = true;
+    updateScrollRail();
+}
+
+function handleCardGameStatsMessage(message) {
+    if (!message || typeof message !== 'object') {
+        return false;
+    }
+
+    const messageType =
+        typeof message.type === 'string'
+            ? message.type.toLowerCase().replace(/[\s-]+/g, '_')
+            : '';
+
+    if (
+        messageType === 'stats_result' ||
+        messageType === 'stats_data' ||
+        messageType === 'user_stats' ||
+        messageType === 'profile_stats'
+    ) {
+        applyCardGameStats(
+            message.data && typeof message.data === 'object'
+                ? message.data
+                : message
+        );
+        return true;
+    }
+
+    return false;
+}
+
+function requestCardGameStats() {
+    if (
+        !socket ||
+        socket.readyState !== WebSocket.OPEN
+    ) {
+        return;
+    }
+
+    cardGameStatsRequested = true;
+
+    socket.send(JSON.stringify({
+        protocol: 'cardgame',
+        version: 1,
+        request: 'get_stats'
+    }));
+}
+
+createStatsScreen();
 
 function updateScrollRail() {  
     document.documentElement.style.minHeight = '';  
@@ -1656,46 +2236,7 @@ function getRngDisplayRarity(payload) {
             payload.rarity 
         );
 
-    /* 
-    // FUTURE MODIFIER-BASED RARITY PROCESSING 
-
-    let rarityTier = 
-        baseRarity === 'common' 
-            ? 0 
-            : baseRarity === 'uncommon' 
-                ? 1 
-                : baseRarity === 'rare' 
-                    ? 2 
-                    : baseRarity === 'legendary' 
-                        ? 3 
-                        : -1; 
-
-    if ( 
-        rarityTier >= 0 && 
-        Array.isArray(payload?.modifiers) 
-    ) { 
-        payload.modifiers.forEach(modifier => { 
-            // Future modifier processing will determine 
-            // whether a modifier increases rarity here. 
-        }); 
-    } 
-
-    const rarityByTier = [ 
-        'common', 
-        'uncommon', 
-        'rare', 
-        'legendary' 
-    ]; 
-
-    if (rarityTier >= 0) { 
-        return rarityByTier[ 
-            Math.min( 
-                rarityTier, 
-                rarityByTier.length - 1 
-            ) 
-        ]; 
-    } 
-    */
+   
 
         return baseRarity; 
 } 
@@ -4409,7 +4950,6 @@ function showRngRecordResult(payload) {
                 lockedCount = 0; 
 
             } else { 
-
                 appearedCount = 
                     recordText.length; 
 
@@ -4766,7 +5306,7 @@ document.addEventListener(
 
 /* 
 ============================================================ 
-===== TEMP RNG COOLDOWN BYPASS - END MARKER ===== 
+===== TEMP RNG COOLDOWN BYPASS - END MARKER =====
 ============================================================ 
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY. 
