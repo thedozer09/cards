@@ -143,84 +143,30 @@ function showTosGate() {
 }
 
 function handleTosStatusMessage(message) {
-    if (!message || typeof message !== 'object') {
+    if (
+        !message ||
+        typeof message !== 'object' ||
+        message.type !== 'tos_accepted'
+    ) {
         return false;
     }
 
-    const messageType =
-        typeof message.type === 'string'
-            ? message.type.toLowerCase().replace(/[\s-]+/g, '_')
-            : '';
-
-    const messageData =
-        message.data && typeof message.data === 'object'
-            ? message.data
-            : message;
-
     if (
-        messageType === 'tos_accepted' ||
-        messageType === 'tos_acceptance_confirmed'
-    ) {
-        tosAcceptanceKnown = true;
-        showLoadingScreenAndLaunch();
-        return true;
-    }
-
-    if (
-        messageType === 'tos_not_accepted' ||
-        messageType === 'tos_unaccepted' ||
-        messageType === 'tos_required'
+        !message.data ||
+        typeof message.data.accepted !== 'boolean'
     ) {
         showTosGate();
         return true;
     }
 
-    const acceptanceValue =
-        typeof messageData.accepted === 'boolean'
-            ? messageData.accepted
-            : typeof messageData.tosAccepted === 'boolean'
-                ? messageData.tosAccepted
-                : typeof messageData.tos_accepted === 'boolean'
-                    ? messageData.tos_accepted
-                    : typeof messageData.hasAcceptedTerms === 'boolean'
-                        ? messageData.hasAcceptedTerms
-                        : typeof messageData.acceptedTerms === 'boolean'
-                            ? messageData.acceptedTerms
-                            : null;
-
-    const statusValue =
-        typeof messageData.status === 'string'
-            ? messageData.status.toLowerCase().replace(/[\s-]+/g, '_')
-            : '';
-
-    if (
-        messageType === 'tos_status' ||
-        messageType === 'tos_result' ||
-        messageType === 'connected'
-    ) {
-        if (
-            acceptanceValue === true ||
-            statusValue === 'accepted' ||
-            statusValue === 'tos_accepted'
-        ) {
-            tosAcceptanceKnown = true;
-            showLoadingScreenAndLaunch();
-            return true;
-        }
-
-        if (
-            acceptanceValue === false ||
-            statusValue === 'not_accepted' ||
-            statusValue === 'unaccepted' ||
-            statusValue === 'required' ||
-            statusValue === 'tos_not_accepted'
-        ) {
-            showTosGate();
-            return true;
-        }
+    if (message.data.accepted === true) {
+        tosAcceptanceKnown = true;
+        showLoadingScreenAndLaunch();
+    } else {
+        showTosGate();
     }
 
-    return false;
+    return true;
 }
 
 function sendTosRequestAndContinue() {
@@ -457,7 +403,7 @@ rngButton.addEventListener('click', () => {
     socket.send(JSON.stringify({  
         protocol: "cardgame",  
         version: 1,  
-        request: "rng_test"  
+        request: "rng_go"  
     }));  
 });  
 
@@ -876,6 +822,21 @@ function setSubnavSelection(button, parent, content, viewName, headingText) {
     }
 
     heading.textContent = headingText;
+
+    if (content === cardsContent) {
+        if (viewName === 'my-collection') {
+            createCollectionStats();
+            collectionStats.classList.remove('hidden');
+            requestCardGameStats();
+
+            if (latestCardGameStatsData) {
+                updateCardGameCountDisplays(latestCardGameStatsData);
+            }
+        } else if (collectionStats) {
+            collectionStats.classList.add('hidden');
+        }
+    }
+
     updateScrollRail();
 }
 
@@ -982,6 +943,90 @@ const scrollRail = document.querySelector('.scrollRail');
 const statsValueElements = {};
 let cardGameStatsRequested = false;
 let cardGameStatsReceived = false;
+let rngRecordsDiscoveredCount = null;
+let collectionStats = null;
+let collectionCardsDiscoveredValue = null;
+let collectionCardsOwnedValue = null;
+let latestCardGameStatsData = null;
+
+function createRngRecordsDiscoveredCount() {
+    if (!generateScreen || rngRecordsDiscoveredCount) {
+        return;
+    }
+
+    rngRecordsDiscoveredCount = document.createElement('div');
+    rngRecordsDiscoveredCount.className = 'rngRecordsDiscoveredCount';
+    rngRecordsDiscoveredCount.style.color = '#fff';
+    rngRecordsDiscoveredCount.textContent = '— out of — records discovered';
+    generateScreen.appendChild(rngRecordsDiscoveredCount);
+
+    if (latestCardGameStatsData) {
+        updateCardGameCountDisplays(latestCardGameStatsData);
+    }
+}
+
+function createCollectionStats() {
+    if (!cardsContent || collectionStats) {
+        return;
+    }
+
+    collectionStats = document.createElement('div');
+    collectionStats.className = 'collectionStats hidden';
+    collectionStats.style.color = '#fff';
+
+    collectionCardsDiscoveredValue = document.createElement('div');
+    collectionCardsDiscoveredValue.className = 'collectionCardsDiscovered';
+    collectionCardsDiscoveredValue.textContent = 'Cards Discovered: —';
+
+    collectionCardsOwnedValue = document.createElement('div');
+    collectionCardsOwnedValue.className = 'collectionCardsOwned';
+    collectionCardsOwnedValue.textContent = 'Cards Owned: —';
+
+    collectionStats.append(
+        collectionCardsDiscoveredValue,
+        collectionCardsOwnedValue
+    );
+
+    cardsContent.appendChild(collectionStats);
+
+    if (latestCardGameStatsData) {
+        updateCardGameCountDisplays(latestCardGameStatsData);
+    }
+}
+
+function updateCardGameCountDisplays(statsData) {
+    const recordsDiscovered = statsData
+        ? statsData.recordsDiscovered
+        : undefined;
+    const totalRecords = statsData
+        ? statsData.totalRecords
+        : undefined;
+
+    if (rngRecordsDiscoveredCount) {
+        rngRecordsDiscoveredCount.textContent =
+            `${formatStatsValue(recordsDiscovered)} out of ${formatStatsValue(totalRecords)} records discovered`;
+    }
+
+    const cardsDiscovered = statsData
+        ? statsData.cardsDiscovered
+        : undefined;
+    const cardsOwned = statsData
+        ? statsData.cardsOwned
+        : undefined;
+    const totalCards = statsData
+        ? statsData.totalCards
+        : undefined;
+
+    if (collectionCardsDiscoveredValue) {
+        collectionCardsDiscoveredValue.textContent =
+            `Cards Discovered: ${formatStatsValue(cardsDiscovered)} out of ${formatStatsValue(totalCards)}`;
+    }
+
+    if (collectionCardsOwnedValue) {
+        collectionCardsOwnedValue.textContent =
+            `Cards Owned: ${formatStatsValue(cardsOwned)} out of ${formatStatsValue(totalCards)}`;
+    }
+}
 
 function createStatsScreen() {
     if (!statsScreen || statsScreen.dataset.initialized === 'true') {
@@ -1027,6 +1072,7 @@ function createStatsScreen() {
     const stats = [
         ['rolls', 'Rolls'],
         ['recordsDiscovered', 'Records Discovered'],
+        ['cardsDiscovered', 'Cards Discovered'],
         ['cardsOwned', 'Cards Owned'],
         ['packsOpened', 'Packs Opened'],
         ['tradesCompleted', 'Trades Completed']
@@ -1092,43 +1138,16 @@ function setStatsProfile(profileData) {
     const avatarElement = document.getElementById('statsProfileAvatar');
 
     const username = getFirstDefinedValue(profileData, [
-        'username',
-        'globalName',
-        'global_name',
-        'displayName',
-        'display_name',
-        'name'
+        'username'
     ]);
 
     if (usernameElement && typeof username === 'string' && username.trim()) {
         usernameElement.textContent = username;
     }
 
-    let avatarUrl = getFirstDefinedValue(profileData, [
-        'avatarUrl',
-        'avatarURL',
-        'avatar_url',
-        'avatarUri',
-        'avatar_uri',
-        'avatar'
+    const avatarUrl = getFirstDefinedValue(profileData, [
+        'avatarUrl'
     ]);
-
-    const userId = getFirstDefinedValue(profileData, [
-        'userId',
-        'user_id',
-        'discordId',
-        'discord_id',
-        'id'
-    ]);
-
-    if (
-        typeof avatarUrl === 'string' &&
-        !/^https?:\/\//i.test(avatarUrl) &&
-        typeof userId === 'string' &&
-        /^[0-9]+$/.test(userId)
-    ) {
-        avatarUrl = `https://cdn.discordapp.com/avatars/${encodeURIComponent(userId)}/${encodeURIComponent(avatarUrl)}.png?size=128`;
-    }
 
     if (avatarElement && typeof avatarUrl === 'string') {
         try {
@@ -1155,29 +1174,28 @@ function applyCardGameStats(payload) {
     const profileData =
         payload.profile && typeof payload.profile === 'object'
             ? payload.profile
-            : payload.user && typeof payload.user === 'object'
-                ? payload.user
-                : payload;
+            : null;
 
     const statsData =
         payload.stats && typeof payload.stats === 'object'
             ? payload.stats
-            : payload.statistics && typeof payload.statistics === 'object'
-                ? payload.statistics
-                : payload;
+            : null;
 
+    latestCardGameStatsData = statsData;
+    updateCardGameCountDisplays(statsData);
     setStatsProfile(profileData);
 
     const statKeys = {
-        rolls: ['rolls', 'totalRolls', 'total_rolls', 'rollCount', 'roll_count'],
-        recordsDiscovered: ['recordsDiscovered', 'records_discovered', 'uniqueRecordsDiscovered', 'unique_records_discovered'],
-        cardsOwned: ['cardsOwned', 'cards_owned', 'ownedCards', 'owned_cards', 'cardCount', 'card_count'],
-        packsOpened: ['packsOpened', 'packs_opened', 'packCount', 'pack_count'],
-        tradesCompleted: ['tradesCompleted', 'trades_completed', 'completedTrades', 'completed_trades']
+        rolls: 'rolls',
+        recordsDiscovered: 'recordsDiscovered',
+        cardsDiscovered: 'cardsDiscovered',
+        cardsOwned: 'cardsOwned',
+        packsOpened: 'packsOpened',
+        tradesCompleted: 'tradesCompleted'
     };
 
-    Object.entries(statKeys).forEach(([key, aliases]) => {
-        const value = getFirstDefinedValue(statsData, aliases);
+    Object.entries(statKeys).forEach(([key, field]) => {
+        const value = statsData ? statsData[field] : undefined;
 
         if (statsValueElements[key] && value !== undefined) {
             statsValueElements[key].textContent = formatStatsValue(value);
@@ -1189,30 +1207,19 @@ function applyCardGameStats(payload) {
 }
 
 function handleCardGameStatsMessage(message) {
-    if (!message || typeof message !== 'object') {
+    if (
+        !message ||
+        typeof message !== 'object' ||
+        message.type !== 'stats_send'
+    ) {
         return false;
     }
 
-    const messageType =
-        typeof message.type === 'string'
-            ? message.type.toLowerCase().replace(/[\s-]+/g, '_')
-            : '';
-
-    if (
-        messageType === 'stats_result' ||
-        messageType === 'stats_data' ||
-        messageType === 'user_stats' ||
-        messageType === 'profile_stats'
-    ) {
-        applyCardGameStats(
-            message.data && typeof message.data === 'object'
-                ? message.data
-                : message
-        );
-        return true;
+    if (message.data && typeof message.data === 'object') {
+        applyCardGameStats(message.data);
     }
 
-    return false;
+    return true;
 }
 
 function requestCardGameStats() {
@@ -2001,7 +2008,9 @@ function createRngTopControlArea() {
 
     generateScreen.appendChild( 
         rngTopControlArea 
-    ); 
+    );
+
+    createRngRecordsDiscoveredCount();
 } 
 
 function createRngDailyStatus() {  
@@ -2030,7 +2039,7 @@ function createRngDailyStatus() {
         '#8a8f94'; 
 
     rngDailyMessage.textContent =  
-        'Next roll in';  
+        'You have already rolled for this period';  
 
     rngDailyCountdown =  
         document.createElement('div');  
@@ -2143,12 +2152,12 @@ function updateRngDailyCountdown() {
     createRngDailyStatus(); 
 
     rngDailyMessage.textContent = 
-        'Next roll in'; 
+        'You have already rolled for this period'; 
 
     rngDailyCountdown.textContent = 
-        formatRngCountdown( 
+        `Next roll in ${formatRngCountdown( 
             remaining 
-        ); 
+        )}`; 
 
     rngDailyMessage.style.color = 
         '#8a8f94'; 
@@ -2236,7 +2245,46 @@ function getRngDisplayRarity(payload) {
             payload.rarity 
         );
 
-   
+    /* 
+    // FUTURE MODIFIER-BASED RARITY PROCESSING 
+
+    let rarityTier = 
+        baseRarity === 'common' 
+            ? 0 
+            : baseRarity === 'uncommon' 
+                ? 1 
+                : baseRarity === 'rare' 
+                    ? 2 
+                    : baseRarity === 'legendary' 
+                        ? 3 
+                        : -1; 
+
+    if ( 
+        rarityTier >= 0 && 
+        Array.isArray(payload?.modifiers) 
+    ) { 
+        payload.modifiers.forEach(modifier => { 
+            // Future modifier processing will determine 
+            // whether a modifier increases rarity here. 
+        }); 
+    } 
+
+    const rarityByTier = [ 
+        'common', 
+        'uncommon', 
+        'rare', 
+        'legendary' 
+    ]; 
+
+    if (rarityTier >= 0) { 
+        return rarityByTier[ 
+            Math.min( 
+                rarityTier, 
+                rarityByTier.length - 1 
+            ) 
+        ]; 
+    } 
+    */
 
         return baseRarity; 
 } 
@@ -5306,7 +5354,7 @@ document.addEventListener(
 
 /* 
 ============================================================ 
-===== TEMP RNG COOLDOWN BYPASS - END MARKER =====
+===== TEMP RNG COOLDOWN BYPASS - END MARKER ===== 
 ============================================================ 
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY. 
