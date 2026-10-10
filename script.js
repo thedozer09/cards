@@ -3699,32 +3699,17 @@ function createRngRecordCard(payload, recordText) {
         duplicateOverlay.className =
             'rngDuplicateOverlay';
 
-        duplicateOverlay.setAttribute(
-            'aria-label',
-            'Duplicate roll'
-        );
-
-        const duplicateText =
-            document.createElement('span');
-
-        duplicateText.className =
-            'rngDuplicateText';
-
-        duplicateText.textContent =
+        duplicateOverlay.textContent =
             'DUPLICATE';
 
-        duplicateText.setAttribute(
+        duplicateOverlay.setAttribute(
             'data-rng-shine-text',
             'DUPLICATE'
         );
 
-        duplicateText.setAttribute(
-            'aria-hidden',
-            'true'
-        );
-
-        duplicateOverlay.appendChild(
-            duplicateText
+        duplicateOverlay.setAttribute(
+            'aria-label',
+            'Duplicate roll'
         );
 
         card.appendChild(
