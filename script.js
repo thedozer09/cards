@@ -290,7 +290,7 @@ function requestRngServerTime() {
         JSON.stringify({  
             protocol: "cardgame",  
             version: 1,  
-            request: "get_time"  
+            request: "get_time" 
         })  
     );  
 }  
@@ -939,10 +939,10 @@ const RNG_LIFETIME_FADE_DURATION = 260;
 const RNG_LIFETIME_ROLL_DURATION = 2000; 
 const RNG_LIFETIME_DIGIT_STAGGER = 0; 
 const RNG_LIFETIME_VISIBLE_STEPS = 1; 
-const RNG_RECORD_WIGGLE_DURATION = 20000; 
+const RNG_RECORD_WIGGLE_DURATION = 10000; 
 const RNG_RECORD_WIGGLE_AMPLITUDE = 8; 
 const RNG_RECORD_WIGGLE_ROTATION = 10; 
-const RNG_RECORD_FINISH_FLASH_DELAY = 6000; 
+const RNG_RECORD_FINISH_FLASH_DELAY = 1000; 
 
 let rngRequestPending = false;  
 let rngRollLoadingPending = false;  
@@ -1823,7 +1823,7 @@ function startRngRecordCardWiggle(
 
     function wiggleFrame(now) { 
         if ( 
-            !card.parentElement 
+            !card.isConnected 
         ) { 
             rngRecordCardWiggleFrame = 
                 null; 
@@ -1898,7 +1898,6 @@ function handleRngGenerateTabActivation() {
             ); 
 
         if (card) { 
-
             applyRngRarityTheme( 
                 card.classList.contains('rng-rarity-common') 
                     ? 'common' 
@@ -1910,12 +1909,6 @@ function handleRngGenerateTabActivation() {
                                 ? 'legendary' 
                                 : 'unknown' 
             ); 
-
-            if (!rngRecordCardWiggleFrame) { 
-                startRngRecordCardWiggle(card); 
-            } 
-
-            requestRngLaunchFlash(); 
         } 
 
         return; 
@@ -1933,7 +1926,84 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-}  
+} 
+
+function startRngCardFinishEffects(card) {
+    if (
+        !card ||
+        !card.isConnected ||
+        card.dataset.rngCardFinishStarted === 'true'
+    ) {
+        return;
+    }
+
+    card.dataset.rngCardFinishStarted = 'true';
+
+    card.classList.remove(
+        'rngResultPopIn'
+    );
+
+    card.style.opacity =
+        '1';
+
+    card.style.transform =
+        'none';
+
+    void card.offsetWidth;
+
+    startRngRecordCardWiggle(
+        card
+    );
+
+    window.setTimeout(
+        () => {
+            if (
+                !card.isConnected
+            ) {
+                return;
+            }
+
+            playRngLaunchFlash();
+
+            card.classList.remove(
+                'rngRecordCardFinalPop'
+            );
+
+            void card.offsetWidth;
+
+            const finishPopHandler = event => {
+                if (
+                    event.animationName !==
+                    'rngRecordCardFinalPop'
+                ) {
+                    return;
+                }
+
+                card.classList.remove(
+                    'rngRecordCardFinalPop'
+                );
+
+                card.style.opacity =
+                    '1';
+
+                card.removeEventListener(
+                    'animationend',
+                    finishPopHandler
+                );
+            };
+
+            card.addEventListener(
+                'animationend',
+                finishPopHandler
+            );
+
+            card.classList.add(
+                'rngRecordCardFinalPop'
+            );
+        },
+        RNG_RECORD_FINISH_FLASH_DELAY
+    );
+}
 
 function scheduleRngDuplicateReveal(card) {
     if (!card) {
@@ -1972,6 +2042,11 @@ function scheduleRngDuplicateReveal(card) {
 
     card.dataset.rngDuplicateRevealScheduled = 'true';
 
+    const duplicateText =
+        duplicateOverlay.querySelector(
+            '.rngDuplicateText'
+        );
+
     const startDuplicateRevealTimer = () => {
         if (
             card.dataset.rngDuplicateRevealTimerStarted === 'true'
@@ -1987,6 +2062,40 @@ function scheduleRngDuplicateReveal(card) {
                     !duplicateOverlay.isConnected
                 ) {
                     return;
+                }
+
+                const handleDuplicatePopInFinished = event => {
+                    if (
+                        event.animationName !==
+                        'rngDuplicateStampPopIn'
+                    ) {
+                        return;
+                    }
+
+                    duplicateText.removeEventListener(
+                        'animationend',
+                        handleDuplicatePopInFinished
+                    );
+
+                    startRngCardFinishEffects(
+                        card
+                    );
+                };
+
+                if (duplicateText) {
+                    duplicateText.addEventListener(
+                        'animationend',
+                        handleDuplicatePopInFinished
+                    );
+                } else {
+                    window.setTimeout(
+                        () => {
+                            startRngCardFinishEffects(
+                                card
+                            );
+                        },
+                        1000
+                    );
                 }
 
                 duplicateOverlay.classList.add(
@@ -2092,77 +2201,61 @@ function animateRngRecordCard(
                 ); 
             } 
 
-            if ( 
-                element === 
-                finalElement 
-            ) { 
-                element.addEventListener( 
-                    'animationend', 
-                    event => { 
-                        if ( 
-                            event.animationName !== 
-                            'rngResultPopIn' 
-                        ) { 
-                            return; 
-                        } 
+            const cardHasDuplicate = Boolean(
+                card.querySelector(
+                    '.rngDuplicateOverlay'
+                )
+            );
 
-                        card.classList.remove( 
-                            'rngResultPopIn' 
-                        ); 
+            const contentLoadTrigger =
+                modifierElements.length > 0
+                    ? modifierElements[modifierElements.length - 1]
+                    : elements.find(element => element.classList.contains('rngNoModifiers')) ||
+                        elements.find(element => element.classList.contains('rngModifiersDescription')) ||
+                        finalElement;
 
-                        card.classList.remove( 
-                            'rngRecordCardFinalPop' 
-                        ); 
+            if (
+                element === contentLoadTrigger
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName !==
+                            'rngResultPopIn'
+                        ) {
+                            return;
+                        }
 
-                        card.style.opacity = 
-                            '1'; 
+                        if (!cardHasDuplicate) {
+                            startRngCardFinishEffects(
+                                card
+                            );
+                        }
+                    },
+                    { once: true }
+                );
+            }
 
-                        card.style.transform = 
-                            'none'; 
+            if (
+                element === finalElement &&
+                onRevealFinished
+            ) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (
+                            event.animationName !==
+                            'rngResultPopIn'
+                        ) {
+                            return;
+                        }
 
-                        void card.offsetWidth; 
-
-                        card.classList.add( 
-                            'rngRecordCardFinalPop' 
-                        ); 
-
-                        card.addEventListener( 
-                            'animationend', 
-                            finalPopEvent => { 
-                                if ( 
-                                    finalPopEvent.animationName !== 
-                                    'rngRecordCardFinalPop' 
-                                ) { 
-                                    return; 
-                                } 
-
-                                card.classList.remove( 
-                                    'rngRecordCardFinalPop' 
-                                ); 
-
-                                window.setTimeout( 
-                                    () => { 
-                                        if (card.isConnected) { 
-                                            playRngLaunchFlash(); 
-                                        } 
-                                    }, 
-                                    RNG_RECORD_FINISH_FLASH_DELAY 
-                                ); 
-
-                                startRngRecordCardWiggle( 
-                                    card 
-                                ); 
-
-                                if (onRevealFinished) { 
-                                    onRevealFinished(); 
-                                } 
-                            }, 
-                            { once: true } 
-                        ); 
-                    }, 
-                    { once: true } 
-                ); 
-            } 
+                        onRevealFinished();
+                    },
+                    { once: true }
+                );
+            }
 
             let popDelay =
                 index * (RNG_POP_INTERVAL / 1000);
@@ -4131,7 +4224,6 @@ function showRngRecordResult(payload) {
         rngResultPanel.appendChild(card);
         scheduleRngDuplicateReveal(card);
         scrollRngResultIntoView(card); 
-        requestRngLaunchFlash(); 
 
         animateRngRecordCard( 
             card, 
@@ -4240,7 +4332,6 @@ function showRngRecordResult(payload) {
         scheduleRngDuplicateReveal(card);
 
         scrollRngResultIntoView(card); 
-        requestRngLaunchFlash(); 
 
         animateRngRecordCard( 
             card, 

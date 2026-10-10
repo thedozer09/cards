@@ -2680,10 +2680,6 @@ button {
     align-items: center !important;
 }
 
-.rngStat:nth-child(4) .rngStatValue {
-    top: 33px !important;
-}
-
 
 .rngLifetimeStatLabel::before {
     content: "Total Score" !important;
@@ -3612,5 +3608,38 @@ button {
     .rngModifierDescription {
         font-size: 11px !important;
         line-height: 1.4 !important;
+    }
+}
+
+
+.rngRecordCard {
+    transform-origin: center center !important;
+    will-change: transform, scale !important;
+}
+
+.rngRecordCard.rngRecordCardFinalPop {
+    animation: rngRecordCardFinalPop 600ms cubic-bezier(0.16, 1.15, 0.3, 1) both !important;
+    animation-composition: add !important;
+}
+
+@keyframes rngRecordCardFinalPop {
+    0% {
+        scale: 1;
+    }
+
+    32% {
+        scale: 1.14;
+    }
+
+    67% {
+        scale: 0.94;
+    }
+
+    84% {
+        scale: 1.04;
+    }
+
+    100% {
+        scale: 1;
     }
 }
