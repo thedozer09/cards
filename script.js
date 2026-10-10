@@ -1076,7 +1076,7 @@ function sanitizeRngStoredResult(payload) {
             isRngDuplicatePayload(payload), 
         modifiers: payload.modifiers ?? [] 
     }; 
-}
+} 
 
 function isRngDuplicatePayload(payload) { 
     if ( 
@@ -2019,10 +2019,21 @@ function animateRngRecordCard(
             '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
         );  
 
+    const fullRarityPlaceholder =
+        card.querySelector(
+            '.rngFullRarityPlaceholder'
+        );
+
     const elements = [ 
         card, 
         ...childElements 
-    ]; 
+    ];
+
+    if (fullRarityPlaceholder) {
+        elements.push(
+            fullRarityPlaceholder
+        );
+    }
 
     const finalElement = 
         elements[ 
@@ -3276,7 +3287,7 @@ function applyRngLifetimeUpdateResult(score) {
             ) 
         ) 
     ); 
-}  
+} 
 
 function applyDailyRollState(state) {  
     return;  
@@ -3482,7 +3493,7 @@ function createRngStat(label, value, valueColor = null) {
 
     const statLabel = document.createElement('div');  
     statLabel.className = 'rngStatLabel';  
-    statLabel.textContent = label; 
+    statLabel.textContent = label;  
 
     if ( 
         String(label).toLowerCase().includes( 
@@ -3595,7 +3606,9 @@ function createRngStat(label, value, valueColor = null) {
 
 function createRngRecordCard(payload, recordText) {  
     const card = document.createElement('div');  
-    card.className = 'rngRecordCard';  
+    card.className = 'rngRecordCard';
+    card.style.background =
+        'linear-gradient(135deg, #30343a 0%, #24282d 48%, #13171b 100%)';
 
     const displayRarity = 
         getRngDisplayRarity( 
@@ -3612,17 +3625,6 @@ function createRngRecordCard(payload, recordText) {
             `rng-rarity-${normalizedRarity}` 
         ); 
 
-        const rarityGradient = 
-            getRngRarityGradient( 
-                normalizedRarity 
-            ); 
-
-        if ( 
-            rarityGradient 
-        ) { 
-            card.style.background = 
-                rarityGradient; 
-        } 
     } 
 
     const recordHeader = document.createElement('div');  
@@ -3638,13 +3640,14 @@ function createRngRecordCard(payload, recordText) {
     const recordValue = document.createElement('div');  
     recordValue.className = 'rngRecordValue';  
     recordValue.textContent = recordText;  
-    recordValue.setAttribute( 
-        'data-rng-full-rarity', 
-        'N/A' 
-    ); 
+
+    const fullRarityPlaceholder = document.createElement('div');
+    fullRarityPlaceholder.className = 'rngFullRarityPlaceholder';
+    fullRarityPlaceholder.textContent = 'N/A';
 
     recordHeader.appendChild(recordLabel);  
     recordHeader.appendChild(recordValue);  
+    recordHeader.appendChild(fullRarityPlaceholder);
     card.appendChild(recordHeader);  
 
     const stats = document.createElement('div');  
@@ -4080,7 +4083,7 @@ function showRngRecordResult(payload) {
         rngScrambleElement = null; 
 
         scramble.remove(); 
-    }  
+    } 
 
     appearedCount = 
         1; 
