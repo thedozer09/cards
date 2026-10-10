@@ -240,7 +240,7 @@ function initializeWebSocket() {
                 errorMessage.classList.remove("hidden");  
                 initializeRngGenerateButton();  
 
-     return;  
+                return;  
             }  
 
             if (data.type === "rng_test") {  
@@ -1949,21 +1949,6 @@ function animateRngRecordCard(
 
     clearRngRecordCardWiggle(); 
 
-    const rarityShineOverlays = 
-        card.querySelectorAll( 
-            '.rngRarityShineOverlay' 
-        ); 
-
-    rarityShineOverlays.forEach(overlay => { 
-        overlay.style.animation = 
-            'none'; 
-
-        void overlay.offsetWidth; 
-
-        overlay.style.animation = 
-            'rngDuplicateShine 4.8s ease-in-out infinite'; 
-    }); 
-
     const childElements =  
         card.querySelectorAll(  
             '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
@@ -1972,12 +1957,12 @@ function animateRngRecordCard(
     const elements = [ 
         card, 
         ...childElements 
-    ]; 
+    ];  
 
     const finalElement = 
         elements[ 
             elements.length - 1 
-        ]; 
+        ];  
 
     elements.forEach(  
         (element, index) => {  
@@ -2222,7 +2207,7 @@ function markRngRollComplete(payload) {
         rngDailyActionArea.remove();  
         rngDailyActionArea = null;  
     }  
-} 
+}  
 
 function getRngLifetimePayloadScore(payload) { 
     if ( 
@@ -3629,116 +3614,10 @@ function createRngRecordCard(payload, recordText) {
             normalizedRarity === 'rare' || 
             normalizedRarity === 'legendary' 
         ) { 
-            const rarityColor = 
-                getRngRarityColor( 
-                    normalizedRarity 
-                ); 
-
-            const rarityText = 
-                rarityValue.textContent.trim(); 
-
-            rarityValue.style.setProperty( 
-                '-webkit-text-fill-color', 
-                'currentColor' 
+            rarityValue.setAttribute( 
+                'data-rng-shine-text', 
+                rarityValue.textContent.trim() 
             ); 
-
-            rarityValue.style.backgroundImage = 
-                'none'; 
-
-            rarityValue.style.backgroundClip = 
-                'border-box'; 
-
-            rarityValue.style.webkitBackgroundClip = 
-                'border-box'; 
-
-            rarityValue.style.animation = 
-                'none'; 
-
-            const rarityShineOverlay = 
-                document.createElement('span'); 
-
-            rarityShineOverlay.className = 
-                'rngRarityShineOverlay'; 
-
-            rarityShineOverlay.setAttribute( 
-                'aria-hidden', 
-                'true' 
-            ); 
-
-            rarityShineOverlay.textContent = 
-                rarityText; 
-
-            rarityShineOverlay.style.position = 
-                'absolute'; 
-
-            rarityShineOverlay.style.top = 
-                '0'; 
-
-            rarityShineOverlay.style.left = 
-                '0'; 
-
-            rarityShineOverlay.style.zIndex = 
-                '2'; 
-
-            rarityShineOverlay.style.display = 
-                'block'; 
-
-            rarityShineOverlay.style.width = 
-                '100%'; 
-
-            rarityShineOverlay.style.height = 
-                '100%'; 
-
-            rarityShineOverlay.style.color = 
-                'transparent'; 
-
-            rarityShineOverlay.style.font = 
-                'inherit'; 
-
-            rarityShineOverlay.style.lineHeight = 
-                'inherit'; 
-
-            rarityShineOverlay.style.letterSpacing = 
-                'inherit'; 
-
-            rarityShineOverlay.style.textAlign = 
-                'center'; 
-
-            rarityShineOverlay.style.whiteSpace = 
-                'nowrap'; 
-
-            rarityShineOverlay.style.pointerEvents = 
-                'none'; 
-
-            rarityShineOverlay.style.textShadow = 
-                'none'; 
-
-            rarityShineOverlay.style.backgroundImage = 
-                `linear-gradient(105deg, ${rarityColor} 0%, ${rarityColor} 38%, rgba(255, 255, 255, 0.92) 48%, ${rarityColor} 58%, ${rarityColor} 100%)`; 
-
-            rarityShineOverlay.style.backgroundSize = 
-                '300% 100%'; 
-
-            rarityShineOverlay.style.backgroundPosition = 
-                '100% 50%'; 
-
-            rarityShineOverlay.style.backgroundClip = 
-                'text'; 
-
-            rarityShineOverlay.style.webkitBackgroundClip = 
-                'text'; 
-
-            rarityShineOverlay.style.webkitTextFillColor = 
-                'transparent'; 
-
-            rarityShineOverlay.style.animation = 
-                'rngDuplicateShine 4.8s ease-in-out infinite'; 
-
-            rarityValue.appendChild( 
-                rarityShineOverlay 
-            ); 
-
-            void rarityShineOverlay.offsetWidth; 
         } 
     } 
 
@@ -3826,12 +3705,32 @@ function createRngRecordCard(payload, recordText) {
         duplicateOverlay.className =
             'rngDuplicateOverlay';
 
-        duplicateOverlay.textContent =
-            'DUPLICATE';
-
         duplicateOverlay.setAttribute(
             'aria-label',
             'Duplicate roll'
+        );
+
+        const duplicateText =
+            document.createElement('span');
+
+        duplicateText.className =
+            'rngDuplicateText';
+
+        duplicateText.textContent =
+            'DUPLICATE';
+
+        duplicateText.setAttribute(
+            'data-rng-shine-text',
+            'DUPLICATE'
+        );
+
+        duplicateText.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+        duplicateOverlay.appendChild(
+            duplicateText
         );
 
         card.appendChild(
