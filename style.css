@@ -23,51 +23,33 @@ body {
     color: #f5f9fd;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #3f6085 0%,
-
             #36577e 26%,
-
             #2d4e76 52%,
-
             #29466d 76%,
-
             #244064 100%
-
         );
 
     -webkit-font-smoothing: antialiased;
 
     -moz-osx-font-smoothing: grayscale;
 
-    transition:
-
-        background 0.35s ease;
+    transition: background 0.35s ease;
 
 }
 
 body.rng-rarity-common {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #557590 0%,
-
             #4a6981 28%,
-
             #435d70 55%,
-
             #3d5363 78%,
-
             #374a58 100%
-
         );
 
 }
@@ -75,21 +57,13 @@ body.rng-rarity-common {
 body.rng-rarity-uncommon {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #247b79 0%,
-
             #286f72 28%,
-
             #2d626b 55%,
-
             #315664 78%,
-
             #344b59 100%
-
         );
 
 }
@@ -97,21 +71,13 @@ body.rng-rarity-uncommon {
 body.rng-rarity-rare {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #2468a3 0%,
-
             #285f97 28%,
-
             #2e587f 55%,
-
             #334f6e 78%,
-
             #37485b 100%
-
         );
 
 }
@@ -119,21 +85,13 @@ body.rng-rarity-rare {
 body.rng-rarity-legendary {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #7b671f 0%,
-
             #6c5d2c 28%,
-
             #5d5234 55%,
-
             #4e4839 78%,
-
             #41403d 100%
-
         );
 
 }
@@ -251,25 +209,16 @@ button {
     border-radius: 25px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #102b4b 0%,
-
             #172f49 42%,
-
             #242e35 72%,
-
             #2d3236 100%
-
         );
 
     box-shadow:
-
         0 14px 34px rgba(2, 10, 20, 0.36),
-
         inset 0 1px 0 rgba(181, 208, 228, 0.06);
 
 }
@@ -289,17 +238,11 @@ button {
     border-radius: 999px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #476f92 0%,
-
             #3d6385 50%,
-
             #335775 100%
-
         );
 
     color: #ffffff;
@@ -313,17 +256,12 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 6px 15px rgba(2, 14, 27, 0.3),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease;
 
 }
@@ -331,25 +269,17 @@ button {
 .tabButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #527ca0 0%,
-
             #477098 50%,
-
             #3b6485 100%
-
         );
 
     border-color: rgba(201, 222, 237, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.34),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 }
@@ -371,17 +301,11 @@ button {
 .tabButton.active {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #5b83a5 0%,
-
             #4d7395 50%,
-
             #406788 100%
-
         );
 
     border-color: rgba(213, 230, 241, 0.38);
@@ -389,9 +313,7 @@ button {
     color: #ffffff;
 
     box-shadow:
-
         0 8px 20px rgba(2, 14, 27, 0.38),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.11);
 
 }
@@ -448,9 +370,7 @@ button {
 
     height: 82px;
 
-    animation:
-
-        carDrive 3s linear forwards;
+    animation: carDrive 3s linear forwards;
 
 }
 
@@ -460,9 +380,7 @@ button {
 
     height: 90px;
 
-    animation:
-
-        tornadoChase 3s linear 1s forwards;
+    animation: tornadoChase 3s linear 1s forwards;
 
 }
 
@@ -695,17 +613,11 @@ button {
     border-radius: 14px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #416e98 0%,
-
             #365f87 52%,
-
             #2e5278 100%
-
         );
 
     color: #ffffff;
@@ -719,19 +631,13 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 7px 16px rgba(2, 14, 27, 0.28),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease,
-
         transform 0.18s ease;
 
 }
@@ -739,25 +645,17 @@ button {
 .rngGenerateButton:hover {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #4c7da8 0%,
-
             #3e6b93 52%,
-
             #345c82 100%
-
         );
 
     border-color: rgba(207, 226, 239, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.32),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     transform: translateY(-1px);
@@ -892,9 +790,7 @@ button {
 
     text-align: center;
 
-    text-shadow:
-
-        0 0 8px rgba(33, 183, 255, 0.24);
+    text-shadow: 0 0 8px rgba(33, 183, 255, 0.24);
 
     word-break: break-all;
 
@@ -935,23 +831,15 @@ button {
     border-radius: 20px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #203e5e 0%,
-
             #253845 46%,
-
             #313739 100%
-
         );
 
     box-shadow:
-
         0 14px 28px rgba(2, 10, 20, 0.28),
-
         inset 0 1px 0 rgba(216, 231, 241, 0.06);
 
     overflow: hidden;
@@ -961,17 +849,11 @@ button {
 .rngRecordCard.rng-rarity-common {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #304b65 0%,
-
             #354653 46%,
-
             #31383d 100%
-
         );
 
 }
@@ -979,17 +861,11 @@ button {
 .rngRecordCard.rng-rarity-uncommon {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #205f5c 0%,
-
             #2b4f53 46%,
-
             #313b40 100%
-
         );
 
 }
@@ -997,17 +873,11 @@ button {
 .rngRecordCard.rng-rarity-rare {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #21598a 0%,
-
             #2d485f 46%,
-
             #303b43 100%
-
         );
 
 }
@@ -1015,17 +885,11 @@ button {
 .rngRecordCard.rng-rarity-legendary {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #695719 0%,
-
             #50472f 46%,
-
             #343a3e 100%
-
         );
 
 }
@@ -1303,9 +1167,7 @@ button {
     opacity: 1;
 
     transition:
-
         opacity 160ms ease,
-
         visibility 0s linear 0s;
 
 }
@@ -1343,9 +1205,7 @@ button {
     pointer-events: none;
 
     transition:
-
         opacity 160ms ease,
-
         visibility 0s linear 160ms;
 
 }
@@ -1482,21 +1342,13 @@ button {
 
     font-weight: 800;
 
-    transform:
-
-        translateX(
-
-            -50%
-
-        );
+    transform: translateX(-50%);
 
     opacity: 0;
 
     pointer-events: none;
 
-    transition:
-
-        opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
+    transition: opacity 260ms cubic-bezier(0.22, 0.8, 0.25, 1);
 
     white-space: nowrap;
 
@@ -1523,43 +1375,25 @@ button {
     flex-shrink: 0;
 
     mask-image:
-
         linear-gradient(
-
             to bottom,
-
             transparent 0%,
-
             rgba(0, 0, 0, 0.72) 18%,
-
             #000000 31%,
-
             #000000 69%,
-
             rgba(0, 0, 0, 0.72) 82%,
-
             transparent 100%
-
         );
 
     -webkit-mask-image:
-
         linear-gradient(
-
             to bottom,
-
             transparent 0%,
-
             rgba(0, 0, 0, 0.72) 18%,
-
             #000000 31%,
-
             #000000 69%,
-
             rgba(0, 0, 0, 0.72) 82%,
-
             transparent 100%
-
         );
 
 }
@@ -1742,9 +1576,7 @@ button {
 
 .rngRecordCard.rngRecordCardFinalPop {
 
-    animation:
-
-        rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+    animation: rngRecordCardFinalPop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
 
 }
 
@@ -1779,156 +1611,6 @@ button {
         opacity: 1;
 
         transform: translateY(0) scale(1);
-
-    }
-
-}
-
-.rngDuplicateOverlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 20;
-
-    width: 100%;
-
-    height: 100%;
-
-    min-height: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin: 0;
-
-    padding: 0;
-
-    color: transparent;
-
-    font-size: 0;
-
-    font-weight: 1000;
-
-    line-height: 1;
-
-    letter-spacing: 0;
-
-    text-align: center;
-
-    white-space: nowrap;
-
-    pointer-events: none;
-
-    opacity: 0.58;
-
-    overflow: visible;
-
-    transform-origin: center center;
-
-    text-shadow: none;
-
-}
-
-.rngDuplicateOverlay::before {
-
-    content: "DUPLICATE";
-
-    display: block;
-
-    width: 170%;
-
-    color: transparent;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 52px;
-
-    font-weight: 1000;
-
-    line-height: 1;
-
-    letter-spacing: 3.5px;
-
-    text-align: center;
-
-    white-space: nowrap;
-
-    background-image:
-
-        linear-gradient(
-
-            105deg,
-
-            #ff2222 0%,
-
-            #ff2222 38%,
-
-            rgba(255, 255, 255, 0.72) 48%,
-
-            #ff2222 58%,
-
-            #ff2222 100%
-
-        );
-
-    background-size: 300% 100%;
-
-    background-position: 100% 50%;
-
-    background-clip: text;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    transform: rotate(-14deg);
-
-    transform-origin: center center;
-
-    filter:
-
-        drop-shadow(
-
-            0 0 4px rgba(255, 24, 24, 0.7)
-
-        )
-
-        drop-shadow(
-
-            0 0 10px rgba(255, 24, 24, 0.32)
-
-        );
-
-    animation:
-
-        rngDuplicateShine 4.8s ease-in-out infinite;
-
-}
-
-@keyframes rngDuplicateShine {
-
-    0%,
-
-    45% {
-
-        background-position: 100% 50%;
-
-    }
-
-    58% {
-
-        background-position: -10% 50%;
-
-    }
-
-    100% {
-
-        background-position: -10% 50%;
 
     }
 
@@ -2073,15 +1755,10 @@ button {
     border-radius: 15px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #122b47 0%,
-
             #252e34 100%
-
         );
 
     color: #ffffff;
@@ -2136,9 +1813,7 @@ button {
 
     background: #ffffff;
 
-    animation:
-
-        rngLaunchFlash 0.6s ease-out forwards;
+    animation: rngLaunchFlash 0.6s ease-out forwards;
 
 }
 
@@ -2172,9 +1847,7 @@ button {
 
 .rngResultPopIn {
 
-    animation:
-
-        rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
+    animation: rngResultPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.08) both;
 
     animation-delay: var(--rng-pop-delay, 0s);
 
@@ -2303,22 +1976,6 @@ button {
     .rngStats {
 
         grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    }
-
-    .rngDuplicateOverlay {
-
-        height: 100%;
-
-        min-height: 100%;
-
-    }
-
-    .rngDuplicateOverlay::before {
-
-        font-size: 46px;
-
-        letter-spacing: 3px;
 
     }
 
@@ -2460,22 +2117,6 @@ button {
 
     }
 
-    .rngDuplicateOverlay {
-
-        height: 100%;
-
-        min-height: 100%;
-
-    }
-
-    .rngDuplicateOverlay::before {
-
-        font-size: 39px;
-
-        letter-spacing: 2.5px;
-
-    }
-
     .tabScreen {
 
         padding: 20px;
@@ -2543,17 +2184,11 @@ button {
     border-radius: 12px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #203e5e 0%,
-
             #253845 52%,
-
             #313739 100%
-
         );
 
     color: #ffffff;
@@ -2565,19 +2200,13 @@ button {
     cursor: pointer;
 
     box-shadow:
-
         0 7px 16px rgba(2, 14, 27, 0.28),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-
         background 0.18s ease,
-
         border-color 0.18s ease,
-
         box-shadow 0.18s ease,
-
         transform 0.18s ease;
 
 }
@@ -2587,9 +2216,7 @@ button {
     border-color: rgba(207, 226, 239, 0.34);
 
     box-shadow:
-
         0 9px 19px rgba(2, 14, 27, 0.34),
-
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     transform: translateY(-1px);
@@ -2636,264 +2263,6 @@ button {
 
 }
 
-.rngRarityValue {
-
-    position: relative;
-
-    z-index: 1;
-
-    display: inline-block;
-
-    width: auto;
-
-    max-width: 100%;
-
-    padding: 0 6px;
-
-    overflow: visible;
-
-    white-space: nowrap;
-
-    isolation: isolate;
-
-}
-
-.rngRarityValue::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 50%;
-
-    left: 50%;
-
-    width: calc(100% + 46px);
-
-    height: 190%;
-
-    transform: translate(-50%, -50%);
-
-    border-radius: 999px;
-
-    filter: blur(8px);
-
-    opacity: 1;
-
-    pointer-events: none;
-
-    z-index: 0;
-
-}
-
-.rngRarityValue {
-
-    text-shadow:
-
-        0 0 7px currentColor,
-
-        0 0 15px currentColor;
-
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityValue {
-
-    color: #dce7f0;
-
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue {
-
-    color: #4fd1c5;
-
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue {
-
-    color: #4da6ff;
-
-    background-image:
-
-        linear-gradient(
-
-            105deg,
-
-            #4da6ff 0%,
-
-            #4da6ff 38%,
-
-            rgba(255, 255, 255, 0.72) 48%,
-
-            #4da6ff 58%,
-
-            #4da6ff 100%
-
-        );
-
-    background-size: 300% 100%;
-
-    background-position: 100% 50%;
-
-    background-clip: text;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    animation:
-
-        rngRarityShine 4.8s ease-in-out infinite;
-
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue {
-
-    color: #ffd84d;
-
-    background-image:
-
-        linear-gradient(
-
-            105deg,
-
-            #ffd84d 0%,
-
-            #ffd84d 38%,
-
-            rgba(255, 255, 255, 0.76) 48%,
-
-            #ffd84d 58%,
-
-            #ffd84d 100%
-
-        );
-
-    background-size: 300% 100%;
-
-    background-position: 100% 50%;
-
-    background-clip: text;
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-
-    animation:
-
-        rngRarityShine 4.8s ease-in-out infinite;
-
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityValue::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse at center,
-
-            rgba(220, 231, 240, 0.82) 0%,
-
-            rgba(220, 231, 240, 0.46) 32%,
-
-            rgba(220, 231, 240, 0.18) 58%,
-
-            rgba(220, 231, 240, 0) 82%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityValue::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse at center,
-
-            rgba(79, 209, 197, 0.9) 0%,
-
-            rgba(79, 209, 197, 0.5) 32%,
-
-            rgba(79, 209, 197, 0.2) 58%,
-
-            rgba(79, 209, 197, 0) 82%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityValue::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse at center,
-
-            rgba(77, 166, 255, 0.95) 0%,
-
-            rgba(77, 166, 255, 0.55) 32%,
-
-            rgba(77, 166, 255, 0.22) 58%,
-
-            rgba(77, 166, 255, 0) 82%
-
-        );
-
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityValue::before {
-
-    background:
-
-        radial-gradient(
-
-            ellipse at center,
-
-            rgba(255, 216, 77, 0.98) 0%,
-
-            rgba(255, 216, 77, 0.58) 32%,
-
-            rgba(255, 216, 77, 0.24) 58%,
-
-            rgba(255, 216, 77, 0) 82%
-
-        );
-
-}
-
-.rngRarityValue::after {
-
-    content: none;
-
-}
-
-@keyframes rngRarityShine {
-
-    0%,
-
-    45% {
-
-        background-position: 100% 50%;
-
-    }
-
-    58% {
-
-        background-position: -10% 50%;
-
-    }
-
-    100% {
-
-        background-position: -10% 50%;
-
-    }
-
-}
-
 @media (max-width: 430px) {
 
     .musicToggleButton {
@@ -2914,224 +2283,598 @@ button {
 
 
 .rngRecordCard .rngRecordValue::after {
-    content: attr(data-rng-full-rarity);
-    display: block;
-    margin-top: 6px;
-    color: rgba(193, 215, 229, 0.82);
-    font-family: inherit;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    line-height: 1.15;
-    text-align: center;
-    text-transform: uppercase;
-    -webkit-text-fill-color: currentColor;
-    background: none;
-    animation: none;
-}
 
+    content: attr(data-rng-full-rarity) !important;
+
+    display: block !important;
+
+    margin-top: 6px !important;
+
+    color: rgba(193, 215, 229, 0.82) !important;
+
+    font-family: inherit !important;
+
+    font-size: 28px !important;
+
+    font-weight: 900 !important;
+
+    letter-spacing: 1px !important;
+
+    line-height: 1.15 !important;
+
+    text-align: center !important;
+
+    text-transform: uppercase !important;
+
+    -webkit-text-fill-color: currentColor !important;
+
+    background: none !important;
+
+    animation: none !important;
+
+}
 
 .rngRecordCard .rngStatValue.rngRarityValue {
-    position: absolute;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    isolation: isolate;
-    color: #dce7f0;
+
+    position: absolute !important;
+
+    top: 33px !important;
+
+    left: 0 !important;
+
+    right: 0 !important;
+
+    z-index: 1 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    width: 100% !important;
+
+    height: 21px !important;
+
+    min-height: 21px !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    overflow: visible !important;
+
+    color: inherit !important;
+
     -webkit-text-fill-color: currentColor !important;
+
     background: none !important;
+
     background-image: none !important;
+
     background-clip: border-box !important;
+
     -webkit-background-clip: border-box !important;
+
     animation: none !important;
-    text-shadow: 0 0 7px currentColor, 0 0 15px currentColor;
-    overflow: visible;
-    white-space: nowrap;
-}
 
-.rngRecordCard.rng-rarity-common .rngStatValue.rngRarityValue { color: #dce7f0; }
-.rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue { color: #4fd1c5; }
-.rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue { color: #4da6ff; }
-.rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue { color: #ffd84d; }
+    text-shadow: none !important;
 
+    white-space: nowrap !important;
 
-.rngRecordCard .rngStatValue.rngRarityValue::before {
-    content: "" !important;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(100% + 46px);
-    height: 190%;
-    transform: translate(-50%, -50%);
-    border-radius: 999px;
-    filter: blur(8px);
-    opacity: 1;
-    pointer-events: none;
-    z-index: -1;
-}
-.rngRecordCard.rng-rarity-common .rngStatValue.rngRarityValue::before {
-    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82%);
-}
-.rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue::before {
-    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.9) 0%, rgba(79, 209, 197, 0.5) 32%, rgba(79, 209, 197, 0.2) 58%, rgba(79, 209, 197, 0) 82%);
-}
-.rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue::before {
-    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%);
-}
-.rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue::before {
-    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%);
-}
+    isolation: isolate !important;
 
+}
 
 .rngRecordCard .rngStatValue.rngRarityValue::after {
-    content: attr(data-rng-shine-text) !important;
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    font: inherit;
-    font-weight: inherit;
-    letter-spacing: inherit;
-    line-height: inherit;
-    text-align: center;
-    white-space: nowrap;
-    pointer-events: none;
-    text-shadow: none;
-    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%);
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    animation: rngRarityTextHighlight 4.8s ease-in-out infinite !important;
+
+    content: none !important;
+
+    display: none !important;
+
 }
 
-@keyframes rngRarityTextHighlight {
-    0%, 45% { background-position: 100% 50%; }
-    58%, 100% { background-position: -10% 50%; }
+.rngRecordCard .rngRarityText {
+
+    position: relative !important;
+
+    z-index: 0 !important;
+
+    display: inline-block !important;
+
+    width: max-content !important;
+
+    max-width: 100% !important;
+
+    overflow: visible !important;
+
+    color: #dce7f0 !important;
+
+    -webkit-text-fill-color: currentColor !important;
+
+    font: inherit !important;
+
+    font-size: 18px !important;
+
+    font-weight: 800 !important;
+
+    line-height: 21px !important;
+
+    letter-spacing: normal !important;
+
+    white-space: nowrap !important;
+
+    text-align: center !important;
+
+    text-shadow: 0 0 7px currentColor, 0 0 15px currentColor !important;
+
+    background: none !important;
+
+    background-image: none !important;
+
+    background-clip: border-box !important;
+
+    -webkit-background-clip: border-box !important;
+
+    isolation: isolate !important;
+
+    animation: none !important;
+
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText {
+
+    color: #dce7f0 !important;
+
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText {
+
+    color: #4fd1c5 !important;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText {
+
+    color: #4da6ff !important;
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText {
+
+    color: #ffd84d !important;
+
+}
+
+
+.rngRecordCard .rngRarityText::before {
+
+    content: "" !important;
+
+    position: absolute !important;
+
+    top: 50% !important;
+
+    left: 50% !important;
+
+    z-index: -1 !important;
+
+    display: block !important;
+
+    width: calc(100% + 46px) !important;
+
+    height: 190% !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    border-radius: 999px !important;
+
+    filter: blur(8px) !important;
+
+    opacity: 1 !important;
+
+    pointer-events: none !important;
+
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText::before {
+
+    background: radial-gradient(
+        ellipse at center,
+        rgba(220, 231, 240, 0.82) 0%,
+        rgba(220, 231, 240, 0.46) 32%,
+        rgba(220, 231, 240, 0.18) 58%,
+        rgba(220, 231, 240, 0) 82%
+    ) !important;
+
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
+
+    background: radial-gradient(
+        ellipse at center,
+        rgba(79, 209, 197, 0.9) 0%,
+        rgba(79, 209, 197, 0.5) 32%,
+        rgba(79, 209, 197, 0.2) 58%,
+        rgba(79, 209, 197, 0) 82%
+    ) !important;
+
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText::before {
+
+    background: radial-gradient(
+        ellipse at center,
+        rgba(77, 166, 255, 0.95) 0%,
+        rgba(77, 166, 255, 0.55) 32%,
+        rgba(77, 166, 255, 0.22) 58%,
+        rgba(77, 166, 255, 0) 82%
+    ) !important;
+
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
+
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 216, 77, 0.98) 0%,
+        rgba(255, 216, 77, 0.58) 32%,
+        rgba(255, 216, 77, 0.24) 58%,
+        rgba(255, 216, 77, 0) 82%
+    ) !important;
+
+}
+
+
+.rngRecordCard .rngRarityText::after {
+
+    content: attr(data-rng-shine-text) !important;
+
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    z-index: 2 !important;
+
+    display: block !important;
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    overflow: visible !important;
+
+    color: transparent !important;
+
+    -webkit-text-fill-color: transparent !important;
+
+    font: inherit !important;
+
+    font-size: inherit !important;
+
+    font-weight: inherit !important;
+
+    letter-spacing: inherit !important;
+
+    line-height: inherit !important;
+
+    text-align: inherit !important;
+
+    white-space: nowrap !important;
+
+    pointer-events: none !important;
+
+    text-shadow: none !important;
+
+    background-image: linear-gradient(
+        105deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.98) 49%,
+        rgba(255, 255, 255, 0.98) 51%,
+        transparent 60%,
+        transparent 100%
+    ) !important;
+
+    background-size: 300% 100% !important;
+
+    background-position: 100% 50% !important;
+
+    background-clip: text !important;
+
+    -webkit-background-clip: text !important;
+
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+
 }
 
 
 .rngRecordCard > .rngDuplicateOverlay {
+
     position: absolute !important;
+
     inset: 0 !important;
-    z-index: 20 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
+
+    z-index: 1000 !important;
+
     display: flex !important;
+
     align-items: center !important;
+
     justify-content: center !important;
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    min-height: 100% !important;
+
     margin: 0 !important;
+
     padding: 0 !important;
-    color: #ff2222 !important;
-    -webkit-text-fill-color: #ff2222 !important;
-    font-family: Arial, Helvetica, sans-serif !important;
-    font-size: 52px !important;
-    font-weight: 1000 !important;
-    line-height: 1 !important;
-    letter-spacing: 3.5px !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    pointer-events: none !important;
-    text-shadow: 0 0 4px rgba(255, 24, 24, 0.7), 0 0 10px rgba(255, 24, 24, 0.32) !important;
-    transform: rotate(-14deg) !important;
-    transform-origin: center center !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: border-box !important;
-    -webkit-background-clip: border-box !important;
-    animation: none !important;
-    opacity: 0;
-    visibility: hidden;
-    overflow: visible !important;
-    transition: opacity 220ms ease, visibility 0s linear 220ms !important;
-}
 
-
-
-
-.rngRecordCard > .rngDuplicateOverlay::before {
-    content: none !important;
-    display: none !important;
-}
-.rngRecordCard > .rngDuplicateOverlay::after {
-    content: attr(data-rng-shine-text) !important;
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: transparent !important;
+
     -webkit-text-fill-color: transparent !important;
-    font: inherit;
-    font-weight: inherit;
-    letter-spacing: inherit;
-    line-height: inherit;
-    text-align: inherit;
-    white-space: nowrap;
-    pointer-events: none;
-    text-shadow: none;
-    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%);
-    background-size: 300% 100%;
-    background-position: 100% 50%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    opacity: 1;
-    animation: rngDuplicateTextHighlight 4.8s ease-in-out infinite;
-}
-.rngRecordCard > .rngDuplicateOverlay.rngDuplicateVisible {
-    opacity: 0.92 !important;
-    visibility: visible !important;
-    transition: opacity 220ms ease !important;
+
+    font-size: 0 !important;
+
+    line-height: 1 !important;
+
+    letter-spacing: 0 !important;
+
+    pointer-events: none !important;
+
+    text-shadow: none !important;
+
+    background: none !important;
+
+    opacity: 0 !important;
+
+    visibility: hidden !important;
+
+    overflow: visible !important;
+
+    transform: none !important;
+
+    transition: opacity 220ms ease, visibility 0s linear 220ms !important;
+
 }
 
-@keyframes rngDuplicateTextHighlight {
-    0%, 45% { background-position: 100% 50%; }
-    58%, 100% { background-position: -10% 50%; }
+
+.rngRecordCard > .rngDuplicateOverlay::before,
+
+.rngRecordCard > .rngDuplicateOverlay::after {
+
+    content: none !important;
+
+    display: none !important;
+
+    animation: none !important;
+
+}
+
+
+.rngRecordCard .rngDuplicateText {
+
+    position: relative !important;
+
+    z-index: 1 !important;
+
+    display: inline-block !important;
+
+    width: max-content !important;
+
+    max-width: 100% !important;
+
+    overflow: visible !important;
+
+    color: #ff2222 !important;
+
+    -webkit-text-fill-color: #ff2222 !important;
+
+    font-family: Arial, Helvetica, sans-serif !important;
+
+    font-size: 52px !important;
+
+    font-weight: 1000 !important;
+
+    line-height: 1 !important;
+
+    letter-spacing: 3.5px !important;
+
+    text-align: center !important;
+
+    white-space: nowrap !important;
+
+    text-shadow: 0 0 4px rgba(255, 24, 24, 0.7), 0 0 10px rgba(255, 24, 24, 0.32) !important;
+
+    transform: rotate(-14deg) !important;
+
+    transform-origin: center center !important;
+
+    background: none !important;
+
+    background-image: none !important;
+
+    background-clip: border-box !important;
+
+    -webkit-background-clip: border-box !important;
+
+    animation: none !important;
+
+}
+
+.rngRecordCard .rngDuplicateText::before {
+
+    content: none !important;
+
+    display: none !important;
+
+}
+
+
+.rngRecordCard .rngDuplicateText::after {
+
+    content: attr(data-rng-shine-text) !important;
+
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    z-index: 2 !important;
+
+    display: block !important;
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    color: transparent !important;
+
+    -webkit-text-fill-color: transparent !important;
+
+    font: inherit !important;
+
+    font-size: inherit !important;
+
+    font-weight: inherit !important;
+
+    letter-spacing: inherit !important;
+
+    line-height: inherit !important;
+
+    text-align: inherit !important;
+
+    white-space: nowrap !important;
+
+    pointer-events: none !important;
+
+    text-shadow: none !important;
+
+    background-image: linear-gradient(
+        105deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.98) 49%,
+        rgba(255, 255, 255, 0.98) 51%,
+        transparent 60%,
+        transparent 100%
+    ) !important;
+
+    background-size: 300% 100% !important;
+
+    background-position: 100% 50% !important;
+
+    background-clip: text !important;
+
+    -webkit-background-clip: text !important;
+
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+
+}
+
+.rngRecordCard > .rngDuplicateOverlay.rngDuplicateVisible {
+
+    opacity: 0.92 !important;
+
+    visibility: visible !important;
+
+    transition: opacity 220ms ease !important;
+
+}
+
+@keyframes rngFinalTextHighlight {
+
+    0%, 45% {
+
+        background-position: 100% 50%;
+
+    }
+
+    58%, 100% {
+
+        background-position: -10% 50%;
+
+    }
+
 }
 
 
 .rngStat:nth-child(3),
+
 .rngStat:nth-child(4) {
+
     min-height: 96px !important;
-}
-.rngStat:nth-child(3) .rngStatValue.rngLifetimeScoreValue {
-    height: 96px !important;
-    min-height: 96px !important;
-}
-.rngStat:nth-child(4) .rngStatLabel {
-    top: 10px !important;
-    height: 17px !important;
-    align-items: center !important;
-}
-.rngStat:nth-child(4) .rngStatValue {
-    top: 33px !important;
+
 }
 
+.rngStat:nth-child(3) .rngStatValue.rngLifetimeScoreValue {
+
+    height: 96px !important;
+
+    min-height: 96px !important;
+
+}
+
+.rngStats {
+
+    margin-bottom: 10px !important;
+
+}
+
+.rngModifiersSection {
+
+    gap: 5px !important;
+
+}
+
+.rngStat:nth-child(4) .rngStatLabel {
+
+    top: 10px !important;
+
+    height: 17px !important;
+
+    align-items: center !important;
+
+}
+
+.rngStat:nth-child(4) .rngStatValue {
+
+    top: 33px !important;
+
+}
 
 .rngLifetimeStatLabel::before {
+
     content: "Total Score" !important;
+
     display: block !important;
+
     font-size: 14px !important;
+
     line-height: 1.2 !important;
-    white-space: nowrap;
+
+    white-space: nowrap !important;
+
 }
+
 .rngLifetimeStatLabel::after {
+
     content: none !important;
+
     display: none !important;
+
 }
 
 @media (max-width: 430px) {
-    .rngRecordCard > .rngDuplicateOverlay {
+
+    .rngRecordCard .rngDuplicateText {
+
         font-size: 39px !important;
+
         letter-spacing: 2.5px !important;
+
     }
+
 }

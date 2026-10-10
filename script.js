@@ -1073,9 +1073,36 @@ function sanitizeRngStoredResult(payload) {
             payload.times_rolled ?? 
             1, 
         duplicateRoll: 
-            payload.duplicateRoll === true, 
+            isRngDuplicatePayload(payload), 
         modifiers: payload.modifiers ?? [] 
     }; 
+} 
+
+function isRngDuplicatePayload(payload) { 
+    if ( 
+        !payload || 
+        typeof payload !== 'object' 
+    ) { 
+        return false; 
+    } 
+
+    const duplicateValue = 
+        payload.duplicateRoll ?? 
+        payload.duplicate_roll ?? 
+        payload.isDuplicate ?? 
+        payload.is_duplicate ?? 
+        payload.duplicate; 
+
+    return ( 
+        duplicateValue === true || 
+        duplicateValue === 1 || 
+        ( 
+            typeof duplicateValue === 'string' && 
+            ['true', 'yes', 'duplicate', '1'].includes( 
+                duplicateValue.trim().toLowerCase() 
+            ) 
+        ) 
+    ); 
 } 
 
 function loadLocalRngRollState() { 
@@ -1907,35 +1934,40 @@ function handleRngGenerateTabActivation() {
     } 
 } 
 
-function scheduleRngDuplicateReveal(card) { 
-    if (!card) { 
-        return; 
-    } 
+function scheduleRngDuplicateReveal(card) {
+    if (!card) {
+        return;
+    }
 
-    const duplicateOverlay = 
-        card.querySelector( 
-            '.rngDuplicateOverlay' 
-        ); 
+    const duplicateOverlay =
+        card.querySelector(
+            '.rngDuplicateOverlay'
+        );
 
-    if (!duplicateOverlay) { 
-        return; 
-    } 
+    if (
+        !duplicateOverlay ||
+        card.dataset.rngDuplicateRevealScheduled === 'true'
+    ) {
+        return;
+    }
 
-    window.setTimeout( 
-        () => { 
-            if ( 
-                !duplicateOverlay.isConnected 
-            ) { 
-                return; 
-            } 
+    card.dataset.rngDuplicateRevealScheduled = 'true';
 
-            duplicateOverlay.classList.add( 
-                'rngDuplicateVisible' 
-            ); 
-        }, 
-        4000 
-    ); 
-} 
+    window.setTimeout(
+        () => {
+            if (
+                !duplicateOverlay.isConnected
+            ) {
+                return;
+            }
+
+            duplicateOverlay.classList.add(
+                'rngDuplicateVisible'
+            );
+        },
+        4000
+    );
+}
 
 function animateRngRecordCard( 
     card, 
@@ -1950,7 +1982,7 @@ function animateRngRecordCard(
 
     const childElements =  
         card.querySelectorAll(  
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue, .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
         );  
 
     const elements = [ 
@@ -3256,19 +3288,13 @@ function renderStoredRngResult(payload) {
         rngResultPanel  
     );  
 
-    rngResultPanel.appendChild(  
-        createRngRecordCard(  
-            payload,  
-            String(  
-                payload.record ?? '' 
-            ) 
-        ) 
-    ); 
+    const card = createRngRecordCard(
+        payload,
+        String(payload.record ?? '')
+    );
 
-    const card = 
-        rngResultPanel.querySelector( 
-            '.rngRecordCard' 
-        ); 
+    rngResultPanel.appendChild(card);
+    scheduleRngDuplicateReveal(card); 
 
     animateRngRecordCard( 
         card, 
@@ -3590,31 +3616,44 @@ function createRngRecordCard(payload, recordText) {
     const stats = document.createElement('div');  
     stats.className = 'rngStats';  
 
-       const rarityString = displayRarity !== 'unknown' 
-        ? displayRarity 
-        : payload.rarity ?? 'Unknown';
-
     const rarityStat = 
         createRngStat(  
             'Base Rarity',  
-            rarityString,  
+            displayRarity !== 'unknown' 
+                ? displayRarity 
+                : payload.rarity ?? 'Unknown',  
             getRngRarityColor(displayRarity)  
         ); 
 
-    const rarityValue = 
-        rarityStat.querySelector( 
-            '.rngStatValue' 
-        ); 
+    const rarityValue =
+        rarityStat.querySelector(
+            '.rngStatValue'
+        );
 
-    if (rarityValue) { 
-        rarityValue.classList.add( 
-            'rngRarityValue' 
-        ); 
+    if (rarityValue) {
+        const rarityText =
+            document.createElement('span');
 
-        rarityValue.setAttribute( 
-            'data-rng-shine-text', 
-            rarityString.trim() 
-        ); 
+        rarityText.className =
+            'rngRarityText';
+
+        rarityText.textContent =
+            rarityValue.textContent.trim();
+
+        rarityText.setAttribute(
+            'data-rng-shine-text',
+            rarityText.textContent
+        );
+
+        rarityValue.textContent = '';
+
+        rarityValue.classList.add(
+            'rngRarityValue'
+        );
+
+        rarityValue.appendChild(
+            rarityText
+        );
     }
 
     stats.appendChild( 
@@ -3694,24 +3733,39 @@ function createRngRecordCard(payload, recordText) {
     modifiersSection.appendChild(modifiersGrid);  
     card.appendChild(modifiersSection);  
 
-    if (payload.duplicateRoll === true) {
+    if (isRngDuplicatePayload(payload)) {
         const duplicateOverlay =
             document.createElement('div');
 
         duplicateOverlay.className =
             'rngDuplicateOverlay';
 
-        duplicateOverlay.textContent =
+        duplicateOverlay.setAttribute(
+            'aria-label',
+            'Duplicate roll'
+        );
+
+        const duplicateText =
+            document.createElement('span');
+
+        duplicateText.className =
+            'rngDuplicateText';
+
+        duplicateText.textContent =
             'DUPLICATE';
 
-        duplicateOverlay.setAttribute(
+        duplicateText.setAttribute(
             'data-rng-shine-text',
             'DUPLICATE'
         );
 
-        duplicateOverlay.setAttribute(
-            'aria-label',
-            'Duplicate roll'
+        duplicateText.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+        duplicateOverlay.appendChild(
+            duplicateText
         );
 
         card.appendChild(
@@ -3852,7 +3906,8 @@ function showRngRecordResult(payload) {
                 recordText  
             );  
 
-        rngResultPanel.appendChild(card);  
+        rngResultPanel.appendChild(card);
+        scheduleRngDuplicateReveal(card);
         scrollRngResultIntoView(card); 
         requestRngLaunchFlash(); 
 
@@ -3887,9 +3942,9 @@ function showRngRecordResult(payload) {
         let output = '';  
 
         for (  
-            let i = 0;  
-            i < recordText.length;  
-            i++  
+            let i = 0; 
+            i < recordText.length; 
+            i++ 
         ) {  
             if (i < lockedCount) {  
                 output += recordText[i];  
@@ -3958,9 +4013,9 @@ function showRngRecordResult(payload) {
                 recordText 
             ); 
 
-        rngResultPanel.appendChild( 
-            card 
-        ); 
+        rngResultPanel.appendChild(card);
+
+        scheduleRngDuplicateReveal(card);
 
         scrollRngResultIntoView(card); 
         requestRngLaunchFlash(); 
@@ -3983,7 +4038,7 @@ function showRngRecordResult(payload) {
         rngScrambleElement = null; 
 
         scramble.remove(); 
-    }  
+    } 
 
     appearedCount = 
         1; 
@@ -4400,5 +4455,4 @@ document.addEventListener(
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY. 
 EVERYTHING BELOW/OUTSIDE THIS BLOCK IS REAL CODE. 
-============================================================ 
-*/
+============================================================ */
