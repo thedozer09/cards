@@ -1653,7 +1653,7 @@ function getRngDisplayRarity(payload) {
         normalizeRngRarity( 
             payload && 
             payload.rarity 
-        ); 
+        );
 
     /* 
     // FUTURE MODIFIER-BASED RARITY PROCESSING 
@@ -1694,9 +1694,9 @@ function getRngDisplayRarity(payload) {
             ) 
         ]; 
     } 
-    */ 
+    */
 
-    return baseRarity; 
+        return baseRarity; 
 } 
 
 function applyRngRarityTheme(rarity) { 
@@ -1932,7 +1932,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-}  
+} 
 
 function scheduleRngDuplicateReveal(card) {
     if (!card) {
@@ -2016,7 +2016,7 @@ function animateRngRecordCard(
 
     const childElements =  
         card.querySelectorAll(  
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngModifierHeader, .rngModifierRarity, .rngModifierName, .rngModifierPoints, .rngModifierDescription, .rngModifierValue, .rngNoModifiers'  
         );  
 
     const fullRarityPlaceholder =
@@ -3364,6 +3364,86 @@ function renderStoredRngResult(payload) {
 }  
 
 function normalizeRngModifiers(modifiers) {  
+    const normalizeModifierObject = (modifier, fallbackLabel) => {
+        const label =
+            modifier.name ??
+            modifier.modifier ??
+            modifier.type ??
+            modifier.id ??
+            fallbackLabel;
+
+        const excludedFields = [
+            'name',
+            'modifier',
+            'type',
+            'id',
+            'rarity',
+            'tier',
+            'rank',
+            'points',
+            'pointBonus',
+            'point_bonus',
+            'pointsBonus',
+            'points_bonus',
+            'pointValue',
+            'point_value',
+            'description',
+            'shortDescription',
+            'short_description',
+            'desc',
+            'details'
+        ];
+
+        const detailEntries = Object.entries(modifier)
+            .filter(([key]) => {
+                return !excludedFields.includes(key);
+            });
+
+        let detail =
+            modifier.description ??
+            modifier.shortDescription ??
+            modifier.short_description ??
+            modifier.desc ??
+            modifier.details ??
+            '';
+
+        if (
+            detail === '' &&
+            detailEntries.length === 1
+        ) {
+            detail = detailEntries[0][1];
+        } else if (
+            detail === '' &&
+            detailEntries.length > 1
+        ) {
+            detail = detailEntries
+                .map(([key, value]) => {
+                    return `${key}: ${formatRngValue(value)}`;
+                })
+                .join(' • ');
+        }
+
+        return {
+            label: String(label),
+            value: formatRngValue(detail),
+            description: formatRngValue(detail),
+            rarity:
+                modifier.rarity ??
+                modifier.tier ??
+                modifier.rank ??
+                '',
+            points:
+                modifier.points ??
+                modifier.pointBonus ??
+                modifier.point_bonus ??
+                modifier.pointsBonus ??
+                modifier.points_bonus ??
+                modifier.pointValue ??
+                modifier.point_value ??
+                null
+        };
+    };
+
     if (Array.isArray(modifiers)) {  
         return modifiers.map((modifier, index) => {  
             if (  
@@ -3371,39 +3451,20 @@ function normalizeRngModifiers(modifiers) {
                 typeof modifier === 'object' &&  
                 !Array.isArray(modifier)  
             ) {  
-                const label =  
-                    modifier.name ??  
-                    modifier.modifier ??  
-                    modifier.type ??  
-                    modifier.id ??  
-                    `Modifier ${index + 1}`;  
-
-                const detailEntries = Object.entries(modifier)  
-                    .filter(([key]) => {  
-                        return !['name', 'modifier', 'type', 'id'].includes(key);  
-                    });  
-
-                let detail = '';  
-
-                if (detailEntries.length === 1) {  
-                    detail = formatRngValue(detailEntries[0][1]);  
-                } else if (detailEntries.length > 1) {  
-                    detail = detailEntries  
-                        .map(([key, value]) => {  
-                            return `${key}: ${formatRngValue(value)}`;  
-                        })  
-                        .join(' • ');  
-                }  
-
-                return {  
-                    label: String(label),  
-                    value: detail  
-                };  
+                return normalizeModifierObject(
+                    modifier,
+                    `Modifier ${index + 1}`
+                );
             }  
+
+            const value = formatRngValue(modifier);
 
             return {  
                 label: `Modifier ${index + 1}`,  
-                value: formatRngValue(modifier)  
+                value,
+                description: value,
+                rarity: '',
+                points: null
             };  
         });  
     }  
@@ -3419,23 +3480,20 @@ function normalizeRngModifiers(modifiers) {
                 typeof value === 'object' &&  
                 !Array.isArray(value)  
             ) {  
-                const entries = Object.entries(value);  
-
-                const detail = entries  
-                    .map(([entryKey, entryValue]) => {  
-                        return `${entryKey}: ${formatRngValue(entryValue)}`;  
-                    })  
-                    .join(' • ');  
-
-                return {  
-                    label: key,  
-                    value: detail  
-                };  
+                return normalizeModifierObject(
+                    value,
+                    key
+                );
             }  
+
+            const detail = formatRngValue(value);
 
             return {  
                 label: key,  
-                value: formatRngValue(value)  
+                value: detail,
+                description: detail,
+                rarity: '',
+                points: null
             };  
         });  
     }  
@@ -3445,9 +3503,14 @@ function normalizeRngModifiers(modifiers) {
         modifiers !== null &&  
         modifiers !== ''  
     ) {  
+        const detail = formatRngValue(modifiers);
+
         return [{ 
             label: 'Modifier', 
-            value: formatRngValue(modifiers) 
+            value: detail,
+            description: detail,
+            rarity: '',
+            points: null
         }]; 
     } 
 
@@ -3749,7 +3812,15 @@ function createRngRecordCard(payload, recordText) {
 
     const modifiers = normalizeRngModifiers(  
         payload.modifiers 
-    );  
+    );
+
+    modifiers.push({
+        label: 'Test Modifier',
+        value: '',
+        description: 'A temporary test modifier used to preview the stacked modifier layout.',
+        rarity: displayRarity !== 'unknown' ? displayRarity : 'common',
+        points: 25
+    });
 
     if (modifiers.length === 0) {  
         const none = document.createElement('div');  
@@ -3759,18 +3830,62 @@ function createRngRecordCard(payload, recordText) {
     } else {  
         modifiers.forEach(modifier => {  
             const modifierCard = document.createElement('div');  
-            modifierCard.className = 'rngModifier';  
+            modifierCard.className = 'rngModifier';
 
-            const modifierName = document.createElement('div');  
-            modifierName.className = 'rngModifierName';  
-            modifierName.textContent = modifier.label;  
+            const modifierRarity =
+                normalizeRngRarity(
+                    modifier.rarity || displayRarity
+                );
 
-            const modifierValue = document.createElement('div');  
-            modifierValue.className = 'rngModifierValue';  
-            modifierValue.textContent = modifier.value;  
+            const finalModifierRarity =
+                modifierRarity !== 'unknown'
+                    ? modifierRarity
+                    : (normalizedRarity !== 'unknown' ? normalizedRarity : 'common');
 
-            modifierCard.appendChild(modifierName);  
-            modifierCard.appendChild(modifierValue);  
+            modifierCard.setAttribute(
+                'data-rarity',
+                finalModifierRarity
+            );
+
+            const modifierHeader = document.createElement('div');
+            modifierHeader.className = 'rngModifierHeader';
+
+            const modifierRarityLabel = document.createElement('span');
+            modifierRarityLabel.className = 'rngModifierRarity';
+            modifierRarityLabel.textContent = `[${finalModifierRarity.toUpperCase()}]`;
+
+            const modifierName = document.createElement('span');
+            modifierName.className = 'rngModifierName';
+            modifierName.textContent = modifier.label;
+
+            modifierHeader.appendChild(modifierRarityLabel);
+            modifierHeader.appendChild(modifierName);
+
+            if (
+                modifier.points !== null &&
+                modifier.points !== undefined &&
+                modifier.points !== ''
+            ) {
+                const numericPoints = Number(modifier.points);
+                const pointsText = Number.isFinite(numericPoints)
+                    ? `(${numericPoints >= 0 ? '+' : ''}${numericPoints})`
+                    : `(${String(modifier.points).trim()})`;
+
+                const modifierPoints = document.createElement('span');
+                modifierPoints.className = 'rngModifierPoints';
+                modifierPoints.textContent = pointsText;
+                modifierHeader.appendChild(modifierPoints);
+            }
+
+            const modifierDescription = document.createElement('div');
+            modifierDescription.className = 'rngModifierDescription';
+            modifierDescription.textContent =
+                modifier.description ||
+                modifier.value ||
+                'Modifier details unavailable.';
+
+            modifierCard.appendChild(modifierHeader);
+            modifierCard.appendChild(modifierDescription);
             modifiersGrid.appendChild(modifierCard);  
         });  
     }  
