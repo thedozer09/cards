@@ -892,6 +892,10 @@ button {
 
     text-align: center;
 
+    text-shadow:
+
+        0 0 8px rgba(33, 183, 255, 0.24);
+
     word-break: break-all;
 
     overflow-wrap: anywhere;
@@ -2468,11 +2472,6 @@ button {
 
 }
 
-
-
-
-
-
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity);
     display: block;
@@ -2489,7 +2488,6 @@ button {
     background: none;
     animation: none;
 }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue {
     position: absolute !important;
@@ -2514,7 +2512,6 @@ button {
 .rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue { color: #4fd1c5 !important; }
 .rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue { color: #4da6ff !important; }
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue { color: #ffd84d !important; }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue::before {
     content: "" !important;
@@ -2544,7 +2541,6 @@ button {
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
 }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue::after {
     content: attr(data-rng-shine-text) !important;
@@ -2579,7 +2575,6 @@ button {
     58%, 100% { background-position: -10% 50%; }
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay {
     position: absolute !important;
     inset: 0 !important;
@@ -2612,7 +2607,6 @@ button {
     overflow: visible !important;
     transition: opacity 220ms ease, visibility 0s linear 220ms !important;
 }
-
 
 .rngRecordCard > .rngDuplicateOverlay::before {
     content: none !important;
@@ -2651,7 +2645,6 @@ button {
     transition: opacity 220ms ease !important;
 }
 
-
 .rngStat:nth-child(3),
 .rngStat:nth-child(4) {
     min-height: 96px !important;
@@ -2680,7 +2673,6 @@ button {
     top: 33px !important;
 }
 
-
 .rngLifetimeStatLabel::before {
     content: "Total Score" !important;
     display: block !important;
@@ -2701,12 +2693,6 @@ button {
     }
 }
 
-
-
-
-
-
-
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity) !important;
     display: block !important;
@@ -2723,7 +2709,6 @@ button {
     background: none !important;
     animation: none !important;
 }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue {
     position: absolute !important;
@@ -2752,12 +2737,10 @@ button {
     isolation: isolate !important;
 }
 
-
 .rngRecordCard .rngStatValue.rngRarityValue::after {
     content: none !important;
     display: none !important;
 }
-
 
 .rngRecordCard .rngRarityText {
     position: relative !important;
@@ -2832,7 +2815,6 @@ button {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
 }
 
-
 .rngRecordCard .rngRarityText::after {
     content: attr(data-rng-shine-text) !important;
     position: absolute !important;
@@ -2861,7 +2843,6 @@ button {
     animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay {
     position: absolute !important;
     inset: 0 !important;
@@ -2889,14 +2870,12 @@ button {
     transition: opacity 220ms ease, visibility 0s linear 220ms !important;
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay::before,
 .rngRecordCard > .rngDuplicateOverlay::after {
     content: none !important;
     display: none !important;
     animation: none !important;
 }
-
 
 .rngRecordCard .rngDuplicateText {
     position: relative !important;
@@ -2972,7 +2951,6 @@ button {
     }
 }
 
-
 .rngStat:nth-child(3),
 .rngStat:nth-child(4) {
     min-height: 96px !important;
@@ -3001,7 +2979,6 @@ button {
     top: 33px !important;
 }
 
-
 .rngLifetimeStatLabel::before {
     content: "Total Score" !important;
     display: block !important;
@@ -3021,12 +2998,6 @@ button {
         letter-spacing: 2.5px !important;
     }
 }
-
-
-
-
-
-
 
 .rngRecordCard .rngRarityText::after,
 .rngRecordCard .rngDuplicateText::after {
@@ -3076,7 +3047,6 @@ button {
     }
 }
 
-
 .rngRecordCard .rngDuplicateText {
     color: #ff2222 !important;
     -webkit-text-fill-color: #ff2222 !important;
@@ -3103,7 +3073,6 @@ button {
         transform: rotate(-20deg) !important;
     }
 }
-
 
 .rngRecordCard .rngRarityText,
 .rngRecordCard .rngDuplicateText {
@@ -3164,7 +3133,6 @@ button {
     }
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay {
     z-index: 1000 !important;
     overflow: visible !important;
@@ -3196,15 +3164,6 @@ button {
         transform: rotate(-25deg) !important;
     }
 }
-
-@media (max-width: 430px) {
-    .rngRecordCard .rngDuplicateText {
-        font-size: 39px !important;
-        letter-spacing: 2.5px !important;
-        transform: rotate(-25deg) !important;
-    }
-}
-
 
 .rngRecordCard .rngRarityText {
     font-size: 22px !important;
@@ -3262,7 +3221,6 @@ button {
         font-size: 10px;
     }
 }
-
 
 .rngRecordCard .rngDuplicateText {
     transform: rotate(-50deg) !important;
@@ -3340,7 +3298,6 @@ button {
 .rngRecordCard.rng-rarity-legendary .rngRarityText::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.36) 0%, rgba(255, 216, 77, 0.22) 32%, rgba(255, 216, 77, 0.09) 62%, rgba(255, 216, 77, 0) 100%) !important;
 }
-
 
 .rngRecordCard .rngRecordValue::after {
     content: none !important;
@@ -3620,8 +3577,6 @@ button {
     }
 }
 
-
-/* Activity record and collection counters */
 #generateScreen {
     position: relative;
 }
@@ -3664,7 +3619,6 @@ button {
     line-height: inherit;
 }
 
-/* Stats screen layout */
 #statsScreen .statsHeader {
     margin-bottom: 24px;
 }
@@ -3786,5 +3740,251 @@ button {
 @media (max-width: 390px) {
     #statsScreen .statsGrid {
         grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+#statsButton,
+#tosAgreeButton,
+.tosAgreeButton,
+#leaderboardsSubnav button,
+#cardsSubnav button {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 42px;
+    width: clamp(100px, 11.5vw, 150px);
+    max-width: 100%;
+    padding: 9px 12px;
+    border: 1px solid rgba(170, 196, 216, 0.2);
+    border-radius: 999px;
+    background: linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.35px;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(2, 14, 27, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#leaderboardsSubnav,
+#cardsSubnav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#leaderboardsSubnav button,
+#cardsSubnav button {
+    flex: 0 1 clamp(100px, 11.5vw, 150px);
+    margin: 0;
+}
+
+#statsButton,
+#tosAgreeButton,
+.tosAgreeButton {
+    flex: 0 1 auto;
+}
+
+#tosAgreeButton,
+.tosAgreeButton {
+    display: block;
+    margin: 18px auto 0;
+}
+
+#statsButton:hover,
+#tosAgreeButton:hover,
+.tosAgreeButton:hover,
+#leaderboardsSubnav button:hover,
+#cardsSubnav button:hover {
+    border-color: rgba(207, 226, 239, 0.34);
+    background: linear-gradient(135deg, #527ca0 0%, #477098 50%, #3b6485 100%);
+    box-shadow: 0 9px 19px rgba(2, 14, 27, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#statsButton:active,
+#tosAgreeButton:active,
+.tosAgreeButton:active,
+#leaderboardsSubnav button:active,
+#cardsSubnav button:active {
+    background: linear-gradient(135deg, #3b6183 0%, #335775 50%, #2b4d6c 100%);
+}
+
+#tosAgreeButton:active,
+.tosAgreeButton:active {
+    animation: simpleButtonJerk 0.28s cubic-bezier(0.22, 0.8, 0.25, 1) both;
+}
+
+#statsButton:focus-visible,
+#tosAgreeButton:focus-visible,
+.tosAgreeButton:focus-visible,
+#leaderboardsSubnav button:focus-visible,
+#cardsSubnav button:focus-visible {
+    outline: 3px solid rgba(168, 202, 225, 0.46);
+    outline-offset: 3px;
+}
+
+#statsButton.active,
+#leaderboardsSubnav button.active,
+#cardsSubnav button.active,
+#leaderboardsSubnav button[aria-pressed="true"],
+#cardsSubnav button[aria-pressed="true"] {
+    border-color: rgba(213, 230, 241, 0.38);
+    background: linear-gradient(135deg, #5b83a5 0%, #4d7395 50%, #406788 100%);
+    color: #ffffff;
+}
+
+.simpleStyledButton.normalButtonWiggle:hover {
+    animation: normalButtonWiggle 0.45s ease-in-out infinite;
+}
+
+.simpleStyledButton.simpleButtonJerk {
+    animation: simpleButtonJerk 0.28s cubic-bezier(0.22, 0.8, 0.25, 1) both;
+}
+
+@keyframes simpleButtonJerk {
+    0% { transform: translateX(0) rotate(0deg); }
+    18% { transform: translateX(-5px) rotate(-1.7deg); }
+    38% { transform: translateX(5px) rotate(1.5deg); }
+    58% { transform: translateX(-3px) rotate(-0.9deg); }
+    78% { transform: translateX(2px) rotate(0.5deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+}
+
+.musicToggleButton {
+    top: auto !important;
+    right: 18px !important;
+    bottom: 72px !important;
+    left: auto !important;
+    z-index: 100003 !important;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(170, 196, 216, 0.2);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%);
+    color: #ffffff;
+}
+
+.musicToggleButton:hover {
+    border-color: rgba(207, 226, 239, 0.34);
+    background: linear-gradient(135deg, #527ca0 0%, #477098 50%, #3b6485 100%);
+}
+
+#statsButton {
+    position: fixed !important;
+    top: auto !important;
+    right: 18px !important;
+    bottom: 18px !important;
+    left: auto !important;
+    z-index: 100002 !important;
+    display: block;
+    width: clamp(100px, 11.5vw, 150px) !important;
+    min-height: 42px;
+    margin: 0;
+}
+
+#tosGate a.tosTermsToggle {
+    display: inline;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #69b6ff;
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+#tosGate a.tosTermsToggle:hover {
+    color: #a0d3ff;
+    background: transparent;
+    box-shadow: none;
+}
+
+#tosGate a.tosTermsToggle:focus-visible {
+    outline: 2px solid #69b6ff;
+    outline-offset: 3px;
+}
+
+#tosGate .cardGameTosDetails {
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px;
+    border: 1px solid rgba(138, 166, 191, 0.22);
+    border-radius: 14px;
+    background: rgba(10, 22, 36, 0.72);
+    color: #ffffff;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+#tosGate .cardGameTosDetails.hidden {
+    display: none !important;
+}
+
+#tosGate .cardGameTosDetailsHeading {
+    margin: 0 0 12px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+#tosGate .cardGameTosDetailsContent {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+    #statsButton {
+        right: 12px !important;
+        bottom: 14px !important;
+    }
+
+    .musicToggleButton {
+        right: 12px !important;
+        bottom: 66px !important;
+    }
+
+    #leaderboardsSubnav,
+    #cardsSubnav {
+        gap: 8px;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button,
+    #tosAgreeButton,
+    .tosAgreeButton {
+        width: clamp(100px, 28vw, 135px);
+        flex-basis: clamp(100px, 28vw, 135px);
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 430px) {
+    #statsButton {
+        right: 10px !important;
+        bottom: 12px !important;
+    }
+
+    .musicToggleButton {
+        right: 10px !important;
+        bottom: 62px !important;
+    }
+
+    #tosGate .cardGameTosDetails {
+        padding: 14px;
     }
 }

@@ -368,7 +368,7 @@ function requestRngServerTime() {
     if (  
         !socket ||  
         socket.readyState !==  
-            WebSocket.OPEN  
+            WebSocket.OPEN 
     ) {  
         return;  
     }  
@@ -431,6 +431,173 @@ const dailyPackScoreButton = document.getElementById('dailyPackScoreButton');
 const openPackButton = document.getElementById('openPackButton');
 const myCollectionButton = document.getElementById('myCollectionButton');
 const tradesButton = document.getElementById('tradesButton');
+
+function createCardGameTermsPanel() {
+    const currentTosGate = document.getElementById('tosGate');
+
+    if (!currentTosGate) {
+        return null;
+    }
+
+    let panel = currentTosGate.querySelector('#cardGameTosDetails');
+
+    if (panel) {
+        return panel;
+    }
+
+    panel = document.createElement('section');
+    panel.id = 'cardGameTosDetails';
+    panel.className = 'cardGameTosDetails hidden';
+    panel.setAttribute('aria-label', 'Card Game Terms of Service');
+
+    const heading = document.createElement('h3');
+    heading.className = 'cardGameTosDetailsHeading';
+    heading.textContent = 'Card Game Terms of Service';
+
+    const content = document.createElement('div');
+    content.className = 'cardGameTosDetailsContent';
+    content.textContent = '[PLACEHOLDER: Paste the Card Game Terms of Service here.]';
+
+    panel.append(heading, content);
+    currentTosGate.appendChild(panel);
+
+    return panel;
+}
+
+function initializeCardGameTermsToggle() {
+    const currentTosGate = document.getElementById('tosGate');
+
+    if (!currentTosGate) {
+        return;
+    }
+
+    let links = Array.from(currentTosGate.querySelectorAll('a')).filter(link => {
+        return (
+            link.id === 'tosLink' ||
+            link.hasAttribute('data-card-game-tos') ||
+            /terms of service|card game terms/i.test(link.textContent || '')
+        );
+    });
+
+    if (links.length === 0) {
+        const firstLink = currentTosGate.querySelector('a');
+
+        if (firstLink) {
+            links = [firstLink];
+        }
+    }
+
+    if (links.length === 0) {
+        return;
+    }
+
+    const panel = createCardGameTermsPanel();
+
+    if (!panel) {
+        return;
+    }
+
+    links.forEach(link => {
+        link.classList.add('tosTermsToggle');
+        link.removeAttribute('href');
+        link.removeAttribute('target');
+        link.setAttribute('role', 'button');
+        link.setAttribute('tabindex', '0');
+        link.setAttribute('aria-controls', panel.id);
+        link.setAttribute('aria-expanded', 'false');
+
+        const togglePanel = () => {
+            const isOpening = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !isOpening);
+            link.setAttribute('aria-expanded', String(isOpening));
+
+            if (isOpening) {
+                panel.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        };
+
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            togglePanel();
+        });
+
+        link.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                togglePanel();
+            }
+        });
+    });
+}
+
+function initializeSimpleButtonEffects() {
+    const simpleButtons = new Set([
+        tosAgreeButton,
+        statsButton,
+        ...document.querySelectorAll('#leaderboardsSubnav button, #cardsSubnav button')
+    ]);
+
+    simpleButtons.forEach(button => {
+        if (
+            !button ||
+            button.dataset.simpleButtonEffectsInitialized === 'true'
+        ) {
+            return;
+        }
+
+        button.dataset.simpleButtonEffectsInitialized = 'true';
+        button.classList.add('simpleStyledButton');
+
+        button.addEventListener('pointerenter', () => {
+            startNormalButtonWiggle(button);
+        });
+
+        button.addEventListener('pointerleave', () => {
+            stopNormalButtonWiggle(button);
+        });
+
+        button.addEventListener('focus', () => {
+            startNormalButtonWiggle(button);
+        });
+
+        button.addEventListener('blur', () => {
+            stopNormalButtonWiggle(button);
+        });
+
+        button.addEventListener('click', () => {
+            const shouldResumeWiggle = button.matches(':hover');
+
+            stopNormalButtonWiggle(button);
+            button.classList.remove('simpleButtonJerk');
+            void button.offsetWidth;
+            button.classList.add('simpleButtonJerk');
+
+            const finishJerk = event => {
+                if (
+                    event.target !== button ||
+                    event.animationName !== 'simpleButtonJerk'
+                ) {
+                    return;
+                }
+
+                button.classList.remove('simpleButtonJerk');
+                button.removeEventListener('animationend', finishJerk);
+
+                if (shouldResumeWiggle && button.matches(':hover')) {
+                    startNormalButtonWiggle(button);
+                }
+            };
+
+            button.addEventListener('animationend', finishJerk);
+        });
+    });
+}
+
+initializeCardGameTermsToggle();
+initializeSimpleButtonEffects();
 
 const screenHeaders = document.querySelectorAll('.tabHeader');  
 
@@ -1007,24 +1174,14 @@ function updateCardGameCountDisplays(statsData) {
             `${formatStatsValue(recordsDiscovered)} out of ${formatStatsValue(totalRecords)} records discovered`;
     }
 
-    const cardsDiscovered = statsData
-        ? statsData.cardsDiscovered
-        : undefined;
-    const cardsOwned = statsData
-        ? statsData.cardsOwned
-        : undefined;
-    const totalCards = statsData
-        ? statsData.totalCards
-        : undefined;
-
     if (collectionCardsDiscoveredValue) {
         collectionCardsDiscoveredValue.textContent =
-            `Cards Discovered: ${formatStatsValue(cardsDiscovered)} out of ${formatStatsValue(totalCards)}`;
+            `Cards Discovered: ${formatStatsValue(statsData ? statsData.cardsDiscovered : undefined)}`;
     }
 
     if (collectionCardsOwnedValue) {
         collectionCardsOwnedValue.textContent =
-            `Cards Owned: ${formatStatsValue(cardsOwned)} out of ${formatStatsValue(totalCards)}`;
+            `Cards Owned: ${formatStatsValue(statsData ? statsData.cardsOwned : undefined)}`;
     }
 }
 
@@ -1314,7 +1471,7 @@ if (typeof ResizeObserver !== 'undefined') {
     scrollResizeObserver.observe(document.body);  
 }  
 
-const tabButtons = document.querySelectorAll('.tabButton');  
+const tabButtons = document.querySelectorAll('.navigation > #generateButton, .navigation > #leaderboardsButton, .navigation > #cardsButton');  
 const buttonShakeStates = new Map(); 
 const TAB_BUTTON_NORMAL_WIGGLE_DURATION = 450;  
 
