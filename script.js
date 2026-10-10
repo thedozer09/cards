@@ -239,7 +239,6 @@ function initializeWebSocket() {
                 errorMessage.textContent = `❌ Server Error: ${message}`;  
                 errorMessage.classList.remove("hidden");  
                 initializeRngGenerateButton();  
-
                 return;  
             }  
 
@@ -1906,7 +1905,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-}  
+} 
 
 function scheduleRngDuplicateReveal(card) { 
     if (!card) { 
@@ -1957,12 +1956,12 @@ function animateRngRecordCard(
     const elements = [ 
         card, 
         ...childElements 
-    ];  
+    ]; 
 
     const finalElement = 
         elements[ 
             elements.length - 1 
-        ];  
+        ]; 
 
     elements.forEach(  
         (element, index) => {  
@@ -2207,7 +2206,7 @@ function markRngRollComplete(payload) {
         rngDailyActionArea.remove();  
         rngDailyActionArea = null;  
     }  
-}  
+} 
 
 function getRngLifetimePayloadScore(payload) { 
     if ( 
@@ -3423,7 +3422,7 @@ function createRngStat(label, value, valueColor = null) {
 
     const statLabel = document.createElement('div');  
     statLabel.className = 'rngStatLabel';  
-    statLabel.textContent = label;  
+    statLabel.textContent = label; 
 
     if ( 
         String(label).toLowerCase().includes( 
@@ -3610,15 +3609,10 @@ function createRngRecordCard(payload, recordText) {
             'rngRarityValue' 
         ); 
 
-        if ( 
-            normalizedRarity === 'rare' || 
-            normalizedRarity === 'legendary' 
-        ) { 
-            rarityValue.setAttribute( 
-                'data-rng-shine-text', 
-                rarityValue.textContent.trim() 
-            ); 
-        } 
+        rarityValue.setAttribute( 
+            'data-rng-shine-text', 
+            rarityValue.textContent.trim() 
+        ); 
     } 
 
     stats.appendChild( 
