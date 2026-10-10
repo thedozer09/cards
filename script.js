@@ -548,6 +548,7 @@ function startTabLoading(
             'hidden' 
         ); 
     } 
+
     state.timer = 
         setTimeout(() => { 
             finishTabLoading(screen); 
@@ -938,9 +939,10 @@ const RNG_LIFETIME_FADE_DURATION = 260;
 const RNG_LIFETIME_ROLL_DURATION = 2000; 
 const RNG_LIFETIME_DIGIT_STAGGER = 0; 
 const RNG_LIFETIME_VISIBLE_STEPS = 1; 
-const RNG_RECORD_WIGGLE_DURATION = 1350; 
+const RNG_RECORD_WIGGLE_DURATION = 20000; 
 const RNG_RECORD_WIGGLE_AMPLITUDE = 8; 
-const RNG_RECORD_WIGGLE_ROTATION = 3.5; 
+const RNG_RECORD_WIGGLE_ROTATION = 10; 
+const RNG_RECORD_FINISH_FLASH_DELAY = 6000; 
 
 let rngRequestPending = false;  
 let rngRollLoadingPending = false;  
@@ -2118,8 +2120,6 @@ function animateRngRecordCard(
                         card.style.transform = 
                             'none'; 
 
-                        playRngLaunchFlash(); 
-
                         void card.offsetWidth; 
 
                         card.classList.add( 
@@ -2135,6 +2135,19 @@ function animateRngRecordCard(
                                 ) { 
                                     return; 
                                 } 
+
+                                card.classList.remove( 
+                                    'rngRecordCardFinalPop' 
+                                ); 
+
+                                window.setTimeout( 
+                                    () => { 
+                                        if (card.isConnected) { 
+                                            playRngLaunchFlash(); 
+                                        } 
+                                    }, 
+                                    RNG_RECORD_FINISH_FLASH_DELAY 
+                                ); 
 
                                 startRngRecordCardWiggle( 
                                     card 
@@ -4305,6 +4318,7 @@ function showRngRecordResult(payload) {
                 lockedCount = 0; 
 
             } else { 
+
                 appearedCount = 
                     recordText.length; 
 

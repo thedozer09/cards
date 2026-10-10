@@ -2710,6 +2710,7 @@ button {
 
 
 
+
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity) !important;
     display: block !important;
@@ -3025,6 +3026,11 @@ button {
     }
 }
 
+
+
+
+
+
 .rngRecordCard .rngRarityText::after,
 .rngRecordCard .rngDuplicateText::after {
     content: attr(data-rng-shine-text) !important;
@@ -3193,6 +3199,7 @@ button {
         transform: rotate(-25deg) !important;
     }
 }
+
 
 .rngRecordCard .rngRarityText {
     font-size: 22px !important;
@@ -3520,7 +3527,7 @@ button {
 }
 
 .rngRecordCard .rngStatValue.rngRarityValue::before {
-    opacity: 0.13 !important;
+    opacity: 0.225 !important;
     filter: blur(12px) !important;
 }
 
