@@ -192,18 +192,18 @@ function initializeWebSocket() {
                     !Number.isFinite(data.data.lifetimeRecordScore)  
                 ) {  
                     errorMessage.textContent =  
-                        "⚠️ Invalid lifetime score update response."; 
+                        "⚠️ Invalid lifetime score update response.";  
 
                     errorMessage.classList.remove(  
                         "hidden"  
-                    ); 
+                    );  
 
                     return;  
-                } 
+                }  
 
                 applyRngLifetimeUpdateResult(  
                     data.data.lifetimeRecordScore  
-                ); 
+                );  
 
                 return;  
             }  
@@ -239,7 +239,8 @@ function initializeWebSocket() {
                 errorMessage.textContent = `❌ Server Error: ${message}`;  
                 errorMessage.classList.remove("hidden");  
                 initializeRngGenerateButton();  
-                return;  
+
+     return;  
             }  
 
             if (data.type === "rng_test") {  
@@ -992,10 +993,10 @@ function syncRngServerClock(
     }  
 
     rngServerTimeBase = 
-        serverTime; 
+        serverTime;  
 
     rngPerformanceTimeBase = 
-        performance.now(); 
+        performance.now();  
 
     rngNextResetTimestamp = 
         nextReset.timestamp; 
@@ -1910,7 +1911,7 @@ function handleRngGenerateTabActivation() {
 function scheduleRngDuplicateReveal(card) { 
     if (!card) { 
         return; 
-    }
+    } 
 
     const duplicateOverlay = 
         card.querySelector( 
@@ -1919,7 +1920,7 @@ function scheduleRngDuplicateReveal(card) {
 
     if (!duplicateOverlay) { 
         return; 
-    }
+    } 
 
     window.setTimeout( 
         () => { 
@@ -1927,7 +1928,7 @@ function scheduleRngDuplicateReveal(card) {
                 !duplicateOverlay.isConnected 
             ) { 
                 return; 
-            }
+            } 
 
             duplicateOverlay.classList.add( 
                 'rngDuplicateVisible' 
@@ -1935,7 +1936,7 @@ function scheduleRngDuplicateReveal(card) {
         }, 
         4000 
     ); 
-}
+} 
 
 function animateRngRecordCard( 
     card, 
@@ -1947,6 +1948,21 @@ function animateRngRecordCard(
     }  
 
     clearRngRecordCardWiggle(); 
+
+    const rarityShineOverlays = 
+        card.querySelectorAll( 
+            '.rngRarityShineOverlay' 
+        ); 
+
+    rarityShineOverlays.forEach(overlay => { 
+        overlay.style.animation = 
+            'none'; 
+
+        void overlay.offsetWidth; 
+
+        overlay.style.animation = 
+            'rngDuplicateShine 4.8s ease-in-out infinite'; 
+    }); 
 
     const childElements =  
         card.querySelectorAll(  
@@ -2036,7 +2052,7 @@ function animateRngRecordCard(
 
                                 startRngRecordCardWiggle( 
                                     card 
-                                );
+                                ); 
 
                                 if (onRevealFinished) { 
                                     onRevealFinished(); 
@@ -3210,7 +3226,7 @@ function applyRngLifetimeUpdateResult(score) {
             ) 
         ) 
     ); 
-}  
+} 
 
 function applyDailyRollState(state) {  
     return;  
@@ -3613,6 +3629,31 @@ function createRngRecordCard(payload, recordText) {
             normalizedRarity === 'rare' || 
             normalizedRarity === 'legendary' 
         ) { 
+            const rarityColor = 
+                getRngRarityColor( 
+                    normalizedRarity 
+                ); 
+
+            const rarityText = 
+                rarityValue.textContent.trim(); 
+
+            rarityValue.style.setProperty( 
+                '-webkit-text-fill-color', 
+                'currentColor' 
+            ); 
+
+            rarityValue.style.backgroundImage = 
+                'none'; 
+
+            rarityValue.style.backgroundClip = 
+                'border-box'; 
+
+            rarityValue.style.webkitBackgroundClip = 
+                'border-box'; 
+
+            rarityValue.style.animation = 
+                'none'; 
+
             const rarityShineOverlay = 
                 document.createElement('span'); 
 
@@ -3625,11 +3666,79 @@ function createRngRecordCard(payload, recordText) {
             ); 
 
             rarityShineOverlay.textContent = 
-                rarityValue.textContent; 
+                rarityText; 
+
+            rarityShineOverlay.style.position = 
+                'absolute'; 
+
+            rarityShineOverlay.style.top = 
+                '0'; 
+
+            rarityShineOverlay.style.left = 
+                '0'; 
+
+            rarityShineOverlay.style.zIndex = 
+                '2'; 
+
+            rarityShineOverlay.style.display = 
+                'block'; 
+
+            rarityShineOverlay.style.width = 
+                '100%'; 
+
+            rarityShineOverlay.style.height = 
+                '100%'; 
+
+            rarityShineOverlay.style.color = 
+                'transparent'; 
+
+            rarityShineOverlay.style.font = 
+                'inherit'; 
+
+            rarityShineOverlay.style.lineHeight = 
+                'inherit'; 
+
+            rarityShineOverlay.style.letterSpacing = 
+                'inherit'; 
+
+            rarityShineOverlay.style.textAlign = 
+                'center'; 
+
+            rarityShineOverlay.style.whiteSpace = 
+                'nowrap'; 
+
+            rarityShineOverlay.style.pointerEvents = 
+                'none'; 
+
+            rarityShineOverlay.style.textShadow = 
+                'none'; 
+
+            rarityShineOverlay.style.backgroundImage = 
+                `linear-gradient(105deg, ${rarityColor} 0%, ${rarityColor} 38%, rgba(255, 255, 255, 0.92) 48%, ${rarityColor} 58%, ${rarityColor} 100%)`; 
+
+            rarityShineOverlay.style.backgroundSize = 
+                '300% 100%'; 
+
+            rarityShineOverlay.style.backgroundPosition = 
+                '100% 50%'; 
+
+            rarityShineOverlay.style.backgroundClip = 
+                'text'; 
+
+            rarityShineOverlay.style.webkitBackgroundClip = 
+                'text'; 
+
+            rarityShineOverlay.style.webkitTextFillColor = 
+                'transparent'; 
+
+            rarityShineOverlay.style.animation = 
+                'rngDuplicateShine 4.8s ease-in-out infinite'; 
 
             rarityValue.appendChild( 
                 rarityShineOverlay 
             ); 
+
+            void rarityShineOverlay.offsetWidth; 
         } 
     } 
 
@@ -3994,7 +4103,7 @@ function showRngRecordResult(payload) {
         rngScrambleElement = null; 
 
         scramble.remove(); 
-    } 
+    }  
 
     appearedCount = 
         1; 
@@ -4287,7 +4396,7 @@ function initializeRngFrontend() {
     createRngTopControlArea();  
     createRngDailyStatus();  
     hideRngDailyStatus();  
-    clearRngRarityTheme(); 
+    clearRngRarityTheme();  
 
     const storedResult = 
         loadLocalRngResult(); 
