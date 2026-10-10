@@ -2476,7 +2476,6 @@ button {
 
 
 
-
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity);
     display: block;
@@ -2539,12 +2538,15 @@ button {
 .rngRecordCard.rng-rarity-common .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82%) !important;
 }
+
 .rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.9) 0%, rgba(79, 209, 197, 0.5) 32%, rgba(79, 209, 197, 0.2) 58%, rgba(79, 209, 197, 0) 82%) !important;
 }
+
 .rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
 }
+
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
 }
@@ -2704,12 +2706,6 @@ button {
         letter-spacing: 2.5px !important;
     }
 }
-
-
-
-
-
-
 
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity) !important;
@@ -3026,11 +3022,6 @@ button {
     }
 }
 
-
-
-
-
-
 .rngRecordCard .rngRarityText::after,
 .rngRecordCard .rngDuplicateText::after {
     content: attr(data-rng-shine-text) !important;
@@ -3197,5 +3188,62 @@ button {
         font-size: 28px !important;
         letter-spacing: 0.8px !important;
         transform: rotate(-25deg) !important;
+    }
+}
+
+.rngRecordCard .rngRarityText {
+    font-size: 22px !important;
+    line-height: 25px !important;
+}
+
+.rngRecordCard .rngRarityText::before {
+    width: calc(100% + 72px) !important;
+    height: 240% !important;
+    filter: blur(12px) !important;
+    opacity: 0.72 !important;
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.52) 0%, rgba(220, 231, 240, 0.30) 32%, rgba(220, 231, 240, 0.12) 62%, rgba(220, 231, 240, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.58) 0%, rgba(79, 209, 197, 0.32) 32%, rgba(79, 209, 197, 0.13) 62%, rgba(79, 209, 197, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.60) 0%, rgba(77, 166, 255, 0.33) 32%, rgba(77, 166, 255, 0.14) 62%, rgba(77, 166, 255, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.62) 0%, rgba(255, 216, 77, 0.34) 32%, rgba(255, 216, 77, 0.14) 62%, rgba(255, 216, 77, 0) 100%) !important;
+}
+
+.rngRecordCard .rngDuplicateText {
+    font-size: 60px !important;
+    letter-spacing: 1.5px !important;
+    transform: rotate(-25deg) !important;
+}
+
+.rngModifiersDescription {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 4px;
+    color: rgba(203, 220, 231, 0.68);
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 430px) {
+    .rngRecordCard .rngDuplicateText {
+        font-size: 56px !important;
+        letter-spacing: 1px !important;
+        transform: rotate(-25deg) !important;
+    }
+
+    .rngModifiersDescription {
+        font-size: 10px;
     }
 }

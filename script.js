@@ -1076,7 +1076,7 @@ function sanitizeRngStoredResult(payload) {
             isRngDuplicatePayload(payload), 
         modifiers: payload.modifiers ?? [] 
     }; 
-} 
+}
 
 function isRngDuplicatePayload(payload) { 
     if ( 
@@ -1932,7 +1932,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-} 
+}  
 
 function scheduleRngDuplicateReveal(card) {
     if (!card) {
@@ -1944,6 +1944,11 @@ function scheduleRngDuplicateReveal(card) {
             '.rngDuplicateOverlay'
         );
 
+    const modifiersTitle =
+        card.querySelector(
+            '.rngModifiersTitle'
+        );
+
     if (
         !duplicateOverlay ||
         card.dataset.rngDuplicateRevealScheduled === 'true'
@@ -1953,19 +1958,48 @@ function scheduleRngDuplicateReveal(card) {
 
     card.dataset.rngDuplicateRevealScheduled = 'true';
 
-    window.setTimeout(
-        () => {
+    const startDuplicateRevealTimer = () => {
+        if (
+            card.dataset.rngDuplicateRevealTimerStarted === 'true'
+        ) {
+            return;
+        }
+
+        card.dataset.rngDuplicateRevealTimerStarted = 'true';
+
+        window.setTimeout(
+            () => {
+                if (
+                    !duplicateOverlay.isConnected
+                ) {
+                    return;
+                }
+
+                duplicateOverlay.classList.add(
+                    'rngDuplicateVisible'
+                );
+            },
+            4000
+        );
+    };
+
+    if (!modifiersTitle) {
+        startDuplicateRevealTimer();
+        return;
+    }
+
+    modifiersTitle.addEventListener(
+        'animationend',
+        event => {
             if (
-                !duplicateOverlay.isConnected
+                event.animationName !==
+                'rngResultPopIn'
             ) {
                 return;
             }
 
-            duplicateOverlay.classList.add(
-                'rngDuplicateVisible'
-            );
-        },
-        4000
+            startDuplicateRevealTimer();
+        }
     );
 }
 
@@ -1982,7 +2016,7 @@ function animateRngRecordCard(
 
     const childElements =  
         card.querySelectorAll(  
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngModifierName, .rngModifierValue, .rngNoModifiers'  
         );  
 
     const elements = [ 
@@ -3242,7 +3276,7 @@ function applyRngLifetimeUpdateResult(score) {
             ) 
         ) 
     ); 
-} 
+}  
 
 function applyDailyRollState(state) {  
     return;  
@@ -3699,6 +3733,14 @@ function createRngRecordCard(payload, recordText) {
         modifiersTitle  
     );  
 
+    const modifiersDescription = document.createElement('div');
+    modifiersDescription.className = 'rngModifiersDescription';
+    modifiersDescription.textContent = 'Modifiers can increase rarity and points beyond the base rarity.';
+
+    modifiersSection.appendChild(
+        modifiersDescription
+    );
+
     const modifiersGrid = document.createElement('div');  
     modifiersGrid.className = 'rngModifiers';  
 
@@ -3942,9 +3984,9 @@ function showRngRecordResult(payload) {
         let output = '';  
 
         for (  
-            let i = 0; 
-            i < recordText.length; 
-            i++ 
+            let i = 0;  
+            i < recordText.length;  
+            i++  
         ) {  
             if (i < lockedCount) {  
                 output += recordText[i];  
@@ -4038,7 +4080,7 @@ function showRngRecordResult(payload) {
         rngScrambleElement = null; 
 
         scramble.remove(); 
-    } 
+    }  
 
     appearedCount = 
         1; 
@@ -4363,6 +4405,8 @@ function initializeRngFrontend() {
 } 
 
 
+
+
 /* 
 ============================================================ 
 ===== TEMP RNG COOLDOWN BYPASS - START REMOVE HERE ===== 
@@ -4372,7 +4416,7 @@ REMOVE EVERYTHING FROM THE START MARKER ABOVE
 THROUGH THE END MARKER BELOW. 
 
 PRESS CTRL + SHIFT + R TO ROLL DURING COOLDOWN. 
-*/ 
+*/
 
 document.addEventListener( 
     'keydown', 
@@ -4445,7 +4489,7 @@ document.addEventListener(
         }); 
 
     } 
-); 
+);
 
 
 /* 
@@ -4455,4 +4499,5 @@ document.addEventListener(
 
 EVERYTHING ABOVE THIS END MARKER IS TEMPORARY. 
 EVERYTHING BELOW/OUTSIDE THIS BLOCK IS REAL CODE. 
-============================================================ */
+============================================================ 
+*/
