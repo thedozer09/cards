@@ -368,7 +368,7 @@ function requestRngServerTime() {
     if (  
         !socket ||  
         socket.readyState !==  
-            WebSocket.OPEN 
+            WebSocket.OPEN  
     ) {  
         return;  
     }  
@@ -428,6 +428,7 @@ const rngTodayButton = document.getElementById('rngTodayButton');
 const rngAllTimeButton = document.getElementById('rngAllTimeButton');
 const cardsNetWorthButton = document.getElementById('cardsNetWorthButton');
 const dailyPackScoreButton = document.getElementById('dailyPackScoreButton');
+dailyPackScoreButton.textContent = "This Period's Pack Score";
 const openPackButton = document.getElementById('openPackButton');
 const myCollectionButton = document.getElementById('myCollectionButton');
 const tradesButton = document.getElementById('tradesButton');
@@ -997,6 +998,7 @@ function setSubnavSelection(button, parent, content, viewName, headingText) {
             requestCardGameStats();
 
             if (latestCardGameStatsData) {
+
                 updateCardGameCountDisplays(latestCardGameStatsData);
             }
         } else if (collectionStats) {
@@ -1071,7 +1073,7 @@ dailyPackScoreButton.addEventListener('click', () => {
         leaderboardsSubnav,
         leaderboardsContent,
         'daily-pack-score',
-        "Today's Card Pack Score"
+        "This Period's Pack Score"
     );
 });
 
@@ -1143,11 +1145,11 @@ function createCollectionStats() {
 
     collectionCardsDiscoveredValue = document.createElement('div');
     collectionCardsDiscoveredValue.className = 'collectionCardsDiscovered';
-    collectionCardsDiscoveredValue.textContent = 'Cards Discovered: —';
+    collectionCardsDiscoveredValue.textContent = '— out of — cards discovered';
 
     collectionCardsOwnedValue = document.createElement('div');
     collectionCardsOwnedValue.className = 'collectionCardsOwned';
-    collectionCardsOwnedValue.textContent = 'Cards Owned: —';
+    collectionCardsOwnedValue.textContent = '— out of — cards owned';
 
     collectionStats.append(
         collectionCardsDiscoveredValue,
@@ -1176,12 +1178,12 @@ function updateCardGameCountDisplays(statsData) {
 
     if (collectionCardsDiscoveredValue) {
         collectionCardsDiscoveredValue.textContent =
-            `Cards Discovered: ${formatStatsValue(statsData ? statsData.cardsDiscovered : undefined)}`;
+            `${formatStatsValue(statsData ? statsData.cardsDiscovered : undefined)} out of ${formatStatsValue(statsData ? statsData.totalCards : undefined)} cards discovered`;
     }
 
     if (collectionCardsOwnedValue) {
         collectionCardsOwnedValue.textContent =
-            `Cards Owned: ${formatStatsValue(statsData ? statsData.cardsOwned : undefined)}`;
+            `${formatStatsValue(statsData ? statsData.cardsOwned : undefined)} out of ${formatStatsValue(statsData ? statsData.totalCards : undefined)} cards owned`;
     }
 }
 
@@ -1497,6 +1499,7 @@ function startButtonEarthquake(button) {
 
         const elapsed = now - state.startedAt;  
         let x = 0;  
+
         let y = 0;  
         let angle = 0;  
 

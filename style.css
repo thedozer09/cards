@@ -3988,3 +3988,175 @@ button {
         padding: 14px;
     }
 }
+
+.musicToggleButton {
+    top: 124px !important;
+    right: 18px !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 100003 !important;
+}
+
+#statsButton {
+    position: fixed !important;
+    top: 174px !important;
+    right: 18px !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 100002 !important;
+    display: block;
+    width: clamp(100px, 11.5vw, 150px) !important;
+    min-height: 42px;
+    margin: 0;
+}
+
+#leaderboardsSubnav {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 60px;
+    align-items: stretch;
+    justify-items: stretch;
+    align-content: start;
+    gap: 10px;
+    width: min(840px, calc(100% - 20px));
+    margin: 0 auto 18px !important;
+}
+
+#leaderboardsSubnav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 60px;
+    height: 60px;
+    flex: none !important;
+    margin: 0;
+    padding: 7px 10px;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.15;
+}
+
+#cardsContent {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#cardsContent > .subviewHeading {
+    order: -2;
+}
+
+#cardsContent > .collectionStats {
+    order: -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: 8px 18px;
+    width: min(620px, 100%);
+    margin: 12px auto 18px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: center;
+}
+
+#cardsContent > .collectionStats.hidden {
+    display: none !important;
+}
+
+#cardsContent > .collectionStats > div {
+    width: 100%;
+    color: #ffffff;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+    .musicToggleButton {
+        top: 112px !important;
+        right: 12px !important;
+        bottom: auto !important;
+        left: auto !important;
+    }
+
+    #statsButton {
+        top: 160px !important;
+        right: 12px !important;
+        bottom: auto !important;
+        left: auto !important;
+    }
+
+    #leaderboardsSubnav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 60px;
+        gap: 8px;
+        width: min(420px, calc(100% - 12px));
+    }
+
+    #leaderboardsSubnav button {
+        width: 100% !important;
+        min-height: 60px;
+        height: 60px;
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+
+    #cardsContent > .collectionStats {
+        width: 100%;
+        gap: 8px 10px;
+        margin-top: 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 430px) {
+    .musicToggleButton {
+        top: 108px !important;
+        right: 10px !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+
+    #statsButton {
+        top: 154px !important;
+        right: 10px !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: clamp(100px, 28vw, 135px) !important;
+    }
+
+    #leaderboardsSubnav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 60px;
+        gap: 7px;
+        width: 100%;
+    }
+
+    #leaderboardsSubnav button {
+        min-height: 60px;
+        height: 60px;
+        font-size: 10px;
+        padding: 6px;
+    }
+
+    #cardsContent > .collectionStats {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+        padding: 8px 4px;
+    }
+}
+
