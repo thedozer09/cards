@@ -2472,10 +2472,6 @@ button {
 
 }
 
-
-
-
-
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity);
     display: block;
@@ -2492,7 +2488,6 @@ button {
     background: none;
     animation: none;
 }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue {
     position: absolute !important;
@@ -2517,7 +2512,6 @@ button {
 .rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue { color: #4fd1c5 !important; }
 .rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue { color: #4da6ff !important; }
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue { color: #ffd84d !important; }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue::before {
     content: "" !important;
@@ -2550,7 +2544,6 @@ button {
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
 }
-
 
 .rngRecordCard .rngStatValue.rngRarityValue::after {
     content: attr(data-rng-shine-text) !important;
@@ -2585,7 +2578,6 @@ button {
     58%, 100% { background-position: -10% 50%; }
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay {
     position: absolute !important;
     inset: 0 !important;
@@ -2618,7 +2610,6 @@ button {
     overflow: visible !important;
     transition: opacity 220ms ease, visibility 0s linear 220ms !important;
 }
-
 
 .rngRecordCard > .rngDuplicateOverlay::before {
     content: none !important;
@@ -2657,6 +2648,15 @@ button {
     transition: opacity 220ms ease !important;
 }
 
+@keyframes rngFinalTextHighlight {
+    0%, 45% {
+        background-position: 100% 50%;
+    }
+
+    58%, 100% {
+        background-position: -10% 50%;
+    }
+}
 
 .rngStat:nth-child(3),
 .rngStat:nth-child(4) {
@@ -2685,7 +2685,6 @@ button {
 .rngStat:nth-child(4) .rngStatValue {
     top: 33px !important;
 }
-
 
 .rngLifetimeStatLabel::before {
     content: "Total Score" !important;
@@ -2724,7 +2723,6 @@ button {
     animation: none !important;
 }
 
-
 .rngRecordCard .rngStatValue.rngRarityValue {
     position: absolute !important;
     top: 33px !important;
@@ -2752,12 +2750,10 @@ button {
     isolation: isolate !important;
 }
 
-
 .rngRecordCard .rngStatValue.rngRarityValue::after {
     content: none !important;
     display: none !important;
 }
-
 
 .rngRecordCard .rngRarityText {
     position: relative !important;
@@ -2832,7 +2828,6 @@ button {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
 }
 
-
 .rngRecordCard .rngRarityText::after {
     content: attr(data-rng-shine-text) !important;
     position: absolute !important;
@@ -2861,7 +2856,6 @@ button {
     animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay {
     position: absolute !important;
     inset: 0 !important;
@@ -2889,14 +2883,12 @@ button {
     transition: opacity 220ms ease, visibility 0s linear 220ms !important;
 }
 
-
 .rngRecordCard > .rngDuplicateOverlay::before,
 .rngRecordCard > .rngDuplicateOverlay::after {
     content: none !important;
     display: none !important;
     animation: none !important;
 }
-
 
 .rngRecordCard .rngDuplicateText {
     position: relative !important;
@@ -2972,6 +2964,177 @@ button {
     }
 }
 
+.rngRecordCard.rng-rarity-legendary .rngRarityText {
+    color: #ffd84d !important;
+}
+
+.rngRecordCard .rngRarityText::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: -1 !important;
+    display: block !important;
+    width: calc(100% + 46px) !important;
+    height: 190% !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius: 999px !important;
+    filter: blur(8px) !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.9) 0%, rgba(79, 209, 197, 0.5) 32%, rgba(79, 209, 197, 0.2) 58%, rgba(79, 209, 197, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
+}
+
+.rngRecordCard .rngRarityText::after {
+    content: attr(data-rng-shine-text) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
+    background-size: 300% 100% !important;
+    background-position: 100% 50%;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    overflow: visible !important;
+    transform: none !important;
+    transition: opacity 220ms ease, visibility 0s linear 220ms !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay::before,
+.rngRecordCard > .rngDuplicateOverlay::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+}
+
+.rngRecordCard .rngDuplicateText {
+    position: relative !important;
+    z-index: 1 !important;
+    display: inline-block !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    color: #ff2222 !important;
+    -webkit-text-fill-color: #ff2222 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 52px !important;
+    font-weight: 1000 !important;
+    line-height: 1 !important;
+    letter-spacing: 3.5px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    text-shadow: 0 0 4px rgba(255, 24, 24, 0.7), 0 0 10px rgba(255, 24, 24, 0.32) !important;
+    transform: rotate(-14deg) !important;
+    transform-origin: center center !important;
+    background: none !important;
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    animation: none !important;
+}
+
+.rngRecordCard .rngDuplicateText::before {
+    content: none !important;
+    display: none !important;
+}
+
+.rngRecordCard .rngDuplicateText::after {
+    content: attr(data-rng-shine-text) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
+    background-size: 300% 100% !important;
+    background-position: 100% 50%;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay.rngDuplicateVisible {
+    opacity: 0.92 !important;
+    visibility: visible !important;
+    transition: opacity 220ms ease !important;
+}
+
+@keyframes rngFinalTextHighlight {
+    0%, 45% {
+        background-position: 100% 50%;
+    }
+
+    58%, 100% {
+        background-position: -10% 50%;
+    }
+}
 
 .rngStat:nth-child(3),
 .rngStat:nth-child(4) {
@@ -3000,7 +3163,6 @@ button {
 .rngStat:nth-child(4) .rngStatValue {
     top: 33px !important;
 }
-
 
 .rngLifetimeStatLabel::before {
     content: "Total Score" !important;
@@ -3070,7 +3232,6 @@ button {
     }
 }
 
-
 .rngRecordCard .rngDuplicateText {
     color: #ff2222 !important;
     -webkit-text-fill-color: #ff2222 !important;
@@ -3097,7 +3258,6 @@ button {
         transform: rotate(-20deg) !important;
     }
 }
-
 
 .rngRecordCard .rngRarityText,
 .rngRecordCard .rngDuplicateText {
@@ -3157,7 +3317,6 @@ button {
         background-position: -80% 0;
     }
 }
-
 
 .rngRecordCard > .rngDuplicateOverlay {
     z-index: 1000 !important;
@@ -3246,4 +3405,66 @@ button {
     .rngModifiersDescription {
         font-size: 10px;
     }
+}
+
+.rngRecordCard .rngDuplicateText {
+    transform: rotate(-50deg) !important;
+}
+
+@media (max-width: 430px) {
+    .rngRecordCard .rngDuplicateText {
+        transform: rotate(-50deg) !important;
+    }
+}
+
+.rngRecordCard .rngDuplicateOverlay.rngDuplicateVisible .rngDuplicateText {
+    animation: rngDuplicateStampPopIn 480ms cubic-bezier(0.2, 0.9, 0.3, 1.12) both !important;
+}
+
+@keyframes rngDuplicateStampPopIn {
+    0% {
+        opacity: 0;
+        transform: rotate(-50deg) scale(0.35);
+    }
+
+    65% {
+        opacity: 1;
+        transform: rotate(-50deg) scale(1.08);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotate(-50deg) scale(1);
+    }
+}
+
+.rngStat:nth-child(4) .rngStatValue {
+    top: 24px !important;
+    height: 21px !important;
+    min-height: 21px !important;
+    font-size: 18px !important;
+    line-height: 21px !important;
+}
+
+.rngRecordCard .rngRarityText::before {
+    width: calc(100% + 72px) !important;
+    height: 240% !important;
+    filter: blur(12px) !important;
+    opacity: 0.48 !important;
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.30) 0%, rgba(220, 231, 240, 0.20) 32%, rgba(220, 231, 240, 0.08) 62%, rgba(220, 231, 240, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.34) 0%, rgba(79, 209, 197, 0.21) 32%, rgba(79, 209, 197, 0.08) 62%, rgba(79, 209, 197, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.35) 0%, rgba(77, 166, 255, 0.22) 32%, rgba(77, 166, 255, 0.09) 62%, rgba(77, 166, 255, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.36) 0%, rgba(255, 216, 77, 0.22) 32%, rgba(255, 216, 77, 0.09) 62%, rgba(255, 216, 77, 0) 100%) !important;
 }
