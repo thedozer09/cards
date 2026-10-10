@@ -3590,12 +3590,14 @@ function createRngRecordCard(payload, recordText) {
     const stats = document.createElement('div');  
     stats.className = 'rngStats';  
 
+       const rarityString = displayRarity !== 'unknown' 
+        ? displayRarity 
+        : payload.rarity ?? 'Unknown';
+
     const rarityStat = 
         createRngStat(  
             'Base Rarity',  
-            displayRarity !== 'unknown' 
-                ? displayRarity 
-                : payload.rarity ?? 'Unknown',  
+            rarityString,  
             getRngRarityColor(displayRarity)  
         ); 
 
@@ -3611,9 +3613,9 @@ function createRngRecordCard(payload, recordText) {
 
         rarityValue.setAttribute( 
             'data-rng-shine-text', 
-            rarityValue.textContent.trim() 
+            rarityString.trim() 
         ); 
-    } 
+    }
 
     stats.appendChild( 
         rarityStat 

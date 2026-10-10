@@ -3048,11 +3048,13 @@ button {
     background-clip: border-box !important;
     -webkit-background-clip: border-box !important;
     animation: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
+    opacity: 0;
+    visibility: hidden;
     overflow: visible !important;
     transition: opacity 220ms ease, visibility 0s linear 220ms !important;
 }
+
+
 
 
 .rngRecordCard > .rngDuplicateOverlay::before {
