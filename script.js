@@ -281,7 +281,7 @@ function requestRngServerTime() {
     if (  
         !socket ||  
         socket.readyState !==  
-            WebSocket.OPEN  
+            WebSocket.OPEN 
     ) {  
         return;  
     }  
@@ -548,7 +548,6 @@ function startTabLoading(
             'hidden' 
         ); 
     } 
-
     state.timer = 
         setTimeout(() => { 
             finishTabLoading(screen); 
@@ -1932,7 +1931,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-} 
+}  
 
 function scheduleRngDuplicateReveal(card) {
     if (!card) {
@@ -1948,6 +1947,19 @@ function scheduleRngDuplicateReveal(card) {
         card.querySelector(
             '.rngModifiersTitle'
         );
+
+    const modifierCards =
+        card.querySelectorAll(
+            '.rngModifier'
+        );
+
+    const lastModifier =
+        modifierCards.length > 0
+            ? modifierCards[modifierCards.length - 1]
+            : null;
+
+    const revealTrigger =
+        lastModifier || modifiersTitle;
 
     if (
         !duplicateOverlay ||
@@ -1983,12 +1995,12 @@ function scheduleRngDuplicateReveal(card) {
         );
     };
 
-    if (!modifiersTitle) {
+    if (!revealTrigger) {
         startDuplicateRevealTimer();
         return;
     }
 
-    modifiersTitle.addEventListener(
+    revealTrigger.addEventListener(
         'animationend',
         event => {
             if (
@@ -2016,7 +2028,7 @@ function animateRngRecordCard(
 
     const childElements =  
         card.querySelectorAll(  
-            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngModifierHeader, .rngModifierRarity, .rngModifierName, .rngModifierPoints, .rngModifierDescription, .rngModifierValue, .rngNoModifiers'  
+            '.rngRecordLabel, .rngRecordValue, .rngStat, .rngStatLabel, .rngStatValue:not(.rngRarityValue), .rngModifiersTitle, .rngModifiersDescription, .rngModifier, .rngNoModifiers'  
         );  
 
     const fullRarityPlaceholder =
@@ -2034,6 +2046,19 @@ function animateRngRecordCard(
             fullRarityPlaceholder
         );
     }
+
+    const modifierElements =
+        elements.filter(
+            element => element.classList.contains('rngModifier')
+        );
+
+    const firstModifierIndex =
+        elements.findIndex(
+            element => element.classList.contains('rngModifier')
+        );
+
+    const modifierPopInterval =
+        (RNG_POP_DURATION + 100) / 1000;
 
     const finalElement = 
         elements[ 
@@ -2126,10 +2151,34 @@ function animateRngRecordCard(
                 ); 
             } 
 
-            element.style.setProperty(  
-                '--rng-pop-delay',  
-                `${index * (RNG_POP_INTERVAL / 1000)}s`  
-            );  
+            let popDelay =
+                index * (RNG_POP_INTERVAL / 1000);
+
+            if (
+                element.classList.contains('rngModifier') &&
+                firstModifierIndex !== -1
+            ) {
+                const modifierIndex =
+                    modifierElements.indexOf(element);
+
+                popDelay =
+                    firstModifierIndex * (RNG_POP_INTERVAL / 1000) +
+                    modifierIndex * modifierPopInterval;
+            } else if (
+                fullRarityPlaceholder &&
+                element === fullRarityPlaceholder &&
+                modifierElements.length > 0 &&
+                firstModifierIndex !== -1
+            ) {
+                popDelay =
+                    firstModifierIndex * (RNG_POP_INTERVAL / 1000) +
+                    modifierElements.length * modifierPopInterval;
+            }
+
+            element.style.setProperty(
+                '--rng-pop-delay',
+                `${popDelay}s`
+            );
 
             element.style.animationDuration = 
                 `${RNG_POP_DURATION}ms`; 

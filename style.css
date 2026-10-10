@@ -2705,6 +2705,11 @@ button {
     }
 }
 
+
+
+
+
+
 .rngRecordCard .rngRecordValue::after {
     content: attr(data-rng-full-rarity) !important;
     display: block !important;
@@ -3014,7 +3019,7 @@ button {
 }
 
 @media (max-width: 430px) {
-    .rngRecordCard > .rngDuplicateOverlay {
+    .rngRecordCard .rngDuplicateText {
         font-size: 39px !important;
         letter-spacing: 2.5px !important;
     }
@@ -3511,5 +3516,94 @@ button {
         min-height: 21px !important;
         font-size: 14px !important;
         line-height: 21px !important;
+    }
+}
+
+.rngRecordCard .rngStatValue.rngRarityValue::before {
+    opacity: 0.13 !important;
+    filter: blur(12px) !important;
+}
+
+.rngModifier {
+    min-height: 52px !important;
+    gap: 6px !important;
+    padding: 9px 11px !important;
+    border-color: rgba(177, 198, 213, 0.22) !important;
+    background: linear-gradient(135deg, rgba(43, 49, 54, 0.96) 0%, rgba(26, 31, 36, 0.98) 100%) !important;
+}
+
+.rngModifierHeader {
+    gap: 6px 8px !important;
+    line-height: 1.35 !important;
+}
+
+.rngModifierRarity {
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.45px !important;
+    line-height: 1.35 !important;
+    text-shadow: 0 0 3px currentColor, 0 0 7px currentColor !important;
+}
+
+.rngModifierName {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+}
+
+.rngModifierPoints {
+    color: #69e58f !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.35 !important;
+    text-shadow: 0 0 4px rgba(74, 222, 128, 0.2) !important;
+}
+
+.rngModifierDescription {
+    color: rgba(218, 228, 236, 0.88) !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+}
+
+.rngModifier[data-rarity="common"] .rngModifierRarity {
+    color: #d5e5f1 !important;
+    text-shadow: 0 0 3px rgba(213, 229, 241, 0.65), 0 0 7px rgba(213, 229, 241, 0.35) !important;
+}
+
+.rngModifier[data-rarity="uncommon"] .rngModifierRarity {
+    color: #64f2cd !important;
+    text-shadow: 0 0 3px rgba(100, 242, 205, 0.75), 0 0 8px rgba(100, 242, 205, 0.48) !important;
+}
+
+.rngModifier[data-rarity="rare"] .rngModifierRarity {
+    color: #68baff !important;
+    text-shadow: 0 0 3px rgba(104, 186, 255, 0.75), 0 0 8px rgba(104, 186, 255, 0.48) !important;
+}
+
+.rngModifier[data-rarity="legendary"] .rngModifierRarity {
+    color: #ffdc65 !important;
+    text-shadow: 0 0 3px rgba(255, 220, 101, 0.75), 0 0 8px rgba(255, 220, 101, 0.45) !important;
+}
+
+@media (max-width: 430px) {
+    .rngModifier {
+        min-height: 48px !important;
+        padding: 8px 9px !important;
+    }
+
+    .rngModifierRarity {
+        font-size: 10px !important;
+    }
+
+    .rngModifierName {
+        font-size: 12px !important;
+    }
+
+    .rngModifierPoints {
+        font-size: 12px !important;
+    }
+
+    .rngModifierDescription {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
     }
 }
