@@ -56,6 +56,10 @@ function startActivityMusic() {
         return; 
     } 
 
+    if (activityMusicStarted && !activityMusic.paused) {
+        return;
+    }
+
     const playPromise = 
         activityMusic.play(); 
 
@@ -68,6 +72,7 @@ function startActivityMusic() {
                 activityMusicStarted = true; 
             }) 
             .catch(() => { 
+                activityMusicStarted = false;
             }); 
     } 
 } 
@@ -81,7 +86,7 @@ function initializeActivityMusic() {
 
     activityMusic.volume = 0.25; 
     activityMusic.loop = true; 
-    activityMusic.muted = true; 
+    activityMusic.muted = false; 
 
     updateActivityMusicButton(); 
     startActivityMusic(); 
@@ -442,6 +447,8 @@ function initializeWebSocket() {
             errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured.";  
         } else if (event.code === 1015) {  
             errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that backend container port didn't accept.";  
+        } else if (event.code === 1001) {  
+            errorMessage.textContent = "⚠️ Disconnected (Code: 1001). Discord failed to keep a stable connection. Please reconnect.";  
         } else {  
             errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'Game had a issue keeping a stable connection, please reconnect.'}`;  
         }  
@@ -584,7 +591,7 @@ function createCardGameTermsPanel() {
         panel.appendChild(fullTermsNotice);
     }
 
-    fullTermsNotice.textContent = 'Full Terms of Service can be found inside the bot profile.';
+    fullTermsNotice.textContent = "The full Terms of Service can be found in the bot's profile.";
 
     return panel;
 }
@@ -616,6 +623,7 @@ function initializeCardGameTermsToggle() {
     }
 
     if (links.length === 0) {
+        createCardGameTermsPanel();
         return;
     }
 
@@ -813,25 +821,48 @@ function initializeActivityNavigationLayout() {
         }
     }
 
+    let fixedControls = document.getElementById('fixedActivityControls');
+
+    if (!fixedControls) {
+        fixedControls = document.createElement('div');
+        fixedControls.id = 'fixedActivityControls';
+        fixedControls.className = 'navigation fixedActivityControls';
+        fixedControls.style.setProperty('display', 'contents', 'important');
+        fixedControls.style.setProperty('position', 'static', 'important');
+        fixedControls.style.setProperty('transform', 'none', 'important');
+        fixedControls.style.setProperty('filter', 'none', 'important');
+        fixedControls.style.setProperty('perspective', 'none', 'important');
+        fixedControls.style.setProperty('contain', 'none', 'important');
+        document.body.appendChild(fixedControls);
+    }
+
     const musicButton = document.getElementById('musicToggleButton');
     const statsToggle = document.getElementById('statsButton');
 
     if (musicButton) {
-        musicButton.style.position = 'fixed';
-        musicButton.style.top = narrowScreen ? '112px' : '124px';
-        musicButton.style.right = narrowScreen ? '12px' : '18px';
-        musicButton.style.bottom = 'auto';
-        musicButton.style.left = 'auto';
-        musicButton.style.zIndex = '100003';
+        if (musicButton.parentElement !== fixedControls) {
+            fixedControls.appendChild(musicButton);
+        }
+
+        musicButton.style.setProperty('position', 'fixed', 'important');
+        musicButton.style.setProperty('top', narrowScreen ? '112px' : '124px', 'important');
+        musicButton.style.setProperty('right', narrowScreen ? '12px' : '18px', 'important');
+        musicButton.style.setProperty('bottom', 'auto', 'important');
+        musicButton.style.setProperty('left', 'auto', 'important');
+        musicButton.style.setProperty('z-index', '100003', 'important');
     }
 
     if (statsToggle) {
-        statsToggle.style.position = 'fixed';
-        statsToggle.style.top = narrowScreen ? '160px' : '174px';
-        statsToggle.style.right = narrowScreen ? '12px' : '18px';
-        statsToggle.style.bottom = 'auto';
-        statsToggle.style.left = 'auto';
-        statsToggle.style.zIndex = '100002';
+        if (statsToggle.parentElement !== fixedControls) {
+            fixedControls.appendChild(statsToggle);
+        }
+
+        statsToggle.style.setProperty('position', 'fixed', 'important');
+        statsToggle.style.setProperty('top', narrowScreen ? '160px' : '174px', 'important');
+        statsToggle.style.setProperty('right', narrowScreen ? '12px' : '18px', 'important');
+        statsToggle.style.setProperty('bottom', 'auto', 'important');
+        statsToggle.style.setProperty('left', 'auto', 'important');
+        statsToggle.style.setProperty('z-index', '100002', 'important');
     }
 }
 
@@ -1106,6 +1137,7 @@ function showLoadingScreenAndLaunch() {
 
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
+    startActivityMusic();
     initializeActivityNavigationLayout();
 
     appLaunchTimer = setTimeout(() => {
@@ -1582,7 +1614,7 @@ function createStatsScreen() {
 
     const supportMessage = document.createElement('p');
     supportMessage.style.margin = '0';
-    supportMessage.textContent = "Report issues or give suggestions, or join our team by joining our Discord server found in the bot's bio.";
+    supportMessage.textContent = "Report problems, give suggestions, and join our storm-chasing team by joining our Discord server, found in the bot's bio.";
 
     support.appendChild(supportMessage);
     statsScreen.append(header, profile, grid, support);
