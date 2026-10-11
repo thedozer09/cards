@@ -7,10 +7,6 @@ const activityMusic = document.getElementById('activityMusic');
 const musicToggleButton = document.getElementById('musicToggleButton');  
 const tosGate = document.getElementById('tosGate');
 const tosAgreeButton = document.getElementById('tosAgreeButton');
-const CARD_GAME_TOS_URL = 'https://docs.google.com/document/d/14XsK7T0vSqNUjXQzvCtw7b6adZ5TXSOEdEtu6yZgpxg/edit?usp=sharing';
-const DOWDATALAB_DISCORD_INVITE_URL = 'https://discord.gg/qVS2QW7xDV';
-let discordSdkInstance = window.discordSdk || window.discordSDK || window.discordEmbeddedAppSdk || null;
-let discordSdkReadyPromise = null;
 
 let socket = null;  
 let activityMusicStarted = false; 
@@ -18,158 +14,6 @@ let tosAcceptanceKnown = false;
 let appLaunchStarted = false;
 let appLaunchTimer = null;
 let activityLaunchBlocked = false;
-
-function getDiscordClientId() {
-    const clientIdMeta = document.querySelector('meta[name="discord-client-id"]');
-    const params = new URLSearchParams(window.location.search);
-    const discordActivityHost = window.location.hostname.match(/^([0-9]+)\.discordsays\.com$/i);
-
-    return (
-        window.DOWDATALAB_DISCORD_CLIENT_ID ||
-        window.DISCORD_CLIENT_ID ||
-        (clientIdMeta && clientIdMeta.content) ||
-        params.get('client_id') ||
-        params.get('application_id') ||
-        (discordActivityHost && discordActivityHost[1]) ||
-        null
-    );
-}
-
-async function getReadyDiscordSdk() {
-    if (discordSdkInstance && discordSdkInstance.commands) {
-        return discordSdkInstance;
-    }
-
-    if (discordSdkReadyPromise) {
-        return discordSdkReadyPromise;
-    }
-
-    const clientId = getDiscordClientId();
-
-    if (!clientId) {
-        return null;
-    }
-
-    discordSdkReadyPromise = (async () => {
-        try {
-            const sdkModule = await import('https://esm.sh/@discord/embedded-app-sdk@2.5.0');
-            const DiscordSDK = sdkModule.DiscordSDK;
-
-            if (typeof DiscordSDK !== 'function') {
-                return null;
-            }
-
-            const sdk = new DiscordSDK(clientId);
-            await sdk.ready();
-            discordSdkInstance = sdk;
-            window.discordSdk = sdk;
-            return sdk;
-        } catch (error) {
-            console.warn('Discord Embedded App SDK could not be initialized.', error);
-            return null;
-        }
-    })();
-
-    return discordSdkReadyPromise;
-}
-
-function showActivityActionError(message) {
-    console.error(message);
-
-    if (errorMessage) {
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
-    }
-}
-
-function showSdkExternalLinkError(error) {
-    if (error) {
-        console.error('Discord could not open the external link through openExternalLink.', error);
-    }
-
-    showActivityActionError('Discord could not open this link through the Activity. Make sure the Activity is running inside Discord and the Embedded App SDK is connected.');
-}
-
-function callSdkExternalLink(sdk, url) {
-    if (!sdk || !sdk.commands || typeof sdk.commands.openExternalLink !== 'function') {
-        showSdkExternalLinkError(new Error('Discord Embedded App SDK openExternalLink is unavailable.'));
-        return Promise.resolve(false);
-    }
-
-    try {
-        return Promise.resolve(sdk.commands.openExternalLink({ url }))
-            .then(() => true)
-            .catch(error => {
-                showSdkExternalLinkError(error);
-                return false;
-            });
-    } catch (error) {
-        showSdkExternalLinkError(error);
-        return Promise.resolve(false);
-    }
-}
-
-function openSdkExternalLink(url) {
-    const currentSdk = discordSdkInstance || window.discordSdk || window.discordSDK || window.discordEmbeddedAppSdk || null;
-
-    if (currentSdk && currentSdk.commands && typeof currentSdk.commands.openExternalLink === 'function') {
-        return callSdkExternalLink(currentSdk, url);
-    }
-
-    return getReadyDiscordSdk()
-        .then(sdk => callSdkExternalLink(sdk, url))
-        .catch(error => {
-            showSdkExternalLinkError(error);
-            return false;
-        });
-}
-
-function bindActivityLink(link, url, className, action) {
-    link.classList.add(className);
-    link.href = url;
-    link.removeAttribute('target');
-    link.rel = 'noopener noreferrer';
-    link.dataset.discordExternalUrl = url;
-    link.style.color = '#69b6ff';
-    link.style.textDecoration = 'underline';
-    link.style.textUnderlineOffset = '3px';
-    link.style.cursor = 'pointer';
-
-    return link;
-}
-
-document.addEventListener('click', event => {
-    const target = event.target;
-    const link = target instanceof Element ? target.closest('a') : null;
-
-    if (!link) {
-        return;
-    }
-
-    const url = link.dataset.discordExternalUrl || link.href;
-    const allowedUrls = [CARD_GAME_TOS_URL, DOWDATALAB_DISCORD_INVITE_URL];
-
-    if (!allowedUrls.includes(url)) {
-        return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (typeof event.stopImmediatePropagation === 'function') {
-        event.stopImmediatePropagation();
-    }
-
-    void openSdkExternalLink(url);
-}, true);
-
-function createActivityLink(text, url, className, action) {
-    const link = document.createElement('a');
-    link.textContent = text;
-    return bindActivityLink(link, url, className, action);
-}
-
-void getReadyDiscordSdk();
 
 function updateActivityMusicButton() { 
     if (!musicToggleButton) { 
@@ -720,30 +564,27 @@ function createCardGameTermsPanel() {
         panel.appendChild(content);
     }
 
-    content.textContent = 'Short version: only the Card Game section of the Terms of Service applies to this Activity. Other sections do not apply to the card game. Open the full terms below to read the applicable section.';
+    content.textContent = 'Short version: only the Card Game section of the Terms of Service applies to this Activity. Other sections do not apply to the card game.';
 
-    let fullTermsLink = panel.querySelector('.cardGameFullTermsLink');
+    const existingFullTermsLink = panel.querySelector('.cardGameFullTermsLink');
 
-    if (!fullTermsLink) {
-        fullTermsLink = createActivityLink(
-            'Click here to view the full Terms of Service (Card Game section only).',
-            CARD_GAME_TOS_URL,
-            'cardGameFullTermsLink',
-            () => openSdkExternalLink(CARD_GAME_TOS_URL)
-        );
-        fullTermsLink.style.display = 'inline-block';
-        fullTermsLink.style.marginTop = '12px';
-        fullTermsLink.style.fontSize = '13px';
-        fullTermsLink.style.lineHeight = '1.5';
-        panel.appendChild(fullTermsLink);
-    } else {
-        bindActivityLink(
-            fullTermsLink,
-            CARD_GAME_TOS_URL,
-            'cardGameFullTermsLink',
-            () => openSdkExternalLink(CARD_GAME_TOS_URL)
-        );
+    if (existingFullTermsLink) {
+        existingFullTermsLink.remove();
     }
+
+    let fullTermsNotice = panel.querySelector('.cardGameFullTermsNotice');
+
+    if (!fullTermsNotice) {
+        fullTermsNotice = document.createElement('p');
+        fullTermsNotice.className = 'cardGameFullTermsNotice';
+        fullTermsNotice.style.display = 'block';
+        fullTermsNotice.style.marginTop = '12px';
+        fullTermsNotice.style.fontSize = '13px';
+        fullTermsNotice.style.lineHeight = '1.5';
+        panel.appendChild(fullTermsNotice);
+    }
+
+    fullTermsNotice.textContent = 'Full Terms of Service can be found inside the bot profile.';
 
     return panel;
 }
@@ -883,68 +724,6 @@ function initializeSimpleButtonEffects() {
     });
 }
 
-function initializeLoadingScreenHints() {
-    if (!loadingScreen) {
-        return;
-    }
-
-    const loadingContent = loadingScreen.querySelector('.loadingContent');
-
-    if (!loadingContent) {
-        return;
-    }
-
-    let topHint = loadingContent.querySelector('#loadingMusicHint');
-
-    if (!topHint) {
-        topHint = document.createElement('p');
-        topHint.id = 'loadingMusicHint';
-        topHint.textContent = 'You can turn on the game music by clicking the speaker button in the top right.';
-        topHint.style.maxWidth = '520px';
-        topHint.style.margin = '0';
-        topHint.style.color = '#dce7f0';
-        topHint.style.fontSize = '14px';
-        topHint.style.lineHeight = '1.5';
-        topHint.style.textAlign = 'center';
-    }
-
-    let bottomHint = loadingContent.querySelector('#loadingSupportHint');
-
-    if (!bottomHint) {
-        bottomHint = document.createElement('p');
-        bottomHint.id = 'loadingSupportHint';
-        bottomHint.style.maxWidth = '560px';
-        bottomHint.style.margin = '0';
-        bottomHint.style.color = '#dce7f0';
-        bottomHint.style.fontSize = '13px';
-        bottomHint.style.lineHeight = '1.5';
-        bottomHint.style.textAlign = 'center';
-        bottomHint.append('To report issues or give suggestions, visit the ');
-        bottomHint.appendChild(createActivityLink(
-            'DOWDataLab Discord server',
-            DOWDATALAB_DISCORD_INVITE_URL,
-            'loadingDiscordInviteLink',
-            () => openSdkExternalLink(DOWDATALAB_DISCORD_INVITE_URL)
-        ));
-        bottomHint.append('.');
-    }
-
-    const heading = loadingContent.querySelector('h1');
-    const spinner = loadingContent.querySelector('.loadingSpinner');
-
-    if (heading && heading.nextElementSibling !== topHint) {
-        heading.insertAdjacentElement('afterend', topHint);
-    } else if (!heading && !topHint.parentElement) {
-        loadingContent.prepend(topHint);
-    }
-
-    if (spinner && spinner.nextElementSibling !== bottomHint) {
-        spinner.insertAdjacentElement('afterend', bottomHint);
-    } else if (!spinner && !bottomHint.parentElement) {
-        loadingContent.appendChild(bottomHint);
-    }
-}
-
 function initializeActivityNavigationLayout() {
     const narrowScreen = window.matchMedia('(max-width: 800px)').matches;
 
@@ -1056,7 +835,6 @@ function initializeActivityNavigationLayout() {
     }
 }
 
-initializeLoadingScreenHints();
 initializeCardGameTermsToggle();
 initializeSimpleButtonEffects();
 
@@ -1328,7 +1106,6 @@ function showLoadingScreenAndLaunch() {
 
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
-    initializeLoadingScreenHints();
     initializeActivityNavigationLayout();
 
     appLaunchTimer = setTimeout(() => {
@@ -1804,19 +1581,10 @@ function createStatsScreen() {
     support.style.textAlign = 'center';
 
     const supportMessage = document.createElement('p');
-    supportMessage.style.margin = '0 0 8px';
-    supportMessage.textContent = 'Join the DOWDataLab Discord server to report issues or give suggestions.';
+    supportMessage.style.margin = '0';
+    supportMessage.textContent = "Report issues or give suggestions, or join our team by joining our Discord server found in the bot's bio.";
 
-    const serverLink = createActivityLink(
-        'DOWDataLab Discord server invite',
-        DOWDATALAB_DISCORD_INVITE_URL,
-        'statsDiscordInviteLink',
-        () => openSdkExternalLink(DOWDATALAB_DISCORD_INVITE_URL)
-    );
-    serverLink.style.display = 'inline-block';
-    serverLink.style.margin = '0 8px 6px';
-
-    support.append(supportMessage, serverLink);
+    support.appendChild(supportMessage);
     statsScreen.append(header, profile, grid, support);
     statsScreen.dataset.initialized = 'true';
 }
@@ -2390,7 +2158,7 @@ function sanitizeRngStoredResult(payload) {
             isRngDuplicatePayload(payload), 
         modifiers: payload.modifiers ?? [] 
     }; 
-}
+} 
 
 function isRngDuplicatePayload(payload) { 
     if ( 
@@ -2750,7 +2518,7 @@ function createRngDailyStatus() {
         document.createElement('div');  
 
     rngDailyStatus.className =  
-        'rngDailyStatus'; 
+        'rngDailyStatus';  
 
     rngDailyStatus.style.color = 
         '#8a8f94'; 
@@ -2759,19 +2527,19 @@ function createRngDailyStatus() {
         document.createElement('div');  
 
     rngDailyMessage.className =  
-        'rngDailyMessage'; 
+        'rngDailyMessage';  
 
     rngDailyMessage.style.color = 
         '#8a8f94'; 
 
     rngDailyMessage.textContent =  
-        'You have already rolled for this period'; 
+        'You have already rolled for this period';  
 
     rngDailyCountdown =  
         document.createElement('div');  
 
     rngDailyCountdown.className =  
-        'rngDailyCountdown'; 
+        'rngDailyCountdown';  
 
     rngDailyCountdown.style.color = 
         '#8a8f94'; 
@@ -3048,13 +2816,7 @@ function getRngRarityGradient(rarity) {
         RNG_RARITY_GRADIENTS[normalized] ?? 
         '' 
     ); 
-}
-
-    return ( 
-        RNG_RARITY_GRADIENTS[normalized] ?? 
-        '' 
-    ); 
-
+} 
 
 function playRngLaunchFlash() {  
     const existingFlash =  
@@ -3247,7 +3009,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-}  
+} 
 
 function startRngCardFinishEffects(card) {
     if (
@@ -4763,7 +4525,7 @@ function applyRngLifetimeUpdateResult(score) {
             ) 
         ) 
     ); 
-}  
+} 
 
 function applyDailyRollState(state) {  
     return;  
@@ -5032,7 +4794,7 @@ function createRngStat(label, value, valueColor = null) {
 
     const statLabel = document.createElement('div');  
     statLabel.className = 'rngStatLabel';  
-    statLabel.textContent = label; 
+    statLabel.textContent = label;  
 
     if ( 
         String(label).toLowerCase().includes( 
