@@ -8,6 +8,10 @@ const activityMusic = document.getElementById('activityMusic');
 const musicToggleButton = document.getElementById('musicToggleButton');  
 const tosGate = document.getElementById('tosGate');
 const tosAgreeButton = document.getElementById('tosAgreeButton');
+const CARD_GAME_TOS_URL = 'https://docs.google.com/document/d/14XsK7T0vSqNUjXQzvCtw7b6adZ5TXSOEdEtu6yZgpxg/edit?usp=sharing';
+const DOWDATALAB_DISCORD_INVITE_URL = 'https://discord.gg/qVS2QW7xDV';
+let discordSdkInstance = window.discordSdk || window.discordSDK || window.discordEmbeddedAppSdk || null;
+let discordSdkReadyPromise = null;
 	  
 let socket = null;  
 let activityMusicStarted = false; 
@@ -16,6 +20,113 @@ let appLaunchStarted = false;
 let appLaunchTimer = null;
 let activityLaunchBlocked = false;
 	  
+function getDiscordClientId() {
+    const clientIdMeta = document.querySelector('meta[name="discord-client-id"]');
+    const params = new URLSearchParams(window.location.search);
+
+    return (
+        window.DOWDATALAB_DISCORD_CLIENT_ID ||
+        window.DISCORD_CLIENT_ID ||
+        (clientIdMeta && clientIdMeta.content) ||
+        params.get('client_id') ||
+        params.get('application_id') ||
+        null
+    );
+}
+
+async function getReadyDiscordSdk() {
+    if (discordSdkInstance && discordSdkInstance.commands) {
+        return discordSdkInstance;
+    }
+
+    if (discordSdkReadyPromise) {
+        return discordSdkReadyPromise;
+    }
+
+    const clientId = getDiscordClientId();
+
+    if (!clientId) {
+        return null;
+    }
+
+    discordSdkReadyPromise = (async () => {
+        try {
+            const sdkModule = await import('https://esm.sh/@discord/embedded-app-sdk?bundle');
+            const DiscordSDK = sdkModule.DiscordSDK;
+
+            if (typeof DiscordSDK !== 'function') {
+                return null;
+            }
+
+            const sdk = new DiscordSDK(clientId);
+            await sdk.ready();
+            discordSdkInstance = sdk;
+            window.discordSdk = sdk;
+            return sdk;
+        } catch (error) {
+            console.warn('Discord Embedded App SDK could not be initialized.', error);
+            return null;
+        }
+    })();
+
+    return discordSdkReadyPromise;
+}
+
+async function openSdkExternalLink(url) {
+    const sdk = await getReadyDiscordSdk();
+
+    if (sdk && sdk.commands && typeof sdk.commands.openExternalLink === 'function') {
+        try {
+            await sdk.commands.openExternalLink({ url });
+            return true;
+        } catch (error) {
+            console.warn('Discord could not open the external link through the SDK.', error);
+        }
+    }
+
+    try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return true;
+    } catch (error) {
+        window.location.href = url;
+        return false;
+    }
+}
+
+async function openSdkInviteDialog() {
+    const sdk = await getReadyDiscordSdk();
+
+    if (!sdk || !sdk.commands || typeof sdk.commands.openInviteDialog !== 'function') {
+        return false;
+    }
+
+    try {
+        await sdk.commands.openInviteDialog();
+        return true;
+    } catch (error) {
+        console.warn('Discord could not open the Activity invite dialog.', error);
+        return false;
+    }
+}
+
+function createActivityLink(text, url, className, action) {
+    const link = document.createElement('a');
+    link.className = className;
+    link.href = url;
+    link.textContent = text;
+    link.style.color = '#69b6ff';
+    link.style.textDecoration = 'underline';
+    link.style.textUnderlineOffset = '3px';
+    link.style.cursor = 'pointer';
+
+    link.addEventListener('click', event => {
+        event.preventDefault();
+        action();
+    });
+
+    return link;
+}
+
 function updateActivityMusicButton() { 
     if (!musicToggleButton) { 
         return; 
@@ -48,7 +159,7 @@ function startActivityMusic() {
         return; 
     } 
  
-    activityMusic.volume = 0.5; 
+    activityMusic.volume = 0.25; 
     activityMusic.loop = true; 
  
     if ( 
@@ -80,8 +191,9 @@ function initializeActivityMusic() {
         return; 
     } 
  
-    activityMusic.volume = 0.5; 
+    activityMusic.volume = 0.25; 
     activityMusic.loop = true; 
+    activityMusic.muted = true; 
  
     updateActivityMusicButton(); 
     startActivityMusic(); 
@@ -242,7 +354,7 @@ function handleActivityLaunchRequiredMessage(message) {
             instructions.textContent = (
                 message.data && typeof message.data.message === 'string'
                     ? message.data.message
-                    : 'We could not match this Activity connection to the Discord user who launched it. Joining this way is not supported. Close this Activity and relaunch Storm Cards using a Storm Cards Activity launch button or the /stormcards slash command.'
+                    : 'We could not match this Activity connection to the Discord user who launched it. Joining this way is not supported. Close this Activity and relaunch Storm Cards using the Storm Cards Activity launch button or the /stormcards slash command.'
             );
             instructions.style.maxWidth = '520px';
             instructions.style.margin = '0';
@@ -538,25 +650,51 @@ function createCardGameTermsPanel() {
 
     let panel = currentTosGate.querySelector('#cardGameTosDetails');
 
-    if (panel) {
-        return panel;
+    if (!panel) {
+        panel = document.createElement('section');
+        panel.id = 'cardGameTosDetails';
+        panel.className = 'cardGameTosDetails hidden';
+        panel.setAttribute('aria-label', 'Card Game Terms of Service');
+        currentTosGate.appendChild(panel);
     }
 
-    panel = document.createElement('section');
-    panel.id = 'cardGameTosDetails';
-    panel.className = 'cardGameTosDetails hidden';
-    panel.setAttribute('aria-label', 'Card Game Terms of Service');
+    let heading = panel.querySelector('.cardGameTosDetailsHeading');
 
-    const heading = document.createElement('h3');
-    heading.className = 'cardGameTosDetailsHeading';
+    if (!heading) {
+        heading = document.createElement('h3');
+        heading.className = 'cardGameTosDetailsHeading';
+        panel.prepend(heading);
+    }
+
     heading.textContent = 'Card Game Terms of Service';
 
-    const content = document.createElement('div');
-    content.className = 'cardGameTosDetailsContent';
-    content.textContent = '[PLACEHOLDER: Paste the Card Game Terms of Service here.]';
+    let content = panel.querySelector('.cardGameTosDetailsContent');
 
-    panel.append(heading, content);
-    currentTosGate.appendChild(panel);
+    if (!content) {
+        content = document.createElement('div');
+        content.className = 'cardGameTosDetailsContent';
+        panel.appendChild(content);
+    }
+
+    content.textContent = 'Short version: only the Card Game section of the Terms of Service applies to this Activity. Other sections do not apply to the card game. Open the full terms below to read the applicable section.';
+
+    let fullTermsLink = panel.querySelector('.cardGameFullTermsLink');
+
+    if (!fullTermsLink) {
+        fullTermsLink = createActivityLink(
+            'Click here to view the full Terms of Service (Card Game section only).',
+            CARD_GAME_TOS_URL,
+            'cardGameFullTermsLink',
+            () => openSdkExternalLink(CARD_GAME_TOS_URL)
+        );
+        fullTermsLink.style.display = 'inline-block';
+        fullTermsLink.style.marginTop = '12px';
+        fullTermsLink.style.fontSize = '13px';
+        fullTermsLink.style.lineHeight = '1.5';
+        panel.appendChild(fullTermsLink);
+    } else {
+        fullTermsLink.href = CARD_GAME_TOS_URL;
+    }
 
     return panel;
 }
@@ -570,9 +708,12 @@ function initializeCardGameTermsToggle() {
 
     let links = Array.from(currentTosGate.querySelectorAll('a')).filter(link => {
         return (
-            link.id === 'tosLink' ||
-            link.hasAttribute('data-card-game-tos') ||
-            /terms of service|card game terms/i.test(link.textContent || '')
+            !link.classList.contains('cardGameFullTermsLink') &&
+            (
+                link.id === 'tosLink' ||
+                link.hasAttribute('data-card-game-tos') ||
+                /terms of service|card game terms/i.test(link.textContent || '')
+            )
         );
     });
 
@@ -693,6 +834,180 @@ function initializeSimpleButtonEffects() {
     });
 }
 
+function initializeLoadingScreenHints() {
+    if (!loadingScreen) {
+        return;
+    }
+
+    const loadingContent = loadingScreen.querySelector('.loadingContent');
+
+    if (!loadingContent) {
+        return;
+    }
+
+    let topHint = loadingContent.querySelector('#loadingMusicHint');
+
+    if (!topHint) {
+        topHint = document.createElement('p');
+        topHint.id = 'loadingMusicHint';
+        topHint.textContent = 'You can turn on the game music by clicking the speaker button in the top right.';
+        topHint.style.maxWidth = '520px';
+        topHint.style.margin = '0';
+        topHint.style.color = '#dce7f0';
+        topHint.style.fontSize = '14px';
+        topHint.style.lineHeight = '1.5';
+        topHint.style.textAlign = 'center';
+    }
+
+    let bottomHint = loadingContent.querySelector('#loadingSupportHint');
+
+    if (!bottomHint) {
+        bottomHint = document.createElement('p');
+        bottomHint.id = 'loadingSupportHint';
+        bottomHint.style.maxWidth = '560px';
+        bottomHint.style.margin = '0';
+        bottomHint.style.color = '#dce7f0';
+        bottomHint.style.fontSize = '13px';
+        bottomHint.style.lineHeight = '1.5';
+        bottomHint.style.textAlign = 'center';
+        bottomHint.append('To report issues or give suggestions, visit the ');
+        bottomHint.appendChild(createActivityLink(
+            'DOWDataLab Discord server',
+            DOWDATALAB_DISCORD_INVITE_URL,
+            'loadingDiscordInviteLink',
+            () => openSdkExternalLink(DOWDATALAB_DISCORD_INVITE_URL)
+        ));
+        bottomHint.append('.');
+    }
+
+    const heading = loadingContent.querySelector('h1');
+    const spinner = loadingContent.querySelector('.loadingSpinner');
+
+    if (heading && heading.nextElementSibling !== topHint) {
+        heading.insertAdjacentElement('afterend', topHint);
+    } else if (!heading && !topHint.parentElement) {
+        loadingContent.prepend(topHint);
+    }
+
+    if (spinner && spinner.nextElementSibling !== bottomHint) {
+        spinner.insertAdjacentElement('afterend', bottomHint);
+    } else if (!spinner && !bottomHint.parentElement) {
+        loadingContent.appendChild(bottomHint);
+    }
+}
+
+function initializeActivityNavigationLayout() {
+    const narrowScreen = window.matchMedia('(max-width: 800px)').matches;
+
+    [leaderboardsSubnav, cardsSubnav].forEach(subnav => {
+        if (!subnav) {
+            return;
+        }
+
+        subnav.style.display = subnav.classList.contains('hidden') ? 'none' : 'flex';
+        subnav.style.flexDirection = 'row';
+        subnav.style.flexWrap = 'nowrap';
+        subnav.style.alignItems = 'center';
+        subnav.style.justifyContent = 'center';
+        subnav.style.gap = narrowScreen ? '7px' : '10px';
+        subnav.style.width = '100%';
+        subnav.style.maxWidth = '100%';
+        subnav.style.marginLeft = 'auto';
+        subnav.style.marginRight = 'auto';
+        subnav.style.overflowX = 'auto';
+        subnav.style.overflowY = 'hidden';
+        subnav.style.scrollbarWidth = 'thin';
+        subnav.style.boxSizing = 'border-box';
+
+        subnav.querySelectorAll('button').forEach(button => {
+            button.style.display = 'flex';
+            button.style.flex = '0 1 150px';
+            button.style.flexDirection = 'row';
+            button.style.alignItems = 'center';
+            button.style.justifyContent = 'center';
+            button.style.width = '150px';
+            button.style.minWidth = narrowScreen ? '98px' : '110px';
+            button.style.maxWidth = '150px';
+            button.style.margin = '0';
+        });
+    });
+
+    if (cardsNavigationRow && cardsSubnav) {
+        cardsNavigationRow.style.position = 'relative';
+        cardsNavigationRow.style.width = '100%';
+        cardsNavigationRow.style.minWidth = '0';
+        cardsNavigationRow.style.boxSizing = 'border-box';
+
+        if (narrowScreen) {
+            cardsNavigationRow.style.flexDirection = 'column';
+            cardsNavigationRow.style.alignItems = 'stretch';
+            cardsNavigationRow.style.justifyContent = 'center';
+            cardsNavigationRow.style.gap = '2px';
+            cardsSubnav.style.position = 'static';
+            cardsSubnav.style.left = 'auto';
+            cardsSubnav.style.transform = 'none';
+            cardsSubnav.style.width = '100%';
+            cardsSubnav.style.maxWidth = '100%';
+            cardsSubnav.style.margin = '0';
+            if (collectionStats) {
+                collectionStats.style.position = 'static';
+                collectionStats.style.alignSelf = 'flex-end';
+                collectionStats.style.width = 'min(100%, 300px)';
+                collectionStats.style.maxWidth = '100%';
+                collectionStats.style.margin = '0 2px 2px auto';
+                collectionStats.style.padding = '0 2px';
+                collectionStats.style.transform = 'none';
+                collectionStats.style.fontSize = '11px';
+            }
+        } else {
+            cardsNavigationRow.style.flexDirection = 'row';
+            cardsNavigationRow.style.alignItems = 'center';
+            cardsNavigationRow.style.justifyContent = 'center';
+            cardsNavigationRow.style.gap = '10px';
+            cardsSubnav.style.position = 'absolute';
+            cardsSubnav.style.left = '50%';
+            cardsSubnav.style.transform = 'translateX(-50%)';
+            cardsSubnav.style.width = 'max-content';
+            cardsSubnav.style.maxWidth = 'calc(100% - 250px)';
+            cardsSubnav.style.margin = '0';
+            if (collectionStats) {
+                collectionStats.style.position = 'absolute';
+                collectionStats.style.top = '50%';
+                collectionStats.style.right = '0';
+                collectionStats.style.alignSelf = 'auto';
+                collectionStats.style.width = 'clamp(165px, 22vw, 245px)';
+                collectionStats.style.maxWidth = '28%';
+                collectionStats.style.margin = '0';
+                collectionStats.style.padding = '0 2px 4px 8px';
+                collectionStats.style.transform = 'translateY(-50%)';
+                collectionStats.style.fontSize = 'clamp(10px, 1.05vw, 13px)';
+            }
+        }
+    }
+
+    const musicButton = document.getElementById('musicToggleButton');
+    const statsToggle = document.getElementById('statsButton');
+
+    if (musicButton) {
+        musicButton.style.position = 'fixed';
+        musicButton.style.top = narrowScreen ? '112px' : '124px';
+        musicButton.style.right = narrowScreen ? '12px' : '18px';
+        musicButton.style.bottom = 'auto';
+        musicButton.style.left = 'auto';
+        musicButton.style.zIndex = '100003';
+    }
+
+    if (statsToggle) {
+        statsToggle.style.position = 'fixed';
+        statsToggle.style.top = narrowScreen ? '160px' : '174px';
+        statsToggle.style.right = narrowScreen ? '12px' : '18px';
+        statsToggle.style.bottom = 'auto';
+        statsToggle.style.left = 'auto';
+        statsToggle.style.zIndex = '100002';
+    }
+}
+
+initializeLoadingScreenHints();
 initializeCardGameTermsToggle();
 initializeSimpleButtonEffects();
 	  
@@ -964,6 +1279,8 @@ function showLoadingScreenAndLaunch() {
 
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
+    initializeLoadingScreenHints();
+    initializeActivityNavigationLayout();
 
     appLaunchTimer = setTimeout(() => {
         appLaunchTimer = null;
@@ -1022,23 +1339,24 @@ function setActiveTopButton(button) {
 }
 
 function updateSecondaryNavigation(screen) {
-    leaderboardsSubnav.classList.add('hidden');
-    cardsSubnav.classList.add('hidden');
-
-    if (cardsNavigationRow) {
-        cardsNavigationRow.classList.add('hidden');
+    if (leaderboardsSubnav) {
+        leaderboardsSubnav.classList.add('hidden');
+    }
+    if (cardsSubnav) {
+        cardsSubnav.classList.add('hidden');
     }
 
-    if (screen === leaderboardsScreen) {
+    if (screen === leaderboardsScreen && leaderboardsSubnav) {
         leaderboardsSubnav.classList.remove('hidden');
-    } else if (screen === cardsScreen) {
+    } else if (screen === cardsScreen && cardsSubnav) {
         cardsSubnav.classList.remove('hidden');
+    }
 
-        if (cardsNavigationRow) {
-            cardsNavigationRow.classList.remove('hidden');
-        }
-
-        requestCardGameStats();
+    if (cardsNavigationRow) {
+        cardsNavigationRow.style.display = screen === cardsScreen ? 'flex' : 'none';
+    }
+    if (collectionStats) {
+        collectionStats.classList.toggle('hidden', screen !== cardsScreen);
     }
 }
 
@@ -1103,33 +1421,42 @@ function setSubnavSelection(button, parent, content, viewName, headingText) {
 
     heading.textContent = headingText;
 
+    if (content === cardsContent) {
+        createCollectionStats();
+        collectionStats.classList.remove('hidden');
+        requestCardGameStats();
+
+        if (latestCardGameStatsData) {
+            updateCardGameCountDisplays(latestCardGameStatsData);
+        }
+    }
+
     updateScrollRail();
 }
 
 generateButton.addEventListener('click', () => {
-    rngGradientEnabled = true;
     switchTab(generateButton, generateScreen);
 });
 
 leaderboardsButton.addEventListener('click', () => {
     switchTab(leaderboardsButton, leaderboardsScreen);
     setSubnavSelection(
-        rngTodayButton,
+        cardsNetWorthButton,
         leaderboardsSubnav,
         leaderboardsContent,
-        'rng-today',
-        'RNG Today'
+        'cards-net-worth',
+        'Cards Net Worth'
     );
 });
 
 cardsButton.addEventListener('click', () => {
     switchTab(cardsButton, cardsScreen);
     setSubnavSelection(
-        openPackButton,
+        myCollectionButton,
         cardsSubnav,
         cardsContent,
-        'open-pack',
-        'Open Pack'
+        'my-collection',
+        'My Collection'
     );
 });
 
@@ -1214,8 +1541,43 @@ let rngRecordsDiscoveredCount = null;
 let collectionStats = null;
 let collectionCardsDiscoveredValue = null;
 let collectionCardsOwnedValue = null;
-let cardsNavigationRow = null;
 let latestCardGameStatsData = null;
+let cardsNavigationRow = null;
+
+function createCardsNavigationRow() {
+    if (!cardsSubnav) {
+        return null;
+    }
+
+    const currentParent = cardsSubnav.parentElement;
+
+    if (currentParent && currentParent.classList.contains('cardsNavigationRow')) {
+        cardsNavigationRow = currentParent;
+        return cardsNavigationRow;
+    }
+
+    cardsNavigationRow = document.createElement('div');
+    cardsNavigationRow.className = 'cardsNavigationRow';
+    cardsNavigationRow.style.position = 'relative';
+    cardsNavigationRow.style.display = 'flex';
+    cardsNavigationRow.style.flexDirection = 'row';
+    cardsNavigationRow.style.alignItems = 'center';
+    cardsNavigationRow.style.justifyContent = 'center';
+    cardsNavigationRow.style.width = '100%';
+    cardsNavigationRow.style.minWidth = '0';
+    cardsNavigationRow.style.gap = '10px';
+    cardsNavigationRow.style.margin = '0 auto 18px';
+    cardsNavigationRow.style.boxSizing = 'border-box';
+
+    cardsSubnav.parentNode.insertBefore(cardsNavigationRow, cardsSubnav);
+    cardsNavigationRow.appendChild(cardsSubnav);
+
+    if (collectionStats) {
+        cardsNavigationRow.appendChild(collectionStats);
+    }
+
+    return cardsNavigationRow;
+}
 
 function createRngRecordsDiscoveredCount() {
     if (!generateScreen || rngRecordsDiscoveredCount) {
@@ -1234,13 +1596,31 @@ function createRngRecordsDiscoveredCount() {
 }
 
 function createCollectionStats() {
-    if (collectionStats) {
+    if (!cardsContent || collectionStats) {
         return;
     }
 
     collectionStats = document.createElement('div');
     collectionStats.className = 'collectionStats';
+    collectionStats.style.position = 'absolute';
+    collectionStats.style.top = '50%';
+    collectionStats.style.right = '0';
+    collectionStats.style.display = 'flex';
+    collectionStats.style.flexDirection = 'column';
+    collectionStats.style.alignItems = 'flex-end';
+    collectionStats.style.justifyContent = 'center';
+    collectionStats.style.gap = '5px';
+    collectionStats.style.width = 'clamp(165px, 22vw, 245px)';
+    collectionStats.style.maxWidth = '28%';
+    collectionStats.style.margin = '0';
+    collectionStats.style.padding = '0 2px 4px 8px';
     collectionStats.style.color = '#fff';
+    collectionStats.style.fontSize = '12px';
+    collectionStats.style.lineHeight = '1.3';
+    collectionStats.style.textAlign = 'right';
+    collectionStats.style.transform = 'translateY(-50%)';
+    collectionStats.style.pointerEvents = 'none';
+    collectionStats.style.boxSizing = 'border-box';
 
     collectionCardsDiscoveredValue = document.createElement('div');
     collectionCardsDiscoveredValue.className = 'collectionCardsDiscovered';
@@ -1255,34 +1635,19 @@ function createCollectionStats() {
         collectionCardsOwnedValue
     );
 
+    const navigationRow = createCardsNavigationRow();
+
+    if (navigationRow) {
+        navigationRow.appendChild(collectionStats);
+    } else {
+        cardsContent.appendChild(collectionStats);
+    }
+
     if (latestCardGameStatsData) {
         updateCardGameCountDisplays(latestCardGameStatsData);
     }
-}
 
-function initializeCardsNavigationRow() {
-    if (
-        !cardsSubnav ||
-        !cardsSubnav.parentElement ||
-        cardsNavigationRow
-    ) {
-        return;
-    }
-
-    createCollectionStats();
-
-    const parent = cardsSubnav.parentElement;
-
-    cardsNavigationRow = document.createElement('div');
-    cardsNavigationRow.className = 'cardsNavigationRow hidden';
-
-    parent.insertBefore(
-        cardsNavigationRow,
-        cardsSubnav
-    );
-
-    cardsNavigationRow.appendChild(cardsSubnav);
-    cardsNavigationRow.appendChild(collectionStats);
+    initializeActivityNavigationLayout();
 }
 
 function updateCardGameCountDisplays(statsData) {
@@ -1377,7 +1742,48 @@ function createStatsScreen() {
         grid.appendChild(item);
     });
 
-    statsScreen.append(header, profile, grid);
+    const support = document.createElement('section');
+    support.className = 'statsSupportHint';
+    support.style.marginTop = '24px';
+    support.style.padding = '16px 18px';
+    support.style.border = '1px solid rgba(138, 166, 191, 0.2)';
+    support.style.borderRadius = '14px';
+    support.style.background = 'rgba(10, 22, 36, 0.55)';
+    support.style.color = '#dce7f0';
+    support.style.fontSize = '13px';
+    support.style.lineHeight = '1.6';
+    support.style.textAlign = 'center';
+
+    const supportMessage = document.createElement('p');
+    supportMessage.style.margin = '0 0 8px';
+    supportMessage.textContent = 'Join the DOWDataLab Discord server to report issues or give suggestions.';
+
+    const serverLink = createActivityLink(
+        'DOWDataLab Discord server invite',
+        DOWDATALAB_DISCORD_INVITE_URL,
+        'statsDiscordInviteLink',
+        () => openSdkExternalLink(DOWDATALAB_DISCORD_INVITE_URL)
+    );
+    serverLink.style.display = 'inline-block';
+    serverLink.style.margin = '0 8px 6px';
+
+    const inviteDialogLink = createActivityLink(
+        'Invite others to this Activity',
+        '#invite',
+        'statsInviteDialogLink',
+        async () => {
+            const opened = await openSdkInviteDialog();
+
+            if (!opened) {
+                await openSdkExternalLink(DOWDATALAB_DISCORD_INVITE_URL);
+            }
+        }
+    );
+    inviteDialogLink.style.display = 'inline-block';
+    inviteDialogLink.style.margin = '0 8px 6px';
+
+    support.append(supportMessage, serverLink, inviteDialogLink);
+    statsScreen.append(header, profile, grid, support);
     statsScreen.dataset.initialized = 'true';
 }
 
@@ -1520,9 +1926,11 @@ function requestCardGameStats() {
     }));
 }
 
-createCollectionStats();
-initializeCardsNavigationRow();
 createStatsScreen();
+createRngRecordsDiscoveredCount();
+createCardsNavigationRow();
+initializeActivityNavigationLayout();
+updateSecondaryNavigation(null);
 	  
 function updateScrollRail() {  
     document.documentElement.style.minHeight = '';  
@@ -1586,7 +1994,8 @@ function updateScrollRail() {
 }  
 	  
 updateScrollRail();  
-window.addEventListener('resize', updateScrollRail);  
+window.addEventListener('resize', updateScrollRail);
+window.addEventListener('resize', initializeActivityNavigationLayout);  
 	  
 if (typeof ResizeObserver !== 'undefined') {  
     const scrollResizeObserver = new ResizeObserver(() => {  
@@ -1711,7 +2120,8 @@ function playButtonAnimation(button) {
         car.remove();  
         tornado.remove();  
     }, { once: true });  
-}
+}  
+	  
 tabButtons.forEach(button => {  
     button.addEventListener('pointerenter', () => {  
         startButtonEarthquake(button);  
@@ -1813,7 +2223,6 @@ const RNG_RECORD_WIGGLE_AMPLITUDE = 8;
 const RNG_RECORD_WIGGLE_ROTATION = 3; 
 const RNG_RECORD_FINISH_FLASH_DELAY = 1000; 
 	  
-let rngGradientEnabled = false;
 let rngRequestPending = false;  
 let rngRollLoadingPending = false;  
 let rngResultPanel = null;  
@@ -2328,7 +2737,7 @@ function createRngDailyStatus() {
         document.createElement('div');  
 	  
     rngDailyCountdown.className =  
-        'rngDailyCountdown'; 
+        'rngDailyCountdown';  
  
     rngDailyCountdown.style.color = 
         '#8a8f94'; 
@@ -2578,8 +2987,7 @@ function applyRngRarityTheme(rarity) {
     const normalized = normalizeRngRarity(rarity); 
  
     if ( 
-        normalized !== 'unknown' &&
-        rngGradientEnabled
+        normalized !== 'unknown' 
     ) { 
         document.body.classList.add( 
             `rng-rarity-${normalized}` 
@@ -2770,11 +3178,7 @@ function handleRngGenerateTabActivation() {
                 '.rngRecordCard' 
             ); 
  
-        if (card) {
-            card.style.background = rngGradientEnabled
-                ? 'linear-gradient(135deg, #30343a 0%, #24282d 48%, #13171b 100%)'
-                : '#24282d';
-
+        if (card) { 
             applyRngRarityTheme( 
                 card.classList.contains('rng-rarity-common') 
                     ? 'common' 
@@ -4702,9 +5106,8 @@ function createRngStat(label, value, valueColor = null) {
 function createRngRecordCard(payload, recordText) {  
     const card = document.createElement('div');  
     card.className = 'rngRecordCard';
-    card.style.background = rngGradientEnabled
-        ? 'linear-gradient(135deg, #30343a 0%, #24282d 48%, #13171b 100%)'
-        : '#24282d';
+    card.style.background =
+        'linear-gradient(135deg, #30343a 0%, #24282d 48%, #13171b 100%)';
 	  
     const displayRarity = 
         getRngDisplayRarity( 

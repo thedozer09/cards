@@ -1,4 +1,3 @@
-
 * {
 
     box-sizing: border-box;
@@ -2327,6 +2326,14 @@ button {
 
 .musicToggleButton {
 
+    position: fixed;
+
+    top: 14px;
+
+    left: 14px;
+
+    z-index: 100000;
+
     width: 42px;
 
     height: 42px;
@@ -2426,6 +2433,24 @@ button {
     75% {
 
         transform: translateX(3px);
+
+    }
+
+}
+
+@media (max-width: 430px) {
+
+    .musicToggleButton {
+
+        top: 10px;
+
+        left: 10px;
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 16px;
 
     }
 
@@ -2602,312 +2627,6 @@ button {
     opacity: 0.92 !important;
     visibility: visible !important;
     transition: opacity 220ms ease !important;
-}
-
-.rngStat:nth-child(3),
-.rngStat:nth-child(4) {
-    min-height: 96px !important;
-}
-
-.rngStat:nth-child(3) .rngStatValue.rngLifetimeScoreValue {
-    height: 96px !important;
-    min-height: 96px !important;
-}
-
-.rngStats {
-    margin-bottom: 10px !important;
-}
-
-.rngModifiersSection {
-    gap: 5px !important;
-}
-
-.rngStat:nth-child(4) .rngStatLabel {
-    top: 10px !important;
-    height: 17px !important;
-    align-items: center !important;
-}
-
-.rngStat:nth-child(4) .rngStatValue {
-    top: 33px !important;
-}
-
-.rngLifetimeStatLabel::before {
-    content: "Total Score" !important;
-    display: block !important;
-    font-size: 14px !important;
-    line-height: 1.2 !important;
-    white-space: nowrap !important;
-}
-
-.rngLifetimeStatLabel::after {
-    content: none !important;
-    display: none !important;
-}
-
-@media (max-width: 430px) {
-    .rngRecordCard > .rngDuplicateOverlay {
-        font-size: 39px !important;
-        letter-spacing: 2.5px !important;
-    }
-}
-
-.rngRecordCard .rngRecordValue::after {
-    content: attr(data-rng-full-rarity) !important;
-    display: block !important;
-    margin-top: 6px !important;
-    color: rgba(193, 215, 229, 0.82) !important;
-    font-family: inherit !important;
-    font-size: 28px !important;
-    font-weight: 900 !important;
-    letter-spacing: 1px !important;
-    line-height: 1.15 !important;
-    text-align: center !important;
-    text-transform: uppercase !important;
-    -webkit-text-fill-color: currentColor !important;
-    background: none !important;
-    animation: none !important;
-}
-
-.rngRecordCard .rngStatValue.rngRarityValue {
-    position: absolute !important;
-    top: 33px !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 21px !important;
-    min-height: 21px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    color: inherit !important;
-    -webkit-text-fill-color: currentColor !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: border-box !important;
-    -webkit-background-clip: border-box !important;
-    animation: none !important;
-    text-shadow: none !important;
-    white-space: nowrap !important;
-    isolation: isolate !important;
-}
-
-.rngRecordCard .rngStatValue.rngRarityValue::after {
-    content: none !important;
-    display: none !important;
-}
-
-.rngRecordCard .rngRarityText {
-    position: relative !important;
-    z-index: 0 !important;
-    display: inline-block !important;
-    width: max-content !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    color: #dce7f0 !important;
-    -webkit-text-fill-color: currentColor !important;
-    font: inherit !important;
-    font-size: 18px !important;
-    font-weight: 800 !important;
-    line-height: 21px !important;
-    letter-spacing: normal !important;
-    white-space: nowrap !important;
-    text-align: center !important;
-    text-shadow: 0 0 7px currentColor, 0 0 15px currentColor !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: border-box !important;
-    -webkit-background-clip: border-box !important;
-    isolation: isolate !important;
-    animation: none !important;
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityText {
-    color: #dce7f0 !important;
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityText {
-    color: #4fd1c5 !important;
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityText {
-    color: #4da6ff !important;
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityText {
-    color: #ffd84d !important;
-}
-
-.rngRecordCard .rngRarityText::before {
-    content: "" !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    z-index: -1 !important;
-    display: block !important;
-    width: calc(100% + 46px) !important;
-    height: 190% !important;
-    transform: translate(-50%, -50%) !important;
-    border-radius: 999px !important;
-    filter: blur(8px) !important;
-    opacity: 1 !important;
-    pointer-events: none !important;
-}
-
-.rngRecordCard.rng-rarity-common .rngRarityText::before {
-    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82%) !important;
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
-    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.9) 0%, rgba(79, 209, 197, 0.5) 32%, rgba(79, 209, 197, 0.2) 58%, rgba(79, 209, 197, 0) 82%) !important;
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityText::before {
-    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
-    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
-}
-
-.rngRecordCard .rngRarityText::after {
-    content: attr(data-rng-shine-text) !important;
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 2 !important;
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: visible !important;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    font: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
-    letter-spacing: inherit !important;
-    line-height: inherit !important;
-    text-align: inherit !important;
-    white-space: nowrap !important;
-    pointer-events: none !important;
-    text-shadow: none !important;
-    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
-    background-size: 300% 100% !important;
-    background-position: 100% 50%;
-    background-clip: text !important;
-    -webkit-background-clip: text !important;
-    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
-}
-
-.rngRecordCard > .rngDuplicateOverlay {
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 1000 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    font-size: 0 !important;
-    line-height: 1 !important;
-    letter-spacing: 0 !important;
-    pointer-events: none !important;
-    text-shadow: none !important;
-    background: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    overflow: visible !important;
-    transform: none !important;
-    transition: opacity 220ms ease, visibility 0s linear 220ms !important;
-}
-
-.rngRecordCard > .rngDuplicateOverlay::before,
-.rngRecordCard > .rngDuplicateOverlay::after {
-    content: none !important;
-    display: none !important;
-    animation: none !important;
-}
-
-.rngRecordCard .rngDuplicateText {
-    position: relative !important;
-    z-index: 1 !important;
-    display: inline-block !important;
-    width: max-content !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    color: #ff2222 !important;
-    -webkit-text-fill-color: #ff2222 !important;
-    font-family: Arial, Helvetica, sans-serif !important;
-    font-size: 52px !important;
-    font-weight: 1000 !important;
-    line-height: 1 !important;
-    letter-spacing: 3.5px !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    text-shadow: 0 0 4px rgba(255, 24, 24, 0.7), 0 0 10px rgba(255, 24, 24, 0.32) !important;
-    transform: rotate(-14deg) !important;
-    transform-origin: center center !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: border-box !important;
-    -webkit-background-clip: border-box !important;
-    animation: none !important;
-}
-
-.rngRecordCard .rngDuplicateText::before {
-    content: none !important;
-    display: none !important;
-}
-
-.rngRecordCard .rngDuplicateText::after {
-    content: attr(data-rng-shine-text) !important;
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 2 !important;
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    font: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
-    letter-spacing: inherit !important;
-    line-height: inherit !important;
-    text-align: inherit !important;
-    white-space: nowrap !important;
-    pointer-events: none !important;
-    text-shadow: none !important;
-    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
-    background-size: 300% 100% !important;
-    background-position: 100% 50%;
-    background-clip: text !important;
-    -webkit-background-clip: text !important;
-    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
-}
-
-.rngRecordCard > .rngDuplicateOverlay.rngDuplicateVisible {
-    opacity: 0.92 !important;
-    visibility: visible !important;
-    transition: opacity 220ms ease !important;
-}
-
-@keyframes rngFinalTextHighlight {
-    0%, 45% {
-        background-position: 100% 50%;
-    }
-
-    58%, 100% {
-        background-position: -10% 50%;
-    }
 }
 
 .rngStat:nth-child(3),
@@ -3861,6 +3580,47 @@ button {
     pointer-events: none;
 }
 
+#cardsContent {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#cardsContent > .subviewHeading {
+    order: -2;
+}
+
+#cardsContent > .collectionStats {
+    order: -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: 8px 18px;
+    width: min(620px, 100%);
+    margin: 12px auto 18px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: center;
+}
+
+#cardsContent > .collectionStats.hidden {
+    display: none !important;
+}
+
+#cardsContent > .collectionStats > div {
+    width: 100%;
+    color: #ffffff;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
 #statsScreen .statsHeader {
     margin-bottom: 24px;
 }
@@ -3882,9 +3642,9 @@ button {
     width: 64px;
     height: 64px;
     flex: 0 0 64px;
-    border: 1px solid rgba(220, 231, 240, 0.25);
     border-radius: 50%;
     object-fit: cover;
+    border: 1px solid rgba(220, 231, 240, 0.25);
 }
 
 #statsScreen .statsProfileAvatar[hidden] {
@@ -3937,6 +3697,54 @@ button {
     overflow-wrap: anywhere;
 }
 
+@media (max-width: 620px) {
+    #generateScreen .rngRecordsDiscoveredCount {
+        top: 10px;
+        right: 20px;
+        max-width: calc(100% - 36px);
+        font-size: 12px;
+    }
+
+    #cardsContent .collectionStats {
+        font-size: 13px;
+    }
+
+    #statsScreen .statsProfile {
+        gap: 12px;
+        padding: 14px;
+    }
+
+    #statsScreen .statsProfileAvatar {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+    }
+
+    #statsScreen .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    #statsScreen .statsItem {
+        gap: 8px;
+        padding: 14px;
+    }
+
+    #statsScreen .statsItemLabel {
+        font-size: 11px;
+    }
+
+    #statsScreen .statsItemValue {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 390px) {
+    #statsScreen .statsGrid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 #statsButton,
 #tosAgreeButton,
 .tosAgreeButton,
@@ -3965,75 +3773,19 @@ button {
     transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-#statsButton,
-#tosAgreeButton,
-.tosAgreeButton {
-    width: clamp(100px, 11.5vw, 150px);
-}
-
 #leaderboardsSubnav,
 #cardsSubnav {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-}
-
-#leaderboardsSubnav.hidden,
-#cardsSubnav.hidden,
-.cardsNavigationRow.hidden {
-    display: none !important;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 #leaderboardsSubnav:not(.hidden) {
-    display: flex !important;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
-    gap: 10px;
-    width: min(840px, 100%);
-    max-width: 100%;
-    margin: 0 auto 18px !important;
-    padding: 2px 2px 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    box-sizing: border-box;
-    scrollbar-width: thin;
-    overscroll-behavior-x: contain;
-}
-
-#leaderboardsSubnav button,
-#cardsSubnav button {
-    display: flex;
-    flex: 0 1 145px;
-    align-items: center;
-    justify-content: center;
-    width: clamp(105px, 13vw, 150px);
-    min-width: 105px;
-    max-width: 150px;
-    min-height: 58px;
-    height: 58px;
-    margin: 0;
-    padding: 8px 10px;
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    line-height: 1.15;
-}
-
-.cardsNavigationRow {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    min-height: 72px;
-    margin: 0 auto 18px;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.cardsNavigationRow > #cardsSubnav:not(.hidden) {
     display: flex !important;
     flex: 0 1 auto;
     flex-direction: row;
@@ -4041,50 +3793,69 @@ button {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: max-content;
+    width: min(100%, 680px);
+    max-width: 100%;
+    margin: 0 auto 18px !important;
+    padding: 2px 2px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    box-sizing: border-box;
+}
+
+#cardsSubnav:not(.hidden) {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: min(100%, 490px);
     max-width: 100%;
     margin: 0 auto !important;
     padding: 2px 2px 8px;
     overflow-x: auto;
     overflow-y: hidden;
-    box-sizing: border-box;
     scrollbar-width: thin;
-    overscroll-behavior-x: contain;
-}
-
-.cardsNavigationRow > .collectionStats {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 5px;
-    width: clamp(165px, 22vw, 245px);
-    max-width: 28%;
-    margin: 0;
-    padding: 0 2px 4px 8px;
-    color: #ffffff;
-    font-size: clamp(10px, 1.05vw, 13px);
-    font-weight: 400;
-    line-height: 1.3;
-    text-align: right;
-    overflow-wrap: anywhere;
-    transform: translateY(-50%);
-    pointer-events: none;
     box-sizing: border-box;
 }
 
-.cardsNavigationRow > .collectionStats > div {
-    width: 100%;
+#leaderboardsSubnav.hidden,
+#cardsSubnav.hidden {
+    display: none !important;
+}
+
+#leaderboardsSubnav button,
+#cardsSubnav button {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: auto;
     min-width: 0;
-    color: #ffffff;
-    font-size: inherit;
-    font-weight: 400;
-    line-height: inherit;
-    text-align: right;
+    max-width: 150px;
+    min-height: 58px;
+    height: 58px;
+    margin: 0;
+    padding: 8px 9px;
+    text-align: center;
+    white-space: normal;
     overflow-wrap: anywhere;
+    line-height: 1.15;
+}
+
+#statsButton,
+#tosAgreeButton,
+.tosAgreeButton {
+    flex: 0 1 auto;
+}
+
+#tosAgreeButton,
+.tosAgreeButton {
+    display: block;
+    width: clamp(100px, 11.5vw, 150px);
+    margin: 18px auto 0;
 }
 
 #statsButton:hover,
@@ -4146,6 +3917,86 @@ button {
     100% { transform: translateX(0) rotate(0deg); }
 }
 
+.cardsNavigationRow {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 72px;
+    margin: 0 auto 18px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cardsNavigationRow > #cardsSubnav:not(.hidden) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex !important;
+    flex: 0 1 490px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: min(490px, calc(100% - 260px));
+    max-width: calc(100% - 260px);
+    margin: 0 !important;
+    padding: 2px 2px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+}
+
+.cardsNavigationRow > #cardsSubnav.hidden {
+    display: none !important;
+}
+
+.cardsNavigationRow > .collectionStats {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    width: clamp(165px, 22vw, 245px);
+    max-width: 28%;
+    margin: 0;
+    padding: 0 2px 4px 8px;
+    color: #ffffff;
+    font-size: clamp(10px, 1.05vw, 13px);
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: right;
+    overflow-wrap: anywhere;
+    transform: translateY(-50%);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.cardsNavigationRow > .collectionStats > div {
+    width: 100%;
+    min-width: 0;
+    color: #ffffff;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.cardsNavigationRow > .collectionStats.hidden {
+    display: none !important;
+}
+
 .musicToggleButton {
     position: fixed !important;
     top: 124px !important;
@@ -4153,13 +4004,34 @@ button {
     bottom: auto !important;
     left: auto !important;
     z-index: 100003 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 42px;
     height: 42px;
+    padding: 0;
+    border: 1px solid rgba(170, 196, 216, 0.2);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(2, 14, 27, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .musicToggleButton:hover {
     border-color: rgba(207, 226, 239, 0.34);
     background: linear-gradient(135deg, #527ca0 0%, #477098 50%, #3b6485 100%);
+    box-shadow: 0 9px 19px rgba(2, 14, 27, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.musicToggleButton:active {
+    transform: translateY(1px);
+}
+
+.musicToggleButton:focus-visible {
+    outline: 3px solid rgba(168, 202, 225, 0.46);
+    outline-offset: 3px;
 }
 
 #statsButton {
@@ -4173,6 +4045,71 @@ button {
     width: clamp(100px, 11.5vw, 150px) !important;
     min-height: 42px;
     margin: 0;
+}
+
+#loadingMusicHint {
+    max-width: 520px;
+    margin: 0;
+    color: #dce7f0;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+#loadingSupportHint {
+    max-width: 560px;
+    margin: 0;
+    color: #dce7f0;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+#loadingScreen a,
+#statsScreen .statsSupportHint a,
+#tosGate .cardGameFullTermsLink {
+    color: #69b6ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+#loadingScreen a:hover,
+#statsScreen .statsSupportHint a:hover,
+#tosGate .cardGameFullTermsLink:hover {
+    color: #a0d3ff;
+}
+
+#statsScreen .statsSupportHint {
+    width: 100%;
+    max-width: 760px;
+    margin: 24px auto 0;
+    padding: 16px 18px;
+    border: 1px solid rgba(138, 166, 191, 0.2);
+    border-radius: 14px;
+    background: rgba(10, 22, 36, 0.55);
+    color: #dce7f0;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+#statsScreen .statsSupportHint p {
+    margin: 0 0 8px;
+}
+
+#statsScreen .statsSupportHint a {
+    display: inline-block;
+    margin: 0 8px 6px;
+    color: #69b6ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+#statsScreen .statsSupportHint a:hover {
+    color: #a0d3ff;
 }
 
 #tosGate a.tosTermsToggle {
@@ -4202,7 +4139,8 @@ button {
 
 #tosGate .cardGameTosDetails {
     width: 100%;
-    margin-top: 20px;
+    max-width: 760px;
+    margin: 20px auto 0;
     padding: 18px;
     border: 1px solid rgba(138, 166, 191, 0.22);
     border-radius: 14px;
@@ -4210,6 +4148,7 @@ button {
     color: #ffffff;
     text-align: left;
     overflow-wrap: anywhere;
+    box-shadow: 0 12px 28px rgba(2, 10, 20, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 #tosGate .cardGameTosDetails.hidden {
@@ -4233,7 +4172,91 @@ button {
     overflow-wrap: anywhere;
 }
 
+#tosGate .cardGameFullTermsLink {
+    display: inline-block;
+    margin-top: 12px;
+    color: #69b6ff;
+    font-size: 13px;
+    line-height: 1.5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+#tosGate .cardGameFullTermsLink:hover {
+    color: #a0d3ff;
+}
+
 @media (max-width: 900px) {
+    #leaderboardsSubnav:not(.hidden) {
+        gap: 8px;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        min-height: 54px;
+        height: 54px;
+        padding: 7px 6px;
+        font-size: 11px;
+    }
+
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
+        width: min(490px, calc(100% - 190px));
+        max-width: calc(100% - 190px);
+        gap: 8px;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        width: 180px;
+        max-width: 26%;
+        font-size: 10px;
+    }
+
+    .musicToggleButton {
+        right: 12px !important;
+    }
+
+    #statsButton {
+        right: 12px !important;
+    }
+}
+
+@media (max-width: 700px) {
+    .mainScreen {
+        padding-right: 66px;
+    }
+
+    .cardsNavigationRow {
+        min-height: 76px;
+    }
+
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
+        width: calc(100% - 145px);
+        max-width: calc(100% - 145px);
+        gap: 6px;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        width: 140px;
+        max-width: 36%;
+        font-size: 9px;
+        line-height: 1.25;
+    }
+
+    #leaderboardsSubnav:not(.hidden) {
+        gap: 6px;
+        width: 100%;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        min-height: 50px;
+        height: 50px;
+        padding: 5px 4px;
+        font-size: 10px;
+        letter-spacing: 0.1px;
+    }
+
     .musicToggleButton {
         top: 112px !important;
         right: 12px !important;
@@ -4244,62 +4267,65 @@ button {
         right: 12px !important;
     }
 
-    #leaderboardsSubnav:not(.hidden),
+    #statsScreen .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .mainScreen {
+        padding-right: 60px;
+    }
+
+    .cardsNavigationRow {
+        min-height: 82px;
+    }
+
     .cardsNavigationRow > #cardsSubnav:not(.hidden) {
-        gap: 8px;
+        width: calc(100% - 112px);
+        max-width: calc(100% - 112px);
+        gap: 5px;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        width: 108px;
+        max-width: 34%;
+        font-size: 8px;
+        line-height: 1.25;
+    }
+
+    #leaderboardsSubnav:not(.hidden) {
+        gap: 5px;
+        padding-right: 0;
+        padding-left: 0;
     }
 
     #leaderboardsSubnav button,
     #cardsSubnav button {
-        flex-basis: 125px;
-        width: 125px;
-        min-width: 125px;
-        max-width: 145px;
-        min-height: 56px;
-        height: 56px;
-        padding: 7px 8px;
-        font-size: 11px;
+        min-height: 48px;
+        height: 48px;
+        padding: 4px 3px;
+        font-size: 9px;
+        letter-spacing: 0;
     }
 
-    .cardsNavigationRow > .collectionStats {
-        width: 170px;
-        max-width: 27%;
+    .musicToggleButton {
+        top: 108px !important;
+        right: 10px !important;
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+
+    #statsButton {
+        top: 154px !important;
+        right: 10px !important;
+        width: clamp(92px, 25vw, 120px) !important;
+        min-height: 38px;
+        padding: 6px 7px;
         font-size: 10px;
     }
-}
 
-@media (max-width: 800px) {
-    .cardsNavigationRow {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 2px;
-        min-height: 0;
-    }
-
-    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
-        width: 100%;
-        max-width: 100%;
-        justify-content: center;
-        margin: 0 !important;
-    }
-
-    .cardsNavigationRow > .collectionStats {
-        position: static;
-        align-self: flex-end;
-        width: min(100%, 300px);
-        max-width: 100%;
-        margin: 0 2px 2px auto;
-        padding: 0 2px;
-        font-size: 11px;
-        transform: none;
-    }
-
-    #leaderboardsSubnav:not(.hidden) {
-        justify-content: flex-start;
-    }
-}
-
-@media (max-width: 700px) {
     #statsScreen .statsProfile {
         gap: 12px;
         padding: 14px;
@@ -4329,68 +4355,36 @@ button {
         font-size: 22px;
     }
 
-    .musicToggleButton {
-        right: 12px !important;
-    }
-
-    #statsButton {
-        right: 12px !important;
-    }
-
-    #leaderboardsSubnav:not(.hidden),
-    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
-        gap: 8px;
-    }
-
-    #leaderboardsSubnav button,
-    #cardsSubnav button {
-        flex-basis: 120px;
-        width: 120px;
-        min-width: 120px;
-        max-width: 135px;
-        min-height: 54px;
-        height: 54px;
-        padding: 7px;
-    }
-}
-
-@media (max-width: 430px) {
-    .musicToggleButton {
-        top: 108px !important;
-        right: 10px !important;
-        width: 38px;
-        height: 38px;
-        font-size: 16px;
-    }
-
-    #statsButton {
-        top: 154px !important;
-        right: 10px !important;
-        width: clamp(100px, 28vw, 135px) !important;
-    }
-
-    #leaderboardsSubnav:not(.hidden),
-    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
-        gap: 7px;
-    }
-
-    #leaderboardsSubnav button,
-    #cardsSubnav button {
-        flex-basis: 112px;
-        width: 112px;
-        min-width: 112px;
-        max-width: 125px;
-        min-height: 52px;
-        height: 52px;
-        padding: 6px;
-        font-size: 10px;
-    }
-
-    .cardsNavigationRow > .collectionStats {
-        font-size: 10px;
+    #statsScreen .statsSupportHint {
+        padding: 14px;
+        font-size: 12px;
     }
 
     #tosGate .cardGameTosDetails {
         padding: 14px;
+    }
+}
+
+@media (max-width: 360px) {
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
+        width: calc(100% - 94px);
+        max-width: calc(100% - 94px);
+        gap: 3px;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        width: 90px;
+        max-width: 32%;
+        font-size: 7px;
+    }
+
+    #leaderboardsSubnav:not(.hidden) {
+        gap: 3px;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        padding: 4px 2px;
+        font-size: 8px;
     }
 }
