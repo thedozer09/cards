@@ -8,8 +8,10 @@ const musicToggleButton = document.getElementById('musicToggleButton');
 const tosGate = document.getElementById('tosGate');
 const tosAgreeButton = document.getElementById('tosAgreeButton');
 
+
 let socket = null;  
-let activityMusicStarted = false; 
+let activityMusicStarted = false;
+let activityMusicAllowed = false;
 let tosAcceptanceKnown = false;
 let appLaunchStarted = false;
 let appLaunchTimer = null;
@@ -42,40 +44,30 @@ function updateActivityMusicButton() {
     } 
 } 
 
-function startActivityMusic() { 
-    if (!activityMusic) { 
-        return; 
-    } 
 
-    activityMusic.volume = 0.25; 
-    activityMusic.loop = true; 
-
-    if ( 
-        activityMusic.muted 
-    ) { 
-        return; 
-    } 
-
-    if (activityMusicStarted && !activityMusic.paused) {
+function startActivityMusic() {
+    if (!activityMusic || !activityMusicAllowed) {
         return;
     }
 
-    const playPromise = 
-        activityMusic.play(); 
+    activityMusic.volume = 0.25;
+    activityMusic.loop = true;
 
-    if ( 
-        playPromise && 
-        typeof playPromise.catch === 'function' 
-    ) { 
-        playPromise 
-            .then(() => { 
-                activityMusicStarted = true; 
-            }) 
-            .catch(() => { 
-                activityMusicStarted = false;
-            }); 
-    } 
-} 
+    if (activityMusic.muted) {
+        return;
+    }
+
+    const playPromise = activityMusic.play();
+
+    if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise
+            .then(() => {
+                activityMusicStarted = true;
+            })
+            .catch(() => {
+            });
+    }
+}
 
 function initializeActivityMusic() { 
     if ( 
@@ -86,15 +78,15 @@ function initializeActivityMusic() {
 
     activityMusic.volume = 0.25; 
     activityMusic.loop = true; 
-    activityMusic.muted = false; 
+    activityMusic.muted = true; 
 
     updateActivityMusicButton(); 
-    startActivityMusic(); 
 
     const startFromInteraction = () => { 
         if ( 
             !activityMusicStarted && 
-            !activityMusic.muted 
+            !activityMusic.muted && 
+            document.getElementById('tosGate')?.classList.contains('hidden')
         ) { 
             startActivityMusic(); 
         } 
@@ -118,6 +110,14 @@ function initializeActivityMusic() {
         musicToggleButton.addEventListener( 
             'click', 
             () => { 
+                if ( 
+                    !document.getElementById('tosGate')?.classList.contains('hidden')
+                ) { 
+                    activityMusic.muted = true; 
+                    updateActivityMusicButton(); 
+                    return; 
+                } 
+
                 if ( 
                     activityMusic.muted 
                 ) { 
@@ -1124,6 +1124,7 @@ function startRngRollLoading(callback) {
 
 initializeTabLoadingScreens(); 
 
+
 function showLoadingScreenAndLaunch() {
     if (activityLaunchBlocked || appLaunchStarted) {
         return;
@@ -1137,7 +1138,16 @@ function showLoadingScreenAndLaunch() {
 
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
-    startActivityMusic();
+
+    if (activityMusic) {
+        activityMusicAllowed = true;
+        activityMusic.muted = false;
+        activityMusic.volume = 0.25;
+        updateActivityMusicButton();
+        startActivityMusic();
+    }
+
+    initializeLoadingScreenHints();
     initializeActivityNavigationLayout();
 
     appLaunchTimer = setTimeout(() => {
