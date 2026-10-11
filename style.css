@@ -1,3 +1,4 @@
+
 * {
 
     box-sizing: border-box;
@@ -22,23 +23,7 @@ body {
 
     color: #f5f9fd;
 
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #3f6085 0%,
-
-            #36577e 26%,
-
-            #2d4e76 52%,
-
-            #29466d 76%,
-
-            #244064 100%
-
-        );
+    background: #2d4e76;
 
     -webkit-font-smoothing: antialiased;
 
@@ -2342,14 +2327,6 @@ button {
 
 .musicToggleButton {
 
-    position: fixed;
-
-    top: 14px;
-
-    left: 14px;
-
-    z-index: 100000;
-
     width: 42px;
 
     height: 42px;
@@ -2449,24 +2426,6 @@ button {
     75% {
 
         transform: translateX(3px);
-
-    }
-
-}
-
-@media (max-width: 430px) {
-
-    .musicToggleButton {
-
-        top: 10px;
-
-        left: 10px;
-
-        width: 38px;
-
-        height: 38px;
-
-        font-size: 16px;
 
     }
 
@@ -2643,6 +2602,312 @@ button {
     opacity: 0.92 !important;
     visibility: visible !important;
     transition: opacity 220ms ease !important;
+}
+
+.rngStat:nth-child(3),
+.rngStat:nth-child(4) {
+    min-height: 96px !important;
+}
+
+.rngStat:nth-child(3) .rngStatValue.rngLifetimeScoreValue {
+    height: 96px !important;
+    min-height: 96px !important;
+}
+
+.rngStats {
+    margin-bottom: 10px !important;
+}
+
+.rngModifiersSection {
+    gap: 5px !important;
+}
+
+.rngStat:nth-child(4) .rngStatLabel {
+    top: 10px !important;
+    height: 17px !important;
+    align-items: center !important;
+}
+
+.rngStat:nth-child(4) .rngStatValue {
+    top: 33px !important;
+}
+
+.rngLifetimeStatLabel::before {
+    content: "Total Score" !important;
+    display: block !important;
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+}
+
+.rngLifetimeStatLabel::after {
+    content: none !important;
+    display: none !important;
+}
+
+@media (max-width: 430px) {
+    .rngRecordCard > .rngDuplicateOverlay {
+        font-size: 39px !important;
+        letter-spacing: 2.5px !important;
+    }
+}
+
+.rngRecordCard .rngRecordValue::after {
+    content: attr(data-rng-full-rarity) !important;
+    display: block !important;
+    margin-top: 6px !important;
+    color: rgba(193, 215, 229, 0.82) !important;
+    font-family: inherit !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    -webkit-text-fill-color: currentColor !important;
+    background: none !important;
+    animation: none !important;
+}
+
+.rngRecordCard .rngStatValue.rngRarityValue {
+    position: absolute !important;
+    top: 33px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 21px !important;
+    min-height: 21px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    background: none !important;
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    animation: none !important;
+    text-shadow: none !important;
+    white-space: nowrap !important;
+    isolation: isolate !important;
+}
+
+.rngRecordCard .rngStatValue.rngRarityValue::after {
+    content: none !important;
+    display: none !important;
+}
+
+.rngRecordCard .rngRarityText {
+    position: relative !important;
+    z-index: 0 !important;
+    display: inline-block !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    color: #dce7f0 !important;
+    -webkit-text-fill-color: currentColor !important;
+    font: inherit !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 21px !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    text-shadow: 0 0 7px currentColor, 0 0 15px currentColor !important;
+    background: none !important;
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    isolation: isolate !important;
+    animation: none !important;
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText {
+    color: #dce7f0 !important;
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText {
+    color: #4fd1c5 !important;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText {
+    color: #4da6ff !important;
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText {
+    color: #ffd84d !important;
+}
+
+.rngRecordCard .rngRarityText::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: -1 !important;
+    display: block !important;
+    width: calc(100% + 46px) !important;
+    height: 190% !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius: 999px !important;
+    filter: blur(8px) !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+}
+
+.rngRecordCard.rng-rarity-common .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(220, 231, 240, 0.82) 0%, rgba(220, 231, 240, 0.46) 32%, rgba(220, 231, 240, 0.18) 58%, rgba(220, 231, 240, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-uncommon .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(79, 209, 197, 0.9) 0%, rgba(79, 209, 197, 0.5) 32%, rgba(79, 209, 197, 0.2) 58%, rgba(79, 209, 197, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-rare .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-legendary .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
+}
+
+.rngRecordCard .rngRarityText::after {
+    content: attr(data-rng-shine-text) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
+    background-size: 300% 100% !important;
+    background-position: 100% 50%;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    overflow: visible !important;
+    transform: none !important;
+    transition: opacity 220ms ease, visibility 0s linear 220ms !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay::before,
+.rngRecordCard > .rngDuplicateOverlay::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+}
+
+.rngRecordCard .rngDuplicateText {
+    position: relative !important;
+    z-index: 1 !important;
+    display: inline-block !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    color: #ff2222 !important;
+    -webkit-text-fill-color: #ff2222 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 52px !important;
+    font-weight: 1000 !important;
+    line-height: 1 !important;
+    letter-spacing: 3.5px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    text-shadow: 0 0 4px rgba(255, 24, 24, 0.7), 0 0 10px rgba(255, 24, 24, 0.32) !important;
+    transform: rotate(-14deg) !important;
+    transform-origin: center center !important;
+    background: none !important;
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    animation: none !important;
+}
+
+.rngRecordCard .rngDuplicateText::before {
+    content: none !important;
+    display: none !important;
+}
+
+.rngRecordCard .rngDuplicateText::after {
+    content: attr(data-rng-shine-text) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+    background-image: linear-gradient(105deg, transparent 0%, transparent 40%, rgba(255, 255, 255, 0.98) 49%, rgba(255, 255, 255, 0.98) 51%, transparent 60%, transparent 100%) !important;
+    background-size: 300% 100% !important;
+    background-position: 100% 50%;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    animation: rngFinalTextHighlight 4.8s ease-in-out infinite !important;
+}
+
+.rngRecordCard > .rngDuplicateOverlay.rngDuplicateVisible {
+    opacity: 0.92 !important;
+    visibility: visible !important;
+    transition: opacity 220ms ease !important;
+}
+
+@keyframes rngFinalTextHighlight {
+    0%, 45% {
+        background-position: 100% 50%;
+    }
+
+    58%, 100% {
+        background-position: -10% 50%;
+    }
 }
 
 .rngStat:nth-child(3),
@@ -3596,47 +3861,6 @@ button {
     pointer-events: none;
 }
 
-#cardsContent {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-#cardsContent > .subviewHeading {
-    order: -2;
-}
-
-#cardsContent > .collectionStats {
-    order: -1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
-    justify-items: center;
-    gap: 8px 18px;
-    width: min(620px, 100%);
-    margin: 12px auto 18px;
-    padding: 10px 12px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.45;
-    text-align: center;
-}
-
-#cardsContent > .collectionStats.hidden {
-    display: none !important;
-}
-
-#cardsContent > .collectionStats > div {
-    width: 100%;
-    color: #ffffff;
-    font-size: inherit;
-    font-weight: 400;
-    line-height: inherit;
-    text-align: center;
-    overflow-wrap: anywhere;
-}
-
 #statsScreen .statsHeader {
     margin-bottom: 24px;
 }
@@ -3658,9 +3882,9 @@ button {
     width: 64px;
     height: 64px;
     flex: 0 0 64px;
+    border: 1px solid rgba(220, 231, 240, 0.25);
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid rgba(220, 231, 240, 0.25);
 }
 
 #statsScreen .statsProfileAvatar[hidden] {
@@ -3713,54 +3937,6 @@ button {
     overflow-wrap: anywhere;
 }
 
-@media (max-width: 620px) {
-    #generateScreen .rngRecordsDiscoveredCount {
-        top: 10px;
-        right: 20px;
-        max-width: calc(100% - 36px);
-        font-size: 12px;
-    }
-
-    #cardsContent .collectionStats {
-        font-size: 13px;
-    }
-
-    #statsScreen .statsProfile {
-        gap: 12px;
-        padding: 14px;
-    }
-
-    #statsScreen .statsProfileAvatar {
-        width: 52px;
-        height: 52px;
-        flex-basis: 52px;
-    }
-
-    #statsScreen .statsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    #statsScreen .statsItem {
-        gap: 8px;
-        padding: 14px;
-    }
-
-    #statsScreen .statsItemLabel {
-        font-size: 11px;
-    }
-
-    #statsScreen .statsItemValue {
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 390px) {
-    #statsScreen .statsGrid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-}
-
 #statsButton,
 #tosAgreeButton,
 .tosAgreeButton,
@@ -3769,7 +3945,6 @@ button {
     box-sizing: border-box;
     min-width: 0;
     min-height: 42px;
-    width: clamp(100px, 11.5vw, 150px);
     max-width: 100%;
     padding: 9px 12px;
     border: 1px solid rgba(170, 196, 216, 0.2);
@@ -3790,65 +3965,126 @@ button {
     transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-#leaderboardsSubnav:not(.hidden) {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-auto-rows: 60px;
-    align-items: stretch;
-    justify-items: stretch;
-    align-content: start;
-    gap: 10px;
-    width: min(840px, 100%);
-    margin: 0 auto 18px;
+#statsButton,
+#tosAgreeButton,
+.tosAgreeButton {
+    width: clamp(100px, 11.5vw, 150px);
 }
 
-#cardsSubnav:not(.hidden) {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: 60px;
-    align-items: stretch;
-    justify-items: stretch;
-    align-content: start;
+#leaderboardsSubnav,
+#cardsSubnav {
+    display: flex;
+    align-items: center;
     gap: 10px;
-    width: min(660px, 100%);
-    margin: 0 auto 18px;
 }
 
 #leaderboardsSubnav.hidden,
-#cardsSubnav.hidden {
+#cardsSubnav.hidden,
+.cardsNavigationRow.hidden {
     display: none !important;
+}
+
+#leaderboardsSubnav:not(.hidden) {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 10px;
+    width: min(840px, 100%);
+    max-width: 100%;
+    margin: 0 auto 18px !important;
+    padding: 2px 2px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
 }
 
 #leaderboardsSubnav button,
 #cardsSubnav button {
     display: flex;
+    flex: 0 1 145px;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    min-height: 60px;
-    height: 60px;
-    flex: none;
+    width: clamp(105px, 13vw, 150px);
+    min-width: 105px;
+    max-width: 150px;
+    min-height: 58px;
+    height: 58px;
     margin: 0;
-    padding: 7px 10px;
+    padding: 8px 10px;
     text-align: center;
     white-space: normal;
     overflow-wrap: anywhere;
     line-height: 1.15;
 }
 
-#statsButton,
-#tosAgreeButton,
-.tosAgreeButton {
-    flex: 0 1 auto;
+.cardsNavigationRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 72px;
+    margin: 0 auto 18px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-#tosAgreeButton,
-.tosAgreeButton {
-    display: block;
-    margin: 18px auto 0;
+.cardsNavigationRow > #cardsSubnav:not(.hidden) {
+    display: flex !important;
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto !important;
+    padding: 2px 2px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+}
+
+.cardsNavigationRow > .collectionStats {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    width: clamp(165px, 22vw, 245px);
+    max-width: 28%;
+    margin: 0;
+    padding: 0 2px 4px 8px;
+    color: #ffffff;
+    font-size: clamp(10px, 1.05vw, 13px);
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: right;
+    overflow-wrap: anywhere;
+    transform: translateY(-50%);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.cardsNavigationRow > .collectionStats > div {
+    width: 100%;
+    min-width: 0;
+    color: #ffffff;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    text-align: right;
+    overflow-wrap: anywhere;
 }
 
 #statsButton:hover,
@@ -3919,10 +4155,6 @@ button {
     z-index: 100003 !important;
     width: 42px;
     height: 42px;
-    border: 1px solid rgba(170, 196, 216, 0.2);
-    border-radius: 12px;
-    background: linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%);
-    color: #ffffff;
 }
 
 .musicToggleButton:hover {
@@ -4001,84 +4233,161 @@ button {
     overflow-wrap: anywhere;
 }
 
-@media (max-width: 700px) {
-    #statsButton {
-        top: 160px !important;
-        right: 12px !important;
-        bottom: auto !important;
-    }
-
+@media (max-width: 900px) {
     .musicToggleButton {
         top: 112px !important;
         right: 12px !important;
-        bottom: auto !important;
     }
 
-    #leaderboardsSubnav:not(.hidden) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: 60px;
-        gap: 8px;
-        width: min(420px, 100%);
+    #statsButton {
+        top: 160px !important;
+        right: 12px !important;
     }
 
-    #cardsSubnav:not(.hidden) {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        grid-auto-rows: 60px;
+    #leaderboardsSubnav:not(.hidden),
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
         gap: 8px;
-        width: 100%;
     }
 
     #leaderboardsSubnav button,
-    #cardsSubnav button,
-    #tosAgreeButton,
-    .tosAgreeButton {
+    #cardsSubnav button {
+        flex-basis: 125px;
+        width: 125px;
+        min-width: 125px;
+        max-width: 145px;
+        min-height: 56px;
+        height: 56px;
+        padding: 7px 8px;
         font-size: 11px;
     }
 
-    #cardsContent > .collectionStats {
+    .cardsNavigationRow > .collectionStats {
+        width: 170px;
+        max-width: 27%;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 800px) {
+    .cardsNavigationRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        min-height: 0;
+    }
+
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
         width: 100%;
-        gap: 8px 10px;
-        margin-top: 10px;
-        font-size: 13px;
+        max-width: 100%;
+        justify-content: center;
+        margin: 0 !important;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        position: static;
+        align-self: flex-end;
+        width: min(100%, 300px);
+        max-width: 100%;
+        margin: 0 2px 2px auto;
+        padding: 0 2px;
+        font-size: 11px;
+        transform: none;
+    }
+
+    #leaderboardsSubnav:not(.hidden) {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 700px) {
+    #statsScreen .statsProfile {
+        gap: 12px;
+        padding: 14px;
+    }
+
+    #statsScreen .statsProfileAvatar {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+    }
+
+    #statsScreen .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    #statsScreen .statsItem {
+        gap: 8px;
+        padding: 14px;
+    }
+
+    #statsScreen .statsItemLabel {
+        font-size: 11px;
+    }
+
+    #statsScreen .statsItemValue {
+        font-size: 22px;
+    }
+
+    .musicToggleButton {
+        right: 12px !important;
+    }
+
+    #statsButton {
+        right: 12px !important;
+    }
+
+    #leaderboardsSubnav:not(.hidden),
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
+        gap: 8px;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        flex-basis: 120px;
+        width: 120px;
+        min-width: 120px;
+        max-width: 135px;
+        min-height: 54px;
+        height: 54px;
+        padding: 7px;
     }
 }
 
 @media (max-width: 430px) {
-    #statsButton {
-        top: 154px !important;
-        right: 10px !important;
-        bottom: auto !important;
-        width: clamp(100px, 28vw, 135px) !important;
-    }
-
     .musicToggleButton {
         top: 108px !important;
         right: 10px !important;
-        bottom: auto !important;
         width: 38px;
         height: 38px;
         font-size: 16px;
     }
 
-    #leaderboardsSubnav:not(.hidden) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: 60px;
+    #statsButton {
+        top: 154px !important;
+        right: 10px !important;
+        width: clamp(100px, 28vw, 135px) !important;
+    }
+
+    #leaderboardsSubnav:not(.hidden),
+    .cardsNavigationRow > #cardsSubnav:not(.hidden) {
         gap: 7px;
-        width: 100%;
     }
 
     #leaderboardsSubnav button,
     #cardsSubnav button {
-        min-height: 60px;
-        height: 60px;
-        font-size: 10px;
+        flex-basis: 112px;
+        width: 112px;
+        min-width: 112px;
+        max-width: 125px;
+        min-height: 52px;
+        height: 52px;
         padding: 6px;
+        font-size: 10px;
     }
 
-    #cardsContent > .collectionStats {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 4px;
-        padding: 8px 4px;
+    .cardsNavigationRow > .collectionStats {
+        font-size: 10px;
     }
 
     #tosGate .cardGameTosDetails {
