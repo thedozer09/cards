@@ -766,32 +766,27 @@ function initializeActivityNavigationLayout() {
             return;
         }
 
-        subnav.style.display = subnav.classList.contains('hidden') ? 'none' : 'flex';
-        subnav.style.flexDirection = 'row';
-        subnav.style.flexWrap = 'nowrap';
-        subnav.style.alignItems = 'center';
-        subnav.style.justifyContent = 'center';
+        subnav.style.display = subnav.classList.contains('hidden') ? 'none' : 'grid';
         subnav.style.width = '100%';
+        subnav.style.maxWidth = '100%';
+        subnav.style.margin = '0 auto 16px';
+        subnav.style.padding = '0';
         subnav.style.boxSizing = 'border-box';
+        subnav.style.overflow = 'visible';
 
-       
         subnav.querySelectorAll('button').forEach(button => {
-            button.style.flex = '1 1 0';
-            button.style.width = 'auto';
+            button.style.width = '100%';
             button.style.minWidth = '0';
             button.style.maxWidth = 'none';
             button.style.margin = '0';
+            button.style.flex = 'none';
         });
     });
 
     if (cardsNavigationRow && cardsSubnav) {
-        cardsNavigationRow.style.position = 'relative';
-        cardsNavigationRow.style.display = 'flex';
-        cardsNavigationRow.style.flexDirection = 'column';
-        cardsNavigationRow.style.alignItems = 'center';
-        cardsNavigationRow.style.justifyContent = 'center';
+        cardsNavigationRow.style.position = 'static';
+        cardsNavigationRow.style.display = 'block';
         cardsNavigationRow.style.width = '100%';
-        cardsNavigationRow.style.gap = '8px';
         cardsNavigationRow.style.margin = '0 auto 16px';
 
         cardsSubnav.style.position = 'static';
@@ -801,8 +796,8 @@ function initializeActivityNavigationLayout() {
         if (collectionStats) {
             collectionStats.style.position = 'static';
             collectionStats.style.transform = 'none';
-            collectionStats.style.width = 'auto';
-            collectionStats.style.alignSelf = 'center';
+            collectionStats.style.width = '100%';
+            collectionStats.style.margin = '8px auto 0';
         }
     }
 
@@ -844,7 +839,6 @@ function initializeActivityNavigationLayout() {
         }
     }
 }
-
 initializeCardGameTermsToggle();
 initializeSimpleButtonEffects();
 
