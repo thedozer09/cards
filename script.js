@@ -795,18 +795,18 @@ if (statsButton) {
         }
 
         statsWiggleAnimation = statsButton.animate(
-            [
-                { transform: 'translateX(0)' },
-                { transform: 'translateX(-3px)', offset: 0.25 },
-                { transform: 'translateX(3px)', offset: 0.75 },
-                { transform: 'translateX(0)' }
-            ],
-            {
-                duration: 450,
-                easing: 'ease-in-out',
-                iterations: 1
-            }
-        );
+    [
+        { transform: 'translateY(0)' },
+        { transform: 'translateY(-2px)', offset: 0.25 },
+        { transform: 'translateY(2px)', offset: 0.75 },
+        { transform: 'translateY(0)' }
+    ],
+    {
+        duration: 900,
+        easing: 'ease-in-out',
+        iterations: Infinity
+    }
+);
     });
 
     statsButton.addEventListener('pointerleave', () => {
