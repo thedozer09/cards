@@ -758,34 +758,67 @@ function initializeSimpleButtonEffects() {
             button.addEventListener('animationend', finishJerk);
         });
     });
-    let statsHoverWiggleTimer = null;
+let statsWiggleAnimation = null;
+
+function setStatsButtonAppearance(isHovered) {
+    if (!statsButton) {
+        return;
+    }
+
+    statsButton.style.setProperty(
+        'background',
+        isHovered
+            ? 'linear-gradient(135deg, #527ca0 0%, #477098 50%, #3b6485 100%)'
+            : 'linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%)',
+        'important'
+    );
+
+    statsButton.style.setProperty(
+        'border-color',
+        isHovered
+            ? 'rgba(207, 226, 239, 0.34)'
+            : 'rgba(170, 196, 216, 0.2)',
+        'important'
+    );
+
+    statsButton.style.setProperty('color', '#ffffff', 'important');
+}
 
 if (statsButton) {
+    setStatsButtonAppearance(false);
+
     statsButton.addEventListener('pointerenter', () => {
-        if (statsHoverWiggleTimer) {
-            clearTimeout(statsHoverWiggleTimer);
+        setStatsButtonAppearance(true);
+
+        if (statsWiggleAnimation) {
+            statsWiggleAnimation.cancel();
         }
 
-        statsButton.classList.remove('normalButtonWiggle');
-        void statsButton.offsetWidth;
-        statsButton.classList.add('normalButtonWiggle');
-
-        statsHoverWiggleTimer = setTimeout(() => {
-            statsButton.classList.remove('normalButtonWiggle');
-            statsHoverWiggleTimer = null;
-        }, TAB_BUTTON_NORMAL_WIGGLE_DURATION);
+        statsWiggleAnimation = statsButton.animate(
+            [
+                { transform: 'translateX(0)' },
+                { transform: 'translateX(-3px)', offset: 0.25 },
+                { transform: 'translateX(3px)', offset: 0.75 },
+                { transform: 'translateX(0)' }
+            ],
+            {
+                duration: 450,
+                easing: 'ease-in-out',
+                iterations: 1
+            }
+        );
     });
 
     statsButton.addEventListener('pointerleave', () => {
-        if (statsHoverWiggleTimer) {
-            clearTimeout(statsHoverWiggleTimer);
-            statsHoverWiggleTimer = null;
-        }
+        setStatsButtonAppearance(false);
 
-        statsButton.classList.remove('normalButtonWiggle');
+        if (statsWiggleAnimation) {
+            statsWiggleAnimation.cancel();
+            statsWiggleAnimation = null;
+        }
     });
-}
-}
+
+}}
 
 function initializeActivityNavigationLayout() {
     const narrowScreen = window.matchMedia('(max-width: 800px)').matches;
@@ -2073,32 +2106,7 @@ tabButtons.forEach(button => {
     });  
     
 });  
-let statsHoverWiggleTimer = null;
 
-if (statsButton) {
-    statsButton.addEventListener('pointerenter', () => {
-        if (statsHoverWiggleTimer) {
-            clearTimeout(statsHoverWiggleTimer);
-        }
-
-        stopButtonEarthquake(statsButton);
-        startButtonEarthquake(statsButton);
-
-        statsHoverWiggleTimer = setTimeout(() => {
-            stopButtonEarthquake(statsButton);
-            statsHoverWiggleTimer = null;
-        }, TAB_BUTTON_NORMAL_WIGGLE_DURATION);
-    });
-
-    statsButton.addEventListener('pointerleave', () => {
-        if (statsHoverWiggleTimer) {
-            clearTimeout(statsHoverWiggleTimer);
-            statsHoverWiggleTimer = null;
-        }
-
-        stopButtonEarthquake(statsButton);
-    });
-}
 function startNormalButtonWiggle(button) {  
     if (!button || button.classList.contains('tabButton')) {  
         return;  

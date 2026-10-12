@@ -4371,7 +4371,7 @@ button {
     grid-auto-rows: 42px;
     align-items: center;
     gap: 5px;
-    padding: 15px;
+    padding: 24px 15px;
     border-radius: 25px;
     background: #1b2026 !important;
 }
@@ -4508,10 +4508,3 @@ button {
     ) !important;
 }
 
-@media (min-width: 701px) {
-    .navigation {
-        width: 125%;
-        margin-left: -12.5%;
-        margin-right: -12.5%;
-    }
-}
