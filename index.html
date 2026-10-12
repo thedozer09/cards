@@ -53,6 +53,20 @@
 
             <nav class="navigation">
 
+                <button
+                    id="musicToggleButton"
+                    class="musicToggleButton"
+                    type="button"
+                    aria-label="Mute music"
+                    aria-pressed="false"
+                >
+                    🔊
+                </button>
+
+                <button id="statsButton" class="tabButton statsButton" type="button">
+                    <span class="tabLabel">Stats</span>
+                </button>
+
                 <button id="generateButton" class="tabButton" type="button">
                     <span class="tabLabel">Generate</span>
                 </button>
@@ -67,46 +81,17 @@
 
             </nav>
 
-            <div class="leftUtilityControls">
-
-                <button
-                    id="musicToggleButton"
-                    class="musicToggleButton"
-                    type="button"
-                    aria-label="Mute music"
-                    aria-pressed="false"
-                >
-                    🔊
-                </button>
-
-                <button id="statsButton" class="statsButton" type="button">
-                    <span class="tabLabel">Stats</span>
-                </button>
-
-            </div>
-
             <nav id="leaderboardsSubnav" class="subNavigation hidden">
-
-                <div class="subNavigationGroup">
-                    <button id="rngTodayButton" class="subTabButton" type="button">RNG Today</button>
-                    <button id="rngAllTimeButton" class="subTabButton" type="button">RNG All Time</button>
-                </div>
-
-                <div class="subNavigationGroup">
-                    <button id="cardsNetWorthButton" class="subTabButton" type="button">Cards Net Worth</button>
-                    <button id="dailyPackScoreButton" class="subTabButton" type="button">Today's Card Pack Score</button>
-                </div>
-
+                <button id="rngTodayButton" class="subTabButton" type="button">RNG Today</button>
+                <button id="rngAllTimeButton" class="subTabButton" type="button">RNG All Time</button>
+                <button id="cardsNetWorthButton" class="subTabButton" type="button">Cards Net Worth</button>
+                <button id="dailyPackScoreButton" class="subTabButton" type="button">Today's Card Pack Score</button>
             </nav>
 
             <nav id="cardsSubnav" class="subNavigation hidden">
-
-                <div class="subNavigationGroup">
-                    <button id="openPackButton" class="subTabButton" type="button">Open Pack</button>
-                    <button id="myCollectionButton" class="subTabButton" type="button">My Collection</button>
-                    <button id="tradesButton" class="subTabButton" type="button">Trades</button>
-                </div>
-
+                <button id="openPackButton" class="subTabButton" type="button">Open Pack</button>
+                <button id="myCollectionButton" class="subTabButton" type="button">My Collection</button>
+                <button id="tradesButton" class="subTabButton" type="button">Trades</button>
             </nav>
 
             <section id="statsScreen" class="tabScreen"></section>
