@@ -4471,3 +4471,47 @@ button {
         letter-spacing: 0;
     }
 }
+.navigation #statsButton.tabButton,
+.navigation #statsButton.tabButton:hover,
+.navigation #statsButton.tabButton:active,
+.navigation #statsButton.tabButton.active {
+    border: 1px solid rgba(170, 196, 216, 0.2) !important;
+    background: linear-gradient(
+        135deg,
+        #476f92 0%,
+        #3d6385 50%,
+        #335775 100%
+    ) !important;
+    color: #ffffff !important;
+    box-shadow:
+        0 6px 15px rgba(2, 14, 27, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.navigation #statsButton.tabButton:hover {
+    border-color: rgba(207, 226, 239, 0.34) !important;
+    background: linear-gradient(
+        135deg,
+        #527ca0 0%,
+        #477098 50%,
+        #3b6485 100%
+    ) !important;
+}
+
+.navigation #statsButton.tabButton.active {
+    border-color: rgba(213, 230, 241, 0.38) !important;
+    background: linear-gradient(
+        135deg,
+        #5b83a5 0%,
+        #4d7395 50%,
+        #406788 100%
+    ) !important;
+}
+
+@media (min-width: 701px) {
+    .navigation {
+        width: 125%;
+        margin-left: -12.5%;
+        margin-right: -12.5%;
+    }
+}

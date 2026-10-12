@@ -910,6 +910,7 @@ if (activityNavigation) {
         statsToggle.style.setProperty('bottom', 'auto', 'important');
         statsToggle.style.setProperty('left', 'auto', 'important');
         statsToggle.style.setProperty('z-index', 'auto', 'important');
+        statsToggle.classList.add('tabButton');
     }
 }
 }
@@ -2080,14 +2081,13 @@ if (statsButton) {
             clearTimeout(statsHoverWiggleTimer);
         }
 
-        statsButton.classList.remove('normalButtonWiggle');
-        void statsButton.offsetWidth;
-        statsButton.classList.add('normalButtonWiggle');
+        stopButtonEarthquake(statsButton);
+        startButtonEarthquake(statsButton);
 
         statsHoverWiggleTimer = setTimeout(() => {
-            statsButton.classList.remove('normalButtonWiggle');
+            stopButtonEarthquake(statsButton);
             statsHoverWiggleTimer = null;
-        }, 450);
+        }, TAB_BUTTON_NORMAL_WIGGLE_DURATION);
     });
 
     statsButton.addEventListener('pointerleave', () => {
@@ -2096,7 +2096,7 @@ if (statsButton) {
             statsHoverWiggleTimer = null;
         }
 
-        statsButton.classList.remove('normalButtonWiggle');
+        stopButtonEarthquake(statsButton);
     });
 }
 function startNormalButtonWiggle(button) {  
