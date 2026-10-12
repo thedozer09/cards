@@ -758,67 +758,7 @@ function initializeSimpleButtonEffects() {
             button.addEventListener('animationend', finishJerk);
         });
     });
-let statsWiggleAnimation = null;
-
-function setStatsButtonAppearance(isHovered) {
-    if (!statsButton) {
-        return;
-    }
-
-    statsButton.style.setProperty(
-        'background',
-        isHovered
-            ? 'linear-gradient(135deg, #527ca0 0%, #477098 50%, #3b6485 100%)'
-            : 'linear-gradient(135deg, #476f92 0%, #3d6385 50%, #335775 100%)',
-        'important'
-    );
-
-    statsButton.style.setProperty(
-        'border-color',
-        isHovered
-            ? 'rgba(207, 226, 239, 0.34)'
-            : 'rgba(170, 196, 216, 0.2)',
-        'important'
-    );
-
-    statsButton.style.setProperty('color', '#ffffff', 'important');
 }
-
-if (statsButton) {
-    setStatsButtonAppearance(false);
-
-    statsButton.addEventListener('pointerenter', () => {
-        setStatsButtonAppearance(true);
-
-        if (statsWiggleAnimation) {
-            statsWiggleAnimation.cancel();
-        }
-
-        statsWiggleAnimation = statsButton.animate(
-    [
-        { transform: 'translateY(0)' },
-        { transform: 'translateY(-2px)', offset: 0.25 },
-        { transform: 'translateY(2px)', offset: 0.75 },
-        { transform: 'translateY(0)' }
-    ],
-    {
-        duration: 900,
-        easing: 'ease-in-out',
-        iterations: Infinity
-    }
-);
-    });
-
-    statsButton.addEventListener('pointerleave', () => {
-        setStatsButtonAppearance(false);
-
-        if (statsWiggleAnimation) {
-            statsWiggleAnimation.cancel();
-            statsWiggleAnimation = null;
-        }
-    });
-
-}}
 
 function initializeActivityNavigationLayout() {
     const narrowScreen = window.matchMedia('(max-width: 800px)').matches;
@@ -2106,7 +2046,30 @@ tabButtons.forEach(button => {
     });  
     
 });  
+function playTopBarButtonJerk(button) {
+    button.classList.remove('simpleButtonJerk');
+    void button.offsetWidth;
+    button.classList.add('simpleButtonJerk');
 
+    button.addEventListener('animationend', event => {
+        if (
+            event.target === button &&
+            event.animationName === 'simpleButtonJerk'
+        ) {
+            button.classList.remove('simpleButtonJerk');
+        }
+    }, { once: true });
+}
+
+[musicToggleButton, statsButton].forEach(button => {
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener('click', () => {
+        playTopBarButtonJerk(button);
+    });
+});
 function startNormalButtonWiggle(button) {  
     if (!button || button.classList.contains('tabButton')) {  
         return;  

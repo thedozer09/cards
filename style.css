@@ -4564,3 +4564,97 @@ button {
         font-size: 13px;
     }
 }
+.navigation .musicToggleButton:hover,
+.navigation #statsButton:hover {
+    animation: none !important;
+    border-color: rgba(207, 226, 239, 0.5) !important;
+    box-shadow:
+        0 0 18px rgba(105, 182, 255, 0.5),
+        0 8px 20px rgba(2, 14, 27, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.navigation .musicToggleButton.simpleButtonJerk,
+.navigation #statsButton.simpleButtonJerk {
+    animation: simpleButtonJerk 0.28s cubic-bezier(0.22, 0.8, 0.25, 1) both !important;
+}
+
+@media (min-width: 701px) {
+    .navigation {
+        grid-auto-rows: 56px;
+    }
+
+    .navigation .musicToggleButton {
+        width: 56px;
+        min-width: 56px;
+        height: 56px;
+        min-height: 56px;
+        font-size: 18px;
+    }
+
+    .navigation #statsButton {
+        height: 56px;
+        min-height: 56px;
+        padding: 0 11px;
+        font-size: 14px;
+    }
+
+    .navigation .tabButton {
+        height: 56px;
+        min-height: 56px;
+        padding: 0 10px;
+        font-size: 14px;
+        letter-spacing: 0.35px;
+    }
+}
+
+@media (min-width: 521px) and (max-width: 700px) {
+    .navigation {
+        grid-auto-rows: 50px;
+    }
+
+    .navigation .musicToggleButton {
+        width: 48px;
+        min-width: 48px;
+        height: 50px;
+        min-height: 50px;
+        font-size: 16px;
+    }
+
+    .navigation #statsButton {
+        height: 50px;
+        min-height: 50px;
+        padding: 0 9px;
+        font-size: 13px;
+    }
+
+    .navigation .tabButton {
+        height: 50px;
+        min-height: 50px;
+        padding: 0 8px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 520px) {
+    .navigation {
+        grid-auto-rows: 42px;
+    }
+
+    .navigation .musicToggleButton {
+        width: 36px;
+        min-width: 36px;
+        height: 42px;
+        min-height: 42px;
+    }
+
+    .navigation #statsButton {
+        height: 42px;
+        min-height: 42px;
+    }
+
+    .navigation .tabButton {
+        height: 42px;
+        min-height: 42px;
+    }
+}
