@@ -10,6 +10,7 @@ const tosAgreeButton = document.getElementById('tosAgreeButton');
 
 
 let socket = null;  
+let tosMusicApproved = false;
 let activityMusicStarted = false;
 let activityMusicAllowed = false;
 let tosAcceptanceKnown = false;
@@ -178,12 +179,20 @@ function handleTosStatusMessage(message) {
         return true;
     }
 
-    if (message.data.accepted === true) {
-        tosAcceptanceKnown = true;
-        showLoadingScreenAndLaunch();
-    } else {
-        showTosGate();
+   if (message.data.accepted === true) {
+    tosAcceptanceKnown = true;
+    tosMusicApproved = true;
+    showLoadingScreenAndLaunch();
+} else {
+    tosMusicApproved = false;
+
+    if (activityMusic) {
+        activityMusic.muted = true;
+        updateActivityMusicButton();
     }
+
+    showTosGate();
+}
 
     return true;
 }
@@ -283,6 +292,15 @@ function sendTosRequestAndContinue() {
         }));
 
         tosAcceptanceKnown = true;
+        tosMusicApproved = true;
+
+if (activityMusic) {
+    activityMusicAllowed = true;
+    activityMusic.muted = false;
+    activityMusic.volume = 0.25;
+    updateActivityMusicButton();
+    startActivityMusic();
+}
 
         if (tosGate) {
             tosGate.classList.add('hidden');
@@ -862,8 +880,8 @@ if (musicButton) {
         'important'
     );
     musicButton.style.setProperty('right', 'auto', 'important');
-    musicButton.style.setProperty('bottom', 'auto', 'important');
-    musicButton.style.setProperty('z-index', '1', 'important');
+musicButton.style.setProperty('bottom', 'auto', 'important');
+musicButton.style.setProperty('z-index', '0', 'important');
 }
 
 if (statsToggle) {
@@ -883,8 +901,8 @@ if (statsToggle) {
         'important'
     );
     statsToggle.style.setProperty('right', 'auto', 'important');
-    statsToggle.style.setProperty('bottom', 'auto', 'important');
-    statsToggle.style.setProperty('z-index', '1', 'important');
+statsToggle.style.setProperty('bottom', 'auto', 'important');
+statsToggle.style.setProperty('z-index', '0', 'important');
 }
 }
 
@@ -1161,15 +1179,18 @@ function showLoadingScreenAndLaunch() {
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
 
-    if (activityMusic) {
-        activityMusicAllowed = true;
-        activityMusic.muted = false;
-        activityMusic.volume = 0.25;
-        updateActivityMusicButton();
+   if (activityMusic) {
+    activityMusicAllowed = tosMusicApproved;
+    activityMusic.muted = !tosMusicApproved;
+    activityMusic.volume = 0.25;
+    updateActivityMusicButton();
+
+    if (tosMusicApproved) {
         startActivityMusic();
     }
+}
 
-    initializeLoadingScreenHints();
+   
     initializeActivityNavigationLayout();
 
     appLaunchTimer = setTimeout(() => {
