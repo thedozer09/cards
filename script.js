@@ -761,46 +761,6 @@ function initializeSimpleButtonEffects() {
 }
 
 function initializeActivityNavigationLayout() {
-    [leaderboardsSubnav, cardsSubnav].forEach(subnav => {
-        if (!subnav) {
-            return;
-        }
-
-        subnav.style.display = subnav.classList.contains('hidden') ? 'none' : 'grid';
-        subnav.style.width = '100%';
-        subnav.style.maxWidth = '100%';
-        subnav.style.margin = '0 auto 16px';
-        subnav.style.padding = '0';
-        subnav.style.boxSizing = 'border-box';
-        subnav.style.overflow = 'visible';
-
-        subnav.querySelectorAll('button').forEach(button => {
-            button.style.width = '100%';
-            button.style.minWidth = '0';
-            button.style.maxWidth = 'none';
-            button.style.margin = '0';
-            button.style.flex = 'none';
-        });
-    });
-
-    if (cardsNavigationRow && cardsSubnav) {
-        cardsNavigationRow.style.position = 'static';
-        cardsNavigationRow.style.display = 'block';
-        cardsNavigationRow.style.width = '100%';
-        cardsNavigationRow.style.margin = '0 auto 16px';
-
-        cardsSubnav.style.position = 'static';
-        cardsSubnav.style.transform = 'none';
-        cardsSubnav.style.width = '100%';
-
-        if (collectionStats) {
-            collectionStats.style.position = 'static';
-            collectionStats.style.transform = 'none';
-            collectionStats.style.width = '100%';
-            collectionStats.style.margin = '8px auto 0';
-        }
-    }
-
     const activityNavigation = generateButton
         ? generateButton.closest('.navigation')
         : null;

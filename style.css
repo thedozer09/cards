@@ -4616,3 +4616,145 @@ button {
         font-size: 10px !important;
     }
 }
+
+#leaderboardsSubnav,
+#leaderboardsSubnav:not(.hidden),
+div#leaderboardsSubnav {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 16px !important;
+    padding: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+}
+
+#cardsSubnav,
+#cardsSubnav:not(.hidden),
+div#cardsSubnav,
+.cardsNavigationRow #cardsSubnav,
+.cardsNavigationRow > #cardsSubnav,
+.cardsNavigationRow > #cardsSubnav:not(.hidden) {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 12px !important;
+    padding: 0 !important;
+    border: none !important;
+    position: static !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+}
+
+#leaderboardsSubnav.hidden,
+#cardsSubnav.hidden {
+    display: none !important;
+}
+
+#rngTodayButton,
+#rngAllTimeButton,
+#cardsNetWorthButton,
+#dailyPackScoreButton,
+#openPackButton,
+#myCollectionButton,
+#tradesButton,
+#leaderboardsSubnav button,
+#cardsSubnav button,
+.cardsNavigationRow #cardsSubnav button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    border-radius: 999px !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.25px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+.cardsNavigationRow {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 16px !important;
+    box-sizing: border-box !important;
+}
+
+.cardsNavigationRow > .collectionStats {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    margin: 6px auto 0 !important;
+    padding: 0 !important;
+    color: rgba(220, 231, 240, 0.85) !important;
+    font-size: 12px !important;
+    text-align: center !important;
+}
+
+.cardsNavigationRow > .collectionStats > div {
+    display: inline-block !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    white-space: nowrap !important;
+}
+
+.cardsNavigationRow > .collectionStats.hidden {
+    display: none !important;
+}
+
+@media (max-width: 700px) {
+    #leaderboardsSubnav,
+    #cardsSubnav {
+        gap: 6px !important;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        height: 42px !important;
+        min-height: 42px !important;
+        padding: 0 4px !important;
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #leaderboardsSubnav,
+    #cardsSubnav {
+        gap: 4px !important;
+    }
+
+    #leaderboardsSubnav button,
+    #cardsSubnav button {
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0 2px !important;
+        font-size: 10px !important;
+    }
+}
