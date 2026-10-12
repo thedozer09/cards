@@ -84,9 +84,9 @@ function initializeActivityMusic() {
 
     const startFromInteraction = () => { 
         if ( 
-            activityMusicAllowed &&
             !activityMusicStarted && 
-            !activityMusic.muted
+            !activityMusic.muted && 
+            document.getElementById('tosGate')?.classList.contains('hidden')
         ) { 
             startActivityMusic(); 
         } 
@@ -110,11 +110,13 @@ function initializeActivityMusic() {
         musicToggleButton.addEventListener( 
             'click', 
             () => { 
-                if (!activityMusicAllowed) {
+                if ( 
+                    !document.getElementById('tosGate')?.classList.contains('hidden')
+                ) { 
                     activityMusic.muted = true; 
                     updateActivityMusicButton(); 
                     return; 
-                }
+                } 
 
                 if ( 
                     activityMusic.muted 
@@ -1137,6 +1139,17 @@ function showLoadingScreenAndLaunch() {
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
 
+    if (activityMusic) {
+        activityMusicAllowed = true;
+        activityMusic.muted = false;
+        activityMusic.volume = 0.25;
+        updateActivityMusicButton();
+        startActivityMusic();
+    }
+
+    initializeLoadingScreenHints();
+    initializeActivityNavigationLayout();
+
     appLaunchTimer = setTimeout(() => {
         appLaunchTimer = null;
 
@@ -1167,17 +1180,6 @@ function showLoadingScreenAndLaunch() {
 
         maybePlayRngLaunchFlash();  
     }, 3000);
-
-    if (activityMusic) {
-        activityMusicAllowed = true;
-        activityMusic.muted = false;
-        activityMusic.volume = 0.25;
-        updateActivityMusicButton();
-        startActivityMusic();
-    }
-
-    initializeLoadingScreenHints();
-    initializeActivityNavigationLayout();
 }
 
 if (tosAgreeButton) {

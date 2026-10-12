@@ -4388,3 +4388,63 @@ button {
         font-size: 8px;
     }
 }
+
+/* Keep the Music and Stats controls fixed on the left while page content scrolls. */
+
+.musicToggleButton {
+    position: fixed !important;
+    top: 124px !important;
+    left: 18px !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: auto !important;
+}
+
+#statsButton {
+    position: fixed !important;
+    top: 174px !important;
+    left: 18px !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: auto !important;
+}
+
+@media (max-width: 900px) {
+    .musicToggleButton {
+        left: 12px !important;
+        right: auto !important;
+    }
+
+    #statsButton {
+        left: 12px !important;
+        right: auto !important;
+    }
+}
+
+@media (max-width: 700px) {
+    .musicToggleButton {
+        top: 112px !important;
+        left: 12px !important;
+        right: auto !important;
+    }
+
+    #statsButton {
+        top: 160px !important;
+        left: 12px !important;
+        right: auto !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .musicToggleButton {
+        top: 108px !important;
+        left: 10px !important;
+        right: auto !important;
+    }
+
+    #statsButton {
+        top: 154px !important;
+        left: 10px !important;
+        right: auto !important;
+    }
+}
