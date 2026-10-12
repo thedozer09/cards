@@ -157,7 +157,7 @@ function showTosGate() {
 }
 
 if (statsButton) {
-    statsButton.classList.add('hidden');
+    statsButton.classList.remove('hidden');
 }
 }
 
@@ -700,11 +700,9 @@ function initializeCardGameTermsToggle() {
 }
 
 function initializeSimpleButtonEffects() {
-    const simpleButtons = new Set([
-        tosAgreeButton,
-        statsButton,
-        ...document.querySelectorAll('#leaderboardsSubnav button, #cardsSubnav button')
-    ]);
+   const simpleButtons = new Set([
+    ...document.querySelectorAll('#leaderboardsSubnav button, #cardsSubnav button')
+]);
 
     simpleButtons.forEach(button => {
         if (
@@ -760,6 +758,33 @@ function initializeSimpleButtonEffects() {
             button.addEventListener('animationend', finishJerk);
         });
     });
+    let statsHoverWiggleTimer = null;
+
+if (statsButton) {
+    statsButton.addEventListener('pointerenter', () => {
+        if (statsHoverWiggleTimer) {
+            clearTimeout(statsHoverWiggleTimer);
+        }
+
+        statsButton.classList.remove('normalButtonWiggle');
+        void statsButton.offsetWidth;
+        statsButton.classList.add('normalButtonWiggle');
+
+        statsHoverWiggleTimer = setTimeout(() => {
+            statsButton.classList.remove('normalButtonWiggle');
+            statsHoverWiggleTimer = null;
+        }, TAB_BUTTON_NORMAL_WIGGLE_DURATION);
+    });
+
+    statsButton.addEventListener('pointerleave', () => {
+        if (statsHoverWiggleTimer) {
+            clearTimeout(statsHoverWiggleTimer);
+            statsHoverWiggleTimer = null;
+        }
+
+        statsButton.classList.remove('normalButtonWiggle');
+    });
+}
 }
 
 function initializeActivityNavigationLayout() {
@@ -1166,7 +1191,7 @@ function showLoadingScreenAndLaunch() {
 }
 
 if (statsButton) {
-    statsButton.classList.add('hidden');
+  statsButton.classList.remove('hidden');
 }
 
    if (activityMusic) {
@@ -1198,7 +1223,7 @@ if (statsButton) {
     musicToggleButton.classList.remove('hidden');
 }
 
-statsButton.classList.add('hidden');
+statsButton.classList.remove('hidden');
 clearRngRarityTheme();
 
 setTimeout(() => {
@@ -1319,7 +1344,7 @@ function switchToStats() {
 }
 
 if (statsButton) {
-    statsButton.classList.add('hidden');
+    statsButton.classList.remove('hidden');
 }
 
 clearRngRarityTheme();
