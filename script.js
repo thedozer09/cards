@@ -761,8 +761,6 @@ function initializeSimpleButtonEffects() {
 }
 
 function initializeActivityNavigationLayout() {
-    const narrowScreen = window.matchMedia('(max-width: 800px)').matches;
-
     [leaderboardsSubnav, cardsSubnav].forEach(subnav => {
         if (!subnav) {
             return;
@@ -773,119 +771,78 @@ function initializeActivityNavigationLayout() {
         subnav.style.flexWrap = 'nowrap';
         subnav.style.alignItems = 'center';
         subnav.style.justifyContent = 'center';
-        subnav.style.gap = narrowScreen ? '7px' : '10px';
         subnav.style.width = '100%';
-        subnav.style.maxWidth = '100%';
-        subnav.style.marginLeft = 'auto';
-        subnav.style.marginRight = 'auto';
-        subnav.style.overflowX = 'auto';
-        subnav.style.overflowY = 'hidden';
-        subnav.style.scrollbarWidth = 'thin';
         subnav.style.boxSizing = 'border-box';
 
+       
         subnav.querySelectorAll('button').forEach(button => {
-            button.style.display = 'flex';
-            button.style.flex = '0 1 150px';
-            button.style.flexDirection = 'row';
-            button.style.alignItems = 'center';
-            button.style.justifyContent = 'center';
-            button.style.width = '150px';
-            button.style.minWidth = narrowScreen ? '98px' : '110px';
-            button.style.maxWidth = '150px';
+            button.style.flex = '1 1 0';
+            button.style.width = 'auto';
+            button.style.minWidth = '0';
+            button.style.maxWidth = 'none';
             button.style.margin = '0';
         });
     });
 
     if (cardsNavigationRow && cardsSubnav) {
         cardsNavigationRow.style.position = 'relative';
+        cardsNavigationRow.style.display = 'flex';
+        cardsNavigationRow.style.flexDirection = 'column';
+        cardsNavigationRow.style.alignItems = 'center';
+        cardsNavigationRow.style.justifyContent = 'center';
         cardsNavigationRow.style.width = '100%';
-        cardsNavigationRow.style.minWidth = '0';
-        cardsNavigationRow.style.boxSizing = 'border-box';
+        cardsNavigationRow.style.gap = '8px';
+        cardsNavigationRow.style.margin = '0 auto 16px';
 
-        if (narrowScreen) {
-            cardsNavigationRow.style.flexDirection = 'column';
-            cardsNavigationRow.style.alignItems = 'stretch';
-            cardsNavigationRow.style.justifyContent = 'center';
-            cardsNavigationRow.style.gap = '2px';
-            cardsSubnav.style.position = 'static';
-            cardsSubnav.style.left = 'auto';
-            cardsSubnav.style.transform = 'none';
-            cardsSubnav.style.width = '100%';
-            cardsSubnav.style.maxWidth = '100%';
-            cardsSubnav.style.margin = '0';
-            if (collectionStats) {
-                collectionStats.style.position = 'static';
-                collectionStats.style.alignSelf = 'flex-end';
-                collectionStats.style.width = 'min(100%, 300px)';
-                collectionStats.style.maxWidth = '100%';
-                collectionStats.style.margin = '0 2px 2px auto';
-                collectionStats.style.padding = '0 2px';
-                collectionStats.style.transform = 'none';
-                collectionStats.style.fontSize = '11px';
-            }
-        } else {
-            cardsNavigationRow.style.flexDirection = 'row';
-            cardsNavigationRow.style.alignItems = 'center';
-            cardsNavigationRow.style.justifyContent = 'center';
-            cardsNavigationRow.style.gap = '10px';
-            cardsSubnav.style.position = 'absolute';
-            cardsSubnav.style.left = '50%';
-            cardsSubnav.style.transform = 'translateX(-50%)';
-            cardsSubnav.style.width = 'max-content';
-            cardsSubnav.style.maxWidth = 'calc(100% - 250px)';
-            cardsSubnav.style.margin = '0';
-            if (collectionStats) {
-                collectionStats.style.position = 'absolute';
-                collectionStats.style.top = '50%';
-                collectionStats.style.right = '0';
-                collectionStats.style.alignSelf = 'auto';
-                collectionStats.style.width = 'clamp(165px, 22vw, 245px)';
-                collectionStats.style.maxWidth = '28%';
-                collectionStats.style.margin = '0';
-                collectionStats.style.padding = '0 2px 4px 8px';
-                collectionStats.style.transform = 'translateY(-50%)';
-                collectionStats.style.fontSize = 'clamp(10px, 1.05vw, 13px)';
-            }
+        cardsSubnav.style.position = 'static';
+        cardsSubnav.style.transform = 'none';
+        cardsSubnav.style.width = '100%';
+
+        if (collectionStats) {
+            collectionStats.style.position = 'static';
+            collectionStats.style.transform = 'none';
+            collectionStats.style.width = 'auto';
+            collectionStats.style.alignSelf = 'center';
         }
     }
-let fixedControls = document.getElementById('fixedActivityControls');
+
     const activityNavigation = generateButton
-    ? generateButton.closest('.navigation')
-    : null;
+        ? generateButton.closest('.navigation')
+        : null;
 
-const musicButton = document.getElementById('musicToggleButton');
-const statsToggle = document.getElementById('statsButton');
+    const musicButton = document.getElementById('musicToggleButton');
+    const statsToggle = document.getElementById('statsButton');
 
-if (activityNavigation) {
-    if (musicButton) {
-        activityNavigation.insertBefore(
-            musicButton,
-            activityNavigation.firstChild
-        );
+    if (activityNavigation) {
+        if (musicButton) {
+            activityNavigation.insertBefore(
+                musicButton,
+                activityNavigation.firstChild
+            );
 
-        musicButton.style.setProperty('position', 'static', 'important');
-        musicButton.style.setProperty('top', 'auto', 'important');
-        musicButton.style.setProperty('right', 'auto', 'important');
-        musicButton.style.setProperty('bottom', 'auto', 'important');
-        musicButton.style.setProperty('left', 'auto', 'important');
-        musicButton.style.setProperty('z-index', 'auto', 'important');
+            musicButton.style.setProperty('position', 'static', 'important');
+            musicButton.style.setProperty('top', 'auto', 'important');
+            musicButton.style.setProperty('right', 'auto', 'important');
+            musicButton.style.setProperty('bottom', 'auto', 'important');
+            musicButton.style.setProperty('left', 'auto', 'important');
+            musicButton.style.setProperty('z-index', 'auto', 'important');
+        }
+
+        if (statsToggle) {
+            activityNavigation.insertBefore(
+                statsToggle,
+                musicButton ? musicButton.nextSibling : activityNavigation.firstChild
+            );
+
+            statsToggle.style.setProperty('position', 'static', 'important');
+            statsToggle.style.setProperty('top', 'auto', 'important');
+            statsToggle.style.setProperty('right', 'auto', 'important');
+            statsToggle.style.setProperty('bottom', 'auto', 'important');
+            statsToggle.style.setProperty('left', 'auto', 'important');
+            statsToggle.style.setProperty('z-index', 'auto', 'important');
+            statsToggle.classList.add('tabButton');
+        }
     }
-
-    if (statsToggle) {
-        activityNavigation.insertBefore(
-            statsToggle,
-            musicButton ? musicButton.nextSibling : activityNavigation.firstChild
-        );
-
-        statsToggle.style.setProperty('position', 'static', 'important');
-        statsToggle.style.setProperty('top', 'auto', 'important');
-        statsToggle.style.setProperty('right', 'auto', 'important');
-        statsToggle.style.setProperty('bottom', 'auto', 'important');
-        statsToggle.style.setProperty('left', 'auto', 'important');
-        statsToggle.style.setProperty('z-index', 'auto', 'important');
-        statsToggle.classList.add('tabButton');
-    }
-}
 }
 
 initializeCardGameTermsToggle();
