@@ -303,13 +303,18 @@ function initializeWebSocket() {
     console.log("Connecting directly to Discord Proxy route:", socketUrl);  
     socket = new WebSocket(socketUrl);  
 
-    socket.addEventListener('open', () => {  
-        console.log("Connected to card game backend");  
-        errorMessage.classList.add("hidden");  
+  socket.addEventListener('open', () => {  
+    console.log("Connected to card game backend");  
+    errorMessage.classList.add("hidden");  
 
-        requestRngServerTime();  
-    });  
+    requestRngServerTime();
 
+    socket.send(JSON.stringify({
+        protocol: 'cardgame',
+        version: 1,
+        request: 'tos_request'
+    }));
+});  
     socket.addEventListener('message', event => {  
         try {  
             const data = JSON.parse(event.data);  
@@ -837,33 +842,50 @@ function initializeActivityNavigationLayout() {
     }
 
     const musicButton = document.getElementById('musicToggleButton');
-    const statsToggle = document.getElementById('statsButton');
+const statsToggle = document.getElementById('statsButton');
+const compactScreen = window.matchMedia('(max-width: 520px)').matches;
 
-    if (musicButton) {
-        if (musicButton.parentElement !== fixedControls) {
-            fixedControls.appendChild(musicButton);
-        }
-
-        musicButton.style.setProperty('position', 'fixed', 'important');
-        musicButton.style.setProperty('top', narrowScreen ? '112px' : '124px', 'important');
-        musicButton.style.setProperty('right', narrowScreen ? '12px' : '18px', 'important');
-        musicButton.style.setProperty('bottom', 'auto', 'important');
-        musicButton.style.setProperty('left', 'auto', 'important');
-        musicButton.style.setProperty('z-index', '100003', 'important');
+if (musicButton) {
+    if (musicButton.parentElement !== fixedControls) {
+        fixedControls.appendChild(musicButton);
     }
 
-    if (statsToggle) {
-        if (statsToggle.parentElement !== fixedControls) {
-            fixedControls.appendChild(statsToggle);
-        }
+    musicButton.style.setProperty('position', 'fixed', 'important');
+    musicButton.style.setProperty(
+        'top',
+        compactScreen ? '108px' : (narrowScreen ? '112px' : '124px'),
+        'important'
+    );
+    musicButton.style.setProperty(
+        'left',
+        compactScreen ? '10px' : (narrowScreen ? '12px' : '18px'),
+        'important'
+    );
+    musicButton.style.setProperty('right', 'auto', 'important');
+    musicButton.style.setProperty('bottom', 'auto', 'important');
+    musicButton.style.setProperty('z-index', '1', 'important');
+}
 
-        statsToggle.style.setProperty('position', 'fixed', 'important');
-        statsToggle.style.setProperty('top', narrowScreen ? '160px' : '174px', 'important');
-        statsToggle.style.setProperty('right', narrowScreen ? '12px' : '18px', 'important');
-        statsToggle.style.setProperty('bottom', 'auto', 'important');
-        statsToggle.style.setProperty('left', 'auto', 'important');
-        statsToggle.style.setProperty('z-index', '100002', 'important');
+if (statsToggle) {
+    if (statsToggle.parentElement !== fixedControls) {
+        fixedControls.appendChild(statsToggle);
     }
+
+    statsToggle.style.setProperty('position', 'fixed', 'important');
+    statsToggle.style.setProperty(
+        'top',
+        compactScreen ? '154px' : (narrowScreen ? '160px' : '174px'),
+        'important'
+    );
+    statsToggle.style.setProperty(
+        'left',
+        compactScreen ? '10px' : (narrowScreen ? '12px' : '18px'),
+        'important'
+    );
+    statsToggle.style.setProperty('right', 'auto', 'important');
+    statsToggle.style.setProperty('bottom', 'auto', 'important');
+    statsToggle.style.setProperty('z-index', '1', 'important');
+}
 }
 
 initializeCardGameTermsToggle();
