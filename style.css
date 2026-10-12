@@ -4494,3 +4494,62 @@ button {
         left: 10px !important;
     }
 }
+.navigation {
+    grid-template-columns: auto auto repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.navigation .musicToggleButton {
+    position: static !important;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    margin: 0;
+    padding: 0;
+    border-radius: 12px;
+    z-index: auto !important;
+}
+
+.navigation #statsButton {
+    position: static !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 42px;
+    height: 42px;
+    margin: 0;
+    padding: 0 8px;
+    white-space: nowrap;
+    z-index: auto !important;
+}
+
+.navigation .tabButton {
+    min-width: 0;
+    padding: 0 12px;
+}
+
+@media (max-width: 700px) {
+    .navigation {
+        gap: 5px;
+    }
+
+    .navigation .musicToggleButton {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        min-height: 38px;
+    }
+
+    .navigation #statsButton {
+        min-height: 38px;
+        height: 38px;
+        padding: 0 6px;
+        font-size: 11px;
+    }
+
+    .navigation .tabButton {
+        padding: 0 7px;
+        font-size: 12px;
+        letter-spacing: 0.25px;
+    }
+}

@@ -152,6 +152,13 @@ function showTosGate() {
     if (tosGate) {
         tosGate.classList.remove('hidden');
     }
+    if (musicToggleButton) {
+    musicToggleButton.classList.add('hidden');
+}
+
+if (statsButton) {
+    statsButton.classList.add('hidden');
+}
 }
 
 function handleTosStatusMessage(message) {
@@ -843,66 +850,42 @@ function initializeActivityNavigationLayout() {
             }
         }
     }
+let fixedControls = document.getElementById('fixedActivityControls');
+    const activityNavigation = generateButton
+    ? generateButton.closest('.navigation')
+    : null;
 
-    let fixedControls = document.getElementById('fixedActivityControls');
-
-    if (!fixedControls) {
-        fixedControls = document.createElement('div');
-        fixedControls.id = 'fixedActivityControls';
-        fixedControls.className = 'navigation fixedActivityControls';
-        fixedControls.style.setProperty('display', 'contents', 'important');
-        fixedControls.style.setProperty('position', 'static', 'important');
-        fixedControls.style.setProperty('transform', 'none', 'important');
-        fixedControls.style.setProperty('filter', 'none', 'important');
-        fixedControls.style.setProperty('perspective', 'none', 'important');
-        fixedControls.style.setProperty('contain', 'none', 'important');
-        document.body.appendChild(fixedControls);
-    }
-
-    const musicButton = document.getElementById('musicToggleButton');
+const musicButton = document.getElementById('musicToggleButton');
 const statsToggle = document.getElementById('statsButton');
-const compactScreen = window.matchMedia('(max-width: 520px)').matches;
 
-if (musicButton) {
-    if (musicButton.parentElement !== fixedControls) {
-        fixedControls.appendChild(musicButton);
+if (activityNavigation) {
+    if (musicButton) {
+        activityNavigation.insertBefore(
+            musicButton,
+            activityNavigation.firstChild
+        );
+
+        musicButton.style.setProperty('position', 'static', 'important');
+        musicButton.style.setProperty('top', 'auto', 'important');
+        musicButton.style.setProperty('right', 'auto', 'important');
+        musicButton.style.setProperty('bottom', 'auto', 'important');
+        musicButton.style.setProperty('left', 'auto', 'important');
+        musicButton.style.setProperty('z-index', 'auto', 'important');
     }
 
-    musicButton.style.setProperty('position', 'fixed', 'important');
-    musicButton.style.setProperty(
-        'top',
-        compactScreen ? '108px' : (narrowScreen ? '112px' : '124px'),
-        'important'
-    );
-    musicButton.style.setProperty(
-        'left',
-        compactScreen ? '10px' : (narrowScreen ? '12px' : '18px'),
-        'important'
-    );
-    musicButton.style.setProperty('right', 'auto', 'important');
-musicButton.style.setProperty('bottom', 'auto', 'important');
-musicButton.style.setProperty('z-index', '0', 'important');
-}
+    if (statsToggle) {
+        activityNavigation.insertBefore(
+            statsToggle,
+            musicButton ? musicButton.nextSibling : activityNavigation.firstChild
+        );
 
-if (statsToggle) {
-    if (statsToggle.parentElement !== fixedControls) {
-        fixedControls.appendChild(statsToggle);
+        statsToggle.style.setProperty('position', 'static', 'important');
+        statsToggle.style.setProperty('top', 'auto', 'important');
+        statsToggle.style.setProperty('right', 'auto', 'important');
+        statsToggle.style.setProperty('bottom', 'auto', 'important');
+        statsToggle.style.setProperty('left', 'auto', 'important');
+        statsToggle.style.setProperty('z-index', 'auto', 'important');
     }
-
-    statsToggle.style.setProperty('position', 'fixed', 'important');
-    statsToggle.style.setProperty(
-        'top',
-        compactScreen ? '154px' : (narrowScreen ? '160px' : '174px'),
-        'important'
-    );
-    statsToggle.style.setProperty(
-        'left',
-        compactScreen ? '10px' : (narrowScreen ? '12px' : '18px'),
-        'important'
-    );
-    statsToggle.style.setProperty('right', 'auto', 'important');
-statsToggle.style.setProperty('bottom', 'auto', 'important');
-statsToggle.style.setProperty('z-index', '0', 'important');
 }
 }
 
@@ -1178,6 +1161,13 @@ function showLoadingScreenAndLaunch() {
 
     loadingScreen.classList.remove('hidden');
     mainScreen.classList.add('hidden');
+    if (musicToggleButton) {
+    musicToggleButton.classList.add('hidden');
+}
+
+if (statsButton) {
+    statsButton.classList.add('hidden');
+}
 
    if (activityMusic) {
     activityMusicAllowed = tosMusicApproved;
@@ -1204,6 +1194,16 @@ function showLoadingScreenAndLaunch() {
         mainScreen.classList.remove('hidden');
         statsScreen.classList.remove('hidden');
         statsButton.classList.add('active');
+        if (musicToggleButton) {
+    musicToggleButton.classList.remove('hidden');
+}
+
+statsButton.classList.add('hidden');
+clearRngRarityTheme();
+
+setTimeout(() => {
+    enforceRngThemeForActiveScreen();
+}, 150);
         updateScrollRail();
         requestCardGameStats();
 
@@ -1276,6 +1276,17 @@ function switchTab(button, screen) {
     hideAllMainScreens();
     screen.classList.remove('hidden');
     updateSecondaryNavigation(screen);
+    if (musicToggleButton) {
+    musicToggleButton.classList.remove('hidden');
+}
+
+if (statsButton) {
+    statsButton.classList.remove('hidden');
+}
+
+setTimeout(() => {
+    enforceRngThemeForActiveScreen();
+}, 150);
 
     if (screen === generateScreen) {
         handleRngGenerateTabActivation();
@@ -1303,6 +1314,19 @@ function switchToStats() {
     hideAllMainScreens();
     statsScreen.classList.remove('hidden');
     updateSecondaryNavigation(statsScreen);
+    if (musicToggleButton) {
+    musicToggleButton.classList.remove('hidden');
+}
+
+if (statsButton) {
+    statsButton.classList.add('hidden');
+}
+
+clearRngRarityTheme();
+
+setTimeout(() => {
+    enforceRngThemeForActiveScreen();
+}, 150);
     requestCardGameStats();
     clearRngRarityTheme();
     updateScrollRail();
@@ -2803,6 +2827,15 @@ function clearRngRarityTheme() {
     document.body.style.background = ''; 
 } 
 
+function enforceRngThemeForActiveScreen() {
+    if (
+        !generateScreen ||
+        generateScreen.classList.contains('hidden')
+    ) {
+        clearRngRarityTheme();
+    }
+}
+
 function normalizeRngRarity(rarity) { 
     if (typeof rarity !== 'string') { 
         return 'unknown'; 
@@ -2869,6 +2902,13 @@ function getRngDisplayRarity(payload) {
 } 
 
 function applyRngRarityTheme(rarity) { 
+    if (
+    !generateScreen ||
+    generateScreen.classList.contains('hidden')
+) {
+    clearRngRarityTheme();
+    return 'unknown';
+}
     clearRngRarityTheme(); 
 
     const normalized = normalizeRngRarity(rarity); 
