@@ -2070,8 +2070,35 @@ tabButtons.forEach(button => {
     button.addEventListener('click', () => {  
         playButtonAnimation(button);  
     });  
+    
 });  
+let statsHoverWiggleTimer = null;
 
+if (statsButton) {
+    statsButton.addEventListener('pointerenter', () => {
+        if (statsHoverWiggleTimer) {
+            clearTimeout(statsHoverWiggleTimer);
+        }
+
+        statsButton.classList.remove('normalButtonWiggle');
+        void statsButton.offsetWidth;
+        statsButton.classList.add('normalButtonWiggle');
+
+        statsHoverWiggleTimer = setTimeout(() => {
+            statsButton.classList.remove('normalButtonWiggle');
+            statsHoverWiggleTimer = null;
+        }, 450);
+    });
+
+    statsButton.addEventListener('pointerleave', () => {
+        if (statsHoverWiggleTimer) {
+            clearTimeout(statsHoverWiggleTimer);
+            statsHoverWiggleTimer = null;
+        }
+
+        statsButton.classList.remove('normalButtonWiggle');
+    });
+}
 function startNormalButtonWiggle(button) {  
     if (!button || button.classList.contains('tabButton')) {  
         return;  
