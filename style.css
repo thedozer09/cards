@@ -4772,13 +4772,14 @@ div#cardsSubnav,
 }
 
 .rngPointsBump {
-    animation: rngPointsBumpAnim 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+    opacity: 1 !important;
+    animation: rngPointsBumpAnim 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
 }
 
 @keyframes rngPointsBumpAnim {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.22); color: #69e58f; }
-    100% { transform: scale(1); }
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.28); color: #69e58f; opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
 }
 .rngRecordCard .rngPointsStatValue {
     display: flex !important;

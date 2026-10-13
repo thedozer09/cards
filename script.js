@@ -3331,9 +3331,13 @@ function animateRngRecordCard(
                         if (modPoints !== 0 && card) {
                             const pointsEl = card.querySelector('.rngPointsStatValue') || 
                  card.querySelector('.rngStat:nth-child(2) .rngStatValue');
-                            if (pointsEl) {
+                          if (pointsEl) {
                                 const currentPts = Number(pointsEl.textContent) || 0;
                                 pointsEl.textContent = String(currentPts + modPoints);
+
+                                pointsEl.classList.remove('rngResultPopIn');
+                                pointsEl.style.opacity = '1';
+                                pointsEl.style.transform = 'none';
 
                                 pointsEl.classList.remove('rngPointsBump');
                                 void pointsEl.offsetWidth;
