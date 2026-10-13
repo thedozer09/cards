@@ -337,7 +337,7 @@ function initializeWebSocket() {
 
     
     });
-};  
+  
     socket.addEventListener('message', event => {  
         try {  
             const data = JSON.parse(event.data);  
@@ -494,7 +494,7 @@ function initializeWebSocket() {
         errorMessage.classList.remove("hidden");  
     });  
  
-
+};
 function requestRngServerTime() {  
     if (  
         !socket ||  
