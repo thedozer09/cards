@@ -3329,7 +3329,8 @@ function animateRngRecordCard(
                         const pointsAttr = element.getAttribute('data-modifier-points');
                         const modPoints = Number(pointsAttr) || 0;
                         if (modPoints !== 0 && card) {
-                            const pointsEl = card.querySelector('.rngPointsStatValue');
+                            const pointsEl = card.querySelector('.rngPointsStatValue') || 
+                 card.querySelector('.rngStat:nth-child(2) .rngStatValue');
                             if (pointsEl) {
                                 const currentPts = Number(pointsEl.textContent) || 0;
                                 pointsEl.textContent = String(currentPts + modPoints);
@@ -5006,9 +5007,13 @@ function createRngRecordCard(payload, recordText) {
         rarityStat 
     );  
 
+    const initialPoints = (payload && payload.points !== undefined && payload.points !== null)
+        ? payload.points
+        : 0;
+
     const pointsStat = createRngStat(  
         'Points',  
-        payload.points ?? '0'  
+        initialPoints  
     );
     const pointsValueEl = pointsStat.querySelector('.rngStatValue');
     if (pointsValueEl) {

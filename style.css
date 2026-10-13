@@ -4780,3 +4780,12 @@ div#cardsSubnav,
     50% { transform: scale(1.22); color: #69e58f; }
     100% { transform: scale(1); }
 }
+.rngRecordCard .rngPointsStatValue {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #edf6fb !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 21px !important;
+}
