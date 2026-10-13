@@ -3301,6 +3301,43 @@ function scheduleRngDuplicateReveal(card) {
         }
     );
 }
+let discoverAudioCtx = null;
+let discoverGainNode = null;
+
+function setupDiscoverSoundVolumeBoost() {
+    if (!discoverSound || discoverGainNode) return;
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        discoverAudioCtx = new AudioCtx();
+        const source = discoverAudioCtx.createMediaElementSource(discoverSound);
+        discoverGainNode = discoverAudioCtx.createGain();
+        discoverGainNode.gain.value = 1.5;
+        source.connect(discoverGainNode);
+        discoverGainNode.connect(discoverAudioCtx.destination);
+    } catch (err) {
+    }
+}
+
+function fadeAudioVolume(audio, targetVolume, durationMs, onComplete) {
+    if (!audio) return;
+    const startVolume = audio.volume;
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
+        audio.volume = Math.max(0, Math.min(1, startVolume + (targetVolume - startVolume) * progress));
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else if (onComplete) {
+            onComplete();
+        }
+    }
+    requestAnimationFrame(step);
+}
+
 function showNewRecordDiscoveredBanner() {
     const existing = document.querySelector('.rngNewDiscoveryBanner');
     if (existing) {
@@ -3313,22 +3350,39 @@ function showNewRecordDiscoveredBanner() {
 
     generateScreen.appendChild(banner);
 
+    if (activityMusic && !activityMusic.muted && activityMusicStarted) {
+        fadeAudioVolume(activityMusic, 0.005, 200);
+    }
+
     if (discoverSound) {
+        setupDiscoverSoundVolumeBoost();
+        if (discoverAudioCtx && discoverAudioCtx.state === 'suspended') {
+            discoverAudioCtx.resume();
+        }
+        discoverSound.volume = 1.0;
         discoverSound.currentTime = 0;
         const playPromise = discoverSound.play();
         if (playPromise && typeof playPromise.catch === 'function') {
             playPromise.catch(() => {});
         }
+
+        setTimeout(() => {
+            fadeAudioVolume(discoverSound, 0, 200, () => {
+                discoverSound.pause();
+                discoverSound.currentTime = 0;
+            });
+        }, 800);
     }
 
     setTimeout(() => {
         banner.classList.add('rngNewDiscoveryFadeOut');
+
+        if (activityMusic && !activityMusic.muted && activityMusicStarted) {
+            fadeAudioVolume(activityMusic, 0.25, 300);
+        }
+
         banner.addEventListener('animationend', () => {
             banner.remove();
-            if (discoverSound) {
-                discoverSound.pause();
-                discoverSound.currentTime = 0;
-            }
         }, { once: true });
     }, 1000);
 }
@@ -5038,8 +5092,12 @@ function createRngRecordCard(payload, recordText) {
 
     const normalizedComputed = normalizeRngRarity(computedRarity);
 
-    const fullRarityContainer = document.createElement('div');
+   const fullRarityContainer = document.createElement('div');
     fullRarityContainer.className = 'rngFullRarityPlaceholder';
+
+    const fullRarityHeader = document.createElement('div');
+    fullRarityHeader.className = 'rngFullRarityHeader';
+    fullRarityHeader.textContent = 'RECORD RARITY';
 
     const fullRarityTitle = document.createElement('div');
     fullRarityTitle.className = 'rngFullRarityTitle';
@@ -5054,6 +5112,7 @@ function createRngRecordCard(payload, recordText) {
     fullRarityPointsSubtitle.className = 'rngFullRaritySubtitle';
     fullRarityPointsSubtitle.textContent = `${totalEarnedPoints} points earned`;
 
+    fullRarityContainer.appendChild(fullRarityHeader);
     fullRarityContainer.appendChild(fullRarityTitle);
     fullRarityContainer.appendChild(fullRarityPointsSubtitle);
 
@@ -5067,7 +5126,7 @@ function createRngRecordCard(payload, recordText) {
 
     const rarityStat = 
         createRngStat(  
-            'Base Rarity',  
+            'Roll Pool',  
             displayRarity !== 'unknown' 
                 ? displayRarity 
                 : payload.rarity ?? 'Unknown',  
@@ -5155,10 +5214,9 @@ function createRngRecordCard(payload, recordText) {
         modifiersTitle  
     );  
 
-    const modifiersDescription = document.createElement('div');
+   const modifiersDescription = document.createElement('div');
     modifiersDescription.className = 'rngModifiersDescription';
-    modifiersDescription.textContent = 'Modifiers can increase rarity and points beyond the base rarity.';
-
+modifiersDescription.textContent = 'Roll Pool sets the base drop chance. Modifiers grant bonus points that upgrade your Record Rarity.';
     modifiersSection.appendChild(
         modifiersDescription
     );
