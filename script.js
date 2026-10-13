@@ -465,9 +465,9 @@ function initializeWebSocket() {
             }  
 
         } catch (err) {  
-            errorMessage.textContent = "⚠️ Invalid game response structural frame.";  
+            errorMessage.textContent = "⚠️ Error: " + (err && err.message ? err.message : String(err));  
             errorMessage.classList.remove("hidden");  
-        }  
+        }
     });  
 
     socket.addEventListener('close', (event) => {  
@@ -3321,17 +3321,22 @@ function animateRngRecordCard(
     elements.forEach(  
         (element, index) => {  
 
-            if (element.classList.contains('rngModifier')) {
+            if (element && element.classList && element.classList.contains('rngModifier')) {
                 element.addEventListener(
                     'animationend',
                     event => {
                         if (event.animationName !== 'rngResultPopIn') return;
-                        const modPoints = Number(element.dataset.modifierPoints) || 0;
-                        if (modPoints !== 0) {
+                        const pointsAttr = element.getAttribute('data-modifier-points');
+                        const modPoints = Number(pointsAttr) || 0;
+                        if (modPoints !== 0 && card) {
                             const pointsEl = card.querySelector('.rngPointsStatValue');
                             if (pointsEl) {
                                 const currentPts = Number(pointsEl.textContent) || 0;
                                 pointsEl.textContent = String(currentPts + modPoints);
+
+                                pointsEl.classList.remove('rngPointsBump');
+                                void pointsEl.offsetWidth;
+                                pointsEl.classList.add('rngPointsBump');
                             }
                         }
                     },
@@ -5103,6 +5108,10 @@ function createRngRecordCard(payload, recordText) {
             modifierCard.setAttribute(
                 'data-rarity',
                 finalModifierRarity
+            );
+            modifierCard.setAttribute(
+                'data-modifier-points',
+                String(modifier.points || 0)
             );
 
             const modifierHeader = document.createElement('div');
