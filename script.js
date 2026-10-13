@@ -3364,27 +3364,8 @@ function animateRngRecordCard(
                     { once: true } 
                 ); 
                 
-            } 
-     if (element.classList.contains('rngModifier')) {
-                element.addEventListener(
-                    'animationend',
-                    event => {
-                        if (event.animationName !== 'rngResultPopIn') return;
-                        const modPoints = Number(element.dataset.modifierPoints) || 0;
-                        if (modPoints !== 0) {
-                            const pointsEl = card.querySelector('.rngPointsStatValue');
-                            if (pointsEl) {
-                                const currentPts = Number(pointsEl.textContent) || 0;
-                                pointsEl.textContent = String(currentPts + modPoints);
-
-                                pointsEl.classList.remove('rngPointsBump');
-                                void pointsEl.offsetWidth;
-                                pointsEl.classList.add('rngPointsBump');
-                            }
-                        }
-                    },
-                    { once: true }
-                );
+            
+     
             }
             const cardHasDuplicate = Boolean(
                 card.querySelector(
@@ -4555,9 +4536,7 @@ function sendRngLifetimeUpdate(payload) {
     const newLifetimeScore = 
         currentLifetime + 
         totalPoints;
-console.log( 
-        `📈 RNG lifetime score update sent: ${currentLifetime} + ${totalPoints} = ${newLifetimeScore}` 
-    );
+
     if ( 
         !Number.isFinite(newLifetimeScore) 
     ) { 
@@ -4601,9 +4580,9 @@ console.log(
     ); 
 
     console.log( 
-        `📈 RNG lifetime score update sent: ${currentLifetime} + ${points} = ${newLifetimeScore}` 
+        `📈 RNG lifetime score update sent: ${currentLifetime} + ${totalPoints} = ${newLifetimeScore}` 
     ); 
-} 
+}
 
 function applyRngLifetimeUpdateResult(score) { 
     const storedResult = 
