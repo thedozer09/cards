@@ -2791,46 +2791,7 @@ function getRngDisplayRarity(payload) {
             payload.rarity 
         );
 
-    /* 
-    // FUTURE MODIFIER-BASED RARITY PROCESSING 
-
-    let rarityTier = 
-        baseRarity === 'common' 
-            ? 0 
-            : baseRarity === 'uncommon' 
-                ? 1 
-                : baseRarity === 'rare' 
-                    ? 2 
-                    : baseRarity === 'legendary' 
-                        ? 3 
-                        : -1; 
-
-    if ( 
-        rarityTier >= 0 && 
-        Array.isArray(payload?.modifiers) 
-    ) { 
-        payload.modifiers.forEach(modifier => { 
-            // Future modifier processing will determine 
-            // whether a modifier increases rarity here. 
-        }); 
-    } 
-
-    const rarityByTier = [ 
-        'common', 
-        'uncommon', 
-        'rare', 
-        'legendary' 
-    ]; 
-
-    if (rarityTier >= 0) { 
-        return rarityByTier[ 
-            Math.min( 
-                rarityTier, 
-                rarityByTier.length - 1 
-            ) 
-        ]; 
-    } 
-    */
+   
 
         return baseRarity; 
 } 
@@ -2932,8 +2893,8 @@ function scrollRngResultIntoView(element) {
     requestAnimationFrame(() => { 
         element.scrollIntoView({ 
             behavior: 'smooth', 
-            block: 'center', 
-            inline: 'center' 
+            block: 'start', 
+            inline: 'nearest'
         }); 
     }); 
 } 
@@ -3267,7 +3228,25 @@ function scheduleRngDuplicateReveal(card) {
         }
     );
 }
+function showNewRecordDiscoveredBanner() {
+    const existing = document.querySelector('.rngNewDiscoveryBanner');
+    if (existing) {
+        existing.remove();
+    }
 
+    const banner = document.createElement('div');
+    banner.className = 'rngNewDiscoveryBanner';
+    banner.textContent = '★ NEW RECORD DISCOVERED! ★';
+
+    generateScreen.appendChild(banner);
+
+    setTimeout(() => {
+        banner.classList.add('rngNewDiscoveryFadeOut');
+        banner.addEventListener('animationend', () => {
+            banner.remove();
+        }, { once: true });
+    }, 1000);
+}
 function animateRngRecordCard( 
     card, 
     onLifetimeLabelShown = null, 
@@ -4955,14 +4934,48 @@ function createRngRecordCard(payload, recordText) {
     recordValue.className = 'rngRecordValue';  
     recordValue.textContent = recordText;  
 
-    const fullRarityPlaceholder = document.createElement('div');
-    fullRarityPlaceholder.className = 'rngFullRarityPlaceholder';
-    fullRarityPlaceholder.textContent = 'N/A';
+    const basePts = Number(payload.points) || 0;
+    const modPts = Number(payload.modifierPoints) || (
+        Array.isArray(payload.modifiers)
+            ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
+            : 0
+    );
+    const totalEarnedPoints = basePts + modPts;
+
+    const requirements = Array.isArray(payload.overallRarityRequirements)
+        ? payload.overallRarityRequirements
+        : [
+            { rarity: "common", minPoints: 0 },
+            { rarity: "uncommon", minPoints: 30 },
+            { rarity: "rare", minPoints: 75 },
+            { rarity: "legendary", minPoints: 150 }
+        ];
+
+    let computedRarity = payload.rarity || 'common';
+    for (const tier of requirements) {
+        if (totalEarnedPoints >= (tier.minPoints || 0)) {
+            computedRarity = tier.rarity;
+        }
+    }
+
+    const fullRarityContainer = document.createElement('div');
+    fullRarityContainer.className = 'rngFullRarityPlaceholder';
+
+    const fullRarityTitle = document.createElement('div');
+    fullRarityTitle.className = 'rngFullRarityTitle';
+    fullRarityTitle.textContent = computedRarity.toUpperCase();
+
+    const fullRarityPointsSubtitle = document.createElement('div');
+    fullRarityPointsSubtitle.className = 'rngFullRaritySubtitle';
+    fullRarityPointsSubtitle.textContent = `${totalEarnedPoints} points earned`;
+
+    fullRarityContainer.appendChild(fullRarityTitle);
+    fullRarityContainer.appendChild(fullRarityPointsSubtitle);
 
     recordHeader.appendChild(recordLabel);  
     recordHeader.appendChild(recordValue);  
-    recordHeader.appendChild(fullRarityPlaceholder);
-    card.appendChild(recordHeader);  
+    recordHeader.appendChild(fullRarityContainer);
+    card.appendChild(recordHeader); 
 
     const stats = document.createElement('div');  
     stats.className = 'rngStats';  
@@ -5323,6 +5336,9 @@ function showRngRecordResult(payload) {
 
         rngResultPanel.appendChild(card);
         scheduleRngDuplicateReveal(card);
+           if (!isRngDuplicatePayload(payload)) {
+            showNewRecordDiscoveredBanner();
+        }
         scrollRngResultIntoView(card); 
 
         animateRngRecordCard( 
@@ -5430,6 +5446,9 @@ function showRngRecordResult(payload) {
         rngResultPanel.appendChild(card);
 
         scheduleRngDuplicateReveal(card);
+         if (!isRngDuplicatePayload(payload)) {
+            showNewRecordDiscoveredBanner();
+        }
 
         scrollRngResultIntoView(card); 
 
