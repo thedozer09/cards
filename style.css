@@ -4758,3 +4758,25 @@ div#cardsSubnav,
         font-size: 10px !important;
     }
 }
+.rngNoModifiers {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px dashed rgba(177, 198, 213, 0.2);
+    border-radius: 8px;
+    color: rgba(180, 195, 206, 0.65);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    background: rgba(26, 31, 36, 0.4);
+    box-sizing: border-box;
+}
+
+.rngPointsBump {
+    animation: rngPointsBumpAnim 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+@keyframes rngPointsBumpAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.22); color: #69e58f; }
+    100% { transform: scale(1); }
+}

@@ -263,7 +263,7 @@ function handleActivityLaunchRequiredMessage(message) {
             instructions.textContent = (
                 message.data && typeof message.data.message === 'string'
                     ? message.data.message
-                    : 'We could not match this Activity connection to the Discord user who launched it. Joining this way is not supported. Close this Activity and relaunch Storm Cards using the Storm Cards Activity launch button or the /stormcards slash command.'
+                    : 'We could not match this Activity connection to the Discord user who launched it. Joining this way is not supported. Close this Activity and relaunch Storm Cards using a Storm Cards Activity launch button or the /stormcards slash command.'
             );
             instructions.style.maxWidth = '520px';
             instructions.style.margin = '0';
@@ -474,7 +474,7 @@ function initializeWebSocket() {
         console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);  
 
         if (event.code === 1006) {  
-            errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured.";  
+            errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured. Please reconnect.";  
         } else if (event.code === 1015) {  
             errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that backend container port didn't accept.";  
         } else if (event.code === 1001) {  
@@ -3321,6 +3321,23 @@ function animateRngRecordCard(
     elements.forEach(  
         (element, index) => {  
 
+            if (element.classList.contains('rngModifier')) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (event.animationName !== 'rngResultPopIn') return;
+                        const modPoints = Number(element.dataset.modifierPoints) || 0;
+                        if (modPoints !== 0) {
+                            const pointsEl = card.querySelector('.rngPointsStatValue');
+                            if (pointsEl) {
+                                const currentPts = Number(pointsEl.textContent) || 0;
+                                pointsEl.textContent = String(currentPts + modPoints);
+                            }
+                        }
+                    },
+                    { once: true }
+                );
+            }
             if ( 
                 onLifetimeLabelShown && 
                 element.classList.contains( 
@@ -3341,8 +3358,29 @@ function animateRngRecordCard(
                     }, 
                     { once: true } 
                 ); 
+                
             } 
+     if (element.classList.contains('rngModifier')) {
+                element.addEventListener(
+                    'animationend',
+                    event => {
+                        if (event.animationName !== 'rngResultPopIn') return;
+                        const modPoints = Number(element.dataset.modifierPoints) || 0;
+                        if (modPoints !== 0) {
+                            const pointsEl = card.querySelector('.rngPointsStatValue');
+                            if (pointsEl) {
+                                const currentPts = Number(pointsEl.textContent) || 0;
+                                pointsEl.textContent = String(currentPts + modPoints);
 
+                                pointsEl.classList.remove('rngPointsBump');
+                                void pointsEl.offsetWidth;
+                                pointsEl.classList.add('rngPointsBump');
+                            }
+                        }
+                    },
+                    { once: true }
+                );
+            }
             const cardHasDuplicate = Boolean(
                 card.querySelector(
                     '.rngDuplicateOverlay'
@@ -4485,14 +4523,22 @@ function sendRngLifetimeUpdate(payload) {
             payload 
         ); 
 
-    const points = 
-        Number( 
-            payload.points 
-        ); 
+    const basePoints = Number(payload.points) || 0;
+    
+    let modifierBonus = 0;
+    if (typeof payload.modifierPoints === 'number' && Number.isFinite(payload.modifierPoints)) {
+        modifierBonus = payload.modifierPoints;
+    } else if (Array.isArray(payload.modifiers)) {
+        modifierBonus = payload.modifiers.reduce((sum, mod) => {
+            return sum + (Number(mod.points) || 0);
+        }, 0);
+    }
+
+    const totalPoints = basePoints + modifierBonus;
 
     if ( 
         currentLifetime === null || 
-        !Number.isFinite(points) 
+        !Number.isFinite(totalPoints) 
     ) { 
         console.error( 
             "❌ Could not calculate new RNG lifetime score." 
@@ -4503,8 +4549,10 @@ function sendRngLifetimeUpdate(payload) {
 
     const newLifetimeScore = 
         currentLifetime + 
-        points; 
-
+        totalPoints;
+console.log( 
+        `📈 RNG lifetime score update sent: ${currentLifetime} + ${totalPoints} = ${newLifetimeScore}` 
+    );
     if ( 
         !Number.isFinite(newLifetimeScore) 
     ) { 
@@ -4663,40 +4711,14 @@ function renderStoredRngResult(payload) {
 function normalizeRngModifiers(modifiers) {  
     const normalizeModifierObject = (modifier, fallbackLabel) => {
         const label =
+            modifier.displayName ??
             modifier.name ??
             modifier.modifier ??
             modifier.type ??
             modifier.id ??
             fallbackLabel;
 
-        const excludedFields = [
-            'name',
-            'modifier',
-            'type',
-            'id',
-            'rarity',
-            'tier',
-            'rank',
-            'points',
-            'pointBonus',
-            'point_bonus',
-            'pointsBonus',
-            'points_bonus',
-            'pointValue',
-            'point_value',
-            'description',
-            'shortDescription',
-            'short_description',
-            'desc',
-            'details'
-        ];
-
-        const detailEntries = Object.entries(modifier)
-            .filter(([key]) => {
-                return !excludedFields.includes(key);
-            });
-
-        let detail =
+        const description =
             modifier.description ??
             modifier.shortDescription ??
             modifier.short_description ??
@@ -4704,40 +4726,28 @@ function normalizeRngModifiers(modifiers) {
             modifier.details ??
             '';
 
-        if (
-            detail === '' &&
-            detailEntries.length === 1
-        ) {
-            detail = detailEntries[0][1];
-        } else if (
-            detail === '' &&
-            detailEntries.length > 1
-        ) {
-            detail = detailEntries
-                .map(([key, value]) => {
-                    return `${key}: ${formatRngValue(value)}`;
-                })
-                .join(' • ');
-        }
+        const rawPoints =
+            modifier.points ??
+            modifier.pointBonus ??
+            modifier.point_bonus ??
+            modifier.pointsBonus ??
+            modifier.points_bonus ??
+            modifier.pointValue ??
+            modifier.point_value ??
+            0;
+
+        const numericPoints = Number(rawPoints);
 
         return {
             label: String(label),
-            value: formatRngValue(detail),
-            description: formatRngValue(detail),
+            value: description,
+            description: description,
             rarity:
                 modifier.rarity ??
                 modifier.tier ??
                 modifier.rank ??
-                '',
-            points:
-                modifier.points ??
-                modifier.pointBonus ??
-                modifier.point_bonus ??
-                modifier.pointsBonus ??
-                modifier.points_bonus ??
-                modifier.pointValue ??
-                modifier.point_value ??
-                null
+                'common',
+            points: Number.isFinite(numericPoints) ? numericPoints : 0
         };
     };
 
@@ -4760,59 +4770,14 @@ function normalizeRngModifiers(modifiers) {
                 label: `Modifier ${index + 1}`,  
                 value,
                 description: value,
-                rarity: '',
-                points: null
+                rarity: 'common',
+                points: 0
             };  
         });  
     }  
-
-    if (  
-        modifiers &&  
-        typeof modifiers === 'object' &&  
-        !Array.isArray(modifiers)  
-    ) {  
-        return Object.entries(modifiers).map(([key, value]) => {  
-            if (  
-                value &&  
-                typeof value === 'object' &&  
-                !Array.isArray(value)  
-            ) {  
-                return normalizeModifierObject(
-                    value,
-                    key
-                );
-            }  
-
-            const detail = formatRngValue(value);
-
-            return {  
-                label: key,  
-                value: detail,
-                description: detail,
-                rarity: '',
-                points: null
-            };  
-        });  
-    }  
-
-    if (  
-        modifiers !== undefined &&  
-        modifiers !== null &&  
-        modifiers !== ''  
-    ) {  
-        const detail = formatRngValue(modifiers);
-
-        return [{ 
-            label: 'Modifier', 
-            value: detail,
-            description: detail,
-            rarity: '',
-            points: null
-        }]; 
-    } 
 
     return []; 
-} 
+}
 
 function formatRngValue(value) {  
     if (value === null || value === undefined) {  
@@ -5053,16 +5018,19 @@ function createRngRecordCard(payload, recordText) {
         );
     }
 
-    stats.appendChild( 
+   stats.appendChild( 
         rarityStat 
     );  
 
-    stats.appendChild(  
-        createRngStat(  
-            'Points',  
-            payload.points ?? '0'  
-        )  
-    );  
+    const pointsStat = createRngStat(  
+        'Points',  
+        payload.points ?? '0'  
+    );
+    const pointsValueEl = pointsStat.querySelector('.rngStatValue');
+    if (pointsValueEl) {
+        pointsValueEl.classList.add('rngPointsStatValue');
+    }
+    stats.appendChild(pointsStat);  
 
     stats.appendChild( 
         createRngStat( 
@@ -5111,14 +5079,6 @@ function createRngRecordCard(payload, recordText) {
         payload.modifiers 
     );
 
-    modifiers.push({
-        label: 'Test Modifier',
-        value: '',
-        description: 'A temporary test modifier used to preview the stacked modifier layout.',
-        rarity: displayRarity !== 'unknown' ? displayRarity : 'common',
-        points: 25
-    });
-
     if (modifiers.length === 0) {  
         const none = document.createElement('div');  
         none.className = 'rngNoModifiers';  
@@ -5128,6 +5088,7 @@ function createRngRecordCard(payload, recordText) {
         modifiers.forEach(modifier => {  
             const modifierCard = document.createElement('div');  
             modifierCard.className = 'rngModifier';
+            modifierCard.dataset.modifierPoints = String(modifier.points || 0);
 
             const modifierRarity =
                 normalizeRngRarity(
@@ -5161,7 +5122,7 @@ function createRngRecordCard(payload, recordText) {
             if (
                 modifier.points !== null &&
                 modifier.points !== undefined &&
-                modifier.points !== ''
+                modifier.points !== 0
             ) {
                 const numericPoints = Number(modifier.points);
                 const pointsText = Number.isFinite(numericPoints)
@@ -5185,7 +5146,7 @@ function createRngRecordCard(payload, recordText) {
             modifierCard.appendChild(modifierDescription);
             modifiersGrid.appendChild(modifierCard);  
         });  
-    }  
+    }
 
     modifiersSection.appendChild(modifiersGrid);  
     card.appendChild(modifiersSection);  
