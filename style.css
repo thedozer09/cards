@@ -34,93 +34,7 @@ body {
 
 }
 
-body.rng-rarity-common {
 
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #557590 0%,
-
-            #4a6981 28%,
-
-            #435d70 55%,
-
-            #3d5363 78%,
-
-            #374a58 100%
-
-        );
-
-}
-
-body.rng-rarity-uncommon {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #247b79 0%,
-
-            #286f72 28%,
-
-            #2d626b 55%,
-
-            #315664 78%,
-
-            #344b59 100%
-
-        );
-
-}
-
-body.rng-rarity-rare {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #2468a3 0%,
-
-            #285f97 28%,
-
-            #2e587f 55%,
-
-            #334f6e 78%,
-
-            #37485b 100%
-
-        );
-
-}
-
-body.rng-rarity-legendary {
-
-    background:
-
-        linear-gradient(
-
-            135deg,
-
-            #7b671f 0%,
-
-            #6c5d2c 28%,
-
-            #5d5234 55%,
-
-            #4e4839 78%,
-
-            #41403d 100%
-
-        );
-
-}
 
 button {
 
@@ -3396,21 +3310,7 @@ button {
     overflow-wrap: anywhere;
 }
 
-.rngModifier[data-rarity="common"] .rngModifierRarity {
-    color: #b6c1ca;
-}
 
-.rngModifier[data-rarity="uncommon"] .rngModifierRarity {
-    color: #8fbab5;
-}
-
-.rngModifier[data-rarity="rare"] .rngModifierRarity {
-    color: #91b5d7;
-}
-
-.rngModifier[data-rarity="legendary"] .rngModifierRarity {
-    color: #c7b985;
-}
 
 @media (max-width: 430px) {
     .rngStat:nth-child(4) .rngStatValue {
@@ -3517,25 +3417,7 @@ button {
     line-height: 1.45 !important;
 }
 
-.rngModifier[data-rarity="common"] .rngModifierRarity {
-    color: #d5e5f1 !important;
-    text-shadow: 0 0 3px rgba(213, 229, 241, 0.65), 0 0 7px rgba(213, 229, 241, 0.35) !important;
-}
 
-.rngModifier[data-rarity="uncommon"] .rngModifierRarity {
-    color: #64f2cd !important;
-    text-shadow: 0 0 3px rgba(100, 242, 205, 0.75), 0 0 8px rgba(100, 242, 205, 0.48) !important;
-}
-
-.rngModifier[data-rarity="rare"] .rngModifierRarity {
-    color: #68baff !important;
-    text-shadow: 0 0 3px rgba(104, 186, 255, 0.75), 0 0 8px rgba(104, 186, 255, 0.48) !important;
-}
-
-.rngModifier[data-rarity="legendary"] .rngModifierRarity {
-    color: #ffdc65 !important;
-    text-shadow: 0 0 3px rgba(255, 220, 101, 0.75), 0 0 8px rgba(255, 220, 101, 0.45) !important;
-}
 
 @media (max-width: 430px) {
     .rngModifier {
@@ -4790,15 +4672,7 @@ div#cardsSubnav,
     font-weight: 800 !important;
     line-height: 21px !important;
 }
-.rngFullRarityTitle {
-    color: #e4ebf0;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-    line-height: 1.1;
-    text-transform: uppercase;
-    text-align: center;
-}
+
 
 .rngFullRaritySubtitle {
     margin-top: 4px;
@@ -4867,4 +4741,168 @@ div#cardsSubnav,
         opacity: 0;
         transform: translateY(-50%) scale(1.05);
     }
+}
+#tosGate .tosDialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#tosGate #tosAgreeButton,
+#tosGate .tosAgreeButton {
+    margin: 18px auto 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+body.rng-rarity-uncommon,
+#generateScreen.rng-rarity-uncommon {
+    background: linear-gradient(135deg, #475569 0%, #334155 28%, #26313f 55%, #1e252e 78%, #14181f 100%) !important;
+}
+
+body.rng-rarity-common,
+#generateScreen.rng-rarity-common {
+    background: linear-gradient(135deg, #1b5e20 0%, #164e1b 28%, #143e18 55%, #0f2e13 78%, #0a1f0d 100%) !important;
+}
+
+body.rng-rarity-rare,
+#generateScreen.rng-rarity-rare {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 28%, #075985 55%, #1691d8 78%, #1574b4 100%) !important;
+}
+
+body.rng-rarity-epic,
+#generateScreen.rng-rarity-epic {
+    background: linear-gradient(135deg, #db2777 0%, #be185d 28%, #df0c61 55%, #ec0062 78%, #ce045c 100%) !important;
+}
+
+body.rng-rarity-legendary,
+#generateScreen.rng-rarity-legendary {
+    background: linear-gradient(135deg, #ca8a04 0%, #b46b05 28%, #c58a0a 55%, #d1a207 78%, #eb9310 100%) !important;
+}
+
+body.rng-rarity-mythical,
+#generateScreen.rng-rarity-mythical {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 28%, #991b1b 55%, #910707 78%, #750707 100%) !important;
+}
+
+body.rng-rarity-celestial,
+#generateScreen.rng-rarity-celestial {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 28%, #1e3a8a 55%, #172554 78%, #080e22 100%) !important;
+}
+
+body.rng-rarity-divine,
+#generateScreen.rng-rarity-divine {
+    background: linear-gradient(135deg, #65a30d 0%, #4d7c0f 28%, #6db60f 55%, #6db806 78%, #426811 100%) !important;
+}
+
+body.rng-rarity-transcendent,
+#generateScreen.rng-rarity-transcendent {
+    background: linear-gradient(135deg, #ff0055 0%, #ff7700 20%, #ffea00 40%, #00e676 60%, #00b0ff 80%, #aa00ff 100%) !important;
+    background-size: 200% 200% !important;
+    animation: transcendentBgMove 10s ease infinite !important;
+}
+
+@keyframes transcendentBgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body.rng-rarity-cosmic,
+#generateScreen.rng-rarity-cosmic {
+    background: linear-gradient(135deg, #6b21a8 0%, #4c1d95 30%, #2e1065 60%, #13032a 85%, #05000d 100%) !important;
+}
+
+body.rng-rarity-omnipotent,
+#generateScreen.rng-rarity-omnipotent {
+    background: linear-gradient(135deg, #ffffff 0%, #9ca3af 25%, #374151 55%, #111827 80%, #000000 100%) !important;
+}
+
+
+.rngFullRarityTitle {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.rngFullRarityTitle[data-rarity="uncommon"]   { color: #94a3b8; text-shadow: 0 0 10px rgba(148, 163, 184, 0.4); }
+.rngFullRarityTitle[data-rarity="common"]     { color: #1b8a43; text-shadow: 0 0 10px rgba(27, 138, 67, 0.5); }
+.rngFullRarityTitle[data-rarity="rare"]       { color: #38bdf8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.5); }
+.rngFullRarityTitle[data-rarity="epic"]       { color: #f472b6; text-shadow: 0 0 14px rgba(244, 114, 182, 0.5); }
+.rngFullRarityTitle[data-rarity="legendary"]  { color: #facc15; text-shadow: 0 0 16px rgba(250, 204, 21, 0.6); }
+.rngFullRarityTitle[data-rarity="mythical"]   { color: #ef4444; text-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+.rngFullRarityTitle[data-rarity="celestial"]  { color: #1d4ed8; text-shadow: 0 0 16px rgba(29, 78, 216, 0.6); }
+.rngFullRarityTitle[data-rarity="divine"]     { color: #84cc16; text-shadow: 0 0 16px rgba(132, 204, 22, 0.6); }
+
+.rngFullRarityTitle[data-rarity="transcendent"] {
+    background: linear-gradient(90deg, #ff0055, #ff7700, #ffea00, #00e676, #00b0ff, #aa00ff, #ff0055);
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: transcendentRainbowShift 3s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+}
+
+@keyframes transcendentRainbowShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+.rngFullRarityTitle[data-rarity="cosmic"] {
+    background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 35%, #7e22ce 70%, #05000d 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.7));
+}
+
+.rngFullRarityTitle[data-rarity="omnipotent"] {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 35%, #475569 70%, #000000 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.8));
+}
+
+
+.rngModifier[data-rarity="uncommon"] .rngModifierRarity   { color: #94a3b8 !important; text-shadow: 0 0 5px rgba(148, 163, 184, 0.4) !important; }
+.rngModifier[data-rarity="common"] .rngModifierRarity     { color: #1b8a43 !important; text-shadow: 0 0 5px rgba(27, 138, 67, 0.5) !important; }
+.rngModifier[data-rarity="rare"] .rngModifierRarity       { color: #38bdf8 !important; text-shadow: 0 0 5px rgba(56, 189, 248, 0.5) !important; }
+.rngModifier[data-rarity="epic"] .rngModifierRarity       { color: #f472b6 !important; text-shadow: 0 0 5px rgba(244, 114, 182, 0.5) !important; }
+.rngModifier[data-rarity="legendary"] .rngModifierRarity  { color: #facc15 !important; text-shadow: 0 0 5px rgba(250, 204, 21, 0.5) !important; }
+.rngModifier[data-rarity="mythical"] .rngModifierRarity   { color: #ef4444 !important; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5) !important; }
+.rngModifier[data-rarity="celestial"] .rngModifierRarity  { color: #1d4ed8 !important; text-shadow: 0 0 5px rgba(29, 78, 216, 0.5) !important; }
+.rngModifier[data-rarity="divine"] .rngModifierRarity     { color: #84cc16 !important; text-shadow: 0 0 5px rgba(132, 204, 22, 0.5) !important; }
+
+.rngModifier[data-rarity="transcendent"] .rngModifierRarity {
+    background: linear-gradient(90deg, #ff0055, #ffea00, #00b0ff, #aa00ff) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.rngModifier[data-rarity="cosmic"] .rngModifierRarity {
+    background: linear-gradient(90deg, #c084fc, #581c87) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.rngModifier[data-rarity="omnipotent"] .rngModifierRarity {
+    background: linear-gradient(90deg, #ffffff, #64748b, #000000) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
 }

@@ -7,6 +7,7 @@ const activityMusic = document.getElementById('activityMusic');
 const musicToggleButton = document.getElementById('musicToggleButton');  
 const tosGate = document.getElementById('tosGate');
 const tosAgreeButton = document.getElementById('tosAgreeButton');
+const discoverSound = document.getElementById('discoversound');
 
 
 let socket = null;  
@@ -334,12 +335,9 @@ function initializeWebSocket() {
 
     requestRngServerTime();
 
-    socket.send(JSON.stringify({
-        protocol: 'cardgame',
-        version: 1,
-        request: 'tos_request'
-    }));
-});  
+    
+    });
+};  
     socket.addEventListener('message', event => {  
         try {  
             const data = JSON.parse(event.data);  
@@ -495,7 +493,7 @@ function initializeWebSocket() {
         }  
         errorMessage.classList.remove("hidden");  
     });  
-}  
+ 
 
 function requestRngServerTime() {  
     if (  
@@ -1998,60 +1996,140 @@ function stopNormalButtonWiggle(button) {
 }  
 
 const RNG_RARITY_COLORS = {  
-    common: "#dce7f0",  
-    uncommon: "#4fd1c5",  
-    rare: "#4da6ff",  
-    legendary: "#ffd84d"  
+    uncommon: "#94a3b8",      // grey
+    common: "#1b8a43",        // dark green
+    rare: "#38bdf8",          // light blue
+    epic: "#f472b6",          // pink
+    legendary: "#facc15",     // yellow
+    mythical: "#ef4444",      // red
+    celestial: "#1d4ed8",     // dark blue
+    divine: "#84cc16",        // lime green
+    transcendent: "#ff5599",  // animated rainbow / rgb
+    cosmic: "#a855f7",        // purple-black gradient
+    omnipotent: "#ffffff"     // white-black gradient
 };  
 
 const RNG_RARITY_GRADIENTS = { 
-    common: 
-        `linear-gradient( 
-            135deg, 
-            #557590 0%, 
-            #4a6981 28%, 
-            #435d70 55%, 
-            #3d5363 78%, 
-            #374a58 100% 
-        )`, 
     uncommon: 
         `linear-gradient( 
             135deg, 
-            #247b79 0%, 
-            #286f72 28%, 
-            #2d626b 55%, 
-            #315664 78%, 
-            #344b59 100% 
+            #475569 0%, 
+            #334155 28%, 
+            #26313f 55%, 
+            #1e252e 78%, 
+            #14181f 100% 
+        )`, 
+    common: 
+        `linear-gradient( 
+            135deg, 
+            #1b5e20 0%, 
+            #164e1b 28%, 
+            #143e18 55%, 
+            #0f2e13 78%, 
+            #0a1f0d 100% 
         )`, 
     rare: 
         `linear-gradient( 
             135deg, 
-            #2468a3 0%, 
-            #285f97 28%, 
-            #2e587f 55%, 
-            #334f6e 78%, 
-            #37485b 100% 
+            #0284c7 0%, 
+            #0369a1 28%, 
+            #075985 55%, 
+            #1691d8 78%, 
+            #1574b4 100% 
+        )`, 
+    epic: 
+        `linear-gradient( 
+            135deg, 
+            #db2777 0%, 
+            #be185d 28%, 
+            #df0c61 55%, 
+            #ec0062 78%, 
+            #ce045c 100% 
         )`, 
     legendary: 
         `linear-gradient( 
             135deg, 
-            #7b671f 0%, 
-            #6c5d2c 28%, 
-            #5d5234 55%, 
-            #4e4839 78%, 
-            #41403d 100% 
+            #ca8a04 0%, 
+            #b46b05 28%, 
+            #c58a0a 55%, 
+            #d1a207 78%, 
+            #eb9310 100% 
+        )`, 
+    mythical: 
+        `linear-gradient( 
+            135deg, 
+            #dc2626 0%, 
+            #b91c1c 28%, 
+            #991b1b 55%, 
+            #910707 78%, 
+            #750707 100% 
+        )`, 
+    celestial: 
+        `linear-gradient( 
+            135deg, 
+            #1d4ed8 0%, 
+            #1e40af 28%, 
+            #1e3a8a 55%, 
+            #172554 78%, 
+            #080e22 100% 
+        )`, 
+    divine: 
+        `linear-gradient( 
+            135deg, 
+            #65a30d 0%, 
+            #4d7c0f 28%, 
+            #6db60f 55%, 
+            #6db806 78%, 
+            #426811 100% 
+        )`, 
+    transcendent: 
+        `linear-gradient( 
+            135deg, 
+            #ff0055 0%, 
+            #ff7700 20%, 
+            #ffea00 40%, 
+            #00e676 60%, 
+            #00b0ff 80%, 
+            #aa00ff 100% 
+        )`, 
+    cosmic: 
+        `linear-gradient( 
+            135deg, 
+            #6b21a8 0%, 
+            #4c1d95 30%, 
+            #2e1065 60%, 
+            #13032a 85%, 
+            #05000d 100% 
+        )`, 
+    omnipotent: 
+        `linear-gradient( 
+            135deg, 
+            #ffffff 0%, 
+            #9ca3af 25%, 
+            #374151 55%, 
+            #111827 80%, 
+            #000000 100% 
         )` 
 }; 
+
+const RNG_RARITY_THEME_CLASSES = [ 
+    'rng-rarity-uncommon', 
+    'rng-rarity-common', 
+    'rng-rarity-rare', 
+    'rng-rarity-epic', 
+    'rng-rarity-legendary', 
+    'rng-rarity-mythical', 
+    'rng-rarity-celestial', 
+    'rng-rarity-divine', 
+    'rng-rarity-transcendent', 
+    'rng-rarity-cosmic', 
+    'rng-rarity-omnipotent' 
+];
 
 const RNG_RANDOM_CHARACTERS = 
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"; 
 
-const RNG_RARITY_THEME_CLASSES = [ 
-    'rng-rarity-common', 
-    'rng-rarity-uncommon', 
-    'rng-rarity-rare', 
-    'rng-rarity-legendary' 
-]; 
+
 
 const RNG_SCRAMBLE_DURATION = 5000; 
 const RNG_APPEAR_DURATION = 700; 
@@ -3001,17 +3079,12 @@ function handleRngGenerateTabActivation() {
             ); 
 
         if (card) { 
-            applyRngRarityTheme( 
-                card.classList.contains('rng-rarity-common') 
-                    ? 'common' 
-                    : card.classList.contains('rng-rarity-uncommon') 
-                        ? 'uncommon' 
-                        : card.classList.contains('rng-rarity-rare') 
-                            ? 'rare' 
-                            : card.classList.contains('rng-rarity-legendary') 
-                                ? 'legendary' 
-                                : 'unknown' 
-            ); 
+            const activeTheme = RNG_RARITY_THEME_CLASSES.find(cls => card.classList.contains(cls));
+            if (activeTheme) {
+                applyRngRarityTheme(activeTheme.replace('rng-rarity-', ''));
+            } else {
+                applyRngRarityTheme('unknown');
+            }
         } 
 
         return; 
@@ -3029,7 +3102,7 @@ function handleRngGenerateTabActivation() {
     ) { 
         initializeRngGenerateButton(); 
     } 
-} 
+}
 
 function startRngCardFinishEffects(card) {
     if (
@@ -3240,10 +3313,22 @@ function showNewRecordDiscoveredBanner() {
 
     generateScreen.appendChild(banner);
 
+    if (discoverSound) {
+        discoverSound.currentTime = 0;
+        const playPromise = discoverSound.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {});
+        }
+    }
+
     setTimeout(() => {
         banner.classList.add('rngNewDiscoveryFadeOut');
         banner.addEventListener('animationend', () => {
             banner.remove();
+            if (discoverSound) {
+                discoverSound.pause();
+                discoverSound.currentTime = 0;
+            }
         }, { once: true });
     }, 1000);
 }
@@ -4942,21 +5027,16 @@ function createRngRecordCard(payload, recordText) {
     );
     const totalEarnedPoints = basePts + modPts;
 
-    const requirements = Array.isArray(payload.overallRarityRequirements)
-        ? payload.overallRarityRequirements
-        : [
-            { rarity: "common", minPoints: 0 },
-            { rarity: "uncommon", minPoints: 30 },
-            { rarity: "rare", minPoints: 75 },
-            { rarity: "legendary", minPoints: 150 }
-        ];
-
-    let computedRarity = payload.rarity || 'common';
-    for (const tier of requirements) {
-        if (totalEarnedPoints >= (tier.minPoints || 0)) {
-            computedRarity = tier.rarity;
+    let computedRarity = payload.rarity || 'uncommon';
+    if (Array.isArray(payload.overallRarityRequirements)) {
+        for (const tier of payload.overallRarityRequirements) {
+            if (totalEarnedPoints >= (tier.minPoints ?? 0)) {
+                computedRarity = tier.rarity;
+            }
         }
     }
+
+    const normalizedComputed = normalizeRngRarity(computedRarity);
 
     const fullRarityContainer = document.createElement('div');
     fullRarityContainer.className = 'rngFullRarityPlaceholder';
@@ -4964,6 +5044,11 @@ function createRngRecordCard(payload, recordText) {
     const fullRarityTitle = document.createElement('div');
     fullRarityTitle.className = 'rngFullRarityTitle';
     fullRarityTitle.textContent = computedRarity.toUpperCase();
+    fullRarityTitle.setAttribute('data-rarity', normalizedComputed);
+
+    if (RNG_RARITY_COLORS[normalizedComputed]) {
+        fullRarityTitle.style.color = RNG_RARITY_COLORS[normalizedComputed];
+    }
 
     const fullRarityPointsSubtitle = document.createElement('div');
     fullRarityPointsSubtitle.className = 'rngFullRaritySubtitle';
