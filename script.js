@@ -3398,7 +3398,7 @@ function showNewRecordDiscoveredBanner() {
         if (activityMusic && !activityMusic.muted && activityMusicStarted && activityMusic.volume === 0) {
             fadeAudioVolume(activityMusic, 0.25, 400);
         }
-    }, 2800);
+    }, 4500);
 
     setTimeout(() => {
         banner.classList.add('rngNewDiscoveryFadeOut');
