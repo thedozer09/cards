@@ -381,7 +381,9 @@ function initializeWebSocket() {
 
                 syncRngServerClock(  
                     data.data.serverTime,  
-                    data.data.nextReset  
+                    data.data.nextReset,
+                    data.data.periods,
+                    data.data.nextCardsReset
                 );  
 
                 return;  
@@ -2171,6 +2173,11 @@ let rngLifetimeRollTimer = null;
 let rngLifetimeAnimationFrames = []; 
 let rngRecordCardWiggleFrame = null; 
 let rngStoredResultScrollPending = false; 
+let rngPeriodStatus = "green";
+let cardsPeriodStatus = "green";
+let nextCardsResetTimestamp = null;
+let currentRngPeriodNumber = 1;
+let currentCardsPeriodNumber = 1;
 
 function getRandomRngCharacter() {  
     const index = Math.floor(  
@@ -2182,7 +2189,9 @@ function getRandomRngCharacter() {
 
 function syncRngServerClock(  
     serverTime,  
-    nextReset  
+    nextReset,
+    periodsData = null,
+    nextCardsReset = null
 ) {  
     if (  
         typeof serverTime !== 'number' ||  
@@ -2194,24 +2203,33 @@ function syncRngServerClock(
         return;  
     }  
 
-    rngServerTimeBase = 
-        serverTime;  
+    rngServerTimeBase = serverTime;  
+    rngPerformanceTimeBase = performance.now();  
+    rngNextResetTimestamp = nextReset.timestamp; 
 
-    rngPerformanceTimeBase = 
-        performance.now();  
+    if (nextCardsReset && typeof nextCardsReset.timestamp === 'number') {
+        nextCardsResetTimestamp = nextCardsReset.timestamp;
+    }
 
-    rngNextResetTimestamp = 
-        nextReset.timestamp; 
+    if (periodsData && typeof periodsData === 'object') {
+        if (periodsData.rng) {
+            rngPeriodStatus = String(periodsData.rng.status || 'green').toLowerCase().trim();
+            currentRngPeriodNumber = periodsData.rng.currentPeriod || 1;
+        }
+        if (periodsData.cards) {
+            cardsPeriodStatus = String(periodsData.cards.status || 'green').toLowerCase().trim();
+            currentCardsPeriodNumber = periodsData.cards.currentPeriod || 1;
+        }
+    }
 
     if (!rngFrontendInitialized) {  
-        rngLocalRollState = 
-            loadLocalRngRollState();  
+        rngLocalRollState = loadLocalRngRollState();  
         initializeRngFrontend();  
     }  
 
     updateRngDailyCountdown();  
     maybePlayRngLaunchFlash();  
-}  
+}
 
 function getRngServerNow() {  
     if (  
@@ -2500,57 +2518,21 @@ function getRngNextRollTimestamp() {
 } 
 
 function isRngCooldownActive() { 
-    const nextRollTimestamp = 
-        getRngNextRollTimestamp(); 
+  
+    if (rngPeriodStatus === "red") {
+        const serverNow = getRngServerNow();
+        if (
+            typeof serverNow === 'number' &&
+            typeof rngNextResetTimestamp === 'number' &&
+            serverNow >= rngNextResetTimestamp
+        ) {
+            return false;
+        }
+        return true;
+    }
 
-    const serverNow = 
-        getRngServerNow(); 
-
-    if ( 
-        typeof nextRollTimestamp !== 'number' || 
-        !Number.isFinite(nextRollTimestamp) || 
-        typeof rngNextResetTimestamp !== 'number' || 
-        !Number.isFinite(rngNextResetTimestamp) || 
-        typeof serverNow !== 'number' || 
-        !Number.isFinite(serverNow) 
-    ) { 
-        return false; 
-    } 
-
-    if ( 
-        nextRollTimestamp !== 
-        rngNextResetTimestamp 
-    ) { 
-        return false; 
-    } 
-
-    if ( 
-        nextRollTimestamp <= 
-        serverNow 
-    ) { 
-        return false; 
-    } 
-
-    const lastRollTimestamp = 
-        Number( 
-            rngLocalRollState?.lastRollTimestamp 
-        ); 
-
-    if ( 
-        Number.isFinite( 
-            lastRollTimestamp 
-        ) 
-    ) { 
-        return ( 
-            lastRollTimestamp <= 
-            serverNow 
-        ); 
-    } 
-
-    return Boolean( 
-        loadLocalRngResult() 
-    ); 
-} 
+    return false;
+}
 
 function createRngTopControlArea() { 
     if (rngTopControlArea) { 
@@ -2679,11 +2661,7 @@ function createRngDailyStatus() {
 }  
 
 function updateRngDailyCountdown() {  
-    const nextRollTimestamp = 
-        getRngNextRollTimestamp(); 
-
-    const serverNow = 
-        getRngServerNow(); 
+    const serverNow = getRngServerNow(); 
 
     if ( 
         typeof serverNow !== 'number' || 
@@ -2694,15 +2672,11 @@ function updateRngDailyCountdown() {
         return false; 
     } 
 
-    if ( 
-        typeof nextRollTimestamp !== 'number' || 
-        !Number.isFinite(nextRollTimestamp) || 
-        !isRngCooldownActive() 
-    ) { 
+    if (!isRngCooldownActive()) { 
         stopRngDailyCountdown(); 
         hideRngDailyStatus(); 
 
-        if (rngResultPanel) { 
+        if (rngResultPanel && rngPeriodStatus === "green") { 
             clearRngLifetimeAnimation(); 
             clearRngRecordCardWiggle(); 
             rngResultPanel.remove(); 
@@ -2729,13 +2703,15 @@ function updateRngDailyCountdown() {
     } 
 
     const remaining = 
-        nextRollTimestamp - 
-        serverNow; 
+        typeof rngNextResetTimestamp === 'number'
+            ? rngNextResetTimestamp - serverNow
+            : 0; 
 
-    if ( 
-        remaining <= 0 
-    ) { 
+    if (remaining <= 0) { 
         stopRngDailyCountdown(); 
+
+        rngPeriodStatus = "green";
+        requestRngServerTime();
 
         clearLocalRngRollState(); 
         clearLocalRngResult(); 
@@ -2770,21 +2746,16 @@ function updateRngDailyCountdown() {
         'You have already rolled for this period'; 
 
     rngDailyCountdown.textContent = 
-        `Next roll in ${formatRngCountdown( 
-            remaining 
-        )}`; 
+        `Next roll in ${formatRngCountdown(remaining)}`; 
 
-    rngDailyMessage.style.color = 
-        '#8a8f94'; 
-
-    rngDailyCountdown.style.color = 
-        '#8a8f94'; 
+    rngDailyMessage.style.color = '#8a8f94'; 
+    rngDailyCountdown.style.color = '#8a8f94'; 
 
     showRngDailyStatus(); 
     startRngDailyCountdown(); 
 
     return true; 
-}  
+}
 
 function startRngDailyCountdown() {  
     stopRngDailyCountdown(); 
@@ -3338,6 +3309,41 @@ function fadeAudioVolume(audio, targetVolume, durationMs, onComplete) {
     requestAnimationFrame(step);
 }
 
+
+
+function setupDiscoverSoundVolumeBoost() {
+    if (!discoverSound || discoverGainNode) return;
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        discoverAudioCtx = new AudioCtx();
+        const source = discoverAudioCtx.createMediaElementSource(discoverSound);
+        discoverGainNode = discoverAudioCtx.createGain();
+        discoverGainNode.gain.value = 1.6; 
+        source.connect(discoverGainNode);
+        discoverGainNode.connect(discoverAudioCtx.destination);
+    } catch (err) {}
+}
+
+function fadeAudioVolume(audio, targetVolume, durationMs, onComplete) {
+    if (!audio) return;
+    const startVolume = audio.volume;
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
+        audio.volume = Math.max(0, Math.min(1, startVolume + (targetVolume - startVolume) * progress));
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else if (onComplete) {
+            onComplete();
+        }
+    }
+    requestAnimationFrame(step);
+}
+
 function showNewRecordDiscoveredBanner() {
     const existing = document.querySelector('.rngNewDiscoveryBanner');
     if (existing) {
@@ -3347,44 +3353,59 @@ function showNewRecordDiscoveredBanner() {
     const banner = document.createElement('div');
     banner.className = 'rngNewDiscoveryBanner';
     banner.textContent = '★ NEW RECORD DISCOVERED! ★';
-
     generateScreen.appendChild(banner);
 
-    if (activityMusic && !activityMusic.muted && activityMusicStarted) {
-        fadeAudioVolume(activityMusic, 0.005, 200);
-    }
+    const isMuted = !activityMusic || activityMusic.muted;
 
-    if (discoverSound) {
-        setupDiscoverSoundVolumeBoost();
-        if (discoverAudioCtx && discoverAudioCtx.state === 'suspended') {
-            discoverAudioCtx.resume();
-        }
-        discoverSound.volume = 1.0;
-        discoverSound.currentTime = 0;
-        const playPromise = discoverSound.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(() => {});
-        }
-
-        setTimeout(() => {
-            fadeAudioVolume(discoverSound, 0, 200, () => {
-                discoverSound.pause();
-                discoverSound.currentTime = 0;
-            });
-        }, 800);
+    if (!isMuted && activityMusicStarted) {
+        fadeAudioVolume(activityMusic, 0, 150);
     }
 
     setTimeout(() => {
-        banner.classList.add('rngNewDiscoveryFadeOut');
+        if (discoverSound) {
+            setupDiscoverSoundVolumeBoost();
+            if (discoverAudioCtx && discoverAudioCtx.state === 'suspended') {
+                discoverAudioCtx.resume();
+            }
 
-        if (activityMusic && !activityMusic.muted && activityMusicStarted) {
-            fadeAudioVolume(activityMusic, 0.25, 300);
+            discoverSound.playbackRate = 0.88; 
+
+            if (isMuted || (activityMusic && activityMusic.muted)) {
+                discoverSound.muted = true;
+                discoverSound.volume = 0;
+            } else {
+                discoverSound.muted = false;
+                discoverSound.volume = 1.0;
+            }
+
+            discoverSound.currentTime = 0;
+            const playPromise = discoverSound.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+
+            discoverSound.onended = () => {
+                setTimeout(() => {
+                    if (activityMusic && !activityMusic.muted && activityMusicStarted) {
+                        fadeAudioVolume(activityMusic, 0.25, 400);
+                    }
+                }, 500); 
+            };
         }
+    }, 450);
 
+    setTimeout(() => {
+        if (activityMusic && !activityMusic.muted && activityMusicStarted && activityMusic.volume === 0) {
+            fadeAudioVolume(activityMusic, 0.25, 400);
+        }
+    }, 2800);
+
+    setTimeout(() => {
+        banner.classList.add('rngNewDiscoveryFadeOut');
         banner.addEventListener('animationend', () => {
             banner.remove();
         }, { once: true });
-    }, 1000);
+    }, 5000);
 }
 function animateRngRecordCard( 
     card, 
@@ -3685,9 +3706,13 @@ function resetDailyRngFrontend() {
 }  
 
 function markRngRollComplete(payload) {  
+    rngPeriodStatus = "red"; 
+    
     saveLocalRngResult( 
         payload 
     ); 
+
+   
 
     if ( 
         typeof rngNextResetTimestamp === 'number' && 
