@@ -1,0 +1,5 @@
+*.md linguist-detectable
+*.txt linguist-language=Markdown
+*.txt linguist-detectable
+.gitattributes linguist-language=Markdown
+.gitattributes linguist-detectable

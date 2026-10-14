@@ -3,59 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Card Game</title>
-
-    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="stylesheet" href="./style.css?v=170">
 </head>
-
 <body>
 
-    <div id="loadingScreen" class="loadingScreen">
+    <audio id="activityMusic" src="./song.mp3" preload="auto" loop></audio>
+<audio id="discoversound" src="./new.mp3" preload="auto" ></audio>
+    <div id="tosGate" class="tosGate hidden">
+        <div class="tosDialog">
+            <h1>DOWDataLab Card Game Terms</h1>
 
-        <div class="loadingContent">
+            <p>
+                To use the Card Game, you must agree to the Card Game section of the
+                <a href="."
+                    target="_blank" rel="noopener noreferrer">DOWDataLab Terms of Service<svg
+                        aria-hidden="true"
+                        viewBox="0 0 16 16"
+                        width="12"
+                        height="12"
+                        style="margin-left: 4px; vertical-align: 0.05em;"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    ><path d="M6 3.5H3.5v9h9V10"/><path d="M8 2h6v6"/><path d="M14 2 7 9"/></svg></a>.
+                By selecting <strong>I Agree</strong>, you confirm your agreement to that
+                section specifically. This agreement prompt applies only to the Card Game
+                section, not to the other sections of the Terms of Service.
+            </p>
 
-            <div class="loadingSpinner"></div>
-
-            <h1>Loading...</h1>
-
+            <button id="tosAgreeButton" type="button">I Agree</button>
         </div>
+    </div>
 
+    <div id="loadingScreen" class="loadingScreen hidden">
+        <div class="loadingContent">
+            <h1>Loading Card Game</h1>
+            <div class="loadingSpinner"></div>
+        </div>
     </div>
 
     <main id="mainScreen" class="mainScreen hidden">
 
         <div class="activityContainer">
 
+            <div id="errorMessage" class="error hidden"></div>
+
             <nav class="navigation">
 
-                <button id="generateButton" class="tabButton active" type="button">
+                <button
+                    id="musicToggleButton"
+                    class="musicToggleButton"
+                    type="button"
+                    aria-label="Mute music"
+                    aria-pressed="false"
+                >
+                    🔊
+                </button>
 
-                    <span class="tabLabel">GENERATE</span>
+                <button id="statsButton" class="tabButton statsButton" type="button">
+                    <span class="tabLabel">Stats</span>
+                </button>
 
+                <button id="generateButton" class="tabButton" type="button">
+                    <span class="tabLabel">Generate</span>
                 </button>
 
                 <button id="leaderboardsButton" class="tabButton" type="button">
-
-                    <span class="tabLabel">LEADERBOARDS</span>
-
+                    <span class="tabLabel">Leaderboards</span>
                 </button>
 
                 <button id="cardsButton" class="tabButton" type="button">
-
-                    <span class="tabLabel">CARDS</span>
-
+                    <span class="tabLabel">Cards</span>
                 </button>
 
             </nav>
 
-            <section id="generateScreen" class="tabScreen">
+            <nav id="leaderboardsSubnav" class="subNavigation hidden">
+                <button id="rngTodayButton" class="subTabButton" type="button">RNG Today</button>
+                <button id="rngAllTimeButton" class="subTabButton" type="button">RNG All Time</button>
+                <button id="cardsNetWorthButton" class="subTabButton" type="button">Cards Net Worth</button>
+                <button id="dailyPackScoreButton" class="subTabButton" type="button">Today's Card Pack Score</button>
+            </nav>
+
+            <nav id="cardsSubnav" class="subNavigation hidden">
+                <button id="openPackButton" class="subTabButton" type="button">Open Pack</button>
+                <button id="myCollectionButton" class="subTabButton" type="button">My Collection</button>
+                <button id="tradesButton" class="subTabButton" type="button">Trades</button>
+            </nav>
+
+            <section id="statsScreen" class="tabScreen"></section>
+
+            <section id="generateScreen" class="tabScreen hidden">
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        RNG
+                    </div>
 
-                    <h1>Generate</h1>
+                    <h1>
+                        Generate Record
+                    </h1>
 
                 </div>
 
@@ -65,11 +116,17 @@
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        RANKINGS
+                    </div>
 
-                    <h1>Leaderboards</h1>
+                    <h1>
+                        Leaderboards
+                    </h1>
 
                 </div>
+
+                <div id="leaderboardsContent"></div>
 
             </section>
 
@@ -77,31 +134,35 @@
 
                 <div class="tabHeader">
 
-                    <span class="tabEyebrow">CARD GAME</span>
+                    <div class="tabEyebrow">
+                        COLLECTION
+                    </div>
 
-                    <h1>Cards</h1>
+                    <h1>
+                        Cards
+                    </h1>
 
                 </div>
+
+                <div id="cardsContent"></div>
 
             </section>
 
         </div>
 
+        <div id="screen1" class="hidden"></div>
+
+        <div id="screen2" class="hidden"></div>
+
+        <button id="testButton" class="hidden" type="button"></button>
+
+        <button id="rngButton" class="hidden" type="button"></button>
+
     </main>
 
-    <div class="scrollRail" aria-hidden="true"></div>
+    <div class="scrollRail"></div>
 
-    <div id="screen1" class="hidden"></div>
-
-    <div id="screen2" class="hidden"></div>
-
-    <button id="testButton" class="hidden" type="button"></button>
-
-    <button id="rngButton" class="hidden" type="button"></button>
-
-    <div id="errorMessage" class="error hidden"></div>
-
-    <script src="script.js?v=13"></script>
+    <script src="./script.js?v=170"></script>
 
 </body>
 </html>
