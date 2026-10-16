@@ -2357,9 +2357,7 @@ button {
 .rngRecordCard.rng-rarity-common .rngStatValue.rngRarityValue { color: #dce7f0 !important; }
 .rngRecordCard.rng-rarity-uncommon .rngStatValue.rngRarityValue { color: #4fd1c5 !important; }
 .rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue { color: #4da6ff !important; }
-.rngRecordCard.rng-rarity-epic .rngRarityText {
-    color: #c084fc !important;
-}
+.rngRecordCard.rng-rarity-epic .rngStatValue.rngRarityValue { color: #c084fc !important; }
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue { color: #ffd84d !important; }
 
 .rngRecordCard .rngStatValue.rngRarityValue::before {
@@ -2387,8 +2385,8 @@ button {
 .rngRecordCard.rng-rarity-rare .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
 }
-.rngRecordCard.rng-rarity-epic .rngRarityText::before {
-    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.60) 0%, rgba(192, 132, 252, 0.33) 32%, rgba(192, 132, 252, 0.14) 62%, rgba(192, 132, 252, 0) 100%) !important;
+.rngRecordCard.rng-rarity-epic .rngStatValue.rngRarityValue::before {
+    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.95) 0%, rgba(192, 132, 252, 0.55) 32%, rgba(192, 132, 252, 0.22) 58%, rgba(192, 132, 252, 0) 82%) !important;
 }
 .rngRecordCard.rng-rarity-legendary .rngStatValue.rngRarityValue::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.98) 0%, rgba(255, 216, 77, 0.58) 32%, rgba(255, 216, 77, 0.24) 58%, rgba(255, 216, 77, 0) 82%) !important;
@@ -2631,6 +2629,10 @@ button {
     color: #4da6ff !important;
 }
 
+.rngRecordCard.rng-rarity-epic .rngRarityText {
+    color: #c084fc !important;
+}
+
 .rngRecordCard.rng-rarity-legendary .rngRarityText {
     color: #ffd84d !important;
 }
@@ -2661,6 +2663,10 @@ button {
 
 .rngRecordCard.rng-rarity-rare .rngRarityText::before {
     background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.95) 0%, rgba(77, 166, 255, 0.55) 32%, rgba(77, 166, 255, 0.22) 58%, rgba(77, 166, 255, 0) 82%) !important;
+}
+
+.rngRecordCard.rng-rarity-epic .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.95) 0%, rgba(192, 132, 252, 0.55) 32%, rgba(192, 132, 252, 0.22) 58%, rgba(192, 132, 252, 0) 82%) !important;
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityText::before {
@@ -3041,6 +3047,10 @@ button {
     background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.60) 0%, rgba(77, 166, 255, 0.33) 32%, rgba(77, 166, 255, 0.14) 62%, rgba(77, 166, 255, 0) 100%) !important;
 }
 
+.rngRecordCard.rng-rarity-epic .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.60) 0%, rgba(192, 132, 252, 0.33) 32%, rgba(192, 132, 252, 0.14) 62%, rgba(192, 132, 252, 0) 100%) !important;
+}
+
 .rngRecordCard.rng-rarity-legendary .rngRarityText::before {
     background: radial-gradient(ellipse at center, rgba(255, 216, 77, 0.62) 0%, rgba(255, 216, 77, 0.34) 32%, rgba(255, 216, 77, 0.14) 62%, rgba(255, 216, 77, 0) 100%) !important;
 }
@@ -3145,6 +3155,10 @@ button {
 
 .rngRecordCard.rng-rarity-rare .rngRarityText::before {
     background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.35) 0%, rgba(77, 166, 255, 0.22) 32%, rgba(77, 166, 255, 0.09) 62%, rgba(77, 166, 255, 0) 100%) !important;
+}
+
+.rngRecordCard.rng-rarity-epic .rngRarityText::before {
+    background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.35) 0%, rgba(192, 132, 252, 0.22) 32%, rgba(192, 132, 252, 0.09) 62%, rgba(192, 132, 252, 0) 100%) !important;
 }
 
 .rngRecordCard.rng-rarity-legendary .rngRarityText::before {
