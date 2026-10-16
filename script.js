@@ -1999,121 +1999,32 @@ function stopNormalButtonWiggle(button) {
 
 const RNG_RARITY_COLORS = {  
     uncommon: "#94a3b8",      // grey
-    common: "#1b8a43",        // dark green
+    common: "#22c55e",        // green
     rare: "#38bdf8",          // light blue
-    epic: "#f472b6",          // pink
-    legendary: "#facc15",     // yellow
+    epic: "#c084fc",          // stealth purple
+    legendary: "#facc15",     // gold / yellow
     mythical: "#ef4444",      // red
-    celestial: "#1d4ed8",     // dark blue
-    divine: "#84cc16",        // lime green
-    transcendent: "#ff5599",  // animated rainbow / rgb
-    cosmic: "#a855f7",        // purple-black gradient
-    omnipotent: "#ffffff"     // white-black gradient
+    celestial: "#60a5fa",     // blue
+    divine: "#a3e635",        // lime green
+    transcendent: "#ff5599",  // rainbow accent
+    cosmic: "#a855f7",        // purple-black
+    omnipotent: "#ffffff"     // white-black
 };  
 
 const RNG_RARITY_GRADIENTS = { 
-    uncommon: 
-        `linear-gradient( 
-            135deg, 
-            #475569 0%, 
-            #334155 28%, 
-            #26313f 55%, 
-            #1e252e 78%, 
-            #14181f 100% 
-        )`, 
-    common: 
-        `linear-gradient( 
-            135deg, 
-            #1b5e20 0%, 
-            #164e1b 28%, 
-            #143e18 55%, 
-            #0f2e13 78%, 
-            #0a1f0d 100% 
-        )`, 
-    rare: 
-        `linear-gradient( 
-            135deg, 
-            #0284c7 0%, 
-            #0369a1 28%, 
-            #075985 55%, 
-            #1691d8 78%, 
-            #1574b4 100% 
-        )`, 
-    epic: 
-        `linear-gradient( 
-            135deg, 
-            #db2777 0%, 
-            #be185d 28%, 
-            #df0c61 55%, 
-            #ec0062 78%, 
-            #ce045c 100% 
-        )`, 
-    legendary: 
-        `linear-gradient( 
-            135deg, 
-            #ca8a04 0%, 
-            #b46b05 28%, 
-            #c58a0a 55%, 
-            #d1a207 78%, 
-            #eb9310 100% 
-        )`, 
-    mythical: 
-        `linear-gradient( 
-            135deg, 
-            #dc2626 0%, 
-            #b91c1c 28%, 
-            #991b1b 55%, 
-            #910707 78%, 
-            #750707 100% 
-        )`, 
-    celestial: 
-        `linear-gradient( 
-            135deg, 
-            #1d4ed8 0%, 
-            #1e40af 28%, 
-            #1e3a8a 55%, 
-            #172554 78%, 
-            #080e22 100% 
-        )`, 
-    divine: 
-        `linear-gradient( 
-            135deg, 
-            #65a30d 0%, 
-            #4d7c0f 28%, 
-            #6db60f 55%, 
-            #6db806 78%, 
-            #426811 100% 
-        )`, 
-    transcendent: 
-        `linear-gradient( 
-            135deg, 
-            #ff0055 0%, 
-            #ff7700 20%, 
-            #ffea00 40%, 
-            #00e676 60%, 
-            #00b0ff 80%, 
-            #aa00ff 100% 
-        )`, 
-    cosmic: 
-        `linear-gradient( 
-            135deg, 
-            #6b21a8 0%, 
-            #4c1d95 30%, 
-            #2e1065 60%, 
-            #13032a 85%, 
-            #05000d 100% 
-        )`, 
-    omnipotent: 
-        `linear-gradient( 
-            135deg, 
-            #ffffff 0%, 
-            #9ca3af 25%, 
-            #374151 55%, 
-            #111827 80%, 
-            #000000 100% 
-        )` 
-}; 
-
+    uncommon: `linear-gradient(135deg, #242e3b 0%, #151c24 100%)`,     // visible slate grey
+    common: `linear-gradient(135deg, #143522 0%, #0c2014 100%)`,       // rich forest green
+    rare: `linear-gradient(135deg, #143554 0%, #0c2035 100%)`,         // deep sapphire blue
+    epic: `linear-gradient(135deg, #351c52 0%, #1e0f30 100%)`,         // rich midnight purple
+    legendary: `linear-gradient(135deg, #422d0d 0%, #251906 100%)`,    // warm bronze gold
+    mythical: `linear-gradient(135deg, #401414 0%, #240909 100%)`,     // deep ruby red
+    celestial: `linear-gradient(135deg, #162952 0%, #0d1833 100%)`,    // stellar deep blue
+    divine: `linear-gradient(135deg, #283a12 0%, #172208 100%)`,       // deep moss olive
+    // Multi-color special tiers:
+    transcendent: `linear-gradient(135deg, #ff0055 0%, #ff7700 20%, #ffea00 40%, #00e676 60%, #00b0ff 80%, #aa00ff 100%)`, // Rainbow
+    cosmic: `linear-gradient(135deg, #6b21a8 0%, #4c1d95 30%, #2e1065 60%, #13032a 85%, #05000d 100%)`,                     // Purple-Black
+    omnipotent: `linear-gradient(135deg, #ffffff 0%, #9ca3af 25%, #374151 55%, #111827 80%, #000000 100%)`                  // White-Black
+};
 const RNG_RARITY_THEME_CLASSES = [ 
     'rng-rarity-uncommon', 
     'rng-rarity-common', 
@@ -2834,16 +2745,33 @@ function normalizeRngRarity(rarity) {
 } 
 
 function getRngDisplayRarity(payload) { 
-    const baseRarity = 
-        normalizeRngRarity( 
-            payload && 
-            payload.rarity 
-        );
+    if (!payload || typeof payload !== 'object') {
+        return 'unknown';
+    }
 
-   
+    if (payload.finalRarity && typeof payload.finalRarity === 'string') {
+        return normalizeRngRarity(payload.finalRarity);
+    }
 
-        return baseRarity; 
-} 
+    const basePts = Number(payload.points) || 0;
+    const modPts = Number(payload.modifierPoints) || (
+        Array.isArray(payload.modifiers)
+            ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
+            : 0
+    );
+    const totalPoints = basePts + modPts;
+
+    let computed = payload.rarity || 'common';
+    if (Array.isArray(payload.overallRarityRequirements)) {
+        for (const tier of payload.overallRarityRequirements) {
+            if (totalPoints >= (tier.minPoints ?? 0)) {
+                computed = tier.rarity;
+            }
+        }
+    }
+
+    return normalizeRngRarity(computed);
+}
 
 function applyRngRarityTheme(rarity) { 
     if (
@@ -5064,25 +4992,15 @@ function createRngStat(label, value, valueColor = null) {
 function createRngRecordCard(payload, recordText) {  
     const card = document.createElement('div');  
     card.className = 'rngRecordCard';
-    card.style.background =
-        'linear-gradient(135deg, #30343a 0%, #24282d 48%, #13171b 100%)';
 
-    const displayRarity = 
-        getRngDisplayRarity( 
-            payload 
-        ); 
+    const finalRarity = getRngDisplayRarity(payload);
+    const normalizedFinalRarity = normalizeRngRarity(finalRarity);
 
-    const normalizedRarity = 
-        normalizeRngRarity( 
-            displayRarity 
-        ); 
-
-    if (normalizedRarity !== 'unknown') { 
-        card.classList.add( 
-            `rng-rarity-${normalizedRarity}` 
-        ); 
-
+    if (normalizedFinalRarity !== 'unknown') { 
+        card.classList.add(`rng-rarity-${normalizedFinalRarity}`); 
     } 
+
+    const baseRollPool = normalizeRngRarity(payload.baseRarity || payload.rarity || 'common');
 
     const recordHeader = document.createElement('div');  
     recordHeader.className = 'rngRecordHeader';  
@@ -5149,14 +5067,11 @@ function createRngRecordCard(payload, recordText) {
     const stats = document.createElement('div');  
     stats.className = 'rngStats';  
 
-    const rarityStat = 
-        createRngStat(  
-            'Roll Pool',  
-            displayRarity !== 'unknown' 
-                ? displayRarity 
-                : payload.rarity ?? 'Unknown',  
-            getRngRarityColor(displayRarity)  
-        ); 
+    const rarityStat = createRngStat(  
+        'Roll Pool',  
+        baseRollPool.toUpperCase(),  
+        getRngRarityColor(baseRollPool)  
+    );
 
     const rarityValue =
         rarityStat.querySelector(
