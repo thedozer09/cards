@@ -2617,25 +2617,11 @@ button {
     animation: none !important;
 }
 
-.rngRecordCard.rng-rarity-common .rngRarityText {
-    color: #dce7f0 !important;
-}
-
-.rngRecordCard.rng-rarity-uncommon .rngRarityText {
-    color: #4fd1c5 !important;
-}
-
-.rngRecordCard.rng-rarity-rare .rngRarityText {
-    color: #4da6ff !important;
-}
-
-.rngRecordCard.rng-rarity-epic .rngRarityText {
-    color: #c084fc !important;
-}
-
-.rngRecordCard.rng-rarity-legendary .rngRarityText {
-    color: #ffd84d !important;
-}
+.rngRarityText[data-rarity="common"]     { color: #dce7f0 !important; }
+.rngRarityText[data-rarity="uncommon"]   { color: #4fd1c5 !important; }
+.rngRarityText[data-rarity="rare"]       { color: #4da6ff !important; }
+.rngRarityText[data-rarity="epic"]       { color: #c084fc !important; }
+.rngRarityText[data-rarity="legendary"]  { color: #ffd84d !important; }
 
 .rngRecordCard .rngRarityText::before {
     content: "" !important;

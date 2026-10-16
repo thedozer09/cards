@@ -5087,6 +5087,7 @@ function createRngRecordCard(payload, recordText) {
 
         rarityText.textContent =
             rarityValue.textContent.trim();
+            rarityText.setAttribute('data-rarity', baseRollPool);
 
         rarityText.setAttribute(
             'data-rng-shine-text',
