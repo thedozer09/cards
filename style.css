@@ -4865,3 +4865,111 @@ body.rng-rarity-omnipotent,
     margin-bottom: 3px;
     text-align: center;
 }
+
+
+#cardsScreen.tabScreen {
+    padding: 12px 24px 20px !important;
+    min-height: auto !important;
+}
+
+#cardsContent > .subviewHeading,
+.subviewHeading {
+    margin: 0 0 6px 0 !important;
+    padding: 0 !important;
+    color: #e8f1f7 !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.4px !important;
+    line-height: 1.15 !important;
+}
+
+.cardsNavigationRow {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#cardsSubnav,
+.cardsNavigationRow > #cardsSubnav {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: calc(100% - 210px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+}
+
+.cardsNavigationRow > .collectionStats {
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: flex-end !important;   
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    gap: 2px !important;
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 200px !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    color: rgba(220, 231, 240, 0.85) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    pointer-events: auto !important;
+}
+
+.cardsNavigationRow > .collectionStats > div {
+    display: block !important;
+    width: 100% !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+}
+
+#cardsSubviews {
+    margin-top: 4px !important;
+}
+
+.cardsSubview {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+@media (max-width: 580px) {
+    .cardsNavigationRow {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+    }
+
+    #cardsSubnav,
+    .cardsNavigationRow > #cardsSubnav {
+        max-width: 100% !important;
+    }
+
+    .cardsNavigationRow > .collectionStats {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}

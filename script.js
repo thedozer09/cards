@@ -1269,7 +1269,6 @@ function setSubnavSelection(button, parent, content, viewName, headingText) {
     if (content === cardsContent) {
         createCollectionStats();
         collectionStats.classList.remove('hidden');
-        requestCardGameStats();
 
         if (latestCardGameStatsData) {
             updateCardGameCountDisplays(latestCardGameStatsData);
