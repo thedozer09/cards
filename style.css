@@ -4380,45 +4380,51 @@ button {
 }
 
 .cardsNavigationRow {
-    display: block !important;
-    position: static !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 auto 16px !important;
-    box-sizing: border-box !important;
+    margin: 0 0 10px 0 !important;
 }
 
 .cardsNavigationRow > #cardsSubnav {
-    position: static !important;
-    transform: none !important;
-    width: 100% !important;
-    margin: 0 auto 8px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: calc(100% - 200px) !important;
+    margin: 0 !important;
 }
 
 .cardsNavigationRow > .collectionStats {
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;   
     justify-content: center !important;
-    gap: 20px !important;
+    flex: 0 0 auto !important;
+    gap: 3px !important;
     position: static !important;
     transform: none !important;
-    width: 100% !important;
-    margin: 6px auto 0 !important;
+    width: auto !important;
+    max-width: 190px !important;
+    margin: 0 !important;
     padding: 0 !important;
-    color: rgba(220, 231, 240, 0.85) !important;
-    font-size: 12px !important;
-    text-align: center !important;
-    pointer-events: auto !important;
-}
-
-.cardsNavigationRow > .collectionStats > div {
-    display: inline-block !important;
-    color: inherit !important;
-    font-size: inherit !important;
+    text-align: right !important;
     white-space: nowrap !important;
 }
 
+.cardsNavigationRow > .collectionStats > div {
+    display: block !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: rgba(220, 231, 240, 0.85) !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+}
 .cardsNavigationRow > .collectionStats.hidden {
     display: none !important;
 }
@@ -4866,53 +4872,74 @@ body.rng-rarity-omnipotent,
     text-align: center;
 }
 
-#cardsScreen.tabScreen {
-    padding-top: 14px !important;
+
+.hidden,
+#cardsSubnav.hidden,
+#leaderboardsSubnav.hidden,
+.cardsNavigationRow.hidden,
+.cardsNavigationRow[style*="display: none"],
+.cardsNavigationRow > #cardsSubnav.hidden,
+.cardsNavigationRow > .collectionStats.hidden {
+    display: none !important;
 }
 
-#cardsContent > .subviewHeading {
+#cardsScreen.tabScreen {
+    padding-top: 10px !important;
+}
+
+#cardsContent > .subviewHeading,
+.subviewHeading {
     margin: 0 0 6px 0 !important;
     padding: 0 !important;
     font-size: 20px !important;
     line-height: 1.2 !important;
 }
 
-.cardsNavigationRow {
-    position: relative;
-    width: 100%;
-    margin: 0 0 10px 0;
+.cardsNavigationRow:not(.hidden) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 0 auto 10px !important;
+    box-sizing: border-box !important;
 }
 
-.cardsNavigationRow > #cardsSubnav {
+#cardsSubnav:not(.hidden),
+.cardsNavigationRow > #cardsSubnav:not(.hidden) {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    align-items: center !important;
     gap: 8px !important;
-    width: min(100%, 620px) !important;
-    margin: 0 !important;
+    width: min(100%, 650px) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
 }
 
-.cardsNavigationRow > .collectionStats {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-end;   
-    justify-content: center;
-    gap: 2px;
-    width: auto;
-    margin: 0;
-    padding: 0;
-    text-align: right;
-    white-space: nowrap;
-    pointer-events: auto;
+.cardsNavigationRow > .collectionStats:not(.hidden) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 6px auto 0 !important;
+    padding: 0 !important;
+    color: rgba(220, 231, 240, 0.85) !important;
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    pointer-events: auto !important;
 }
 
-.cardsNavigationRow > .collectionStats > div {
-    font-size: 11px;
-    font-weight: 700;
-    color: rgba(220, 231, 240, 0.85);
-    line-height: 1.25;
-    white-space: nowrap;
+.cardsNavigationRow > .collectionStats:not(.hidden) > div {
+    display: inline-block !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    white-space: nowrap !important;
+    text-align: center !important;
 }

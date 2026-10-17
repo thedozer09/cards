@@ -1160,24 +1160,24 @@ function setActiveTopButton(button) {
 }
 
 function updateSecondaryNavigation(screen) {
+    const isLeaderboards = screen === leaderboardsScreen;
+    const isCards = screen === cardsScreen;
+
     if (leaderboardsSubnav) {
-        leaderboardsSubnav.classList.add('hidden');
-    }
-    if (cardsSubnav) {
-        cardsSubnav.classList.add('hidden');
+        leaderboardsSubnav.classList.toggle('hidden', !isLeaderboards);
     }
 
-    if (screen === leaderboardsScreen && leaderboardsSubnav) {
-        leaderboardsSubnav.classList.remove('hidden');
-    } else if (screen === cardsScreen && cardsSubnav) {
-        cardsSubnav.classList.remove('hidden');
+    if (cardsSubnav) {
+        cardsSubnav.classList.toggle('hidden', !isCards);
     }
 
     if (cardsNavigationRow) {
-        cardsNavigationRow.style.display = screen === cardsScreen ? 'flex' : 'none';
+        cardsNavigationRow.style.display = isCards ? 'flex' : 'none';
+        cardsNavigationRow.classList.toggle('hidden', !isCards);
     }
+
     if (collectionStats) {
-        collectionStats.classList.toggle('hidden', screen !== cardsScreen);
+        collectionStats.classList.toggle('hidden', !isCards);
     }
 }
 
