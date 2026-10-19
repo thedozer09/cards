@@ -144,7 +144,47 @@
 
                 </div>
 
-                <div id="cardsContent"></div>
+                <div id="cardsContent">
+                    <div id="myCollectionView" class="cardsSubview">
+                        <div class="collectionControlsRow">
+                            <div class="collectionSearchWrap">
+                                <input
+                                    type="text"
+                                    id="collectionSearchInput"
+                                    class="collectionSearchInput"
+                                    placeholder="Search cards by name..."
+                                    autocomplete="off"
+                                >
+                            </div>
+
+                            <div class="collectionSortWrap">
+                                <select id="collectionSortSelect" class="collectionSortSelect">
+                                    <option value="rarity_desc">Rarity: High to Low</option>
+                                    <option value="rarity_asc">Rarity: Low to High</option>
+                                </select>
+                            </div>
+
+                            <label class="collectionOwnedLabel">
+                                <input type="checkbox" id="collectionOwnedCheckbox" class="collectionOwnedCheckbox">
+                                <span>Owned Only</span>
+                            </label>
+                        </div>
+
+                        <div id="collectionRosterCount" class="collectionRosterCount">
+                            0 cards in roster
+                        </div>
+
+                        <div id="collectionCardsGrid" class="collectionCardsGrid"></div>
+                    </div>
+
+                    <div id="openPackView" class="cardsSubview hidden">
+                        <div class="subviewPlaceholder">Pack opening interface coming soon.</div>
+                    </div>
+
+                    <div id="tradesView" class="cardsSubview hidden">
+                        <div class="subviewPlaceholder">Trading interface coming soon.</div>
+                    </div>
+                </div>
 
             </section>
 
@@ -162,7 +202,7 @@
 
     <div class="scrollRail"></div>
 
-    <script src="./script.js?v=176"></script>
+    <script src="./script.js?v=177"></script>
 
 </body>
 </html>
