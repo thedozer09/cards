@@ -5929,7 +5929,6 @@ function triggerCollectionFilterRequest() {
     }
     updateCollectionRosterText();
 
-    // Sends packet to backend WebSocket
     if (typeof activitySocket !== 'undefined' && activitySocket && activitySocket.readyState === WebSocket.OPEN) {
         activitySocket.send(JSON.stringify({
             type: "collection_filter_requested",
@@ -5946,12 +5945,12 @@ function handleCollectionSortChange(e) {
     const now = Date.now();
 
     if (now < collectionSortCooldownUntil) {
-        collectionSortSelect.value = collectionSortOrder; // Revert visually if spammed
+        collectionSortSelect.value = collectionSortOrder;
         return;
     }
 
     collectionSortOrder = collectionSortSelect.value;
-    collectionSortCooldownUntil = now + 10000; // Set 10-second lock
+    collectionSortCooldownUntil = now + 10000;
 
     collectionSortSelect.disabled = true;
     const selectedOption = collectionSortSelect.options[collectionSortSelect.selectedIndex];
@@ -5971,6 +5970,20 @@ function handleCollectionSortChange(e) {
     }, 500);
 
     triggerCollectionFilterRequest();
+}
+
+function switchCardsSubview(targetView) {
+    if (myCollectionView) myCollectionView.classList.add('hidden');
+    if (openPackView) openPackView.classList.add('hidden');
+    if (tradesView) tradesView.classList.add('hidden');
+
+    if (targetView === 'collection' && myCollectionView) {
+        myCollectionView.classList.remove('hidden');
+    } else if (targetView === 'pack' && openPackView) {
+        openPackView.classList.remove('hidden');
+    } else if (targetView === 'trades' && tradesView) {
+        tradesView.classList.remove('hidden');
+    }
 }
 
 function setupCollectionControls() {
@@ -5997,9 +6010,24 @@ function setupCollectionControls() {
         });
     }
 
+    const myColBtn = document.getElementById('myCollectionButton');
+    const openPackBtn = document.getElementById('openPackButton');
+    const tradesBtn = document.getElementById('tradesButton');
+
+    if (myColBtn) {
+        myColBtn.addEventListener('click', () => switchCardsSubview('collection'));
+    }
+    if (openPackBtn) {
+        openPackBtn.addEventListener('click', () => switchCardsSubview('pack'));
+    }
+    if (tradesBtn) {
+        tradesBtn.addEventListener('click', () => switchCardsSubview('trades'));
+    }
+
     updateCollectionRosterText();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCollectionControls();
+    switchCardsSubview('collection');
 });
