@@ -4954,3 +4954,141 @@ body.rng-rarity-omnipotent,
     text-align: right !important;
     white-space: nowrap !important;
 }
+
+
+#cardsContent .subviewHeading,
+.subviewHeading {
+    text-align: center !important;
+    margin: 4px auto 14px auto !important;
+    width: 100% !important;
+    color: #e8f1f7 !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+}
+
+.collectionControlsRow {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 820px !important;
+    margin: 0 auto 10px auto !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(138, 166, 191, 0.22) !important;
+    border-radius: 14px !important;
+    background: rgba(14, 32, 54, 0.65) !important;
+    box-sizing: border-box !important;
+}
+
+.collectionSearchWrap {
+    flex: 1 1 auto !important;
+    min-width: 140px !important;
+}
+
+.collectionSearchInput {
+    width: 100% !important;
+    height: 38px !important;
+    padding: 0 14px !important;
+    border: 1px solid rgba(170, 196, 216, 0.24) !important;
+    border-radius: 10px !important;
+    background: rgba(8, 20, 36, 0.8) !important;
+    color: #f5f9fd !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.collectionSearchInput:focus {
+    border-color: #69b6ff !important;
+    box-shadow: 0 0 10px rgba(105, 182, 255, 0.3) !important;
+}
+
+.collectionSortWrap {
+    flex: 0 0 auto !important;
+}
+
+.collectionSortSelect {
+    height: 38px !important;
+    padding: 0 10px !important;
+    border: 1px solid rgba(170, 196, 216, 0.24) !important;
+    border-radius: 10px !important;
+    background: rgba(8, 20, 36, 0.9) !important;
+    color: #f5f9fd !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    outline: none !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.18s ease !important;
+}
+
+.collectionSortSelect:disabled {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+}
+
+.collectionOwnedLabel {
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    flex: 0 0 auto !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #e2eaf1 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    white-space: nowrap !important;
+}
+
+.collectionOwnedCheckbox {
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    accent-color: #38bdf8 !important;
+    cursor: pointer !important;
+}
+
+.collectionRosterCount {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: rgba(193, 215, 229, 0.75) !important;
+    letter-spacing: 0.3px !important;
+    margin: 6px auto 16px auto !important;
+}
+
+.collectionCardsGrid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+    min-height: 140px !important;
+    padding: 4px 0 !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 600px) {
+    .collectionControlsRow {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+
+    .collectionSearchWrap,
+    .collectionSortWrap,
+    .collectionSortSelect {
+        width: 100% !important;
+    }
+
+    .collectionOwnedLabel {
+        justify-content: flex-start !important;
+        padding: 4px 0 !important;
+    }
+}

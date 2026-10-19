@@ -5879,3 +5879,127 @@ function initializeRngFrontend() {
 
 
 
+const myCollectionView = document.getElementById('myCollectionView');
+const openPackView = document.getElementById('openPackView');
+const tradesView = document.getElementById('tradesView');
+
+const collectionSearchInput = document.getElementById('collectionSearchInput');
+const collectionSortSelect = document.getElementById('collectionSortSelect');
+const collectionOwnedCheckbox = document.getElementById('collectionOwnedCheckbox');
+const collectionRosterCount = document.getElementById('collectionRosterCount');
+const collectionCardsGrid = document.getElementById('collectionCardsGrid');
+
+let collectionSearchQuery = '';
+let collectionSortOrder = 'rarity_desc';
+let collectionOwnedOnly = false;
+let collectionSearchDebounceTimer = null;
+let collectionSortCooldownUntil = 0;
+let collectionSortCooldownInterval = null;
+
+let totalCatalogCardCount = 1000;
+let totalOwnedCardCount = 0;
+let currentRosterFilteredCount = 1000;
+
+function updateCollectionRosterText() {
+    if (!collectionRosterCount) return;
+
+    const isSearching = Boolean(collectionSearchQuery.trim());
+    const isOwned = Boolean(collectionOwnedOnly);
+
+    const formattedMatch = Number(currentRosterFilteredCount || 0).toLocaleString();
+
+    if (!isSearching && !isOwned) {
+        collectionRosterCount.textContent = `${formattedMatch} cards in roster`;
+    } else if (!isSearching && isOwned) {
+        collectionRosterCount.textContent = `${formattedMatch} cards owned in roster`;
+    } else if (isSearching && !isOwned) {
+        collectionRosterCount.textContent = `${formattedMatch} cards in roster matching "${collectionSearchQuery}"`;
+    } else if (isSearching && isOwned) {
+        collectionRosterCount.textContent = `${formattedMatch} cards owned in roster matching "${collectionSearchQuery}"`;
+    }
+}
+
+function triggerCollectionFilterRequest() {
+    console.log(`📡 [COLLECTION FILTER] Query: "${collectionSearchQuery}", Sort: ${collectionSortOrder}, OwnedOnly: ${collectionOwnedOnly}`);
+
+    if (collectionOwnedOnly) {
+        currentRosterFilteredCount = totalOwnedCardCount;
+    } else {
+        currentRosterFilteredCount = totalCatalogCardCount;
+    }
+    updateCollectionRosterText();
+
+    // Sends packet to backend WebSocket
+    if (typeof activitySocket !== 'undefined' && activitySocket && activitySocket.readyState === WebSocket.OPEN) {
+        activitySocket.send(JSON.stringify({
+            type: "collection_filter_requested",
+            data: {
+                query: collectionSearchQuery,
+                sort: collectionSortOrder,
+                ownedOnly: collectionOwnedOnly
+            }
+        }));
+    }
+}
+
+function handleCollectionSortChange(e) {
+    const now = Date.now();
+
+    if (now < collectionSortCooldownUntil) {
+        collectionSortSelect.value = collectionSortOrder; // Revert visually if spammed
+        return;
+    }
+
+    collectionSortOrder = collectionSortSelect.value;
+    collectionSortCooldownUntil = now + 10000; // Set 10-second lock
+
+    collectionSortSelect.disabled = true;
+    const selectedOption = collectionSortSelect.options[collectionSortSelect.selectedIndex];
+    const baseText = selectedOption.text.replace(/\s*\(\d+s\)/, '');
+
+    clearInterval(collectionSortCooldownInterval);
+    collectionSortCooldownInterval = setInterval(() => {
+        const secondsLeft = Math.ceil((collectionSortCooldownUntil - Date.now()) / 1000);
+
+        if (secondsLeft <= 0) {
+            clearInterval(collectionSortCooldownInterval);
+            collectionSortSelect.disabled = false;
+            selectedOption.text = baseText;
+        } else {
+            selectedOption.text = `${baseText} (${secondsLeft}s)`;
+        }
+    }, 500);
+
+    triggerCollectionFilterRequest();
+}
+
+function setupCollectionControls() {
+    if (collectionSearchInput) {
+        collectionSearchInput.addEventListener('input', (e) => {
+            clearTimeout(collectionSearchDebounceTimer);
+            const val = e.target.value;
+
+            collectionSearchDebounceTimer = setTimeout(() => {
+                collectionSearchQuery = val.trim();
+                triggerCollectionFilterRequest();
+            }, 1500);
+        });
+    }
+
+    if (collectionSortSelect) {
+        collectionSortSelect.addEventListener('change', handleCollectionSortChange);
+    }
+
+    if (collectionOwnedCheckbox) {
+        collectionOwnedCheckbox.addEventListener('change', (e) => {
+            collectionOwnedOnly = e.target.checked;
+            triggerCollectionFilterRequest();
+        });
+    }
+
+    updateCollectionRosterText();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setupCollectionControls();
+});
