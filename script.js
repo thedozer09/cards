@@ -463,6 +463,10 @@ function initializeWebSocket() {
             if (data.type === "rng_test") {  
                 return;  
             }  
+            if (data.type === "collection_data_send") {
+                handleCollectionDataResponse(data.data);
+                return;
+            }
 
         } catch (err) {  
             errorMessage.textContent = "⚠️ Error: " + (err && err.message ? err.message : String(err));  
@@ -1302,6 +1306,8 @@ cardsButton.addEventListener('click', () => {
         'my-collection',
         'My Collection'
     );
+    switchCardsSubview('collection');
+    triggerCollectionFilterRequest();
 });
 
 statsButton.addEventListener('click', switchToStats);
@@ -1364,6 +1370,8 @@ myCollectionButton.addEventListener('click', () => {
         'my-collection',
         'My Collection'
     );
+    switchCardsSubview('collection');
+    triggerCollectionFilterRequest();
 });
 
 tradesButton.addEventListener('click', () => {
@@ -5922,22 +5930,23 @@ function updateCollectionRosterText() {
 function triggerCollectionFilterRequest() {
     console.log(`📡 [COLLECTION FILTER] Query: "${collectionSearchQuery}", Sort: ${collectionSortOrder}, OwnedOnly: ${collectionOwnedOnly}`);
 
-    if (collectionOwnedOnly) {
-        currentRosterFilteredCount = totalOwnedCardCount;
-    } else {
-        currentRosterFilteredCount = totalCatalogCardCount;
+    if (collectionRosterCount) {
+        collectionRosterCount.textContent = "Loading cards from Trello...";
     }
-    updateCollectionRosterText();
 
-    if (typeof activitySocket !== 'undefined' && activitySocket && activitySocket.readyState === WebSocket.OPEN) {
-        activitySocket.send(JSON.stringify({
-            type: "collection_filter_requested",
-            data: {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "collection_filter_requested",
+            info: {
                 query: collectionSearchQuery,
                 sort: collectionSortOrder,
                 ownedOnly: collectionOwnedOnly
             }
         }));
+    } else {
+        console.warn("⚠️ WebSocket not open, cannot request collection data.");
     }
 }
 
@@ -6031,3 +6040,154 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCollectionControls();
     switchCardsSubview('collection');
 });
+
+// ==========================================
+// TEMPORARY COLLECTION UI
+// ==========================================
+let allCollectionCards = [];
+let currentCollectionPage = 1;
+const CARDS_PER_PAGE = 5; // 5 cards per page
+
+function handleCollectionDataResponse(payload) {
+    if (!payload || typeof payload !== 'object') return;
+
+    allCollectionCards = payload.cards || [];
+    currentCollectionPage = 1; // Reset to page 1 on new search/filter
+
+    const counts = payload.counts || {};
+    currentRosterFilteredCount = counts.currentFiltered ?? allCollectionCards.length;
+    totalOwnedCardCount = counts.totalOwned ?? 0;
+    totalCatalogCardCount = counts.totalCatalog ?? allCollectionCards.length;
+
+    updateCollectionRosterText();
+    renderTemporaryCardGrid();
+}
+
+function renderTemporaryCardGrid() {
+    if (!collectionCardsGrid) return;
+
+    collectionCardsGrid.innerHTML = '';
+
+    if (allCollectionCards.length === 0) {
+        collectionCardsGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 24px; font-size: 14px;">
+                No cards found matching your criteria.
+            </div>
+        `;
+        return;
+    }
+
+    const totalPages = Math.ceil(allCollectionCards.length / CARDS_PER_PAGE) || 1;
+    const startIndex = (currentCollectionPage - 1) * CARDS_PER_PAGE;
+    const pageCards = allCollectionCards.slice(startIndex, startIndex + CARDS_PER_PAGE);
+
+    const gridContainer = document.createElement('div');
+    gridContainer.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        width: 100%;
+        margin-bottom: 16px;
+    `;
+
+    pageCards.forEach(card => {
+        const cardBox = document.createElement('div');
+        const rarityColor = RNG_RARITY_COLORS[card.rarity] || '#94a3b8';
+        const isOwned = Boolean(card.owned);
+
+        cardBox.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(13, 27, 46, 0.85);
+            border: 1.5px solid ${rarityColor};
+            border-radius: 10px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+            opacity: ${isOwned ? '1' : '0.5'};
+        `;
+
+        cardBox.innerHTML = `
+            <div>
+                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: ${rarityColor}; letter-spacing: 0.8px;">
+                    ${card.rarity}
+                </span>
+                <div style="font-size: 14px; font-weight: 700; margin-top: 4px; word-break: break-word;">
+                    ${card.name}
+                </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 11px; font-weight: 800; text-align: right; color: ${isOwned ? '#4ade80' : '#64748b'};">
+                ${isOwned ? '✓ OWNED' : '🔒 LOCKED'}
+            </div>
+        `;
+
+        gridContainer.appendChild(cardBox);
+    });
+
+    collectionCardsGrid.appendChild(gridContainer);
+
+    const paginationBar = document.createElement('div');
+    paginationBar.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        width: 100%;
+        padding: 8px 0;
+    `;
+
+    const prevBtn = document.createElement('button');
+    prevBtn.type = 'button';
+    prevBtn.textContent = '◀ Prev';
+    prevBtn.disabled = currentCollectionPage <= 1;
+    prevBtn.style.cssText = `
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: #1e293b;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.2);
+        cursor: ${currentCollectionPage <= 1 ? 'not-allowed' : 'pointer'};
+        opacity: ${currentCollectionPage <= 1 ? '0.4' : '1'};
+    `;
+    prevBtn.addEventListener('click', () => {
+        if (currentCollectionPage > 1) {
+            currentCollectionPage--;
+            renderTemporaryCardGrid();
+        }
+    });
+
+    const pageIndicator = document.createElement('span');
+    pageIndicator.style.cssText = `
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(220, 231, 240, 0.8);
+    `;
+    pageIndicator.textContent = `Page ${currentCollectionPage} of ${totalPages}`;
+
+    const nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.textContent = 'Next ▶';
+    nextBtn.disabled = currentCollectionPage >= totalPages;
+    nextBtn.style.cssText = `
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: #1e293b;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.2);
+        cursor: ${currentCollectionPage >= totalPages ? 'not-allowed' : 'pointer'};
+        opacity: ${currentCollectionPage >= totalPages ? '0.4' : '1'};
+    `;
+    nextBtn.addEventListener('click', () => {
+        if (currentCollectionPage < totalPages) {
+            currentCollectionPage++;
+            renderTemporaryCardGrid();
+        }
+    });
+
+    paginationBar.appendChild(prevBtn);
+    paginationBar.appendChild(pageIndicator);
+    paginationBar.appendChild(nextBtn);
+
+    collectionCardsGrid.appendChild(paginationBar);
+}
