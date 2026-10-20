@@ -5066,12 +5066,18 @@ body.rng-rarity-omnipotent,
 
 .collectionCardsGrid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
-    gap: 14px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important; 
+    gap: 12px !important;
     width: 100% !important;
     min-height: 140px !important;
     padding: 4px 0 !important;
     box-sizing: border-box !important;
+}
+
+@media (max-width: 580px) {
+    .collectionCardsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
 }
 
 @media (max-width: 600px) {
@@ -5090,5 +5096,121 @@ body.rng-rarity-omnipotent,
     .collectionOwnedLabel {
         justify-content: flex-start !important;
         padding: 4px 0 !important;
+    }
+}
+
+
+.collectionCardsGrid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-bottom: 20px !important;
+    box-sizing: border-box !important;
+}
+
+.collectionCardBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: rgba(13, 27, 46, 0.85);
+    border: 1.5px solid rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
+    color: #f1f5f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    min-height: 92px;
+    box-sizing: border-box;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.collectionCardBox:hover {
+    transform: translateY(-2px);
+}
+
+.collectionCardBox.owned {
+    opacity: 1;
+}
+
+.collectionCardBox.locked {
+    opacity: 0.42;
+}
+
+.collectionCardRarity {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: inline-block;
+}
+
+.collectionCardName {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 4px;
+    word-break: break-word;
+    line-height: 1.25;
+}
+
+.collectionCardStatus {
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.collectionCardStatus.owned {
+    color: #4ade80;
+}
+
+.collectionCardStatus.locked {
+    color: #64748b;
+}
+
+.collectionPaginationBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    padding: 10px 0 24px;
+}
+
+.collectionPageBtn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s ease, opacity 0.18s ease;
+}
+
+.collectionPageBtn:hover:not(:disabled) {
+    background: #334155;
+}
+
+.collectionPageBtn:disabled {
+    background: rgba(30, 41, 59, 0.45);
+    color: #64748b;
+    border-color: rgba(255, 255, 255, 0.05);
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.collectionPageIndicator {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(220, 231, 240, 0.85);
+    letter-spacing: 0.3px;
+}
+
+@media (max-width: 580px) {
+    .collectionCardsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
 }

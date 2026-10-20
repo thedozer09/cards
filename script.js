@@ -6041,18 +6041,70 @@ document.addEventListener('DOMContentLoaded', () => {
     switchCardsSubview('collection');
 });
 
-// ==========================================
-// TEMPORARY COLLECTION UI
-// ==========================================
 let allCollectionCards = [];
 let currentCollectionPage = 1;
-const CARDS_PER_PAGE = 5; // 5 cards per page
+const CARDS_PER_PAGE = 30; 
+
+let lastStatsRequestTime = 0;
+let lastFilterRequestTime = 0;
+const REQUEST_COOLDOWN_MS = 2500;
+
+function triggerCollectionFilterRequest() {
+    const now = Date.now();
+    if (now - lastFilterRequestTime < REQUEST_COOLDOWN_MS) {
+        console.log("⏳ [THROTTLE] Collection filter on cooldown, ignoring spam.");
+        return;
+    }
+
+    lastFilterRequestTime = now;
+    console.log(`📡 [COLLECTION FILTER] Query: "${collectionSearchQuery}", Sort: ${collectionSortOrder}, OwnedOnly: ${collectionOwnedOnly}`);
+
+    if (collectionRosterCount) {
+        collectionRosterCount.textContent = "Loading cards from database...";
+    }
+
+    if (typeof socket !== 'undefined' && socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "collection_filter_requested",
+            info: {
+                query: collectionSearchQuery,
+                sort: collectionSortOrder,
+                ownedOnly: collectionOwnedOnly
+            }
+        }));
+    } else {
+        console.warn("⚠️ WebSocket not open, cannot request collection data.");
+    }
+}
+
+function requestCardGameStats() {
+    const now = Date.now();
+    if (now - lastStatsRequestTime < REQUEST_COOLDOWN_MS) {
+        console.log("⏳ [THROTTLE] Stats request on cooldown, ignoring spam.");
+        return;
+    }
+
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    lastStatsRequestTime = now;
+    cardGameStatsRequested = true;
+
+    socket.send(JSON.stringify({
+        protocol: 'cardgame',
+        version: 1,
+        request: 'get_stats'
+    }));
+}
 
 function handleCollectionDataResponse(payload) {
     if (!payload || typeof payload !== 'object') return;
 
     allCollectionCards = payload.cards || [];
-    currentCollectionPage = 1; // Reset to page 1 on new search/filter
+    currentCollectionPage = 1; 
 
     const counts = payload.counts || {};
     currentRosterFilteredCount = counts.currentFiltered ?? allCollectionCards.length;
@@ -6060,12 +6112,11 @@ function handleCollectionDataResponse(payload) {
     totalCatalogCardCount = counts.totalCatalog ?? allCollectionCards.length;
 
     updateCollectionRosterText();
-    renderTemporaryCardGrid();
+    renderCollectionCardGrid();
 }
 
-function renderTemporaryCardGrid() {
+function renderCollectionCardGrid() {
     if (!collectionCardsGrid) return;
-
     collectionCardsGrid.innerHTML = '';
 
     if (allCollectionCards.length === 0) {
@@ -6077,111 +6128,73 @@ function renderTemporaryCardGrid() {
         return;
     }
 
-    const totalPages = Math.ceil(allCollectionCards.length / CARDS_PER_PAGE) || 1;
+    const totalPages = Math.max(1, Math.ceil(allCollectionCards.length / CARDS_PER_PAGE));
     const startIndex = (currentCollectionPage - 1) * CARDS_PER_PAGE;
     const pageCards = allCollectionCards.slice(startIndex, startIndex + CARDS_PER_PAGE);
 
-    const gridContainer = document.createElement('div');
-    gridContainer.style.cssText = `
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
-        width: 100%;
-        margin-bottom: 16px;
-    `;
+    const fragment = document.createDocumentFragment();
 
     pageCards.forEach(card => {
-        const cardBox = document.createElement('div');
-        const rarityColor = RNG_RARITY_COLORS[card.rarity] || '#94a3b8';
         const isOwned = Boolean(card.owned);
+        const rarityKey = (card.rarity || 'common').toLowerCase();
+        const rarityColor = RNG_RARITY_COLORS[rarityKey] || '#94a3b8';
 
-        cardBox.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 12px 14px;
-            background: rgba(13, 27, 46, 0.85);
-            border: 1.5px solid ${rarityColor};
-            border-radius: 10px;
-            color: #f1f5f9;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
-            opacity: ${isOwned ? '1' : '0.5'};
-        `;
+        const cardBox = document.createElement('div');
+        cardBox.className = `collectionCardBox ${isOwned ? 'owned' : 'locked'}`;
+        cardBox.style.borderColor = rarityColor; 
 
         cardBox.innerHTML = `
             <div>
-                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: ${rarityColor}; letter-spacing: 0.8px;">
-                    ${card.rarity}
+                <span class="collectionCardRarity" style="color: ${rarityColor};">
+                    ${rarityKey}
                 </span>
-                <div style="font-size: 14px; font-weight: 700; margin-top: 4px; word-break: break-word;">
+                <div class="collectionCardName">
                     ${card.name}
                 </div>
             </div>
-            <div style="margin-top: 10px; font-size: 11px; font-weight: 800; text-align: right; color: ${isOwned ? '#4ade80' : '#64748b'};">
+            <div class="collectionCardStatus ${isOwned ? 'owned' : 'locked'}">
                 ${isOwned ? '✓ OWNED' : '🔒 LOCKED'}
             </div>
         `;
 
-        gridContainer.appendChild(cardBox);
+        fragment.appendChild(cardBox);
     });
 
-    collectionCardsGrid.appendChild(gridContainer);
+    collectionCardsGrid.appendChild(fragment);
 
     const paginationBar = document.createElement('div');
-    paginationBar.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        width: 100%;
-        padding: 8px 0;
-    `;
+    paginationBar.className = 'collectionPaginationBar';
+
+    const isFirstPage = currentCollectionPage <= 1;
+    const isLastPage = currentCollectionPage >= totalPages;
 
     const prevBtn = document.createElement('button');
     prevBtn.type = 'button';
+    prevBtn.className = 'collectionPageBtn';
     prevBtn.textContent = '◀ Prev';
-    prevBtn.disabled = currentCollectionPage <= 1;
-    prevBtn.style.cssText = `
-        padding: 6px 14px;
-        border-radius: 8px;
-        background: #1e293b;
-        color: #fff;
-        border: 1px solid rgba(255,255,255,0.2);
-        cursor: ${currentCollectionPage <= 1 ? 'not-allowed' : 'pointer'};
-        opacity: ${currentCollectionPage <= 1 ? '0.4' : '1'};
-    `;
+    prevBtn.disabled = isFirstPage;
     prevBtn.addEventListener('click', () => {
         if (currentCollectionPage > 1) {
             currentCollectionPage--;
-            renderTemporaryCardGrid();
+            renderCollectionCardGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 
     const pageIndicator = document.createElement('span');
-    pageIndicator.style.cssText = `
-        font-size: 12px;
-        font-weight: 700;
-        color: rgba(220, 231, 240, 0.8);
-    `;
+    pageIndicator.className = 'collectionPageIndicator';
     pageIndicator.textContent = `Page ${currentCollectionPage} of ${totalPages}`;
 
     const nextBtn = document.createElement('button');
     nextBtn.type = 'button';
+    nextBtn.className = 'collectionPageBtn';
     nextBtn.textContent = 'Next ▶';
-    nextBtn.disabled = currentCollectionPage >= totalPages;
-    nextBtn.style.cssText = `
-        padding: 6px 14px;
-        border-radius: 8px;
-        background: #1e293b;
-        color: #fff;
-        border: 1px solid rgba(255,255,255,0.2);
-        cursor: ${currentCollectionPage >= totalPages ? 'not-allowed' : 'pointer'};
-        opacity: ${currentCollectionPage >= totalPages ? '0.4' : '1'};
-    `;
+    nextBtn.disabled = isLastPage;
     nextBtn.addEventListener('click', () => {
         if (currentCollectionPage < totalPages) {
             currentCollectionPage++;
-            renderTemporaryCardGrid();
+            renderCollectionCardGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 
@@ -6189,5 +6202,5 @@ function renderTemporaryCardGrid() {
     paginationBar.appendChild(pageIndicator);
     paginationBar.appendChild(nextBtn);
 
-    collectionCardsGrid.appendChild(paginationBar);
+    collectionCardsGrid.after(paginationBar);
 }
