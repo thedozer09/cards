@@ -5095,13 +5095,14 @@ body.rng-rarity-omnipotent,
 }
 
 
+
 .collectionCardsGrid {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 20px 12px !important;
+    gap: 10px !important;                 
     width: 100% !important;
-    margin-bottom: 24px !important;
-    padding: 8px 4px !important;
+    margin-bottom: 20px !important;
+    padding: 4px !important;              
     box-sizing: border-box !important;
     justify-items: center !important;
 }
@@ -5109,10 +5110,10 @@ body.rng-rarity-omnipotent,
 
 .collectionCardBox {
     width: 100%;
-    max-width: 135px;
-    aspect-ratio: 1 / 1.75;
-    margin: 4px auto;
-    border-radius: 8px;
+    max-width: 205px;                     
+    aspect-ratio: 1 / 1.45;              
+    margin: 2px auto;                     
+    border-radius: 10px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -5164,24 +5165,24 @@ body.rng-rarity-omnipotent,
 
 
 .cardUndiscoveredQuestion {
-    font-size: 52px;
+    font-size: 64px;                     
     font-weight: 900;
     color: #ffffff;
     line-height: 1;
-    margin-bottom: 6px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+    margin-bottom: 8px;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
 }
 
 .cardUndiscoveredRarity {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 900;
-    letter-spacing: 1.2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: #ffffff;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
     text-align: center;
     opacity: 0.95;
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 .collectionCardBox.owned .collectionCardName {

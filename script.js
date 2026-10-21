@@ -1186,6 +1186,10 @@ function updateSecondaryNavigation(screen) {
 }
 
 function switchTab(button, screen) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     setActiveTopButton(button);
     hideAllMainScreens();
     screen.classList.remove('hidden');
@@ -1224,6 +1228,10 @@ setTimeout(() => {
 }
 
 function switchToStats() {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     setActiveTopButton(statsButton);
     hideAllMainScreens();
     statsScreen.classList.remove('hidden');
@@ -1250,6 +1258,10 @@ function setSubnavSelection(button, parent, content, viewName, headingText) {
     if (!button || !parent || !content) {
         return;
     }
+
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 
     parent.querySelectorAll('button').forEach(item => {
         item.classList.remove('active');
@@ -1764,10 +1776,16 @@ function updateScrollRail() {
     document.documentElement.style.minHeight = '';  
     document.body.style.minHeight = ''; 
 
+    if (scrollRail) {
+        scrollRail.style.height = '0px';
+    }
+
+    void document.body.offsetHeight;
+
     const pageHeight = Math.max(  
         document.documentElement.scrollHeight,  
         document.body.scrollHeight,  
-        mainScreen.scrollHeight,  
+        mainScreen ? mainScreen.scrollHeight : 0,  
         window.innerHeight  
     );  
 
@@ -1776,7 +1794,7 @@ function updateScrollRail() {
 
     if (!scrollRail) {  
         return;  
-    }  
+    }
 
     const spacing = 250;  
     const edgeInset = 36;  
@@ -5939,6 +5957,10 @@ function handleCollectionSortChange(e) {
     triggerCollectionSearchOrFilter();
 }
 function switchCardsSubview(targetView) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     if (myCollectionView) myCollectionView.classList.add('hidden');
     if (openPackView) openPackView.classList.add('hidden');
     if (tradesView) tradesView.classList.add('hidden');
@@ -5950,8 +5972,9 @@ function switchCardsSubview(targetView) {
     } else if (targetView === 'trades' && tradesView) {
         tradesView.classList.remove('hidden');
     }
-}
 
+    updateScrollRail();
+}
 function setupCollectionControls() {
     if (collectionSearchInput) {
         collectionSearchInput.addEventListener('input', (e) => {
