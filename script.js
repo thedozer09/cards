@@ -1314,10 +1314,12 @@ if (tosAgreeButton) {
 
 
 function hideAllMainScreens() {
-    generateScreen.classList.add('hidden');
-    leaderboardsScreen.classList.add('hidden');
-    cardsScreen.classList.add('hidden');
-    statsScreen.classList.add('hidden');
+    [generateScreen, leaderboardsScreen, cardsScreen, statsScreen].forEach(screen => {
+        if (screen) {
+            screen.classList.add('hidden');
+            screen.style.display = 'none'; 
+        }
+    });
 }
 
 function setActiveTopButton(button) {
@@ -1337,10 +1339,12 @@ function updateSecondaryNavigation(screen) {
 
     if (leaderboardsSubnav) {
         leaderboardsSubnav.classList.toggle('hidden', !isLeaderboards);
+        leaderboardsSubnav.style.display = isLeaderboards ? '' : 'none';
     }
 
     if (cardsSubnav) {
         cardsSubnav.classList.toggle('hidden', !isCards);
+        cardsSubnav.style.display = isCards ? '' : 'none';
     }
 
     if (cardsNavigationRow) {
@@ -1350,6 +1354,7 @@ function updateSecondaryNavigation(screen) {
 
     if (collectionStats) {
         collectionStats.classList.toggle('hidden', !isCards);
+        collectionStats.style.display = isCards ? 'flex' : 'none';
     }
 }
 
@@ -1361,18 +1366,20 @@ function switchTab(button, screen) {
     setActiveTopButton(button);
     hideAllMainScreens();
     screen.classList.remove('hidden');
+    screen.style.display = ''; // Restore active screen display
     updateSecondaryNavigation(screen);
+
     if (musicToggleButton) {
-    musicToggleButton.classList.remove('hidden');
-}
+        musicToggleButton.classList.remove('hidden');
+    }
 
-if (statsButton) {
-    statsButton.classList.remove('hidden');
-}
+    if (statsButton) {
+        statsButton.classList.remove('hidden');
+    }
 
-setTimeout(() => {
-    enforceRngThemeForActiveScreen();
-}, 150);
+    setTimeout(() => {
+        enforceRngThemeForActiveScreen();
+    }, 150);
 
     if (screen === generateScreen) {
         handleRngGenerateTabActivation();
@@ -1403,6 +1410,7 @@ function switchToStats() {
     setActiveTopButton(statsButton);
     hideAllMainScreens();
     statsScreen.classList.remove('hidden');
+    statsScreen.style.display = ''; // Restore stats display
     updateSecondaryNavigation(statsScreen);
     if (musicToggleButton) {
     musicToggleButton.classList.remove('hidden');
@@ -1948,46 +1956,46 @@ function updateScrollRail() {
         scrollRail.style.height = '0px';
     }
 
-    void document.body.offsetHeight;
+    const activeScreen = [generateScreen, leaderboardsScreen, cardsScreen, statsScreen].find(
+        s => s && !s.classList.contains('hidden') && s.style.display !== 'none'
+    ) || mainScreen;
 
-    const pageHeight = Math.max(  
-        document.documentElement.scrollHeight,  
-        document.body.scrollHeight,  
-        mainScreen ? mainScreen.scrollHeight : 0,  
-        window.innerHeight  
-    );  
-
-   document.documentElement.style.minHeight = '';  
-    document.body.style.minHeight = '';
+    const nav = document.querySelector('.navigation');
+    const navHeight = nav ? nav.offsetHeight : 0;
+    const activeContentHeight = (activeScreen ? activeScreen.scrollHeight : 0) + navHeight;
+    const windowHeight = window.innerHeight;
 
     if (!scrollRail) {  
         return;  
     }
 
+    const scrollableDistance = Math.max(0, activeContentHeight - windowHeight);
+
+    if (scrollableDistance <= 0) {
+        scrollRail.classList.add('hidden');
+        scrollRail.style.height = '0px';
+        scrollRail.innerHTML = '';
+        return;
+    }
+
     const spacing = 250;  
     const edgeInset = 36;  
     const positions = [];  
+    const usableHeight = Math.max(0, activeContentHeight - (edgeInset * 2));  
 
-    const usableHeight = Math.max(  
-        0,  
-        pageHeight - (edgeInset * 2)  
-    );  
-
-    const indicatorCount = Math.max(  
-        1,  
-        Math.floor(usableHeight / spacing) + 1  
-    );  
+    const indicatorCount = Math.max(1, Math.floor(usableHeight / spacing) + 1);  
 
     if (indicatorCount === 1) {  
-        positions.push(pageHeight / 2);  
+        positions.push(activeContentHeight / 2);  
     } else {  
         for (let i = 0; i < indicatorCount; i++) {  
             positions.push(edgeInset + (i * spacing));  
         }  
     }  
 
-    scrollRail.style.height = `${pageHeight}px`;  
-    scrollRail.innerHTML = '';  
+    scrollRail.classList.remove('hidden');
+    scrollRail.style.height = `${activeContentHeight}px`;  
+    scrollRail.innerHTML = ''; 
 
     for (let i = 0; i < positions.length; i++) {  
         const indicator = document.createElement('div');  
@@ -5209,7 +5217,7 @@ function createRngRecordCard(payload, recordText) {
     recordValue.className = 'rngRecordValue';  
     recordValue.textContent = recordText;  
 
-    const basePts = Number(payload.points) || 0;
+   const basePts = Number(payload.points) || 0;
     const modPts = Number(payload.modifierPoints) || (
         Array.isArray(payload.modifiers)
             ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
@@ -5217,18 +5225,22 @@ function createRngRecordCard(payload, recordText) {
     );
     const totalEarnedPoints = basePts + modPts;
 
-    let computedRarity = payload.rarity || 'uncommon';
-    if (Array.isArray(payload.overallRarityRequirements)) {
-        for (const tier of payload.overallRarityRequirements) {
-            if (totalEarnedPoints >= (tier.minPoints ?? 0)) {
-                computedRarity = tier.rarity;
+    let computedRarity = payload.finalRarity || payload.final_rarity || finalRarity;
+
+    if (!computedRarity || computedRarity === 'unknown') {
+        computedRarity = 'common';
+        if (Array.isArray(payload.overallRarityRequirements)) {
+            for (const tier of payload.overallRarityRequirements) {
+                if (totalEarnedPoints >= (tier.minPoints ?? 0)) {
+                    computedRarity = tier.rarity;
+                }
             }
         }
     }
 
     const normalizedComputed = normalizeRngRarity(computedRarity);
 
-   const fullRarityContainer = document.createElement('div');
+    const fullRarityContainer = document.createElement('div');
     fullRarityContainer.className = 'rngFullRarityPlaceholder';
 
     const fullRarityHeader = document.createElement('div');
