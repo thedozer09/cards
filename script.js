@@ -751,49 +751,107 @@ function createCardGameTermsPanel() {
         panel = document.createElement('section');
         panel.id = 'cardGameTosDetails';
         panel.className = 'cardGameTosDetails hidden';
-        panel.setAttribute('aria-label', 'Card Game Terms of Service');
+        panel.setAttribute('aria-label', 'Storm Cards Terms of Service');
         currentTosGate.appendChild(panel);
     }
 
     let heading = panel.querySelector('.cardGameTosDetailsHeading');
-
     if (!heading) {
         heading = document.createElement('h3');
         heading.className = 'cardGameTosDetailsHeading';
         panel.prepend(heading);
     }
-
-    heading.textContent = 'Card Game Terms of Service';
+    heading.textContent = 'DOWDataLab Terms of Service & License Agreement';
 
     let content = panel.querySelector('.cardGameTosDetailsContent');
-
     if (!content) {
         content = document.createElement('div');
         content.className = 'cardGameTosDetailsContent';
         panel.appendChild(content);
     }
 
-    content.textContent = 'Short version: only the Card Game section of the Terms of Service applies to this Activity. Other sections do not apply to the card game.';
+    content.innerHTML = `
+        <div class="tosLegalWrapper">
+            <p class="tosLegalMeta">
+                <strong>Storm Cards</strong> is copyright &copy; Hunter Games Studios. All rights reserved.<br>
+                <strong>DOWDataLab</strong> is an unregistered trademark of Hunter Games Studios.
+            </p>
+
+            <div class="tosSectionBlock">
+                <h4>1. "As-Is" Service & Warranty Disclaimer</h4>
+                <p>
+                    Storm Cards, DOWDataLab, and all related interactive software systems are provided strictly on an <strong>"AS-IS"</strong> and <strong>"AS-AVAILABLE"</strong> basis without warranties of any kind, whether express, statutory, or implied. Neither Hunter Games Studios nor DOWDataLab makes any guarantee regarding uninterrupted uptime, continuous server availability, or permanent preservation of digital data. Hunter Games Studios and DOWDataLab disclaim all liability for service outages, network interruptions, inventory resets, or database rollbacks resulting from technical maintenance, infrastructure failures, or balance re-calibrations.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h4>2. Mandatory Geographic Exclusions</h4>
+                <p>
+                    Due to regional regulatory restrictions regarding randomized collectible mechanics, access to Storm Cards is strictly prohibited in certain territories. By accessing or continuing to use this service, you legally certify and warrant under penalty of account termination that <strong>YOU ARE NOT ACCESSING, RESIDING IN, LOCATED IN, OR ROUTING TRAFFIC FROM:</strong>
+                </p>
+                <ul class="tosLegalList">
+                    <li>The Netherlands</li>
+                    <li>Belgium</li>
+                    <li>South Korea</li>
+                    <li>The People's Republic of China</li>
+                    <li>Vietnam</li>
+                </ul>
+                <p>
+                    Any attempt to bypass or obscure geographic origin through VPNs, proxies, or DNS masquerading constitutes a material violation of this agreement and will result in an immediate, permanent ban.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h4>3. Virtual Assets & Prohibition of Real-Money Trading (RMT)</h4>
+                <p>
+                    All cards, packs, records, and points within Storm Cards are purely virtual entertainment licenses with <strong>NO CASH VALUE</strong> and no real-world monetary equivalent. You expressly agree that you shall NOT buy, sell, barter, lease, transfer, or facilitate the exchange of any in-game card, item, or status for:
+                </p>
+                <ul class="tosLegalList">
+                    <li>Real-world fiat currency (USD, EUR, etc.) or peer-to-peer transfers;</li>
+                    <li>Cryptocurrency or digital tokens;</li>
+                    <li>External tangible goods, physical merchandise, or deliveries;</li>
+                    <li>Real-world favors, services, Discord Nitro, subscriptions, or off-platform benefits;</li>
+                    <li>Any other tangible or intangible consideration outside native game mechanics.</li>
+                </ul>
+                <p>
+                    Cards may <strong>ONLY</strong> be traded card-for-card through the official, sanctioned in-game trading interface. Any off-platform trading, real-money transactions (RMT), or cross-account resource funneling will result in an <strong>immediate permanent ban and an irreversible total wipe of all account data and card inventories</strong>.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h4>4. Anti-Automation & Security</h4>
+                <p>
+                    The use of third-party macros, auto-clickers, generation bots, packet manipulation tools, or automated scripts is strictly prohibited. Accounts caught employing automation or exploiting glitches are subject to immediate termination.
+                </p>
+            </div>
+
+            <div class="tosSensitivityNotice">
+                <div class="tosSensitivityHeader">
+                    <span class="tosSensitivityIcon">⚠️</span>
+                    <strong>A Note on Sensitivity & Disaster Respect</strong>
+                </div>
+                <p>
+                    Storm Cards was developed solely out of a profound passion for atmospheric science and meteorological phenomena. It is <strong>NOT designed, intended, or positioned to be insensitive or disrespectful to any individuals, families, or communities affected by tornadoes or severe weather disasters.</strong>
+                </p>
+                <p class="tosSensitivityExclusion">
+                    <strong>EXCLUSION OF DAMAGE, INJURY, AND DEATH:</strong> All card statistics, point valuations, records, and rarity tiers are calculated <strong>EXCLUSIVELY from objective meteorological and physical characteristics</strong> (e.g., peak rotational wind velocity, path length, vortex width dimensions, and radar gate-to-gate shear). Under no circumstances are cards, scores, or rarities based on, scaled by, or rewarded for property destruction, human injury, or loss of life.
+                </p>
+                <p>
+                    DOWDataLab maintains a strict, uncompromised zero-tolerance policy against any player using chat, trades, or community features to mock victims, celebrate disaster destruction, or express insensitivity toward impacted communities. Any such conduct will result in an <strong>immediate permanent ban and a complete data wipe</strong>.
+                </p>
+            </div>
+        </div>
+    `;
 
     const existingFullTermsLink = panel.querySelector('.cardGameFullTermsLink');
-
     if (existingFullTermsLink) {
         existingFullTermsLink.remove();
     }
 
-    let fullTermsNotice = panel.querySelector('.cardGameFullTermsNotice');
-
-    if (!fullTermsNotice) {
-        fullTermsNotice = document.createElement('p');
-        fullTermsNotice.className = 'cardGameFullTermsNotice';
-        fullTermsNotice.style.display = 'block';
-        fullTermsNotice.style.marginTop = '12px';
-        fullTermsNotice.style.fontSize = '13px';
-        fullTermsNotice.style.lineHeight = '1.5';
-        panel.appendChild(fullTermsNotice);
+    const existingNotice = panel.querySelector('.cardGameFullTermsNotice');
+    if (existingNotice) {
+        existingNotice.remove();
     }
-
-    fullTermsNotice.textContent = "The full Terms of Service can be found in the bot's profile.";
 
     return panel;
 }
