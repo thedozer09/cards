@@ -152,6 +152,7 @@ function showTosGate() {
 
     if (tosGate) {
         tosGate.classList.remove('hidden');
+        initializeCardGameTermsToggle();
     }
     if (musicToggleButton) {
     musicToggleButton.classList.add('hidden');
@@ -745,17 +746,20 @@ function createCardGameTermsPanel() {
         return null;
     }
 
+    const dialog = currentTosGate.querySelector('.tosDialog') || currentTosGate;
+    const agreeBtn = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
+
+
     let sensitivityBlock = currentTosGate.querySelector('#stormCardsSensitivityNotice');
     if (!sensitivityBlock) {
         sensitivityBlock = document.createElement('div');
         sensitivityBlock.id = 'stormCardsSensitivityNotice';
         sensitivityBlock.className = 'stormCardsSensitivityNotice';
         
-        const agreeBtn = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
         if (agreeBtn && agreeBtn.parentNode) {
             agreeBtn.parentNode.insertBefore(sensitivityBlock, agreeBtn);
         } else {
-            currentTosGate.appendChild(sensitivityBlock);
+            dialog.appendChild(sensitivityBlock);
         }
     }
 
@@ -785,7 +789,12 @@ function createCardGameTermsPanel() {
         panel.id = 'cardGameTosDetails';
         panel.className = 'cardGameTosDetails hidden';
         panel.setAttribute('aria-label', 'Storm Cards Terms of Service and Privacy Policy');
-        currentTosGate.appendChild(panel);
+        
+        if (agreeBtn && agreeBtn.parentNode) {
+            agreeBtn.parentNode.insertBefore(panel, agreeBtn);
+        } else {
+            dialog.appendChild(panel);
+        }
     }
 
     let heading = panel.querySelector('.cardGameTosDetailsHeading');
@@ -959,16 +968,6 @@ function createCardGameTermsPanel() {
         </div>
     `;
 
-    const existingFullTermsLink = panel.querySelector('.cardGameFullTermsLink');
-    if (existingFullTermsLink) {
-        existingFullTermsLink.remove();
-    }
-
-    const existingNotice = panel.querySelector('.cardGameFullTermsNotice');
-    if (existingNotice) {
-        existingNotice.remove();
-    }
-
     return panel;
 }
 
@@ -979,118 +978,62 @@ function initializeCardGameTermsToggle() {
         return;
     }
 
-    currentTosGate.querySelectorAll('h1, h2, h3, p, span').forEach(el => {
+    const dialog = currentTosGate.querySelector('.tosDialog') || currentTosGate;
+    const agreeBtn = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
+
+    currentTosGate.querySelectorAll('h1, h2, h3, h4, p, span').forEach(el => {
         if (/card game/i.test(el.textContent || '') && !el.classList.contains('cardGameTosDetailsHeading')) {
             el.textContent = el.textContent.replace(/card game/gi, 'Storm Cards');
         }
     });
 
-    let links = Array.from(currentTosGate.querySelectorAll('a')).filter(link => {
-        return (
-            !link.classList.contains('cardGameFullTermsLink') &&
-            (
-                link.id === 'tosLink' ||
-                link.hasAttribute('data-card-game-tos') ||
-                /terms of service|card game terms|storm cards/i.test(link.textContent || '')
-            )
-        );
-    });
-
-    if (links.length === 0) {
-        const fallbackLink = document.createElement('a');
-        fallbackLink.href = '#';
-        fallbackLink.id = 'tosLink';
-        fallbackLink.setAttribute('data-card-game-tos', 'true');
-        fallbackLink.textContent = 'View Storm Cards Terms of Service & Privacy Policy';
-        fallbackLink.className = 'tosTermsToggle';
-
-        const dialog = currentTosGate.querySelector('.tosDialog') || currentTosGate;
-        const button = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
-
-        if (button && button.parentNode) {
-            button.parentNode.insertBefore(fallbackLink, button);
-        } else {
-            dialog.appendChild(fallbackLink);
-        }
-
-        links = [fallbackLink];
-    } else {
-        links.forEach(l => {
-            l.textContent = 'View Storm Cards Terms of Service & Privacy Policy';
-        });
-    }
-
-function initializeCardGameTermsToggle() {
-    const currentTosGate = document.getElementById('tosGate');
-
-    if (!currentTosGate) {
-        return;
-    }
-
-    let links = Array.from(currentTosGate.querySelectorAll('a')).filter(link => {
-        return (
-            !link.classList.contains('cardGameFullTermsLink') &&
-            (
-                link.id === 'tosLink' ||
-                link.hasAttribute('data-card-game-tos') ||
-                /terms of service|card game terms/i.test(link.textContent || '')
-            )
-        );
-    });
-
-    if (links.length === 0) {
-        const firstLink = currentTosGate.querySelector('a');
-
-        if (firstLink) {
-            links = [firstLink];
-        }
-    }
-
-    if (links.length === 0) {
-        createCardGameTermsPanel();
-        return;
-    }
-
     const panel = createCardGameTermsPanel();
-
     if (!panel) {
         return;
     }
 
-    links.forEach(link => {
-        link.classList.add('tosTermsToggle');
-        link.removeAttribute('href');
-        link.removeAttribute('target');
-        link.setAttribute('role', 'button');
-        link.setAttribute('tabindex', '0');
-        link.setAttribute('aria-controls', panel.id);
-        link.setAttribute('aria-expanded', 'false');
+    let toggleLink = currentTosGate.querySelector('#tosLink') || 
+                     currentTosGate.querySelector('.tosTermsToggle') || 
+                     currentTosGate.querySelector('a[data-card-game-tos]');
 
-        const togglePanel = () => {
-            const isOpening = panel.classList.contains('hidden');
-            panel.classList.toggle('hidden', !isOpening);
-            link.setAttribute('aria-expanded', String(isOpening));
+    if (!toggleLink) {
+        toggleLink = document.createElement('a');
+        toggleLink.href = '#';
+        toggleLink.id = 'tosLink';
+        toggleLink.className = 'tosTermsToggle';
 
-            if (isOpening) {
-                panel.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-        };
+        if (agreeBtn && agreeBtn.parentNode) {
+            agreeBtn.parentNode.insertBefore(toggleLink, agreeBtn);
+        } else {
+            dialog.appendChild(toggleLink);
+        }
+    }
 
-        link.addEventListener('click', event => {
-            event.preventDefault();
-            togglePanel();
-        });
+    toggleLink.textContent = 'View Storm Cards Terms of Service & Privacy Policy ▼';
+    toggleLink.setAttribute('role', 'button');
+    toggleLink.setAttribute('tabindex', '0');
+    toggleLink.setAttribute('aria-expanded', 'false');
 
-        link.addEventListener('keydown', event => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                togglePanel();
-            }
-        });
-    });
+    const handleToggle = (e) => {
+        if (e) e.preventDefault();
+        const isOpening = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', !isOpening);
+        toggleLink.setAttribute('aria-expanded', String(isOpening));
+        toggleLink.textContent = isOpening 
+            ? 'Hide Storm Cards Terms of Service & Privacy Policy ▲' 
+            : 'View Storm Cards Terms of Service & Privacy Policy ▼';
+
+        if (isOpening) {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    };
+
+    toggleLink.onclick = handleToggle;
+    toggleLink.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            handleToggle(e);
+        }
+    };
 }
 
 function initializeSimpleButtonEffects() {
@@ -6648,4 +6591,4 @@ function renderCollectionCardGrid() {
     paginationBar.appendChild(nextBtn);
 
     collectionCardsGrid.after(paginationBar);
-}}
+}
