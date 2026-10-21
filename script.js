@@ -279,6 +279,166 @@ function handleActivityLaunchRequiredMessage(message) {
     return true;
 }
 
+function stopAllGameAudio() {
+    if (activityMusic) {
+        activityMusic.pause();
+        activityMusic.currentTime = 0;
+        activityMusic.muted = true;
+    }
+
+    if (discoverSound) {
+        discoverSound.pause();
+        discoverSound.currentTime = 0;
+        discoverSound.muted = true;
+    }
+
+    document.querySelectorAll('audio, video').forEach(media => {
+        try {
+            media.pause();
+            media.currentTime = 0;
+        } catch (e) {}
+    });
+
+    activityMusicAllowed = false;
+    activityMusicStarted = false;
+
+    if (musicToggleButton) {
+        musicToggleButton.classList.add('hidden');
+    }
+}
+
+function handleBannedStatusMessage(message) {
+    if (!message || typeof message !== 'object') {
+        return false;
+    }
+
+    const isBanned = message.type === 'banned' || message.command === 'banned' || message.status === 'banned';
+    if (!isBanned) {
+        return false;
+    }
+
+    stopAllGameAudio();
+
+    if (appLaunchTimer) {
+        clearTimeout(appLaunchTimer);
+        appLaunchTimer = null;
+    }
+
+    activityLaunchBlocked = true;
+    appLaunchStarted = false;
+    tosAcceptanceKnown = false;
+
+    if (mainScreen) mainScreen.classList.add('hidden');
+    if (tosGate) tosGate.classList.add('hidden');
+    if (loadingScreen) loadingScreen.classList.add('hidden');
+
+    const banReason = (
+        (message.data && (message.data.reason || message.data.message)) ||
+        message.reason ||
+        message.message ||
+        'Violation of DOWDataLab Terms of Service.'
+    );
+
+    const existing = document.getElementById('systemNoticeOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'systemNoticeOverlay';
+    overlay.className = 'systemNoticeOverlay';
+    overlay.innerHTML = `
+        <div class="systemNoticeBox">
+            <div class="systemNoticeHeader">DOWDataLab Security Notice</div>
+            <div class="systemNoticeTitle">Access Terminated</div>
+            <p class="systemNoticeBody">
+                You are banned from accessing <strong>Storm Cards</strong> because you violated the DOWDataLab Terms of Service or engaged in behavior resulting in a permanent suspension.
+            </p>
+            <div class="systemNoticeDetailPanel">
+                <span class="systemNoticeLabel">Reason</span>
+                ${banReason}
+            </div>
+            <p class="systemNoticeFooter">
+                Client access has been revoked. If you believe this action was taken in error, contact DOWDataLab administration.
+            </p>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    try {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
+    } catch (e) {}
+
+    return true;
+}
+
+function handleInServiceStatusMessage(message) {
+    if (!message || typeof message !== 'object') {
+        return false;
+    }
+
+    const isInService = (
+        message.type === 'in_service' || 
+        message.command === 'in_service' || 
+        message.type === 'maintenance' || 
+        message.command === 'maintenance'
+    );
+
+    if (!isInService) {
+        return false;
+    }
+
+    stopAllGameAudio();
+
+    if (appLaunchTimer) {
+        clearTimeout(appLaunchTimer);
+        appLaunchTimer = null;
+    }
+
+    activityLaunchBlocked = true;
+    appLaunchStarted = false;
+
+    if (mainScreen) mainScreen.classList.add('hidden');
+    if (tosGate) tosGate.classList.add('hidden');
+    if (loadingScreen) loadingScreen.classList.add('hidden');
+
+    const serviceDetails = (
+        (message.data && (message.data.message || message.data.details || message.data.reason)) ||
+        message.message ||
+        message.details ||
+        message.reason ||
+        'The game is currently offline for technical service and scheduled maintenance.'
+    );
+
+    const existing = document.getElementById('systemNoticeOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'systemNoticeOverlay';
+    overlay.className = 'systemNoticeOverlay';
+    overlay.innerHTML = `
+        <div class="systemNoticeBox">
+            <div class="systemNoticeHeader">DOWDataLab System Status</div>
+            <div class="systemNoticeTitle">Technical Service & Maintenance</div>
+            <p class="systemNoticeBody">
+                <strong>Storm Cards</strong> is currently down for technical service and maintenance. Access is temporarily unavailable while maintenance is being performed.
+            </p>
+            <div class="systemNoticeDetailPanel">
+                <span class="systemNoticeLabel">Details</span>
+                ${serviceDetails}
+            </div>
+            <button class="systemNoticeRefreshBtn" onclick="location.reload()">Check Status / Reconnect</button>
+            <p class="systemNoticeFooter">
+                Service will resume once maintenance is complete.
+            </p>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    return true;
+}
+
 function sendTosRequestAndContinue() {
     if (activityLaunchBlocked) {
         return;
@@ -348,6 +508,14 @@ function initializeWebSocket() {
             }
 
             if (handleTosStatusMessage(data)) {
+                return;
+            }
+
+            if (handleBannedStatusMessage(data)) {
+                return;
+            }
+
+            if (handleInServiceStatusMessage(data)) {
                 return;
             }
 

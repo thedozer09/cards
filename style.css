@@ -5095,15 +5095,16 @@ body.rng-rarity-omnipotent,
 }
 
 
+
 .collectionCardsGrid {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 205px)) !important; 
-    justify-content: center !important;                           
-    column-gap: 6px !important;                                   
-    row-gap: 12px !important;                                     
+    justify-content: center !important;                         
+    column-gap: 12px !important;                                  
+    row-gap: 14px !important;                                    
     width: 100% !important;
     margin: 0 auto 20px auto !important;
-    padding: 4px !important;
+    padding: 6px 4px !important;
     box-sizing: border-box !important;
 }
 
@@ -5310,3 +5311,100 @@ body.rng-rarity-omnipotent,
     }
 }
 
+
+.systemNoticeOverlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: #0d0f12;
+    color: #e2e4e9;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    user-select: none;
+}
+
+.systemNoticeBox {
+    width: 100%;
+    max-width: 480px;
+    background: #14161b;
+    border: 1px solid #262930;
+    border-radius: 6px;
+    padding: 28px 26px;
+    box-sizing: border-box;
+}
+
+.systemNoticeHeader {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b929e;
+    margin-bottom: 12px;
+}
+
+.systemNoticeTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f0f2f5;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+}
+
+.systemNoticeBody {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #a2a8b4;
+    margin: 0 0 16px 0;
+}
+
+.systemNoticeDetailPanel {
+    background: #090a0d;
+    border: 1px solid #1f2127;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #cfd4dc;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.systemNoticeLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #6d7380;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.systemNoticeFooter {
+    font-size: 11px;
+    line-height: 1.5;
+    color: #5c6270;
+    margin: 0;
+}
+
+.systemNoticeRefreshBtn {
+    background: #20232a;
+    border: 1px solid #323640;
+    color: #dce0e6;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 14px;
+}
+
+.systemNoticeRefreshBtn:hover {
+    background: #282c35;
+    color: #ffffff;
+}
