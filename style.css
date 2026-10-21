@@ -3929,22 +3929,75 @@ button {
     outline-offset: 3px;
 }
 
+
+.stormCardsSensitivityNotice {
+    width: 100%;
+    max-width: 740px;
+    margin: 16px auto;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(59, 130, 246, 0.5);
+    background: rgba(15, 23, 42, 0.85);
+    color: #e2e8f0;
+    text-align: left;
+    box-sizing: border-box;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.stormCardsSensitivityNotice .sensitivityHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #93c5fd;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.stormCardsSensitivityNotice .sensitivityIcon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.stormCardsSensitivityNotice p {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #cbd5e1;
+}
+
+.stormCardsSensitivityNotice .sensitivityExclusion {
+    background: rgba(30, 58, 138, 0.35);
+    border-left: 3px solid #60a5fa;
+    padding: 8px 12px;
+    color: #ffffff !important;
+    border-radius: 0 6px 6px 0;
+}
+
+.stormCardsSensitivityNotice .sensitivityZeroTol {
+    margin-bottom: 0;
+    color: #94a3b8;
+    font-size: 11.5px;
+}
+
+
 #tosGate .cardGameTosDetails {
     width: 100%;
-    max-width: 780px;
-    max-height: 60vh;
+    max-width: 760px;
+    max-height: 55vh;
     overflow-y: auto;
     margin: 16px auto 0;
-    padding: 22px 24px;
-    border: 1px solid rgba(138, 166, 191, 0.28);
-    border-radius: 14px;
-    background: rgba(10, 18, 28, 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: 20px 22px;
+    border: 1px solid rgba(138, 166, 191, 0.25);
+    border-radius: 12px;
+    background: rgba(8, 14, 22, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: #ffffff;
     text-align: left;
     overflow-wrap: anywhere;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     box-sizing: border-box;
 }
 
@@ -3956,8 +4009,95 @@ button {
     width: 6px;
 }
 #tosGate .cardGameTosDetails::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.25);
     border-radius: 4px;
+}
+#tosGate .cardGameTosDetails::-webkit-scrollbar-thumb {
+    background: rgba(138, 166, 191, 0.35);
+    border-radius: 4px;
+}
+
+#tosGate .cardGameTosDetailsHeading {
+    margin: 0 0 12px;
+    color: #f8fafc;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    padding-bottom: 10px;
+}
+
+#tosGate .cardGameTosDetailsContent {
+    color: #cbd5e1;
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+.tosLegalMeta {
+    font-size: 11.5px;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px 0;
+    line-height: 1.5;
+}
+
+.tosScopeHighlight {
+    margin-top: 6px !important;
+    color: #38bdf8 !important;
+}
+
+.tosHeaderDivider {
+    margin: 20px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tosHeaderDivider h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.tosHeaderDivider span {
+    font-size: 10.5px;
+    color: #64748b;
+}
+
+.tosSectionBlock {
+    margin-bottom: 16px;
+}
+
+.tosSectionBlock h5 {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.tosSectionBlock p {
+    margin: 0 0 6px 0;
+    color: #cbd5e1;
+}
+
+.tosLegalList {
+    margin: 4px 0 8px 18px;
+    padding: 0;
+    color: #e2e8f0;
+}
+
+.tosLegalList li {
+    margin-bottom: 3px;
 }
 #tosGate .cardGameTosDetails::-webkit-scrollbar-thumb {
     background: rgba(138, 166, 191, 0.35);
