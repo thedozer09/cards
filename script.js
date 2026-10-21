@@ -6150,31 +6150,35 @@ function renderCollectionCardGrid() {
 
     const fragment = document.createDocumentFragment();
 
-    pageCards.forEach(card => {
-        const isOwned = Boolean(card.owned);
-        const rarityKey = (card.rarity || 'common').toLowerCase();
-        const rarityColor = RNG_RARITY_COLORS[rarityKey] || '#94a3b8';
+        const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
 
-        const cardBox = document.createElement('div');
-        cardBox.className = `collectionCardBox ${isOwned ? 'owned' : 'locked'}`;
-        cardBox.style.borderColor = rarityColor; 
+        pageCards.forEach(card => {
+            const isOwned = Boolean(card.owned);
+            const rarityKey = (card.rarity || 'common').toLowerCase();
+            const hasGradient = RNG_GRADIENT_RARITIES.includes(rarityKey);
 
-        cardBox.innerHTML = `
-            <div>
-                <span class="collectionCardRarity" style="color: ${rarityColor};">
-                    ${rarityKey}
-                </span>
-                <div class="collectionCardName">
-                    ${card.name}
-                </div>
-            </div>
-            <div class="collectionCardStatus ${isOwned ? 'owned' : 'locked'}">
-                ${isOwned ? '✓ OWNED' : '🔒 LOCKED'}
-            </div>
-        `;
+            const cardBox = document.createElement('div');
+            cardBox.className = `collectionCardBox ${isOwned ? 'owned' : 'locked'}`;
+            cardBox.dataset.rarity = rarityKey;
 
-        fragment.appendChild(cardBox);
-    });
+            if (hasGradient) {
+                cardBox.dataset.hasGradient = "true";
+            }
+
+            if (!isOwned) {
+                cardBox.innerHTML = `
+                    <div class="cardUndiscoveredQuestion">?</div>
+                    <div class="cardUndiscoveredRarity">${rarityKey}</div>
+                `;
+            } else {
+                cardBox.innerHTML = `
+                    <div class="collectionCardName">${card.name}</div>
+                    <div class="collectionCardRarity">${rarityKey}</div>
+                `;
+            }
+
+            fragment.appendChild(cardBox);
+        });
 
     collectionCardsGrid.appendChild(fragment);
 
