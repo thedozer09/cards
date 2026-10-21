@@ -1957,8 +1957,8 @@ function updateScrollRail() {
         window.innerHeight  
     );  
 
-    document.documentElement.style.minHeight = `${pageHeight}px`;  
-    document.body.style.minHeight = `${pageHeight}px`; 
+   document.documentElement.style.minHeight = '';  
+    document.body.style.minHeight = '';
 
     if (!scrollRail) {  
         return;  
