@@ -1307,7 +1307,7 @@ cardsButton.addEventListener('click', () => {
         'My Collection'
     );
     switchCardsSubview('collection');
-    triggerCollectionFilterRequest();
+    triggerCollectionTabRequest();
 });
 
 statsButton.addEventListener('click', switchToStats);
@@ -1371,7 +1371,7 @@ myCollectionButton.addEventListener('click', () => {
         'My Collection'
     );
     switchCardsSubview('collection');
-    triggerCollectionFilterRequest();
+    triggerCollectionTabRequest();
 });
 
 tradesButton.addEventListener('click', () => {
@@ -5911,6 +5911,11 @@ let currentRosterFilteredCount = 1000;
 function updateCollectionRosterText() {
     if (!collectionRosterCount) return;
 
+    if (collectionHasPendingSearch) {
+        collectionRosterCount.textContent = "Searching Trello...";
+        return;
+    }
+
     const isSearching = Boolean(collectionSearchQuery.trim());
     const isOwned = Boolean(collectionOwnedOnly);
 
@@ -5927,60 +5932,12 @@ function updateCollectionRosterText() {
     }
 }
 
-function triggerCollectionFilterRequest() {
-    console.log(`📡 [COLLECTION FILTER] Query: "${collectionSearchQuery}", Sort: ${collectionSortOrder}, OwnedOnly: ${collectionOwnedOnly}`);
 
-    if (collectionRosterCount) {
-        collectionRosterCount.textContent = "Loading cards from Trello...";
-    }
-
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({
-            protocol: "cardgame",
-            version: 1,
-            request: "collection_filter_requested",
-            info: {
-                query: collectionSearchQuery,
-                sort: collectionSortOrder,
-                ownedOnly: collectionOwnedOnly
-            }
-        }));
-    } else {
-        console.warn("⚠️ WebSocket not open, cannot request collection data.");
-    }
-}
 
 function handleCollectionSortChange(e) {
-    const now = Date.now();
-
-    if (now < collectionSortCooldownUntil) {
-        collectionSortSelect.value = collectionSortOrder;
-        return;
-    }
-
     collectionSortOrder = collectionSortSelect.value;
-    collectionSortCooldownUntil = now + 10000;
-
-    collectionSortSelect.disabled = true;
-    const selectedOption = collectionSortSelect.options[collectionSortSelect.selectedIndex];
-    const baseText = selectedOption.text.replace(/\s*\(\d+s\)/, '');
-
-    clearInterval(collectionSortCooldownInterval);
-    collectionSortCooldownInterval = setInterval(() => {
-        const secondsLeft = Math.ceil((collectionSortCooldownUntil - Date.now()) / 1000);
-
-        if (secondsLeft <= 0) {
-            clearInterval(collectionSortCooldownInterval);
-            collectionSortSelect.disabled = false;
-            selectedOption.text = baseText;
-        } else {
-            selectedOption.text = `${baseText} (${secondsLeft}s)`;
-        }
-    }, 500);
-
-    triggerCollectionFilterRequest();
+    triggerCollectionSearchOrFilter();
 }
-
 function switchCardsSubview(targetView) {
     if (myCollectionView) myCollectionView.classList.add('hidden');
     if (openPackView) openPackView.classList.add('hidden');
@@ -6003,8 +5960,8 @@ function setupCollectionControls() {
 
             collectionSearchDebounceTimer = setTimeout(() => {
                 collectionSearchQuery = val.trim();
-                triggerCollectionFilterRequest();
-            }, 1500);
+                triggerCollectionSearchOrFilter();
+            }, 600);
         });
     }
 
@@ -6015,7 +5972,7 @@ function setupCollectionControls() {
     if (collectionOwnedCheckbox) {
         collectionOwnedCheckbox.addEventListener('change', (e) => {
             collectionOwnedOnly = e.target.checked;
-            triggerCollectionFilterRequest();
+            triggerCollectionSearchOrFilter();
         });
     }
 
@@ -6044,23 +6001,22 @@ document.addEventListener('DOMContentLoaded', () => {
 let allCollectionCards = [];
 let currentCollectionPage = 1;
 const CARDS_PER_PAGE = 30; 
+const STATS_COOLDOWN_MS = 30 * 1000;              // 30s cooldown for stats
+const COLLECTION_TAB_COOLDOWN_MS = 30 * 1000;     // 30s cooldown when clicking Cards or My Collection
+const COLLECTION_SEARCH_COOLDOWN_MS = 8 * 1000;   // 8s cooldown for search / filter changes
 
 let lastStatsRequestTime = 0;
-let lastFilterRequestTime = 0;
-const REQUEST_COOLDOWN_MS = 2500;
+let lastCollectionTabRequestTime = 0;
+let lastCollectionSearchRequestTime = 0;
 
-function triggerCollectionFilterRequest() {
-    const now = Date.now();
-    if (now - lastFilterRequestTime < REQUEST_COOLDOWN_MS) {
-        console.log("⏳ [THROTTLE] Collection filter on cooldown, ignoring spam.");
-        return;
-    }
+let collectionPendingSearchTimer = null;
+let collectionHasPendingSearch = false;
 
-    lastFilterRequestTime = now;
+function sendCollectionFilterWebSocket() {
     console.log(`📡 [COLLECTION FILTER] Query: "${collectionSearchQuery}", Sort: ${collectionSortOrder}, OwnedOnly: ${collectionOwnedOnly}`);
 
     if (collectionRosterCount) {
-        collectionRosterCount.textContent = "Loading cards from database...";
+        collectionRosterCount.textContent = "Loading cards from Trello...";
     }
 
     if (typeof socket !== 'undefined' && socket && socket.readyState === WebSocket.OPEN) {
@@ -6079,10 +6035,65 @@ function triggerCollectionFilterRequest() {
     }
 }
 
+function triggerCollectionTabRequest() {
+    const now = Date.now();
+    if (now - lastCollectionTabRequestTime < COLLECTION_TAB_COOLDOWN_MS) {
+        console.log("⏳ [THROTTLE] Collection tab on 30s cooldown, ignoring spam.");
+        return;
+    }
+
+    lastCollectionTabRequestTime = now;
+    lastCollectionSearchRequestTime = now;
+
+    if (collectionPendingSearchTimer) {
+        clearTimeout(collectionPendingSearchTimer);
+        collectionPendingSearchTimer = null;
+        collectionHasPendingSearch = false;
+    }
+
+    sendCollectionFilterWebSocket();
+}
+
+function triggerCollectionSearchOrFilter() {
+    const now = Date.now();
+    const elapsed = now - lastCollectionSearchRequestTime;
+
+    if (elapsed >= COLLECTION_SEARCH_COOLDOWN_MS) {
+        if (collectionPendingSearchTimer) {
+            clearTimeout(collectionPendingSearchTimer);
+            collectionPendingSearchTimer = null;
+        }
+        collectionHasPendingSearch = false;
+        lastCollectionSearchRequestTime = now;
+        sendCollectionFilterWebSocket();
+    } else {
+        collectionHasPendingSearch = true;
+        if (collectionRosterCount) {
+            collectionRosterCount.textContent = "Searching Trello...";
+        }
+
+        const remaining = COLLECTION_SEARCH_COOLDOWN_MS - elapsed;
+        if (!collectionPendingSearchTimer) {
+            collectionPendingSearchTimer = setTimeout(() => {
+                collectionPendingSearchTimer = null;
+                if (collectionHasPendingSearch) {
+                    collectionHasPendingSearch = false;
+                    lastCollectionSearchRequestTime = Date.now();
+                    sendCollectionFilterWebSocket();
+                }
+            }, remaining);
+        }
+    }
+}
+
+function triggerCollectionFilterRequest() {
+    triggerCollectionSearchOrFilter();
+}
+
 function requestCardGameStats() {
     const now = Date.now();
-    if (now - lastStatsRequestTime < REQUEST_COOLDOWN_MS) {
-        console.log("⏳ [THROTTLE] Stats request on cooldown, ignoring spam.");
+    if (now - lastStatsRequestTime < STATS_COOLDOWN_MS) {
+        console.log("⏳ [THROTTLE] Stats request on 30s cooldown, ignoring spam.");
         return;
     }
 
@@ -6118,6 +6129,11 @@ function handleCollectionDataResponse(payload) {
 function renderCollectionCardGrid() {
     if (!collectionCardsGrid) return;
     collectionCardsGrid.innerHTML = '';
+
+    const existingPaginationBar = document.querySelector('.collectionPaginationBar');
+    if (existingPaginationBar) {
+        existingPaginationBar.remove();
+    }
 
     if (allCollectionCards.length === 0) {
         collectionCardsGrid.innerHTML = `
