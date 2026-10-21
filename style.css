@@ -5095,24 +5095,23 @@ body.rng-rarity-omnipotent,
 }
 
 
-
 .collectionCardsGrid {
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 10px !important;                 
+    grid-template-columns: repeat(3, minmax(0, 205px)) !important; 
+    justify-content: center !important;                           
+    column-gap: 6px !important;                                   
+    row-gap: 12px !important;                                     
     width: 100% !important;
-    margin-bottom: 20px !important;
-    padding: 4px !important;              
+    margin: 0 auto 20px auto !important;
+    padding: 4px !important;
     box-sizing: border-box !important;
-    justify-items: center !important;
 }
-
 
 .collectionCardBox {
     width: 100%;
-    max-width: 205px;                     
-    aspect-ratio: 1 / 1.45;              
-    margin: 2px auto;                     
+    max-width: 205px;
+    aspect-ratio: 1 / 1.45;
+    margin: 0;                      
     border-radius: 10px;
     box-sizing: border-box;
     display: flex;
