@@ -749,52 +749,13 @@ function createCardGameTermsPanel() {
     const dialog = currentTosGate.querySelector('.tosDialog') || currentTosGate;
     const agreeBtn = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
 
-
-    let sensitivityBlock = currentTosGate.querySelector('#stormCardsSensitivityNotice');
-    if (!sensitivityBlock) {
-        sensitivityBlock = document.createElement('div');
-        sensitivityBlock.id = 'stormCardsSensitivityNotice';
-        sensitivityBlock.className = 'stormCardsSensitivityNotice';
-        
-        if (agreeBtn && agreeBtn.parentNode) {
-            agreeBtn.parentNode.insertBefore(sensitivityBlock, agreeBtn);
-        } else {
-            dialog.appendChild(sensitivityBlock);
-        }
-    }
-
-    sensitivityBlock.innerHTML = `
-        <div class="sensitivityHeader">
-            <span class="sensitivityIcon">⚠️</span>
-            <strong>Storm Cards &bull; Disaster Respect & Purpose Notice</strong>
-        </div>
-        <p>
-            <strong>Storm Cards</strong> is created strictly for <strong>fun, community entertainment, and educational learning about historical and meteorological tornadoes</strong> you may not have previously known about. It is built to explore atmospheric science and storm history in an interactive card format.
-        </p>
-        <p>
-            This game is <strong>NOT</strong> designed, intended, or positioned to be insensitive, disrespectful, or trivializing toward any individuals, families, or communities who have experienced the grief, loss, or hardship caused by severe weather and natural disasters.
-        </p>
-        <p class="sensitivityExclusion">
-            <strong>EXCLUSION OF DAMAGE, INJURY, AND DEATH:</strong> All card statistics, point valuations, records, and rarity tiers are derived <strong>EXCLUSIVELY from objective atmospheric physics and meteorological storm characteristics</strong>. Under no circumstances are cards, scores, or rarities based upon, scaled by, or rewarded for property damage, personal injury, or human loss of life.
-        </p>
-        <p class="sensitivityZeroTol">
-            DOWDataLab maintains an uncompromised <strong>zero-tolerance policy</strong> against any conduct, mockery, harassment, or insensitivity regarding tornado devastation or disaster victims anywhere within or associated with this game. Violations will result in an immediate permanent ban and complete account wipe.
-        </p>
-    `;
-
-    
     let panel = currentTosGate.querySelector('#cardGameTosDetails');
     if (!panel) {
         panel = document.createElement('section');
         panel.id = 'cardGameTosDetails';
         panel.className = 'cardGameTosDetails hidden';
         panel.setAttribute('aria-label', 'Storm Cards Terms of Service and Privacy Policy');
-        
-        if (agreeBtn && agreeBtn.parentNode) {
-            agreeBtn.parentNode.insertBefore(panel, agreeBtn);
-        } else {
-            dialog.appendChild(panel);
-        }
+        dialog.appendChild(panel);
     }
 
     let heading = panel.querySelector('.cardGameTosDetailsHeading');
@@ -814,14 +775,14 @@ function createCardGameTermsPanel() {
 
     content.innerHTML = `
         <div class="tosLegalWrapper">
-            <!-- Metadata & Scope Notice -->
+            <!-- Metadata & Intellectual Property Notice -->
             <div class="tosLegalMeta">
                 <p>
                     <strong>Storm Cards is copyrighted material owned and operated by Hunter Games Studios.</strong><br>
                     <strong>DOWDataLab is an unregistered trademark of Hunter Games Studios.</strong>
                 </p>
                 <p class="tosScopeHighlight">
-                    <strong>IMPORTANT SCOPE LIMITATION:</strong> These Terms of Service and Privacy Policy apply <strong>EXCLUSIVELY to Storm Cards</strong>. Separate Terms of Service and Privacy Policies govern other DOWDataLab bots, websites, web portals, and external systems.
+                    <strong>SCOPE:</strong> These Terms of Service and Privacy Policy apply <strong>EXCLUSIVELY to Storm Cards</strong>. Other DOWDataLab software, bots, websites, and external platforms are governed by their own independent agreements.
                 </p>
             </div>
 
@@ -834,26 +795,40 @@ function createCardGameTermsPanel() {
             </div>
 
             <div class="tosSectionBlock">
-                <h5>1. Service Overview & "As-Is" Availability</h5>
+                <h5>1. Service Scope & "As-Is" Availability</h5>
                 <p>
-                    Storm Cards is an interactive digital tornado collectible card game and educational Activity. Access to the Service is provided strictly on an <strong>"AS-IS"</strong> and <strong>"AS-AVAILABLE"</strong> basis without warranties of any kind, whether express, statutory, or implied.
+                    Storm Cards is an interactive educational, archival, and collectible tornado card Activity. Access is granted strictly on an <strong>"AS-IS"</strong> and <strong>"AS-AVAILABLE"</strong> basis without warranties of any kind, whether express, statutory, or implied.
                 </p>
                 <p>
-                    Neither Hunter Games Studios nor DOWDataLab guarantees uninterrupted uptime, continuous server availability, or permanent retention of virtual data. We reserve the right to modify, change, rebalance, remove, or discontinue any card, statistic, mechanic, feature, or the game entirely at any time without prior liability. Notice of material changes to these terms will be formally announced.
-                </p>
-            </div>
-
-            <div class="tosSectionBlock">
-                <h5>2. Third-Party Platforms & Systems</h5>
-                <p>
-                    Storm Cards operates through and relies upon third-party services and infrastructure, including <strong>Discord</strong>, <strong>Trello</strong>, and independent backend hosting servers. By using this Activity, you acknowledge that each of these third-party platforms maintains their own respective Terms of Service and Privacy Policies that independently govern your account and data on their systems.
+                    Hunter Games Studios and DOWDataLab do not guarantee uninterrupted server uptime, bug-free operation, or permanent retention of digital items. We reserve the full right to modify, rebalance, adjust, remove, or discontinue any card, mechanic, point value, or the game entirely at any time without prior liability. Notice of material updates to these terms will be formally announced through our communication channels.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>3. Mandatory Geographic Exclusions</h5>
+                <h5>2. Emergency Weather & Life Safety Disclaimer</h5>
                 <p>
-                    Due to local regulatory compliance regarding digital collectible and probability systems, access is strictly prohibited in certain regions. You certify under penalty of immediate account termination that <strong>YOU ARE NOT ACCESSING, RESIDING IN, LOCATED IN, OR ROUTING TRAFFIC FROM:</strong>
+                    <strong>STORM CARDS IS NOT AN EMERGENCY ALERT SYSTEM OR REAL-TIME RADAR TOOL.</strong> All data, records, radar captures, and storm profiles featured in the game are historical, educational, or illustrative in nature. Under no circumstances should this software be utilized for severe weather forecasting, life safety decisions, or active storm monitoring. Always consult the National Weather Service (NWS) or local civil authorities during severe weather.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>3. Age Requirement & Platform Compliance</h5>
+                <p>
+                    You must be at least <strong>13 years of age</strong> (or the minimum legal digital consent age required by your country of residence) to access Storm Cards. By launching this Activity, you certify that you meet Discord's minimum age requirements and agree to comply with Discord's Terms of Service and Community Guidelines [1].
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>4. Third-Party Platforms & Infrastructure</h5>
+                <p>
+                    Storm Cards operates through and interfaces with third-party platforms, including <strong>Discord</strong>, <strong>Trello</strong>, and backend cloud servers. Your use of this Activity is subject to the respective terms and privacy policies of these third-party platform providers.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>5. Mandatory Geographic Exclusions</h5>
+                <p>
+                    Due to regional regulatory standards regarding digital randomized collectibles, access is strictly prohibited from certain territories. You legally certify and warrant under penalty of permanent account termination that <strong>YOU ARE NOT ACCESSING, RESIDING IN, LOCATED IN, OR ROUTING TRAFFIC FROM:</strong>
                 </p>
                 <ul class="tosLegalList">
                     <li>The Netherlands</li>
@@ -863,36 +838,60 @@ function createCardGameTermsPanel() {
                     <li>Vietnam</li>
                 </ul>
                 <p>
-                    Bypassing or obscuring geographic location using VPNs, proxies, or spoofing constitutes an intentional breach and will result in a permanent ban.
+                    Circumventing geographic restrictions via VPNs, proxies, or IP masquerading constitutes a material breach resulting in immediate and permanent account suspension.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>4. Virtual Assets & Strict Prohibition of Real-Money Trading (RMT)</h5>
+                <h5>6. Virtual Collectibles & Strict Prohibition of Real-Money Trading (RMT)</h5>
                 <p>
-                    All cards, packs, records, and points within Storm Cards are virtual licenses with <strong>NO CASH VALUE</strong> and no monetary redemption status. You expressly agree that you shall <strong>NOT</strong> buy, sell, auction, barter, or transfer any card or digital item for:
+                    All cards, packs, records, and points within Storm Cards are virtual entertainment licenses with <strong>NO CASH VALUE</strong> and no monetary redemption equivalent. You explicitly agree that you shall <strong>NOT</strong> sell, buy, auction, barter, or transfer any card or digital asset for:
                 </p>
                 <ul class="tosLegalList">
                     <li>Real-world fiat currency (USD, EUR, etc.) or peer-to-peer transfers;</li>
                     <li>Cryptocurrency or digital tokens;</li>
-                    <li>External tangible goods, physical merchandise, or deliveries;</li>
+                    <li>External physical merchandise, goods, or deliveries;</li>
                     <li>Real-world favors, services, Discord Nitro, subscriptions, or off-platform perks;</li>
                     <li>Any other tangible or intangible consideration outside native game mechanics.</li>
                 </ul>
                 <p>
-                    Cards may <strong>ONLY</strong> be traded card-for-card through the official, sanctioned in-game trading interface. Any off-platform trading, real-money transactions (RMT), or cross-account resource funneling will result in an <strong>immediate permanent ban and an irreversible total wipe of all account data and card inventories</strong>.
+                    Cards may <strong>ONLY</strong> be traded card-for-card through the official, sanctioned in-game trading interface. Any off-platform trading, RMT, or cross-account resource funneling will result in an <strong>immediate permanent ban and an irreversible total wipe of all account data and card inventories</strong>.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>5. Anti-Automation & Security</h5>
+                <h5>7. Anti-Exploitation, Automation & Economy Rollbacks</h5>
                 <p>
-                    The use of macros, auto-clickers, automated generation scripts, bots, packet manipulation, reverse engineering, or exploiting glitches is strictly prohibited. Violators will be banned immediately.
+                    The use of macros, auto-clickers, generation bots, packet injection, reverse engineering, or exploiting glitches is strictly prohibited. If an exploit or calculation defect results in unintended cards or point balances, DOWDataLab reserves the right to execute targeted inventory rollbacks or account resets to preserve game integrity.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>6. Support & Inquiries</h5>
+                <h5>8. Storm Chasing Vehicles & Community Figures (Inclusion & Opt-Out)</h5>
+                <p>
+                    Storm Cards may feature commemorative cards showcasing real-world storm chasing vehicles, research equipment, and notable figures or creators from the meteorological and storm chasing community. These entries are created in good faith as commemorative tributes to severe weather documentation, research, and field history.
+                </p>
+                <p>
+                    <strong>REMOVAL & OPT-OUT PROCESS:</strong> Any storm chaser, researcher, creator, or vehicle owner whose identity, persona, or equipment is featured in a card may request its review, modification, or complete removal at any time without hassle. You may submit a removal request by contacting <strong>dozer1853</strong> directly on Discord, or by opening a formal support ticket in the official <strong>DOWDataLab Discord server</strong>. Requests will be handled promptly.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>9. Community Weather & Storm Suggestions</h5>
+                <p>
+                    We actively encourage our community to suggest historical tornadoes, significant storm events, unusual meteorological occurrences, research vehicles, or community ideas to be added into Storm Cards. You can submit suggestions through the designated community channels in the official <strong>DOWDataLab Discord server</strong>. By submitting a suggestion, you grant DOWDataLab permission to research, create, and implement the card concept within the game without royalty, licensing fee, or compensation.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>10. Historical Media, Photographic Attribution & Fair Use</h5>
+                <p>
+                    Photographic, radar, and historical meteorological data are incorporated for educational, scientific, and commemorative archival purposes under fair use doctrine. If you are a photographer, researcher, or copyright owner seeking attribution adjustment, credit updates, or removal of card media, please submit an inquiry to <strong>dozer1853</strong> on Discord or join the official DOWDataLab Discord server.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>11. Inquiries & Community Support</h5>
                 <p>
                     For inquiries, feedback, or support regarding Storm Cards or these terms, you may contact <strong>dozer1853</strong> directly via Discord, or join the official <strong>DOWDataLab Discord server</strong> (accessible via the link in the bot's Discord profile bio).
                 </p>
@@ -916,7 +915,7 @@ function createCardGameTermsPanel() {
             <div class="tosSectionBlock">
                 <h5>2. Information We Collect</h5>
                 <p>
-                    When you launch or interact with Storm Cards, the application collects and stores the following standard, publicly accessible Discord profile information:
+                    When you launch or interact with Storm Cards, the application processes and stores the following standard, publicly accessible Discord profile data:
                 </p>
                 <ul class="tosLegalList">
                     <li>Your <strong>Discord User ID</strong> (unique numerical identifier)</li>
@@ -925,17 +924,17 @@ function createCardGameTermsPanel() {
                     <li>Your <strong>Discord Profile Picture</strong> (Avatar URL)</li>
                 </ul>
                 <p>
-                    <strong>WHAT WE DO NOT COLLECT:</strong> Storm Cards does <strong>NOT</strong> collect, track, or store your IP address, physical location, email address, payment details, phone number, or private off-platform personal identifiers.
+                    <strong>WHAT WE DO NOT COLLECT:</strong> Storm Cards does <strong>NOT</strong> collect, log, track, or store your IP address, physical location, email address, payment credentials, phone number, or private off-platform personal identifiers.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
                 <h5>3. How Data is Stored & Used</h5>
                 <p>
-                    Collected account data is stored securely using <strong>Trello</strong> integration and backend infrastructure. This data is utilized solely to ensure core game functionality, including:
+                    Account data is stored securely using <strong>Trello</strong> API infrastructure and backend database servers. Data is utilized strictly to provide core game functionality, including:
                 </p>
                 <ul class="tosLegalList">
-                    <li>Tracking your card inventory and pack history;</li>
+                    <li>Maintaining your card inventory and pack history;</li>
                     <li>Managing roll cooldowns, points, and leaderboard standings;</li>
                     <li>Verifying player identities during card-for-card trades;</li>
                     <li>Enforcing bans, suspensions, and maintenance lockouts.</li>
@@ -945,7 +944,7 @@ function createCardGameTermsPanel() {
             <div class="tosSectionBlock">
                 <h5>4. Featured Cards & Historical DOWDataLab Community Records</h5>
                 <p>
-                    Storm Cards includes commemorative cards and historical records of individuals affiliated with DOWDataLab and community history. These cards may include non-public organizational milestones, such as staff promotions, demotions, role transitions, and organizational records.
+                    Storm Cards includes commemorative cards and historical records of individuals affiliated with DOWDataLab and community history. These cards may reference non-public organizational milestones, such as staff promotions, demotions, role transitions, and organizational records.
                 </p>
                 <p>
                     <strong>OPT-OUT REQUESTS:</strong> Any individual whose identity or record is featured in a card entry may request to opt out or have their card reviewed or removed by joining the official <strong>DOWDataLab Discord server</strong> (linked in the bot's bio) and submitting an opt-out inquiry.
@@ -953,9 +952,9 @@ function createCardGameTermsPanel() {
             </div>
 
             <div class="tosSectionBlock">
-                <h5>5. Your Rights: Data Viewing & Deletion</h5>
+                <h5>5. Your Rights: Data Viewing, Inactivity & Deletion</h5>
                 <p>
-                    You have the right to inspect the data stored about your account or request the complete deletion of your Storm Cards player data. Comprehensive guidelines on your data rights and full deletion procedures are governed by the overarching <strong>DOWDataLab Terms of Service linked in the bot's Discord profile bio</strong>, or you can submit a direct request to <strong>dozer1853</strong> on Discord.
+                    You have the right to inspect what data is stored about your account or request the complete deletion of your Storm Cards player data. Comprehensive guidelines on exercising your data rights and full deletion procedures are governed by the overarching <strong>DOWDataLab Terms of Service linked in the bot's Discord profile bio</strong>, or you can submit a direct request to <strong>dozer1853</strong> on Discord.
                 </p>
             </div>
 
@@ -966,6 +965,36 @@ function createCardGameTermsPanel() {
                 </p>
             </div>
         </div>
+    `;
+
+    let sensitivityBlock = currentTosGate.querySelector('#stormCardsSensitivityNotice');
+    if (!sensitivityBlock) {
+        sensitivityBlock = document.createElement('div');
+        sensitivityBlock.id = 'stormCardsSensitivityNotice';
+        sensitivityBlock.className = 'stormCardsSensitivityNotice';
+        dialog.appendChild(sensitivityBlock);
+    }
+
+    sensitivityBlock.innerHTML = `
+        <div class="sensitivityHeader">
+            <span class="sensitivityIcon">⚠️</span>
+            <strong>A Note on Sensitivity</strong>
+        </div>
+        <p>
+            <strong>Storm Cards</strong> is developed primarily as an <strong>interactive educational archive, severe weather documentation, and atmospheric science project</strong>. Its core objective is to promote meteorological literacy and document historic, noteworthy, or lesser-known tornadoes, severe storms, and atmospheric dynamics you may not have previously known about. While designed to be an engaging and enjoyable card-collecting experience for weather enthusiasts, its foundation is education, storm research, and meteorological history.
+        </p>
+        <p>
+            The developers and DOWDataLab explicitly recognize that severe convective storms, tornadoes, and natural disasters cause profound human grief, displacement, emotional trauma, and lasting hardship for individuals, families, and communities. Storm Cards is deliberately, strictly, and categorically <strong>NOT designed, marketed, or intended to be insensitive, disrespectful, or trivializing toward anyone who has lived through or been affected by severe weather tragedies.</strong>
+        </p>
+        <p class="sensitivityExclusion">
+            <strong>STRICT EXCLUSION OF DAMAGE, INJURY, AND LOSS OF LIFE:</strong> To maintain solemn respect for all communities affected by severe storms, <strong>ALL</strong> card stats, point values, classifications, records, and rarity tiers are calculated <strong>EXCLUSIVELY from objective meteorological physics and physical atmospheric characteristics</strong>. Under no circumstances do cards, scoring mechanics, or point formulas factor in, reward, or celebrate property destruction, structural damage, economic devastation, personal injuries, or fatalities. Human tragedy plays absolutely zero role in card evaluations or gameplay rewards.
+        </p>
+        <p class="sensitivityCommunity">
+            Cards depicting storm research vehicles, scientific instrumentation, and notable figures from the storm chasing community are included as historical tributes to field meteorology, storm warning science, and scientific documentation.
+        </p>
+        <p class="sensitivityZeroTol">
+            DOWDataLab enforces an uncompromising, non-negotiable <strong>zero-tolerance policy</strong> against any player who utilizes usernames, in-game features, community channels, or related communications to mock victims, celebrate disaster devastation, or display insensitivity toward impacted populations anywhere within or associated with this game. Violators will face an immediate, permanent ban and a complete, irreversible player data wipe.
+        </p>
     `;
 
     return panel;
@@ -988,9 +1017,7 @@ function initializeCardGameTermsToggle() {
     });
 
     const panel = createCardGameTermsPanel();
-    if (!panel) {
-        return;
-    }
+    const sensitivityBlock = currentTosGate.querySelector('#stormCardsSensitivityNotice');
 
     let toggleLink = currentTosGate.querySelector('#tosLink') || 
                      currentTosGate.querySelector('.tosTermsToggle') || 
@@ -1001,18 +1028,22 @@ function initializeCardGameTermsToggle() {
         toggleLink.href = '#';
         toggleLink.id = 'tosLink';
         toggleLink.className = 'tosTermsToggle';
-
-        if (agreeBtn && agreeBtn.parentNode) {
-            agreeBtn.parentNode.insertBefore(toggleLink, agreeBtn);
-        } else {
-            dialog.appendChild(toggleLink);
-        }
+        dialog.appendChild(toggleLink);
     }
 
     toggleLink.textContent = 'View Storm Cards Terms of Service & Privacy Policy ▼';
     toggleLink.setAttribute('role', 'button');
     toggleLink.setAttribute('tabindex', '0');
     toggleLink.setAttribute('aria-expanded', 'false');
+
+    
+    if (agreeBtn && agreeBtn.parentNode) {
+        agreeBtn.parentNode.insertBefore(toggleLink, agreeBtn);
+        agreeBtn.after(sensitivityBlock);
+        if (panel) {
+            sensitivityBlock.after(panel);
+        }
+    }
 
     const handleToggle = (e) => {
         if (e) e.preventDefault();

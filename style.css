@@ -3930,54 +3930,63 @@ button {
 }
 
 
+
 .stormCardsSensitivityNotice {
     width: 100%;
     max-width: 740px;
-    margin: 16px auto;
-    padding: 16px 18px;
+    margin: 20px auto 14px auto;         
+    padding: 18px 22px;
     border-radius: 10px;
-    border: 1.5px solid rgba(59, 130, 246, 0.5);
-    background: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid rgba(59, 130, 246, 0.45);
+    background: rgba(13, 20, 34, 0.92);
     color: #e2e8f0;
     text-align: left;
     box-sizing: border-box;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
 }
 
 .stormCardsSensitivityNotice .sensitivityHeader {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     color: #93c5fd;
-    font-size: 13.5px;
-    letter-spacing: 0.3px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
+    font-weight: 800;
 }
 
 .stormCardsSensitivityNotice .sensitivityIcon {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1;
 }
 
 .stormCardsSensitivityNotice p {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     font-size: 12px;
-    line-height: 1.55;
+    line-height: 1.6;
     color: #cbd5e1;
 }
 
 .stormCardsSensitivityNotice .sensitivityExclusion {
     background: rgba(30, 58, 138, 0.35);
     border-left: 3px solid #60a5fa;
-    padding: 8px 12px;
+    padding: 10px 14px;
     color: #ffffff !important;
     border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+}
+
+.stormCardsSensitivityNotice .sensitivityCommunity {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin-bottom: 10px;
 }
 
 .stormCardsSensitivityNotice .sensitivityZeroTol {
     margin-bottom: 0;
-    color: #94a3b8;
+    color: #f87171;
     font-size: 11.5px;
 }
 
@@ -3987,17 +3996,17 @@ button {
     max-width: 760px;
     max-height: 55vh;
     overflow-y: auto;
-    margin: 16px auto 0;
+    margin: 14px auto 0;
     padding: 20px 22px;
     border: 1px solid rgba(138, 166, 191, 0.25);
     border-radius: 12px;
-    background: rgba(8, 14, 22, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(8, 14, 22, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     color: #ffffff;
     text-align: left;
     overflow-wrap: anywhere;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     box-sizing: border-box;
 }
 
@@ -4036,7 +4045,7 @@ button {
 .tosLegalMeta {
     font-size: 11.5px;
     color: #94a3b8;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(15, 23, 42, 0.65);
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 6px;
     padding: 10px 14px;
@@ -4097,7 +4106,7 @@ button {
 }
 
 .tosLegalList li {
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 #tosGate .cardGameTosDetails::-webkit-scrollbar-thumb {
     background: rgba(138, 166, 191, 0.35);
