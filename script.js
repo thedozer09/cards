@@ -747,8 +747,8 @@ function createCardGameTermsPanel() {
     }
 
     const dialog = currentTosGate.querySelector('.tosDialog') || currentTosGate;
-    const agreeBtn = currentTosGate.querySelector('#tosAgreeButton') || currentTosGate.querySelector('.tosAgreeButton') || currentTosGate.querySelector('#tosAcceptButton');
 
+    
     let panel = currentTosGate.querySelector('#cardGameTosDetails');
     if (!panel) {
         panel = document.createElement('section');
@@ -819,9 +819,12 @@ function createCardGameTermsPanel() {
             </div>
 
             <div class="tosSectionBlock">
-                <h5>4. Third-Party Platforms & Infrastructure</h5>
+                <h5>4. Third-Party Platforms, Infrastructure & Outages</h5>
                 <p>
                     Storm Cards operates through and interfaces with third-party platforms, including <strong>Discord</strong>, <strong>Trello</strong>, and backend cloud servers. Your use of this Activity is subject to the respective terms and privacy policies of these third-party platform providers.
+                </p>
+                <p>
+                    <strong>OUTAGE DISCLAIMER:</strong> DOWDataLab is not responsible for temporary service interruptions, network latency, or downtime caused by outages, rate limits, or maintenance events originating from Discord, Atlassian/Trello APIs, or third-party cloud infrastructure. Outages on third-party platforms do not entitle users to compensation, refunds, or virtual asset restorations.
                 </p>
             </div>
 
@@ -860,38 +863,62 @@ function createCardGameTermsPanel() {
             </div>
 
             <div class="tosSectionBlock">
-                <h5>7. Anti-Exploitation, Automation & Economy Rollbacks</h5>
+                <h5>7. Trade Finality & No Trade Reversals</h5>
+                <p>
+                    All trades executed and confirmed through the official in-game trading menu are <strong>permanent and final</strong>. DOWDataLab staff and developers will not reverse completed trades, mediate interpersonal disputes, or restore cards lost due to user error, misclicks, or buyer's remorse. Trade restorations will only be considered in the rare event of a confirmed, server-side data corruption or technical system failure.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>8. Anti-Exploitation, Automation & Economy Rollbacks</h5>
                 <p>
                     The use of macros, auto-clickers, generation bots, packet injection, reverse engineering, or exploiting glitches is strictly prohibited. If an exploit or calculation defect results in unintended cards or point balances, DOWDataLab reserves the right to execute targeted inventory rollbacks or account resets to preserve game integrity.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>8. Storm Chasing Vehicles & Community Figures (Inclusion & Opt-Out)</h5>
+                <h5>9. Responsible Vulnerability Disclosure & Developer Discretionary Rewards</h5>
                 <p>
-                    Storm Cards may feature commemorative cards showcasing real-world storm chasing vehicles, research equipment, and notable figures or creators from the meteorological and storm chasing community. These entries are created in good faith as commemorative tributes to severe weather documentation, research, and field history.
+                    We strongly encourage the responsible, confidential disclosure of software bugs, calculation defects, WebSocket vulnerabilities, or duplication glitches. Players who discover an exploit must immediately report it privately to <strong>dozer1853</strong> on Discord or via a confidential support ticket in the official DOWDataLab Discord server. Good-faith reporting will never result in disciplinary action; conversely, abusing, sharing, or weaponizing an exploit will result in an immediate permanent ban.
                 </p>
                 <p>
-                    <strong>REMOVAL & OPT-OUT PROCESS:</strong> Any storm chaser, researcher, creator, or vehicle owner whose identity, persona, or equipment is featured in a card may request its review, modification, or complete removal at any time without hassle. You may submit a removal request by contacting <strong>dozer1853</strong> directly on Discord, or by opening a formal support ticket in the official <strong>DOWDataLab Discord server</strong>. Requests will be handled promptly.
+                    <strong>DEVELOPER REWARDS FOR BUG REPORTS:</strong> At their sole discretion and evaluated objectively without personal bias, developers may choose to <strong>REWARD</strong> players with cards, digital items, or other in-game perks for good-faith vulnerability reports that lead to active bug fixes, or for any other community contribution the developers deem worthy of recognition. Any such rewards are discretionary gifts and do not constitute an ongoing entitlement or contractual obligation.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>9. Community Weather & Storm Suggestions</h5>
+                <h5>10. Discord Community Ban Mirroring</h5>
+                <p>
+                    Storm Cards operates in coordination with the broader DOWDataLab Discord community. If an individual is banned, suspended, or blacklisted from the official DOWDataLab Discord server for harassment, hate speech, threats, safety violations, or severe misconduct, DOWDataLab reserves the right to concurrently terminate or suspend that individual's access to the Storm Cards Activity.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>11. Storm Chasing Vehicles, Community Figures & DOWDataLab Members</h5>
+                <p>
+                    Storm Cards features commemorative and historical cards highlighting real-world storm chasing vehicles, scientific research equipment, notable figures from the severe weather community, and members affiliated with DOWDataLab community history. These cards exist in good faith to archive severe weather documentation, field science, and project milestones.
+                </p>
+                <p>
+                    <strong>REMOVAL & OPT-OUT PROCESS:</strong> Any storm chaser, researcher, community figure, vehicle owner, or DOWDataLab member whose likeness, persona, equipment, or community record is depicted on a card may request its review, modification, or removal without hassle. To submit a removal request, contact <strong>dozer1853</strong> directly on Discord, or open a support ticket in the official <strong>DOWDataLab Discord server</strong>.
+                </p>
+            </div>
+
+            <div class="tosSectionBlock">
+                <h5>12. Community Weather & Storm Suggestions</h5>
                 <p>
                     We actively encourage our community to suggest historical tornadoes, significant storm events, unusual meteorological occurrences, research vehicles, or community ideas to be added into Storm Cards. You can submit suggestions through the designated community channels in the official <strong>DOWDataLab Discord server</strong>. By submitting a suggestion, you grant DOWDataLab permission to research, create, and implement the card concept within the game without royalty, licensing fee, or compensation.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>10. Historical Media, Photographic Attribution & Fair Use</h5>
+                <h5>13. Historical Media, Photographic Attribution & Fair Use</h5>
                 <p>
                     Photographic, radar, and historical meteorological data are incorporated for educational, scientific, and commemorative archival purposes under fair use doctrine. If you are a photographer, researcher, or copyright owner seeking attribution adjustment, credit updates, or removal of card media, please submit an inquiry to <strong>dozer1853</strong> on Discord or join the official DOWDataLab Discord server.
                 </p>
             </div>
 
             <div class="tosSectionBlock">
-                <h5>11. Inquiries & Community Support</h5>
+                <h5>14. Inquiries & Community Support</h5>
                 <p>
                     For inquiries, feedback, or support regarding Storm Cards or these terms, you may contact <strong>dozer1853</strong> directly via Discord, or join the official <strong>DOWDataLab Discord server</strong> (accessible via the link in the bot's Discord profile bio).
                 </p>
@@ -942,12 +969,12 @@ function createCardGameTermsPanel() {
             </div>
 
             <div class="tosSectionBlock">
-                <h5>4. Featured Cards & Historical DOWDataLab Community Records</h5>
+                <h5>4. Featured Cards, Chasers & Historical DOWDataLab Community Records</h5>
                 <p>
-                    Storm Cards includes commemorative cards and historical records of individuals affiliated with DOWDataLab and community history. These cards may reference non-public organizational milestones, such as staff promotions, demotions, role transitions, and organizational records.
+                    Storm Cards includes commemorative cards and historical records of storm chasers, research vehicles, and individuals affiliated with DOWDataLab and community history. In the case of DOWDataLab affiliates, these cards may reference historical organizational occurrences, including non-public milestones such as staff promotions, demotions, role transitions, and organizational records.
                 </p>
                 <p>
-                    <strong>OPT-OUT REQUESTS:</strong> Any individual whose identity or record is featured in a card entry may request to opt out or have their card reviewed or removed by joining the official <strong>DOWDataLab Discord server</strong> (linked in the bot's bio) and submitting an opt-out inquiry.
+                    <strong>OPT-OUT REQUESTS:</strong> Any individual whose identity, equipment, or community record is featured in a card entry may request to opt out or have their card reviewed or removed by joining the official <strong>DOWDataLab Discord server</strong> (linked in the bot's bio) and submitting an inquiry.
                 </p>
             </div>
 
@@ -967,6 +994,7 @@ function createCardGameTermsPanel() {
         </div>
     `;
 
+   
     let sensitivityBlock = currentTosGate.querySelector('#stormCardsSensitivityNotice');
     if (!sensitivityBlock) {
         sensitivityBlock = document.createElement('div');
@@ -989,9 +1017,6 @@ function createCardGameTermsPanel() {
         <p class="sensitivityExclusion">
             <strong>STRICT EXCLUSION OF DAMAGE, INJURY, AND LOSS OF LIFE:</strong> To maintain solemn respect for all communities affected by severe storms, <strong>ALL</strong> card stats, point values, classifications, records, and rarity tiers are calculated <strong>EXCLUSIVELY from objective meteorological physics and physical atmospheric characteristics</strong>. Under no circumstances do cards, scoring mechanics, or point formulas factor in, reward, or celebrate property destruction, structural damage, economic devastation, personal injuries, or fatalities. Human tragedy plays absolutely zero role in card evaluations or gameplay rewards.
         </p>
-        <p class="sensitivityCommunity">
-            Cards depicting storm research vehicles, scientific instrumentation, and notable figures from the storm chasing community are included as historical tributes to field meteorology, storm warning science, and scientific documentation.
-        </p>
         <p class="sensitivityZeroTol">
             DOWDataLab enforces an uncompromising, non-negotiable <strong>zero-tolerance policy</strong> against any player who utilizes usernames, in-game features, community channels, or related communications to mock victims, celebrate disaster devastation, or display insensitivity toward impacted populations anywhere within or associated with this game. Violators will face an immediate, permanent ban and a complete, irreversible player data wipe.
         </p>
@@ -999,7 +1024,6 @@ function createCardGameTermsPanel() {
 
     return panel;
 }
-
 function initializeCardGameTermsToggle() {
     const currentTosGate = document.getElementById('tosGate');
 
