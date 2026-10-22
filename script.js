@@ -45,7 +45,7 @@ async function authenticateWithDiscord() {
     try {
         console.log("⏳ Loading Discord SDK module...");
 
-        const module = await import("https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.4.1/output/index.mjs");
+        const module = await import("/.proxy/jsdelivr/npm/@discord/embedded-app-sdk@1.4.1/output/index.mjs");
         const SdkClass = module.DiscordSDK;
 
         if (!SdkClass) {
