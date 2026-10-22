@@ -81,6 +81,7 @@ async function authenticateWithDiscord() {
     }
 }
 let socket = null;  
+let isAuthenticated = false;
 let tosMusicApproved = false;
 let activityMusicStarted = false;
 let activityMusicAllowed = false;
@@ -560,9 +561,10 @@ function initializeWebSocket() {
     console.log("Connecting directly to Discord Proxy route:", socketUrl);  
     socket = new WebSocket(socketUrl);  
 
-  socket.addEventListener('open', async () => {  
+ socket.addEventListener('open', async () => {  
         console.log("Connected to card game backend");  
         errorMessage.classList.add("hidden");  
+        isAuthenticated = false;
 
         const userId = await authenticateWithDiscord();
 
@@ -573,9 +575,13 @@ function initializeWebSocket() {
                 request: "authenticate",
                 info: { userId: userId }
             }));
-        }
 
-        requestRngServerTime();
+            isAuthenticated = true;
+
+            requestRngServerTime();
+        } else {
+            console.warn("⚠️ Did not receive a valid Discord User ID; blocking get_time from sending.");
+        }
     });
   
     socket.addEventListener('message', event => {  
@@ -722,8 +728,9 @@ function initializeWebSocket() {
         }
     });  
 
-    socket.addEventListener('close', (event) => {  
-        console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);  
+   socket.addEventListener('close', (event) => {  
+        isAuthenticated = false;
+        console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
 
         if (event.code === 1006) {  
             errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured. Please reconnect.";  
@@ -752,8 +759,8 @@ function initializeWebSocket() {
 function requestRngServerTime() {  
     if (  
         !socket ||  
-        socket.readyState !==  
-            WebSocket.OPEN  
+        socket.readyState !== WebSocket.OPEN ||
+        !isAuthenticated
     ) {  
         return;  
     }  
@@ -765,7 +772,7 @@ function requestRngServerTime() {
             request: "get_time"  
         })  
     );  
-}  
+} 
 
 testButton.addEventListener('click', () => {  
     screen1.classList.add('hidden');  
