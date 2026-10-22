@@ -49,7 +49,7 @@ async function handleDiscordSdkInitialization(sdkCode) {
         const module = await import(blobUrl);
         URL.revokeObjectURL(blobUrl);
 
-        const SdkClass = module.DiscordSDK;
+       const SdkClass = module.DiscordSDK || module.default?.DiscordSDK || module.default;
         if (!SdkClass) {
             throw new Error("DiscordSDK class not found in loaded payload.");
         }
