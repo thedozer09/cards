@@ -43,15 +43,24 @@ const DISCORD_CLIENT_ID = "1371190489629593750";
 
 async function authenticateWithDiscord() {
     try {
-        const SdkClass = window.DiscordSDK?.DiscordSDK || window.DiscordSDK;
+        console.log("⏳ Loading Discord SDK module...");
+
+        const module = await import("https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.4.1/output/index.mjs");
+        const SdkClass = module.DiscordSDK;
+
         if (!SdkClass) {
-            console.error("Discord SDK not loaded on window.");
-            return null;
+            throw new Error("DiscordSDK class not found in imported module.");
         }
 
-        const discordSdk = new SdkClass(DISCORD_CLIENT_ID);
+        console.log("⏳ Initializing Discord SDK instance...");
+        const discordSdk = new SdkClass(DISCORD_CLIENT_ID, {
+            disableConsoleLogOverride: true 
+        });
+
+        console.log("⏳ Waiting for Discord ready handshake...");
         await discordSdk.ready();
 
+        console.log("⏳ Requesting authorization code from Discord...");
         const { code } = await discordSdk.commands.authorize({
             client_id: DISCORD_CLIENT_ID,
             response_type: 'code',
@@ -60,6 +69,7 @@ async function authenticateWithDiscord() {
             scope: ['identify']
         });
 
+        console.log("⏳ Exchanging code for access token via Mid /api/token...");
         const tokenResponse = await fetch('/api/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,16 +77,24 @@ async function authenticateWithDiscord() {
         });
 
         if (!tokenResponse.ok) {
-            throw new Error(`Token exchange failed: ${tokenResponse.status}`);
+            const errText = await tokenResponse.text();
+            throw new Error(`Token exchange failed (${tokenResponse.status}): ${errText}`);
         }
 
         const { access_token } = await tokenResponse.json();
 
+        console.log("⏳ Authenticating access token with Discord...");
         const auth = await discordSdk.commands.authenticate({ access_token });
-        console.log(`Authenticated Discord User ID: ${auth.user.id}`);
+
+        console.log("✅ Authenticated Discord User ID:", auth.user.id);
         return auth.user.id;
     } catch (err) {
         console.error("❌ Discord OAuth failed:", err);
+
+        if (errorMessage) {
+            errorMessage.textContent = `Auth Error: ${err.message}`;
+            errorMessage.classList.remove("hidden");
+        }
         return null;
     }
 }
@@ -568,19 +586,21 @@ function initializeWebSocket() {
 
         const userId = await authenticateWithDiscord();
 
-        if (userId) {
+      if (userId) {
             socket.send(JSON.stringify({
                 protocol: "cardgame",
                 version: 1,
                 request: "authenticate",
                 info: { userId: userId }
             }));
-
             isAuthenticated = true;
-
             requestRngServerTime();
         } else {
-            console.warn("⚠️ Did not receive a valid Discord User ID; blocking get_time from sending.");
+            console.warn("⚠️ Did not receive a valid Discord User ID; displaying error screen.");
+            if (errorMessage) {
+                errorMessage.textContent = "Could not authenticate your Discord account. Check the console or reload.";
+                errorMessage.classList.remove("hidden");
+            }
         }
     });
   
