@@ -1,6 +1,36 @@
+
+const MAINTENANCE_ALERT_CONFIG = {
+    enabled: true, 
+    text: "Scheduled Maintenance: Storm Cards is under maintenance and development until further notice."
+};
+
+function updateMaintenanceAlertBanner() {
+    let banner = document.getElementById('scheduledMaintenanceAlert');
+
+    if (!MAINTENANCE_ALERT_CONFIG.enabled) {
+        if (banner) {
+            banner.remove();
+        }
+        return;
+    }
+
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'scheduledMaintenanceAlert';
+        banner.className = 'scheduledMaintenanceAlert';
+        document.body.appendChild(banner);
+    }
+
+    banner.innerHTML = `
+        <span class="mAlertIcon">⚠️</span>
+        <span class="mAlertText">${MAINTENANCE_ALERT_CONFIG.text}</span>
+    `;
+}
+
 const screen1 = document.getElementById('screen1');  
 const screen2 = document.getElementById('screen2');  
-const testButton = document.getElementById('testButton');  
+const testButton = document.getElementById('testButton');
+ 
 const rngButton = document.getElementById('rngButton');  
 const errorMessage = document.getElementById('errorMessage');  
 const activityMusic = document.getElementById('activityMusic'); 
@@ -814,7 +844,7 @@ function createCardGameTermsPanel() {
             <div class="tosSectionBlock">
                 <h5>3. Age Requirement & Platform Compliance</h5>
                 <p>
-                    You must be at least <strong>13 years of age</strong> (or the minimum legal digital consent age required by your country of residence) to access Storm Cards. By launching this Activity, you certify that you meet Discord's minimum age requirements and agree to comply with Discord's Terms of Service and Community Guidelines [1].
+                    You must be at least <strong>13 years of age</strong> (or the minimum legal digital consent age required by your country of residence) to access Storm Cards. By launching this Activity, you certify that you meet Discord's minimum age requirements and agree to comply with Discord's Terms of Service and Community Guidelines.
                 </p>
             </div>
 
@@ -1193,6 +1223,7 @@ function initializeActivityNavigationLayout() {
 }
 initializeCardGameTermsToggle();
 initializeSimpleButtonEffects();
+updateMaintenanceAlertBanner();
 
 const screenHeaders = document.querySelectorAll('.tabHeader');  
 
@@ -2615,6 +2646,8 @@ function sanitizeRngStoredResult(payload) {
     return { 
         record: payload.record ?? '', 
         rarity: payload.rarity ?? 'Unknown', 
+        finalRarity: payload.finalRarity ?? payload.final_rarity ?? null,
+        baseRarity: payload.baseRarity ?? payload.rarity ?? null,
         points: payload.points ?? '0', 
         lifetimeRecordScore: 
             payload.lifetimeRecordScore ?? 
@@ -2627,10 +2660,10 @@ function sanitizeRngStoredResult(payload) {
             1, 
         duplicateRoll: 
             isRngDuplicatePayload(payload), 
-        modifiers: payload.modifiers ?? [] 
+        modifiers: payload.modifiers ?? [],
+        overallRarityRequirements: payload.overallRarityRequirements ?? null
     }; 
-} 
-
+}
 function isRngDuplicatePayload(payload) { 
     if ( 
         !payload || 
@@ -3173,25 +3206,29 @@ function getRngDisplayRarity(payload) {
     if (payload.finalRarity && typeof payload.finalRarity === 'string') {
         return normalizeRngRarity(payload.finalRarity);
     }
+    if (payload.final_rarity && typeof payload.final_rarity === 'string') {
+        return normalizeRngRarity(payload.final_rarity);
+    }
 
-    const basePts = Number(payload.points) || 0;
-    const modPts = Number(payload.modifierPoints) || (
-        Array.isArray(payload.modifiers)
-            ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
-            : 0
-    );
-    const totalPoints = basePts + modPts;
+    if (Array.isArray(payload.overallRarityRequirements) && payload.overallRarityRequirements.length > 0) {
+        const basePts = Number(payload.points) || 0;
+        const modPts = Number(payload.modifierPoints) || (
+            Array.isArray(payload.modifiers)
+                ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
+                : 0
+        );
+        const totalPoints = basePts + modPts;
 
-    let computed = payload.rarity || 'common';
-    if (Array.isArray(payload.overallRarityRequirements)) {
+        let computed = 'common';
         for (const tier of payload.overallRarityRequirements) {
             if (totalPoints >= (tier.minPoints ?? 0)) {
                 computed = tier.rarity;
             }
         }
+        return normalizeRngRarity(computed);
     }
 
-    return normalizeRngRarity(computed);
+    return 'common';
 }
 
 function applyRngRarityTheme(rarity) { 
@@ -5419,9 +5456,11 @@ function createRngRecordCard(payload, recordText) {
 
     if (normalizedFinalRarity !== 'unknown') { 
         card.classList.add(`rng-rarity-${normalizedFinalRarity}`); 
+        card.setAttribute('data-rarity', normalizedFinalRarity);
     } 
 
     const baseRollPool = normalizeRngRarity(payload.baseRarity || payload.rarity || 'common');
+    card.setAttribute('data-roll-pool', baseRollPool);
 
     const recordHeader = document.createElement('div');  
     recordHeader.className = 'rngRecordHeader';  
@@ -5429,15 +5468,13 @@ function createRngRecordCard(payload, recordText) {
     const recordLabel = document.createElement('div');  
     recordLabel.className = 'rngRecordLabel';  
     recordLabel.textContent = 'Record';  
-
-    recordLabel.style.fontSize = 
-        '28px'; 
+    recordLabel.style.fontSize = '28px'; 
 
     const recordValue = document.createElement('div');  
     recordValue.className = 'rngRecordValue';  
     recordValue.textContent = recordText;  
 
-   const basePts = Number(payload.points) || 0;
+    const basePts = Number(payload.points) || 0;
     const modPts = Number(payload.modifierPoints) || (
         Array.isArray(payload.modifiers)
             ? payload.modifiers.reduce((sum, m) => sum + (Number(m.points) || 0), 0)
@@ -5445,20 +5482,8 @@ function createRngRecordCard(payload, recordText) {
     );
     const totalEarnedPoints = basePts + modPts;
 
-    let computedRarity = payload.finalRarity || payload.final_rarity || finalRarity;
-
-    if (!computedRarity || computedRarity === 'unknown') {
-        computedRarity = 'common';
-        if (Array.isArray(payload.overallRarityRequirements)) {
-            for (const tier of payload.overallRarityRequirements) {
-                if (totalEarnedPoints >= (tier.minPoints ?? 0)) {
-                    computedRarity = tier.rarity;
-                }
-            }
-        }
-    }
-
-    const normalizedComputed = normalizeRngRarity(computedRarity);
+    const displayRarityName = finalRarity;
+    const normalizedDisplayRarity = normalizedFinalRarity;
 
     const fullRarityContainer = document.createElement('div');
     fullRarityContainer.className = 'rngFullRarityPlaceholder';
@@ -5469,13 +5494,12 @@ function createRngRecordCard(payload, recordText) {
 
     const fullRarityTitle = document.createElement('div');
     fullRarityTitle.className = 'rngFullRarityTitle';
-    fullRarityTitle.textContent = computedRarity.toUpperCase();
-    fullRarityTitle.setAttribute('data-rarity', normalizedComputed);
+    fullRarityTitle.textContent = displayRarityName.toUpperCase();
+    fullRarityTitle.setAttribute('data-rarity', normalizedDisplayRarity);
 
-    if (RNG_RARITY_COLORS[normalizedComputed]) {
-        fullRarityTitle.style.color = RNG_RARITY_COLORS[normalizedComputed];
+    if (RNG_RARITY_COLORS[normalizedDisplayRarity]) {
+        fullRarityTitle.style.color = RNG_RARITY_COLORS[normalizedDisplayRarity];
     }
-
     const fullRarityPointsSubtitle = document.createElement('div');
     fullRarityPointsSubtitle.className = 'rngFullRaritySubtitle';
     fullRarityPointsSubtitle.textContent = `${totalEarnedPoints} points earned`;
