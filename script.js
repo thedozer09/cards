@@ -39,7 +39,47 @@ const tosGate = document.getElementById('tosGate');
 const tosAgreeButton = document.getElementById('tosAgreeButton');
 const discoverSound = document.getElementById('discoversound');
 
+const DISCORD_CLIENT_ID = "1371190489629593750";
 
+async function authenticateWithDiscord() {
+    try {
+        const SdkClass = window.DiscordSDK?.DiscordSDK || window.DiscordSDK;
+        if (!SdkClass) {
+            console.error("Discord SDK not loaded on window.");
+            return null;
+        }
+
+        const discordSdk = new SdkClass(DISCORD_CLIENT_ID);
+        await discordSdk.ready();
+
+        const { code } = await discordSdk.commands.authorize({
+            client_id: DISCORD_CLIENT_ID,
+            response_type: 'code',
+            state: '',
+            prompt: 'none',
+            scope: ['identify']
+        });
+
+        const tokenResponse = await fetch('/api/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+
+        if (!tokenResponse.ok) {
+            throw new Error(`Token exchange failed: ${tokenResponse.status}`);
+        }
+
+        const { access_token } = await tokenResponse.json();
+
+        const auth = await discordSdk.commands.authenticate({ access_token });
+        console.log(`Authenticated Discord User ID: ${auth.user.id}`);
+        return auth.user.id;
+    } catch (err) {
+        console.error("❌ Discord OAuth failed:", err);
+        return null;
+    }
+}
 let socket = null;  
 let tosMusicApproved = false;
 let activityMusicStarted = false;
@@ -520,13 +560,22 @@ function initializeWebSocket() {
     console.log("Connecting directly to Discord Proxy route:", socketUrl);  
     socket = new WebSocket(socketUrl);  
 
-  socket.addEventListener('open', () => {  
-    console.log("Connected to card game backend");  
-    errorMessage.classList.add("hidden");  
+  socket.addEventListener('open', async () => {  
+        console.log("Connected to card game backend");  
+        errorMessage.classList.add("hidden");  
 
-    requestRngServerTime();
+        const userId = await authenticateWithDiscord();
 
-    
+        if (userId) {
+            socket.send(JSON.stringify({
+                protocol: "cardgame",
+                version: 1,
+                request: "authenticate",
+                info: { userId: userId }
+            }));
+        }
+
+        requestRngServerTime();
     });
   
     socket.addEventListener('message', event => {  
