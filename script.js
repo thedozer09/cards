@@ -115,25 +115,17 @@ function handleTosTimeout() {
         errorMessage.textContent = 'tos backend timeout please reconnect to agree';
         errorMessage.classList.remove('hidden');
 
-        if (tosGate && tosGate.contains(errorMessage)) {
+        if (tosGate && !tosGate.classList.contains('hidden') && tosGate.contains(errorMessage)) {
             if (tosAgreeButton) {
                 tosAgreeButton.disabled = true;
             }
-        } else {
-            if (tosGate) {
-                tosGate.classList.add('hidden');
-            }
+        } else if (tosGate && !tosGate.classList.contains('hidden')) {
+            tosGate.classList.add('hidden');
             if (screen1) {
                 screen1.classList.remove('hidden');
             }
         }
     }
-
-    try {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.close();
-        }
-    } catch (e) {}
 }
 async function handleDiscordSdkInitialization(sdkCode) {
     setOAuthStatus("OAuth2 authenticating...");
@@ -334,6 +326,8 @@ function showTosGate() {
 if (statsButton) {
     statsButton.classList.remove('hidden');
 }
+
+    startTosTimeoutTimer();
 }
 
 function handleTosStatusMessage(message) {
@@ -665,16 +659,35 @@ function initializeWebSocket() {
     console.log("Connecting directly to Discord Proxy route:", socketUrl);  
     socket = new WebSocket(socketUrl);  
 
+let heartbeatInterval = null;
+
 socket.addEventListener('open', () => {  
         console.log("Connected to card game backend, awaiting SDK payload...");  
         errorMessage.classList.add("hidden");  
         isAuthenticated = false;
+
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(() => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    protocol: "cardgame",
+                    version: 1,
+                    request: "ping"
+                }));
+            }
+        }, 5000);
     });
   
-   socket.addEventListener('message', event => {  
+ socket.addEventListener('message', event => {  
         try {  
             const data = JSON.parse(event.data);  
-            console.log("Backend message:", data);  
+
+            
+            if (data.type === "pong") {
+                return;
+            }
+
+            console.log("Backend message:", data);
 
             if (data.type === "init_sdk") {
                 handleDiscordSdkInitialization(data.sdkCode);
@@ -829,6 +842,10 @@ socket.addEventListener('open', () => {
     });  
 
    socket.addEventListener('close', (event) => {  
+        if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+            heartbeatInterval = null;
+        }
         clearOAuthStatus();
         clearTosTimeoutTimer();
         isAuthenticated = false;
@@ -1778,14 +1795,14 @@ function switchTab(button, screen) {
     screen.style.display = ''; // Restore active screen display
     updateSecondaryNavigation(screen);
 
-    if (musicToggleButton) {
+   if (musicToggleButton) {
         musicToggleButton.classList.remove('hidden');
     }
 
     if (statsButton) {
         statsButton.classList.remove('hidden');
     }
-startTosTimeoutTimer();
+
     setTimeout(() => {
         enforceRngThemeForActiveScreen();
     }, 150);
