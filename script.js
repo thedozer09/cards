@@ -40,7 +40,103 @@ const tosAgreeButton = document.getElementById('tosAgreeButton');
 const discoverSound = document.getElementById('discoversound');
 const DISCORD_CLIENT_ID = "1371190489629593750";
 
+let tosTimeoutTimer = null;
+const TOS_TIMEOUT_DURATION = 30000; // 30 seconds
+
+function setOAuthStatus(text) {
+    let badge = document.getElementById('oauthStatusBadge');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'oauthStatusBadge';
+        badge.style.position = 'fixed';
+        badge.style.top = '20px';
+        badge.style.left = '50%';
+        badge.style.transform = 'translateX(-50%)';
+        badge.style.zIndex = '999999';
+        badge.style.padding = '10px 22px';
+        badge.style.background = 'rgba(10, 22, 36, 0.94)';
+        badge.style.border = '1.5px solid #38bdf8';
+        badge.style.borderRadius = '999px';
+        badge.style.color = '#38bdf8';
+        badge.style.fontSize = '14px';
+        badge.style.fontWeight = '800';
+        badge.style.letterSpacing = '0.5px';
+        badge.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.5)';
+        badge.style.pointerEvents = 'none';
+        document.body.appendChild(badge);
+    }
+    badge.textContent = `⏳ ${text}`;
+    badge.classList.remove('hidden');
+
+    const loading = document.getElementById('loadingScreen');
+    if (loading && !loading.classList.contains('hidden')) {
+        const heading = loading.querySelector('h1');
+        if (heading) {
+            heading.dataset.prevText = heading.dataset.prevText || heading.textContent;
+            heading.textContent = text;
+        }
+    }
+}
+
+function clearOAuthStatus() {
+    const badge = document.getElementById('oauthStatusBadge');
+    if (badge) {
+        badge.remove();
+    }
+    const loading = document.getElementById('loadingScreen');
+    if (loading) {
+        const heading = loading.querySelector('h1');
+        if (heading && heading.dataset.prevText) {
+            heading.textContent = heading.dataset.prevText;
+            delete heading.dataset.prevText;
+        }
+    }
+}
+
+function startTosTimeoutTimer() {
+    clearTosTimeoutTimer();
+    tosTimeoutTimer = setTimeout(() => {
+        handleTosTimeout();
+    }, TOS_TIMEOUT_DURATION);
+}
+
+function clearTosTimeoutTimer() {
+    if (tosTimeoutTimer) {
+        clearTimeout(tosTimeoutTimer);
+        tosTimeoutTimer = null;
+    }
+}
+
+function handleTosTimeout() {
+    clearTosTimeoutTimer();
+    stopAllGameAudio();
+
+    if (errorMessage) {
+        errorMessage.textContent = 'tos backend timeout please reconnect to agree';
+        errorMessage.classList.remove('hidden');
+
+        if (tosGate && tosGate.contains(errorMessage)) {
+            if (tosAgreeButton) {
+                tosAgreeButton.disabled = true;
+            }
+        } else {
+            if (tosGate) {
+                tosGate.classList.add('hidden');
+            }
+            if (screen1) {
+                screen1.classList.remove('hidden');
+            }
+        }
+    }
+
+    try {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
+    } catch (e) {}
+}
 async function handleDiscordSdkInitialization(sdkCode) {
+    setOAuthStatus("OAuth2 authenticating...");
     try {
         console.log("⏳ Initializing Discord SDK received from Mid...");
 
@@ -77,7 +173,8 @@ async function handleDiscordSdkInitialization(sdkCode) {
             request: "authenticate",
             info: { code: code }
         }));
-    } catch (err) {
+   } catch (err) {
+        clearOAuthStatus();
         console.error("❌ Discord SDK Auth Error:", err);
         if (errorMessage) {
             errorMessage.textContent = `Auth Error: ${err.message}`;
@@ -264,7 +361,8 @@ function handleTosStatusMessage(message) {
         return true;
     }
 
-   if (message.data.accepted === true) {
+ if (message.data.accepted === true) {
+    clearTosTimeoutTimer();
     tosAcceptanceKnown = true;
     tosMusicApproved = true;
     showLoadingScreenAndLaunch();
@@ -517,6 +615,7 @@ function handleInServiceStatusMessage(message) {
 }
 
 function sendTosRequestAndContinue() {
+    clearTosTimeoutTimer();
     if (activityLaunchBlocked) {
         return;
     }
@@ -582,7 +681,8 @@ socket.addEventListener('open', () => {
                 return;
             }
 
-            if (data.type === "authenticated") {
+           if (data.type === "authenticated") {
+                clearOAuthStatus();
                 console.log(`✅ Authenticated with Mid as Discord User ${data.userId}`);
                 isAuthenticated = true;
                 requestRngServerTime();
@@ -729,6 +829,8 @@ socket.addEventListener('open', () => {
     });  
 
    socket.addEventListener('close', (event) => {  
+        clearOAuthStatus();
+        clearTosTimeoutTimer();
         isAuthenticated = false;
         console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
 
@@ -1683,7 +1785,7 @@ function switchTab(button, screen) {
     if (statsButton) {
         statsButton.classList.remove('hidden');
     }
-
+startTosTimeoutTimer();
     setTimeout(() => {
         enforceRngThemeForActiveScreen();
     }, 150);
