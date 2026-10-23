@@ -109,22 +109,10 @@ function clearTosTimeoutTimer() {
 
 function handleTosTimeout() {
     clearTosTimeoutTimer();
-    stopAllGameAudio();
 
     if (errorMessage) {
-        errorMessage.textContent = 'tos backend timeout please reconnect to agree';
+        errorMessage.textContent = '⚠️ TOS backend timeout. Please reconnect to agree.';
         errorMessage.classList.remove('hidden');
-
-        if (tosGate && !tosGate.classList.contains('hidden') && tosGate.contains(errorMessage)) {
-            if (tosAgreeButton) {
-                tosAgreeButton.disabled = true;
-            }
-        } else if (tosGate && !tosGate.classList.contains('hidden')) {
-            tosGate.classList.add('hidden');
-            if (screen1) {
-                screen1.classList.remove('hidden');
-            }
-        }
     }
 }
 async function handleDiscordSdkInitialization(sdkCode) {
@@ -675,7 +663,7 @@ socket.addEventListener('open', () => {
                     request: "ping"
                 }));
             }
-        }, 5000);
+        }, 10000);
     });
   
  socket.addEventListener('message', event => {  
