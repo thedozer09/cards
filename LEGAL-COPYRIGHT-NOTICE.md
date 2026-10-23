@@ -6,6 +6,8 @@ Copyright © 2026 Hunter Games Studios. All rights reserved.
 All items in this repository (excluding music and sounds) are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, downloading, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
 
 Music and sounds by third parties; not the property of Hunter Games Studios.
+Hip Hop Drums.wav by CrushedLoops -- https://freesound.org/s/621600/ -- License: Creative Commons 0
+Dream Catcher by Vexento -- https://www.youtube.com/watch?v=nK5blLPbFyE -- License: Implied CC-BY
 
 ### Computer Misuse & Security Warning
 This repository is  for backend technical purposes only. Any unauthorized attempts to:
