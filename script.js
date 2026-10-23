@@ -41,6 +41,7 @@ const discoverSound = document.getElementById('discoversound');
 const DISCORD_CLIENT_ID = "1371190489629593750";
 
 let tosTimeoutTimer = null;
+let isTosTimedOut = false;
 const TOS_TIMEOUT_DURATION = 30000; // 30 seconds
 
 function setOAuthStatus(text) {
@@ -95,6 +96,15 @@ function clearOAuthStatus() {
 
 function startTosTimeoutTimer() {
     clearTosTimeoutTimer();
+    isTosTimedOut = false;
+
+    if (tosAgreeButton) {
+        tosAgreeButton.disabled = false;
+        tosAgreeButton.style.pointerEvents = '';
+        tosAgreeButton.style.opacity = '';
+        tosAgreeButton.style.cursor = '';
+    }
+
     tosTimeoutTimer = setTimeout(() => {
         handleTosTimeout();
     }, TOS_TIMEOUT_DURATION);
@@ -109,10 +119,26 @@ function clearTosTimeoutTimer() {
 
 function handleTosTimeout() {
     clearTosTimeoutTimer();
+    isTosTimedOut = true;
+
+    if (tosAgreeButton) {
+        tosAgreeButton.disabled = true;
+        tosAgreeButton.style.pointerEvents = 'none';
+        tosAgreeButton.style.opacity = '0.4';
+        tosAgreeButton.style.cursor = 'not-allowed';
+    }
 
     if (errorMessage) {
         errorMessage.textContent = '⚠️ TOS backend timeout. Please reconnect to agree.';
         errorMessage.classList.remove('hidden');
+        errorMessage.style.position = 'fixed';
+        errorMessage.style.bottom = '20px';
+        errorMessage.style.left = '50%';
+        errorMessage.style.transform = 'translateX(-50%)';
+        errorMessage.style.zIndex = '9999999';
+        if (errorMessage.parentElement !== document.body) {
+            document.body.appendChild(errorMessage);
+        }
     }
 }
 async function handleDiscordSdkInitialization(sdkCode) {
@@ -156,10 +182,22 @@ async function handleDiscordSdkInitialization(sdkCode) {
    } catch (err) {
         clearOAuthStatus();
         console.error("❌ Discord SDK Auth Error:", err);
-        if (errorMessage) {
-            errorMessage.textContent = `Auth Error: ${err.message}`;
-            errorMessage.classList.remove("hidden");
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+                protocol: "cardgame",
+                version: 1,
+                request: "auth_cancelled",
+                info: { error: err.message }
+            }));
         }
+
+        handleActivityLaunchRequiredMessage({
+            type: "activity_launch_required",
+            data: {
+                message: "We could not match this Activity connection to the Discord user who launched it. Joining this way is not supported. Close this Activity and relaunch Storm Cards using a Storm Cards Activity launch button or the /stormcards slash command."
+            }
+        });
     }
 }
 let socket = null;  
@@ -307,7 +345,7 @@ function showTosGate() {
         tosGate.classList.remove('hidden');
         initializeCardGameTermsToggle();
     }
-    if (musicToggleButton) {
+   if (musicToggleButton) {
     musicToggleButton.classList.add('hidden');
 }
 
@@ -316,6 +354,8 @@ if (statsButton) {
 }
 
     startTosTimeoutTimer();
+
+
 }
 
 function handleTosStatusMessage(message) {
@@ -371,6 +411,8 @@ function handleActivityLaunchRequiredMessage(message) {
         return false;
     }
 
+    clearOAuthStatus();
+    clearTosTimeoutTimer();
     activityLaunchBlocked = true;
 
     if (appLaunchTimer) {
@@ -597,10 +639,11 @@ function handleInServiceStatusMessage(message) {
 }
 
 function sendTosRequestAndContinue() {
-    clearTosTimeoutTimer();
-    if (activityLaunchBlocked) {
+    if (activityLaunchBlocked || isTosTimedOut) {
         return;
     }
+
+    clearTosTimeoutTimer();
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
         if (errorMessage) {
