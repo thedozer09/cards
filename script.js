@@ -6932,6 +6932,7 @@ function handlePackOptionsResponse(data) {
     cachedPackOptions = data.packs || [];
     renderPackViewContainer();
 }
+let packModalOverlayElement = null;
 
 function renderPackViewContainer() {
     if (!openPackView) return;
@@ -6939,26 +6940,25 @@ function renderPackViewContainer() {
 
     const cooldownActive = isCardsCooldownActive();
 
+    const topControlArea = document.createElement('div');
+    topControlArea.className = 'packTopControlArea';
+
     if (cooldownActive) {
-        const cooldownBox = document.createElement('div');
-        cooldownBox.className = 'packCooldownContainer';
+        const dailyStatus = document.createElement('div');
+        dailyStatus.className = 'packDailyStatus';
 
-        const title = document.createElement('div');
-        title.className = 'packCooldownTitle';
-        title.textContent = 'Pack Already Opened';
+        const dailyMessage = document.createElement('div');
+        dailyMessage.className = 'packDailyMessage';
+        dailyMessage.textContent = 'You have already opened your pack for this period';
 
-        const desc = document.createElement('div');
-        desc.className = 'packCooldownDesc';
-        desc.textContent = 'You have already opened your card pack for this period.';
+        const dailyCountdown = document.createElement('div');
+        dailyCountdown.id = 'packResetCountdownDisplay';
+        dailyCountdown.className = 'packDailyCountdown';
 
-        const timer = document.createElement('div');
-        timer.id = 'packResetCountdownDisplay';
-        timer.className = 'packCooldownTimer';
-
-        cooldownBox.appendChild(title);
-        cooldownBox.appendChild(desc);
-        cooldownBox.appendChild(timer);
-        openPackView.appendChild(cooldownBox);
+        dailyStatus.appendChild(dailyMessage);
+        dailyStatus.appendChild(dailyCountdown);
+        topControlArea.appendChild(dailyStatus);
+        openPackView.appendChild(topControlArea);
 
         startCardsPackCountdown();
         return;
@@ -6966,55 +6966,112 @@ function renderPackViewContainer() {
 
     stopCardsPackCountdown();
 
-    const header = document.createElement('div');
-    header.className = 'packSelectionHeader';
-    header.innerHTML = `<h3>Select a Pack to Open</h3><p>Select a historical era pack below. Each pack awards 20 cards.</p>`;
-    openPackView.appendChild(header);
+    const actionArea = document.createElement('div');
+    actionArea.className = 'packActionArea';
 
-    if (cachedPackOptions.length === 0) {
-        const loading = document.createElement('div');
-        loading.style.textAlign = 'center';
-        loading.style.padding = '30px';
-        loading.style.color = '#94a3b8';
-        loading.textContent = 'Loading packs from Trello...';
-        openPackView.appendChild(loading);
-        return;
-    }
-
-    const grid = document.createElement('div');
-    grid.className = 'packGrid';
-
-    cachedPackOptions.forEach(pack => {
-        const cardItem = document.createElement('div');
-        cardItem.className = 'packItemCard';
-
-        const name = document.createElement('div');
-        name.className = 'packItemName';
-        name.textContent = pack.displayName;
-
-        const stats = document.createElement('div');
-        stats.className = 'packItemStats';
-        stats.innerHTML = `
-            <div>${Number(pack.discovered || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} cards discovered</div>
-            <div>${Number(pack.owned || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} cards owned</div>
-        `;
-
-        const openBtn = document.createElement('button');
-        openBtn.type = 'button';
-        openBtn.className = 'packItemOpenBtn';
-        openBtn.textContent = 'Open Pack';
-        openBtn.disabled = isOpeningPack;
-        openBtn.addEventListener('click', () => {
-            triggerOpenPack(pack.id, pack.displayName);
-        });
-
-        cardItem.appendChild(name);
-        cardItem.appendChild(stats);
-        cardItem.appendChild(openBtn);
-        grid.appendChild(cardItem);
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'rngGenerateButton';
+    openBtn.textContent = 'Open Pack';
+    openBtn.addEventListener('click', () => {
+        showPackSelectionModal();
     });
 
-    openPackView.appendChild(grid);
+    actionArea.appendChild(openBtn);
+    topControlArea.appendChild(actionArea);
+    openPackView.appendChild(topControlArea);
+}
+
+function closePackSelectionModal() {
+    if (packModalOverlayElement) {
+        packModalOverlayElement.remove();
+        packModalOverlayElement = null;
+    }
+}
+
+function showPackSelectionModal() {
+    closePackSelectionModal();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'packModalOverlay';
+
+    const modalBox = document.createElement('div');
+    modalBox.className = 'packModalBox';
+
+    const header = document.createElement('div');
+    header.className = 'packModalHeader';
+
+    const title = document.createElement('h3');
+    title.textContent = 'Select a Pack';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'packModalCloseBtn';
+    closeBtn.textContent = '✕';
+    closeBtn.addEventListener('click', closePackSelectionModal);
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    modalBox.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'packModalList';
+
+    if (!cachedPackOptions || cachedPackOptions.length === 0) {
+        const loading = document.createElement('div');
+        loading.style.textAlign = 'center';
+        loading.style.padding = '20px';
+        loading.style.color = '#94a3b8';
+        loading.textContent = 'Loading packs from Trello...';
+        list.appendChild(loading);
+    } else {
+        cachedPackOptions.forEach(pack => {
+            const item = document.createElement('div');
+            item.className = 'packModalItem';
+
+            const info = document.createElement('div');
+            info.className = 'packModalInfo';
+
+            const name = document.createElement('div');
+            name.className = 'packModalName';
+            name.textContent = pack.displayName;
+
+            const stats = document.createElement('div');
+            stats.className = 'packModalStats';
+            stats.innerHTML = `
+                <div>${Number(pack.discovered || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} discovered</div>
+                <div>${Number(pack.owned || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} owned</div>
+            `;
+
+            info.appendChild(name);
+            info.appendChild(stats);
+
+            const openPackBtn = document.createElement('button');
+            openPackBtn.type = 'button';
+            openPackBtn.className = 'packModalItemOpenBtn';
+            openPackBtn.textContent = 'Open';
+            openPackBtn.addEventListener('click', () => {
+                closePackSelectionModal();
+                triggerOpenPack(pack.id, pack.displayName);
+            });
+
+            item.appendChild(info);
+            item.appendChild(openPackBtn);
+            list.appendChild(item);
+        });
+    }
+
+    modalBox.appendChild(list);
+    overlay.appendChild(modalBox);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closePackSelectionModal();
+        }
+    });
+
+    document.body.appendChild(overlay);
+    packModalOverlayElement = overlay;
 }
 
 function startCardsPackCountdown() {
@@ -7053,7 +7110,7 @@ function updateCardsPackCountdownText() {
         return;
     }
 
-    el.textContent = `Next pack available in: ${formatRngCountdown(remaining)}`;
+    el.textContent = `Next pack in ${formatRngCountdown(remaining)}`;
 }
 
 function triggerOpenPack(packId, displayName) {
@@ -7133,6 +7190,8 @@ function startPackCardReveal(packDisplayName) {
     renderCurrentRevealCard();
 }
 
+let isCardRevealSpinning = false;
+
 function renderCurrentRevealCard() {
     const slot = document.getElementById('packRevealCardSlot');
     const counter = document.getElementById('packRevealCounter');
@@ -7147,32 +7206,63 @@ function renderCurrentRevealCard() {
 
     slot.innerHTML = '';
 
-    const cardBox = document.createElement('div');
-    cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
-    cardBox.dataset.rarity = card.rarity || 'common';
-
-    const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
-    if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
-        cardBox.dataset.hasGradient = "true";
+    isCardRevealSpinning = true;
+    if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.style.opacity = '0.5';
+        nextBtn.style.cursor = 'not-allowed';
     }
 
-    cardBox.innerHTML = `
-        <div class="collectionCardName">${card.name}</div>
-        <div class="collectionCardRarity">${card.rarity}</div>
-        ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+    const mysteryBox = document.createElement('div');
+    mysteryBox.className = 'collectionCardBox packCardMystery packCardSpinning';
+    mysteryBox.innerHTML = `
+        <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</div>
+        <div class="packCardMysteryMainQ">?</div>
     `;
+    slot.appendChild(mysteryBox);
 
-    slot.appendChild(cardBox);
+    setTimeout(() => {
+        if (!slot.contains(mysteryBox)) return;
 
-    if (currentPackRevealIndex >= total - 1) {
-        if (nextBtn) {
-            nextBtn.textContent = 'Finish Opening ✔';
-            nextBtn.classList.add('finishBtn');
+        playRngLaunchFlash();
+
+        slot.innerHTML = '';
+
+        const cardBox = document.createElement('div');
+        cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
+        cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
+
+        const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
+        if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
+            cardBox.dataset.hasGradient = "true";
         }
-    }
+
+        cardBox.innerHTML = `
+            <div class="collectionCardName">${card.name}</div>
+            <div class="collectionCardRarity">${card.rarity}</div>
+            ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+        `;
+
+        slot.appendChild(cardBox);
+
+        isCardRevealSpinning = false;
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '';
+            nextBtn.style.cursor = '';
+            if (currentPackRevealIndex >= total - 1) {
+                nextBtn.textContent = 'Finish Opening ✔';
+                nextBtn.classList.add('finishBtn');
+            } else {
+                nextBtn.textContent = 'Next Card ▶';
+                nextBtn.classList.remove('finishBtn');
+            }
+        }
+    }, 1100);
 }
 
 function advancePackCardReveal(packDisplayName) {
+    if (isCardRevealSpinning) return;
     if (currentPackRevealIndex < currentPackRevealCards.length - 1) {
         currentPackRevealIndex++;
         renderCurrentRevealCard();
