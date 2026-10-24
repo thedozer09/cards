@@ -865,7 +865,20 @@ socket.addEventListener('open', () => {
                 handleCollectionDataResponse(data.data);
                 return;
             }
+if (data.type === "pack_options_result") {
+                handlePackOptionsResponse(data.data);
+                return;
+            }
 
+            if (data.type === "pack_opened_result") {
+                handlePackOpenedResult(data.data);
+                return;
+            }
+
+            if (data.type === "pack_error") {
+                handlePackError(data.data);
+                return;
+            }
         } catch (err) {  
             errorMessage.textContent = "⚠️ Error: " + (err && err.message ? err.message : String(err));  
             errorMessage.classList.remove("hidden");  
@@ -2005,6 +2018,8 @@ openPackButton.addEventListener('click', () => {
         'open-pack',
         'Open Pack'
     );
+    switchCardsSubview('pack');
+    requestPackOptions();
 });
 
 myCollectionButton.addEventListener('click', () => {
@@ -6595,10 +6610,11 @@ function switchCardsSubview(targetView) {
     if (openPackView) openPackView.classList.add('hidden');
     if (tradesView) tradesView.classList.add('hidden');
 
-    if (targetView === 'collection' && myCollectionView) {
+   if (targetView === 'collection' && myCollectionView) {
         myCollectionView.classList.remove('hidden');
     } else if (targetView === 'pack' && openPackView) {
         openPackView.classList.remove('hidden');
+        renderPackViewContainer();
     } else if (targetView === 'trades' && tradesView) {
         tradesView.classList.remove('hidden');
     }
@@ -6876,4 +6892,314 @@ function renderCollectionCardGrid() {
     paginationBar.appendChild(nextBtn);
 
     collectionCardsGrid.after(paginationBar);
+}
+
+let cachedPackOptions = [];
+let packCountdownTimer = null;
+let currentPackRevealCards = [];
+let currentPackRevealIndex = 0;
+let isOpeningPack = false;
+
+function isCardsCooldownActive() {
+    if (cardsPeriodStatus === "red") {
+        const serverNow = getRngServerNow();
+        if (
+            typeof serverNow === 'number' &&
+            typeof nextCardsResetTimestamp === 'number' &&
+            serverNow >= nextCardsResetTimestamp
+        ) {
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+function requestPackOptions() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "get_pack_options"
+    }));
+}
+
+function handlePackOptionsResponse(data) {
+    if (!data) return;
+    if (data.cardsPeriod) {
+        cardsPeriodStatus = String(data.cardsPeriod).toLowerCase().trim();
+    }
+    cachedPackOptions = data.packs || [];
+    renderPackViewContainer();
+}
+
+function renderPackViewContainer() {
+    if (!openPackView) return;
+    openPackView.innerHTML = '';
+
+    const cooldownActive = isCardsCooldownActive();
+
+    if (cooldownActive) {
+        const cooldownBox = document.createElement('div');
+        cooldownBox.className = 'packCooldownContainer';
+
+        const title = document.createElement('div');
+        title.className = 'packCooldownTitle';
+        title.textContent = 'Pack Already Opened';
+
+        const desc = document.createElement('div');
+        desc.className = 'packCooldownDesc';
+        desc.textContent = 'You have already opened your card pack for this period.';
+
+        const timer = document.createElement('div');
+        timer.id = 'packResetCountdownDisplay';
+        timer.className = 'packCooldownTimer';
+
+        cooldownBox.appendChild(title);
+        cooldownBox.appendChild(desc);
+        cooldownBox.appendChild(timer);
+        openPackView.appendChild(cooldownBox);
+
+        startCardsPackCountdown();
+        return;
+    }
+
+    stopCardsPackCountdown();
+
+    const header = document.createElement('div');
+    header.className = 'packSelectionHeader';
+    header.innerHTML = `<h3>Select a Pack to Open</h3><p>Select a historical era pack below. Each pack awards 20 cards.</p>`;
+    openPackView.appendChild(header);
+
+    if (cachedPackOptions.length === 0) {
+        const loading = document.createElement('div');
+        loading.style.textAlign = 'center';
+        loading.style.padding = '30px';
+        loading.style.color = '#94a3b8';
+        loading.textContent = 'Loading packs from Trello...';
+        openPackView.appendChild(loading);
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'packGrid';
+
+    cachedPackOptions.forEach(pack => {
+        const cardItem = document.createElement('div');
+        cardItem.className = 'packItemCard';
+
+        const name = document.createElement('div');
+        name.className = 'packItemName';
+        name.textContent = pack.displayName;
+
+        const stats = document.createElement('div');
+        stats.className = 'packItemStats';
+        stats.innerHTML = `
+            <div>${Number(pack.discovered || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} cards discovered</div>
+            <div>${Number(pack.owned || 0).toLocaleString()} of ${Number(pack.totalCards || 0).toLocaleString()} cards owned</div>
+        `;
+
+        const openBtn = document.createElement('button');
+        openBtn.type = 'button';
+        openBtn.className = 'packItemOpenBtn';
+        openBtn.textContent = 'Open Pack';
+        openBtn.disabled = isOpeningPack;
+        openBtn.addEventListener('click', () => {
+            triggerOpenPack(pack.id, pack.displayName);
+        });
+
+        cardItem.appendChild(name);
+        cardItem.appendChild(stats);
+        cardItem.appendChild(openBtn);
+        grid.appendChild(cardItem);
+    });
+
+    openPackView.appendChild(grid);
+}
+
+function startCardsPackCountdown() {
+    stopCardsPackCountdown();
+    updateCardsPackCountdownText();
+    packCountdownTimer = setInterval(updateCardsPackCountdownText, 1000);
+}
+
+function stopCardsPackCountdown() {
+    if (packCountdownTimer) {
+        clearInterval(packCountdownTimer);
+        packCountdownTimer = null;
+    }
+}
+
+function updateCardsPackCountdownText() {
+    const el = document.getElementById('packResetCountdownDisplay');
+    if (!el) {
+        stopCardsPackCountdown();
+        return;
+    }
+
+    const serverNow = getRngServerNow();
+    if (!serverNow || !nextCardsResetTimestamp) {
+        el.textContent = 'Calculating reset time...';
+        return;
+    }
+
+    const remaining = nextCardsResetTimestamp - serverNow;
+    if (remaining <= 0) {
+        stopCardsPackCountdown();
+        cardsPeriodStatus = 'green';
+        requestRngServerTime();
+        requestPackOptions();
+        renderPackViewContainer();
+        return;
+    }
+
+    el.textContent = `Next pack available in: ${formatRngCountdown(remaining)}`;
+}
+
+function triggerOpenPack(packId, displayName) {
+    if (isOpeningPack) return;
+    isOpeningPack = true;
+
+    openPackView.innerHTML = `
+        <div class="packOpeningLoadingBox">
+            <div class="loadingSpinner"></div>
+            <div style="font-size: 18px; font-weight: 800; color: #38bdf8;">Opening ${displayName}...</div>
+            <div style="font-size: 13px; color: #94a3b8;">Rolling 20 cards from the archives...</div>
+        </div>
+    `;
+
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "open_pack",
+        info: { packName: packId }
+    }));
+}
+
+function handlePackError(data) {
+    isOpeningPack = false;
+    const msg = data?.message || "Failed to open pack.";
+    alert(`❌ Pack Error: ${msg}`);
+    requestPackOptions();
+    renderPackViewContainer();
+}
+
+function handlePackOpenedResult(data) {
+    isOpeningPack = false;
+    cardsPeriodStatus = "red";
+    currentPackRevealCards = data.cards || [];
+    currentPackRevealIndex = 0;
+
+    requestCardGameStats();
+    if (typeof triggerCollectionTabRequest === 'function') {
+        triggerCollectionTabRequest();
+    }
+
+    startPackCardReveal(data.displayName);
+}
+
+function startPackCardReveal(packDisplayName) {
+    if (!openPackView) return;
+    openPackView.innerHTML = '';
+
+    const container = document.createElement('div');
+    container.className = 'packRevealContainer';
+
+    const header = document.createElement('div');
+    header.className = 'packRevealHeader';
+    header.innerHTML = `
+        <div class="packRevealTitle">${packDisplayName}</div>
+        <div id="packRevealCounter" class="packRevealCounter">Card 1 of ${currentPackRevealCards.length}</div>
+    `;
+    container.appendChild(header);
+
+    const cardSlot = document.createElement('div');
+    cardSlot.id = 'packRevealCardSlot';
+    cardSlot.className = 'packRevealCardSlot';
+    container.appendChild(cardSlot);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.id = 'packRevealNextBtn';
+    nextBtn.type = 'button';
+    nextBtn.className = 'packRevealNextBtn';
+    nextBtn.textContent = 'Next Card ▶';
+    nextBtn.addEventListener('click', () => {
+        advancePackCardReveal(packDisplayName);
+    });
+    container.appendChild(nextBtn);
+
+    openPackView.appendChild(container);
+
+    renderCurrentRevealCard();
+}
+
+function renderCurrentRevealCard() {
+    const slot = document.getElementById('packRevealCardSlot');
+    const counter = document.getElementById('packRevealCounter');
+    const nextBtn = document.getElementById('packRevealNextBtn');
+    if (!slot || !counter) return;
+
+    const total = currentPackRevealCards.length;
+    counter.textContent = `Card ${currentPackRevealIndex + 1} of ${total}`;
+
+    const card = currentPackRevealCards[currentPackRevealIndex];
+    if (!card) return;
+
+    slot.innerHTML = '';
+
+    const cardBox = document.createElement('div');
+    cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
+    cardBox.dataset.rarity = card.rarity || 'common';
+
+    const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
+    if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
+        cardBox.dataset.hasGradient = "true";
+    }
+
+    cardBox.innerHTML = `
+        <div class="collectionCardName">${card.name}</div>
+        <div class="collectionCardRarity">${card.rarity}</div>
+        ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+    `;
+
+    slot.appendChild(cardBox);
+
+    if (currentPackRevealIndex >= total - 1) {
+        if (nextBtn) {
+            nextBtn.textContent = 'Finish Opening ✔';
+            nextBtn.classList.add('finishBtn');
+        }
+    }
+}
+
+function advancePackCardReveal(packDisplayName) {
+    if (currentPackRevealIndex < currentPackRevealCards.length - 1) {
+        currentPackRevealIndex++;
+        renderCurrentRevealCard();
+    } else {
+        renderPackSummaryScreen(packDisplayName);
+    }
+}
+
+function renderPackSummaryScreen(packDisplayName) {
+    if (!openPackView) return;
+    openPackView.innerHTML = '';
+
+    const summaryBox = document.createElement('div');
+    summaryBox.className = 'packSummaryBox';
+
+    const newCardsCount = currentPackRevealCards.filter(c => !c.duplicate).length;
+
+    summaryBox.innerHTML = `
+        <h2 style="color: #38bdf8; margin: 0 0 10px 0;">Pack Opening Complete!</h2>
+        <p style="color: #cbd5e1; margin: 0 0 20px 0;">You opened the <strong>${packDisplayName}</strong> and pulled 20 cards (${newCardsCount} newly discovered).</p>
+        <button id="packSummaryDoneBtn" class="packItemOpenBtn" style="min-width: 200px;">Return to Packs</button>
+    `;
+
+    openPackView.appendChild(summaryBox);
+
+    document.getElementById('packSummaryDoneBtn')?.addEventListener('click', () => {
+        requestPackOptions();
+        renderPackViewContainer();
+    });
 }

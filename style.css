@@ -5699,3 +5699,201 @@ body.rng-rarity-omnipotent,
 .scheduledMaintenanceAlert .mAlertText {
     letter-spacing: 0.2px;
 }
+
+
+.packCooldownContainer,
+.packOpeningLoadingBox,
+.packSummaryBox {
+    width: 100%;
+    max-width: 580px;
+    margin: 30px auto;
+    padding: 30px 24px;
+    border: 1px solid rgba(138, 166, 191, 0.25);
+    border-radius: 16px;
+    background: rgba(14, 26, 42, 0.85);
+    text-align: center;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.packCooldownTitle {
+    color: #f87171;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.packCooldownDesc {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.packCooldownTimer {
+    color: #facc15;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-family: monospace;
+}
+
+.packSelectionHeader {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.packSelectionHeader h3 {
+    margin: 0 0 6px 0;
+    color: #f1f5f9;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.packSelectionHeader p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.packGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.packItemCard {
+    background: linear-gradient(135deg, rgba(20, 35, 55, 0.9) 0%, rgba(10, 20, 32, 0.95) 100%);
+    border: 1px solid rgba(138, 166, 191, 0.2);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.packItemCard:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.packItemName {
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.packItemStats {
+    font-size: 12px;
+    color: rgba(220, 231, 240, 0.75);
+    line-height: 1.5;
+}
+
+.packItemOpenBtn,
+.packRevealNextBtn {
+    min-width: 130px;
+    min-height: 40px;
+    padding: 8px 18px;
+    border: 1px solid rgba(170, 196, 216, 0.3);
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.packItemOpenBtn:hover,
+.packRevealNextBtn:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    transform: translateY(-1px);
+}
+
+.packRevealContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    gap: 18px;
+}
+
+.packRevealHeader {
+    text-align: center;
+}
+
+.packRevealTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin-bottom: 4px;
+}
+
+.packRevealCounter {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.packRevealCardSlot {
+    min-height: 290px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.packRevealedCardAnim {
+    animation: packCardRevealPop 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+@keyframes packCardRevealPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.7) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.packCardBadgeNew {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.packCardBadgeDup {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.packRevealNextBtn.finishBtn {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+}
