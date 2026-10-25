@@ -5905,9 +5905,9 @@ body.rng-rarity-omnipotent,
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 16px 0 28px;
-    gap: 14px;
+    justify-content: flex-start;
+    padding: 4px 0 20px;
+    gap: 10px;
     perspective: 1200px;
     width: 100%;
     max-width: 440px;
@@ -5916,28 +5916,29 @@ body.rng-rarity-omnipotent,
 
 .packRevealHeader {
     text-align: center;
+    margin-bottom: 0;
 }
 
 .packRevealTitle {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 800;
     color: #38bdf8;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .packRevealCounter {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #8a96a4;
 }
 
 .packRevealCardSlot {
-    width: 205px;
-    height: 297px;
-    min-width: 205px;
-    min-height: 297px;
-    max-width: 205px;
-    max-height: 297px;
+    width: 165px;
+    height: 239px;
+    min-width: 165px;
+    min-height: 239px;
+    max-width: 165px;
+    max-height: 239px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5946,91 +5947,219 @@ body.rng-rarity-omnipotent,
 }
 
 .packRevealCardSlot .collectionCardBox {
-    width: 205px !important;
-    height: 297px !important;
-    min-width: 205px !important;
-    min-height: 297px !important;
-    max-width: 205px !important;
-    max-height: 297px !important;
+    width: 165px !important;
+    height: 239px !important;
+    min-width: 165px !important;
+    min-height: 239px !important;
+    max-width: 165px !important;
+    max-height: 239px !important;
     margin: 0 !important;
     box-sizing: border-box !important;
 }
-
 .packFoilWrapper {
-    width: 205px;
-    height: 297px;
+    width: 165px;
+    height: 239px;
     position: relative;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.packFoilWrapper.packFoilClickable {
+    cursor: pointer;
+}
+
+.packFoilWrapper.packFoilClickable:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.1);
 }
 
 .packFoilTopPart,
 .packFoilBottomPart {
     width: 100%;
-    background: linear-gradient(145deg, #1f2d3d 0%, #111a24 50%, #2a3c50 100%);
-    border: 2px solid rgba(138, 166, 191, 0.4);
     box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 .packFoilTopPart {
-    height: 75px;
-    border-bottom: 2px dashed rgba(255, 255, 255, 0.35);
+    height: 60px;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.45);
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     transform-origin: bottom left;
 }
 
 .packFoilBottomPart {
-    height: 222px;
+    height: 179px;
     border-top: 0;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     transform-origin: top center;
 }
 
 .packFoilBadge {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.12em;
-    color: #38bdf8;
     text-transform: uppercase;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .packFoilEraTitle {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 900;
     color: #ffffff;
     text-align: center;
-    padding: 0 10px;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    padding: 0 8px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 }
 
 .packFoilSub {
-    font-size: 11px;
-    color: #94a3b8;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.65);
     letter-spacing: 0.08em;
 }
 
+.packFoilClickPrompt {
+    font-size: 10px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+    padding: 3px 8px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    animation: packFoilPromptPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes packFoilPromptPulse {
+    from { transform: scale(0.96); opacity: 0.8; }
+    to { transform: scale(1.04); opacity: 1; border-color: rgba(255, 255, 255, 0.8); }
+}
+
+
+
+/* Common */
+.packFoilWrapper[data-highest-rarity="common"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="common"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #14241a 0%, #1c3b28 50%, #0e1c13 100%);
+    border: 2px solid rgba(74, 222, 128, 0.45);
+}
+.packFoilWrapper[data-highest-rarity="common"] .packFoilBadge { color: #4ade80; }
+.packFoilWrapper[data-highest-rarity="common"] { filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.25)); }
+
+/* Uncommon */
+.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #1e2631 0%, #334155 50%, #18202a 100%);
+    border: 2px solid rgba(148, 163, 184, 0.5);
+}
+.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilBadge { color: #cbd5e1; }
+.packFoilWrapper[data-highest-rarity="uncommon"] { filter: drop-shadow(0 0 10px rgba(148, 163, 184, 0.25)); }
+
+/* Rare */
+.packFoilWrapper[data-highest-rarity="rare"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="rare"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #082f49 0%, #0284c7 50%, #0c4a6e 100%);
+    border: 2px solid rgba(56, 189, 248, 0.6);
+}
+.packFoilWrapper[data-highest-rarity="rare"] .packFoilBadge { color: #38bdf8; }
+.packFoilWrapper[data-highest-rarity="rare"] { filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.35)); }
+
+/* Epic */
+.packFoilWrapper[data-highest-rarity="epic"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="epic"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #2e1065 0%, #7e22ce 50%, #3b0764 100%);
+    border: 2px solid rgba(192, 132, 252, 0.65);
+}
+.packFoilWrapper[data-highest-rarity="epic"] .packFoilBadge { color: #c084fc; }
+.packFoilWrapper[data-highest-rarity="epic"] { filter: drop-shadow(0 0 16px rgba(192, 132, 252, 0.45)); }
+
+/* Legendary */
+.packFoilWrapper[data-highest-rarity="legendary"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="legendary"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #451a03 0%, #ca8a04 50%, #713f12 100%);
+    border: 2px solid rgba(250, 204, 21, 0.75);
+}
+.packFoilWrapper[data-highest-rarity="legendary"] .packFoilBadge { color: #facc15; }
+.packFoilWrapper[data-highest-rarity="legendary"] { filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.55)); }
+
+/* Mythical */
+.packFoilWrapper[data-highest-rarity="mythical"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="mythical"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #450a0a 0%, #dc2626 50%, #7f1d1d 100%);
+    border: 2px solid rgba(248, 113, 113, 0.75);
+}
+.packFoilWrapper[data-highest-rarity="mythical"] .packFoilBadge { color: #f87171; }
+.packFoilWrapper[data-highest-rarity="mythical"] { filter: drop-shadow(0 0 20px rgba(248, 113, 113, 0.55)); }
+
+/* Celestial */
+.packFoilWrapper[data-highest-rarity="celestial"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="celestial"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #0c2b4e 0%, #2563eb 50%, #1d4ed8 100%);
+    border: 2px solid rgba(96, 165, 250, 0.8);
+}
+.packFoilWrapper[data-highest-rarity="celestial"] .packFoilBadge { color: #60a5fa; }
+.packFoilWrapper[data-highest-rarity="celestial"] { filter: drop-shadow(0 0 22px rgba(96, 165, 250, 0.6)); }
+
+/* Divine */
+.packFoilWrapper[data-highest-rarity="divine"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="divine"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #1a2e05 0%, #65a30d 50%, #365314 100%);
+    border: 2px solid rgba(163, 230, 53, 0.8);
+}
+.packFoilWrapper[data-highest-rarity="divine"] .packFoilBadge { color: #a3e635; }
+.packFoilWrapper[data-highest-rarity="divine"] { filter: drop-shadow(0 0 22px rgba(163, 230, 53, 0.6)); }
+
+/* Transcendent */
+.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #500724 0%, #db2777 50%, #831843 100%);
+    border: 2px solid rgba(255, 85, 153, 0.85);
+}
+.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilBadge { color: #ff5599; }
+.packFoilWrapper[data-highest-rarity="transcendent"] { filter: drop-shadow(0 0 24px rgba(255, 85, 153, 0.65)); }
+
+/* Cosmic */
+.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #2e0854 0%, #6d28d9 50%, #4c1d95 100%);
+    border: 2px solid rgba(192, 132, 252, 0.85);
+}
+.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilBadge { color: #c084fc; }
+.packFoilWrapper[data-highest-rarity="cosmic"] { filter: drop-shadow(0 0 26px rgba(192, 132, 252, 0.7)); }
+
+/* Omnipotent */
+.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilTopPart,
+.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilBottomPart {
+    background: linear-gradient(145deg, #1e293b 0%, #f8fafc 50%, #334155 100%);
+    border: 2px solid #ffffff;
+}
+.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilBadge { color: #ffffff; }
+.packFoilWrapper[data-highest-rarity="omnipotent"] { filter: drop-shadow(0 0 28px rgba(255, 255, 255, 0.8)); }
+
 .packFoilWrapper.ripping .packFoilTopPart {
-    animation: packFoilRipTop 0.65s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+    animation: packFoilRipTop 1.3s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
 }
 
 .packFoilWrapper.ripping .packFoilBottomPart {
-    animation: packFoilRipBottom 0.65s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+    animation: packFoilRipBottom 1.3s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
 }
 
 @keyframes packFoilRipTop {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    50% { transform: translate(-20px, -24px) rotate(-16deg); opacity: 0.9; }
+    45% { transform: translate(-20px, -24px) rotate(-16deg); opacity: 0.9; }
     100% { transform: translate(-70px, -60px) rotate(-34deg); opacity: 0; }
 }
 
@@ -6058,19 +6187,19 @@ body.rng-rarity-omnipotent,
     align-items: center;
     justify-content: center;
     color: rgba(255, 255, 255, 0.12);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 900;
     line-height: 1.35;
-    letter-spacing: 10px;
+    letter-spacing: 8px;
     word-break: break-all;
     user-select: none;
     pointer-events: none;
     text-align: center;
-    padding: 8px;
+    padding: 6px;
 }
 
 .packCardMysteryMainQ {
-    font-size: 64px;
+    font-size: 52px;
     font-weight: 900;
     color: #ffffff;
     z-index: 2;
@@ -6078,21 +6207,25 @@ body.rng-rarity-omnipotent,
 }
 
 .packCardSpinSlow {
-    animation: packCardSpinSlower 1.6s cubic-bezier(0.12, 0.78, 0.22, 1) forwards;
+    animation: packCardSpinSlower 2.8s cubic-bezier(0.12, 0.82, 0.24, 1) forwards;
 }
 
 @keyframes packCardSpinSlower {
     0% {
-        transform: rotateY(1440deg) scale(0.75);
-        filter: brightness(0.5);
+        transform: rotateY(1800deg) scale(0.7);
+        filter: brightness(0.4);
     }
-    60% {
-        transform: rotateY(360deg) scale(0.96);
-        filter: brightness(0.85);
+    50% {
+        transform: rotateY(720deg) scale(0.9);
+        filter: brightness(0.75);
     }
-    85% {
-        transform: rotateY(70deg) scale(0.99);
-        filter: brightness(0.95);
+    75% {
+        transform: rotateY(180deg) scale(0.98);
+        filter: brightness(0.9);
+    }
+    90% {
+        transform: rotateY(40deg) scale(0.995);
+        filter: brightness(0.98);
     }
     100% {
         transform: rotateY(0deg) scale(1);
@@ -6101,8 +6234,8 @@ body.rng-rarity-omnipotent,
 }
 
 .packMysteryRippingContainer {
-    width: 205px;
-    height: 297px;
+    width: 165px;
+    height: 239px;
     position: relative;
     overflow: visible;
 }
@@ -6119,116 +6252,113 @@ body.rng-rarity-omnipotent,
 
 .packMysteryRipHalfTop {
     top: 0;
-    height: 148px;
+    height: 119px;
     border-bottom: 2px dashed #475569;
     clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 80% 100%, 60% 88%, 40% 100%, 20% 88%, 0% 96%);
-    animation: packRipSeparateTop 0.45s ease-out forwards;
+    animation: packRipSeparateTop 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .packMysteryRipHalfBottom {
     bottom: 0;
-    height: 152px;
+    height: 122px;
     border-top: 0;
     clip-path: polygon(0% 6%, 20% 14%, 40% 2%, 60% 14%, 80% 2%, 100% 10%, 100% 100%, 0% 100%);
-    animation: packRipSeparateBottom 0.45s ease-out forwards;
+    animation: packRipSeparateBottom 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes packRipSeparateTop {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(-14px, -22px) rotate(-8deg); opacity: 0.7; }
+    100% { transform: translate(-20px, -26px) rotate(-10deg); opacity: 0.8; }
 }
 
 @keyframes packRipSeparateBottom {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(14px, 22px) rotate(8deg); opacity: 0.7; }
+    100% { transform: translate(20px, 26px) rotate(10deg); opacity: 0.8; }
 }
 
 .packRevealedCardAnim {
-    animation: packCardRevealPop 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+    animation: packCardRevealPop 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
 }
 
-.packCardDetailsBox {
-    width: 100%;
-    max-width: 280px;
-    background: rgba(18, 26, 36, 0.85);
-    border: 1px solid rgba(138, 166, 191, 0.22);
-    border-radius: 12px;
-    padding: 10px 14px;
-    box-sizing: border-box;
+.packCardTextDetails {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     text-align: center;
+    margin: 4px auto 0;
+    width: 100%;
+    max-width: 320px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.packCardDetailName {
-    font-size: 15px;
+.packCardTextName {
+    font-size: 16px;
     font-weight: 800;
     color: #ffffff;
-    line-height: 1.25;
-    word-break: break-word;
+    line-height: 1.2;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    margin-bottom: 2px;
 }
 
-.packCardDetailGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 4px;
-    border-top: 1px solid rgba(138, 166, 191, 0.14);
-    padding-top: 6px;
-}
-
-.packCardDetailRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-}
-
-.packDetailLabel {
-    color: #8a96a4;
+.packCardTextLine {
+    font-size: 12.5px;
     font-weight: 600;
-}
-
-.packDetailValue {
     color: #cbd5e1;
-    font-weight: 700;
+    line-height: 1.35;
 }
 
-.packDetailValue.statusNew {
+.packCardTextNew {
+    font-size: 13px;
+    font-weight: 900;
     color: #4ade80;
+    letter-spacing: 0.6px;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+    margin: 1px 0;
 }
 
-.packDetailValue.statusDup {
-    color: #f87171;
+.packCardTextRarity {
+    font-weight: 800;
+    color: #38bdf8;
 }
 
-.packCardBadgeNew {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #16a34a;
+.packCardTextRarity[data-rarity="common"] { color: #4ade80; }
+.packCardTextRarity[data-rarity="uncommon"] { color: #94a3b8; }
+.packCardTextRarity[data-rarity="rare"] { color: #38bdf8; }
+.packCardTextRarity[data-rarity="epic"] { color: #c084fc; }
+.packCardTextRarity[data-rarity="legendary"] { color: #facc15; }
+.packCardTextRarity[data-rarity="mythical"] { color: #f87171; }
+.packCardTextRarity[data-rarity="celestial"] { color: #60a5fa; }
+.packCardTextRarity[data-rarity="divine"] { color: #a3e635; }
+.packCardTextRarity[data-rarity="transcendent"] { color: #ff5599; }
+.packCardTextRarity[data-rarity="cosmic"] { color: #c084fc; }
+.packCardTextRarity[data-rarity="omnipotent"] { color: #ffffff; }
+
+.packSummaryReturnBtn {
+    min-width: 190px;
+    min-height: 48px;
+    padding: 0 26px;
+    border: 1px solid rgba(185, 211, 230, 0.24);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #416e98 0%, #365f87 52%, #2e5278 100%);
     color: #ffffff;
-    font-size: 10px;
-    font-weight: 900;
-    padding: 3px 6px;
-    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 800;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    box-shadow: 0 7px 16px rgba(2, 14, 27, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    margin-top: 10px;
 }
 
-.packCardBadgeDup {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #dc2626;
-    color: #ffffff;
-    font-size: 9px;
-    font-weight: 900;
-    padding: 3px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+.packSummaryReturnBtn:hover {
+    background: linear-gradient(135deg, #4c7da8 0%, #3e6b93 52%, #345c82 100%);
+    border-color: rgba(207, 226, 239, 0.34);
+    box-shadow: 0 9px 19px rgba(2, 14, 27, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
 }
 
 .packRevealNextBtn {

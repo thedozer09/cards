@@ -7189,6 +7189,72 @@ function startPackCardReveal(packDisplayName) {
 
     renderCurrentRevealCard(packDisplayName);
 }
+const RARITY_LADDER_ORDER = [
+    'omnipotent',
+    'cosmic',
+    'transcendent',
+    'divine',
+    'celestial',
+    'mythical',
+    'legendary',
+    'epic',
+    'rare',
+    'uncommon',
+    'common'
+];
+
+const RARITY_FLASH_COLORS = {
+    common: '#4ade80',
+    uncommon: '#94a3b8',
+    rare: '#38bdf8',
+    epic: '#c084fc',
+    legendary: '#facc15',
+    mythical: '#f87171',
+    celestial: '#60a5fa',
+    divine: '#a3e635',
+    transcendent: '#ff5599',
+    cosmic: '#c084fc',
+    omnipotent: '#ffffff'
+};
+
+function getHighestRarityInPack(cards) {
+    if (!Array.isArray(cards) || cards.length === 0) return 'common';
+    let highestIndex = RARITY_LADDER_ORDER.length - 1;
+    for (const c of cards) {
+        const r = (c.rarity || 'common').toLowerCase();
+        const idx = RARITY_LADDER_ORDER.indexOf(r);
+        if (idx !== -1 && idx < highestIndex) {
+            highestIndex = idx;
+        }
+    }
+    return RARITY_LADDER_ORDER[highestIndex];
+}
+
+function playPackCardFlash(rarity) {
+    const rKey = (rarity || 'common').toLowerCase();
+    const flashColor = RARITY_FLASH_COLORS[rKey] || '#ffffff';
+
+    let flashEl = document.querySelector('.rngLaunchFlashOverlay') || document.querySelector('.rngLaunchFlash');
+    if (!flashEl) {
+        flashEl = document.createElement('div');
+        flashEl.className = 'rngLaunchFlash';
+        document.body.appendChild(flashEl);
+    }
+
+    flashEl.style.backgroundColor = flashColor;
+    flashEl.style.boxShadow = `inset 0 0 100px ${flashColor}`;
+    flashEl.classList.remove('active');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('active');
+
+    setTimeout(() => {
+        if (flashEl) {
+            flashEl.style.backgroundColor = '';
+            flashEl.style.boxShadow = '';
+            flashEl.remove();
+        }
+    }, 650);
+}
 
 let isCardRevealSpinning = false;
 
@@ -7220,7 +7286,7 @@ function renderCurrentRevealCard(packDisplayName) {
         const mysteryBox = document.createElement('div');
         mysteryBox.className = 'collectionCardBox packCardMystery packCardSpinSlow';
         mysteryBox.innerHTML = `
-            <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</div>
+            <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ?</div>
             <div class="packCardMysteryMainQ">?</div>
         `;
         slot.appendChild(mysteryBox);
@@ -7228,91 +7294,81 @@ function renderCurrentRevealCard(packDisplayName) {
         setTimeout(() => {
             if (!slot.contains(mysteryBox)) return;
 
-            slot.innerHTML = '';
-            const ripContainer = document.createElement('div');
-            ripContainer.className = 'packMysteryRippingContainer';
-            ripContainer.innerHTML = `
-                <div class="packMysteryRipHalf packMysteryRipHalfTop">
-                    <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ?</div>
-                </div>
-                <div class="packMysteryRipHalf packMysteryRipHalfBottom">
-                    <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ?</div>
-                </div>
-            `;
-            slot.appendChild(ripContainer);
-
             setTimeout(() => {
-                playRngLaunchFlash();
-
                 slot.innerHTML = '';
 
-                const cardBox = document.createElement('div');
-                cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
-                cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
-
-                const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
-                if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
-                    cardBox.dataset.hasGradient = "true";
-                }
-
-                cardBox.innerHTML = `
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${card.rarity}</div>
-                    ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+                const ripContainer = document.createElement('div');
+                ripContainer.className = 'packMysteryRippingContainer';
+                ripContainer.innerHTML = `
+                    <div class="packMysteryRipHalf packMysteryRipHalfTop">
+                        <div class="packCardMysteryPattern">? ? ? ? ?</div>
+                    </div>
+                    <div class="packMysteryRipHalf packMysteryRipHalfBottom">
+                        <div class="packCardMysteryPattern">? ? ? ? ?</div>
+                    </div>
                 `;
-                slot.appendChild(cardBox);
+                slot.appendChild(ripContainer);
 
-                const container = document.querySelector('.packRevealContainer');
-                if (container) {
-                    const newDetails = document.createElement('div');
-                    newDetails.id = 'packCardDetailsBox';
-                    newDetails.className = 'packCardDetailsBox packRevealedCardAnim';
-                    newDetails.innerHTML = `
-                        <div class="packCardDetailName">${card.name}</div>
-                        <div class="packCardDetailGrid">
-                            <div class="packCardDetailRow">
-                                <span class="packDetailLabel">Edition</span>
-                                <span class="packDetailValue">Edition N/A</span>
-                            </div>
-                            <div class="packCardDetailRow">
-                                <span class="packDetailLabel">Status</span>
-                                <span class="packDetailValue ${!card.duplicate ? 'statusNew' : 'statusDup'}">
-                                    ${!card.duplicate ? '★ NEW ★' : 'DUPLICATE'}
-                                </span>
-                            </div>
-                            <div class="packCardDetailRow">
-                                <span class="packDetailLabel">Modifiers</span>
-                                <span class="packDetailValue">None</span>
-                            </div>
-                            <div class="packCardDetailRow">
-                                <span class="packDetailLabel">Total Points</span>
-                                <span class="packDetailValue">N/A</span>
-                            </div>
-                        </div>
-                    `;
+                setTimeout(() => {
+                    playPackCardFlash(card.rarity);
 
-                    const nextBtnEl = document.getElementById('packRevealNextBtn');
-                    container.insertBefore(newDetails, nextBtnEl);
-                }
+                    slot.innerHTML = '';
 
-                isCardRevealSpinning = false;
-                if (nextBtn) {
-                    nextBtn.disabled = false;
-                    if (currentPackRevealIndex >= total - 1) {
-                        nextBtn.textContent = 'Finish Opening ✔';
-                        nextBtn.classList.add('finishBtn');
-                    } else {
-                        nextBtn.textContent = 'Next Card ▶';
-                        nextBtn.classList.remove('finishBtn');
+                    const cardBox = document.createElement('div');
+                    cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
+                    cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
+
+                    const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
+                    if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
+                        cardBox.dataset.hasGradient = "true";
                     }
-                }
-            }, 420);
-        }, 1600);
+
+                    cardBox.innerHTML = `
+                        <div class="collectionCardName">${card.name}</div>
+                        <div class="collectionCardRarity">${card.rarity}</div>
+                    `;
+                    slot.appendChild(cardBox);
+
+                    const container = document.querySelector('.packRevealContainer');
+                    if (container) {
+                        const textDetails = document.createElement('div');
+                        textDetails.id = 'packCardDetailsBox';
+                        textDetails.className = 'packCardTextDetails packRevealedCardAnim';
+                        textDetails.innerHTML = `
+                            <div class="packCardTextName">${card.name}</div>
+                            <div class="packCardTextLine">Edition: N/A</div>
+                            ${!card.duplicate ? '<div class="packCardTextNew">★ NEW ★</div>' : ''}
+                            <div class="packCardTextLine">Total Points: N/A</div>
+                            <div class="packCardTextLine">Modifiers: None</div>
+                            <div class="packCardTextLine">Pull Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span></div>
+                        `;
+
+                        const nextBtnEl = document.getElementById('packRevealNextBtn');
+                        container.insertBefore(textDetails, nextBtnEl);
+                    }
+
+                    isCardRevealSpinning = false;
+                    if (nextBtn) {
+                        nextBtn.disabled = false;
+                        if (currentPackRevealIndex >= total - 1) {
+                            nextBtn.textContent = 'Finish Opening ✔';
+                            nextBtn.classList.add('finishBtn');
+                        } else {
+                            nextBtn.textContent = 'Next Card ▶';
+                            nextBtn.classList.remove('finishBtn');
+                        }
+                    }
+                }, 1200);
+            }, 350);
+        }, 2800);
     };
 
     if (currentPackRevealIndex === 0) {
+        const highestRarity = getHighestRarityInPack(currentPackRevealCards);
+
         const foilWrapper = document.createElement('div');
-        foilWrapper.className = 'packFoilWrapper';
+        foilWrapper.className = 'packFoilWrapper packFoilClickable';
+        foilWrapper.dataset.highestRarity = highestRarity;
         foilWrapper.innerHTML = `
             <div class="packFoilTopPart">
                 <span class="packFoilBadge">BOOSTER PACK</span>
@@ -7320,16 +7376,22 @@ function renderCurrentRevealCard(packDisplayName) {
             <div class="packFoilBottomPart">
                 <div class="packFoilEraTitle">${packDisplayName || 'Historical Pack'}</div>
                 <div class="packFoilSub">20 CARDS INSIDE</div>
+                <div class="packFoilClickPrompt">✦ CLICK TO TEAR OPEN ✦</div>
             </div>
         `;
         slot.appendChild(foilWrapper);
 
-        setTimeout(() => {
+        let hasTorn = false;
+        foilWrapper.addEventListener('click', () => {
+            if (hasTorn) return;
+            hasTorn = true;
+            foilWrapper.classList.remove('packFoilClickable');
             foilWrapper.classList.add('ripping');
+
             setTimeout(() => {
                 startCardSpinAndRip();
-            }, 650);
-        }, 350);
+            }, 1300);
+        });
     } else {
         startCardSpinAndRip();
     }
@@ -7344,6 +7406,7 @@ function advancePackCardReveal(packDisplayName) {
         renderPackSummaryScreen(packDisplayName);
     }
 }
+
 function renderPackSummaryScreen(packDisplayName) {
     if (!openPackView) return;
     openPackView.innerHTML = '';
@@ -7356,7 +7419,7 @@ function renderPackSummaryScreen(packDisplayName) {
     summaryBox.innerHTML = `
         <h2 style="color: #38bdf8; margin: 0 0 10px 0;">Pack Opening Complete!</h2>
         <p style="color: #cbd5e1; margin: 0 0 20px 0;">You opened the <strong>${packDisplayName}</strong> and pulled 20 cards (${newCardsCount} newly discovered).</p>
-        <button id="packSummaryDoneBtn" class="packItemOpenBtn" style="min-width: 200px;">Return to Packs</button>
+        <button id="packSummaryDoneBtn" type="button" class="packSummaryReturnBtn">Return to Packs</button>
     `;
 
     openPackView.appendChild(summaryBox);
