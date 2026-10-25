@@ -5901,16 +5901,84 @@ body.rng-rarity-omnipotent,
     box-sizing: border-box;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
+.packRevealStageWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.packSideCardsLeft,
+.packSideCardsRight {
+    flex: 0 0 100px;
+    width: 100px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding-top: 10px;
+    box-sizing: border-box;
+}
+
+.packSideCardItem {
+    width: 82px !important;
+    height: 118px !important;
+    min-width: 82px !important;
+    min-height: 118px !important;
+    border-radius: 6px !important;
+    margin-top: -82px !important;
+    transition: transform 0.2s ease;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55) !important;
+    border-width: 2.5px !important;
+    outline-width: 1px !important;
+    animation: sideCardPopIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+.packSideCardItem:first-child {
+    margin-top: 0 !important;
+}
+
+.packSideCardItem .collectionCardName {
+    font-size: 8.5px !important;
+    line-height: 1.15 !important;
+    padding: 0 3px !important;
+}
+
+.packSideCardItem .collectionCardRarity {
+    font-size: 7px !important;
+    margin-top: 2px !important;
+}
+
+.packSideCardsLeft .packSideCardItem {
+    transform: rotate(-5deg);
+}
+
+.packSideCardsRight .packSideCardItem {
+    transform: rotate(5deg);
+}
+
+@keyframes sideCardPopIn {
+    0% { transform: scale(0.6) translateY(-14px); opacity: 0; }
+    100% { opacity: 1; }
+}
+
 .packRevealContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 4px 0 20px;
+    padding: 2px 0 20px;
     gap: 10px;
     perspective: 1200px;
     width: 100%;
-    max-width: 440px;
+    max-width: 320px;
     margin: 0 auto;
 }
 
@@ -5956,6 +6024,7 @@ body.rng-rarity-omnipotent,
     margin: 0 !important;
     box-sizing: border-box !important;
 }
+
 .packFoilWrapper {
     width: 165px;
     height: 239px;
@@ -5964,209 +6033,167 @@ body.rng-rarity-omnipotent,
     display: flex;
     flex-direction: column;
     overflow: visible;
-    transition: transform 0.2s ease, filter 0.2s ease;
+    transition: transform 0.18s ease;
 }
 
-.packFoilWrapper.packFoilClickable {
+.packFoilClickable {
     cursor: pointer;
 }
 
-.packFoilWrapper.packFoilClickable:hover {
-    transform: translateY(-3px) scale(1.02);
-    filter: brightness(1.1);
+.packFoilClickable:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.packFoilTopPrompt {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #38bdf8;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    animation: packFoilPromptBounce 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes packFoilPromptBounce {
+    from { transform: translateX(-50%) translateY(0); opacity: 0.85; }
+    to { transform: translateX(-50%) translateY(-3px); opacity: 1; }
 }
 
 .packFoilTopPart,
 .packFoilBottomPart {
     width: 100%;
-    box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.7);
+    background: linear-gradient(155deg, #f1f5f9 0%, #cbd5e1 32%, #94a3b8 68%, #c6d7e8 100%);
+    border: 2px solid #cbd5e1;
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(30, 41, 59, 0.4), 0 8px 22px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
     box-sizing: border-box;
-    transition: all 0.3s ease;
 }
 
 .packFoilTopPart {
-    height: 60px;
-    border-bottom: 2px dashed rgba(255, 255, 255, 0.45);
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    height: 58px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 2px dashed rgba(71, 85, 105, 0.65);
     transform-origin: bottom left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.packFoilCrimpHeader {
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: repeating-linear-gradient(90deg, rgba(148, 163, 184, 0.5) 0px, rgba(148, 163, 184, 0.5) 2px, transparent 2px, transparent 4px);
+    opacity: 0.65;
+}
+
+.packFoilCrimpFooter {
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: repeating-linear-gradient(90deg, rgba(148, 163, 184, 0.5) 0px, rgba(148, 163, 184, 0.5) 2px, transparent 2px, transparent 4px);
+    opacity: 0.65;
+}
+
+.packFoilGameTitle {
+    font-size: 12px;
+    font-weight: 1000;
+    letter-spacing: 1.2px;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+
+.packFoilSubBadge {
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #475569;
 }
 
 .packFoilBottomPart {
-    height: 179px;
+    height: 181px;
     border-top: 0;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     flex-direction: column;
-    gap: 6px;
+    justify-content: space-between;
+    padding: 10px 8px 12px;
     transform-origin: top center;
 }
 
-.packFoilBadge {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-}
-
-.packFoilEraTitle {
+.packFoilPackName {
     font-size: 14px;
     font-weight: 900;
-    color: #ffffff;
+    color: #0f172a;
     text-align: center;
-    padding: 0 8px;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    line-height: 1.2;
+    margin-top: 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.packFoilSub {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.65);
-    letter-spacing: 0.08em;
-}
-
-.packFoilClickPrompt {
-    font-size: 10px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 0.08em;
-    margin-top: 8px;
-    padding: 3px 8px;
-    background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 999px;
-    animation: packFoilPromptPulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes packFoilPromptPulse {
-    from { transform: scale(0.96); opacity: 0.8; }
-    to { transform: scale(1.04); opacity: 1; border-color: rgba(255, 255, 255, 0.8); }
-}
-
-
-
-/* Common */
-.packFoilWrapper[data-highest-rarity="common"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="common"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #14241a 0%, #1c3b28 50%, #0e1c13 100%);
-    border: 2px solid rgba(74, 222, 128, 0.45);
-}
-.packFoilWrapper[data-highest-rarity="common"] .packFoilBadge { color: #4ade80; }
-.packFoilWrapper[data-highest-rarity="common"] { filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.25)); }
-
-/* Uncommon */
-.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #1e2631 0%, #334155 50%, #18202a 100%);
-    border: 2px solid rgba(148, 163, 184, 0.5);
-}
-.packFoilWrapper[data-highest-rarity="uncommon"] .packFoilBadge { color: #cbd5e1; }
-.packFoilWrapper[data-highest-rarity="uncommon"] { filter: drop-shadow(0 0 10px rgba(148, 163, 184, 0.25)); }
-
-/* Rare */
-.packFoilWrapper[data-highest-rarity="rare"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="rare"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #082f49 0%, #0284c7 50%, #0c4a6e 100%);
-    border: 2px solid rgba(56, 189, 248, 0.6);
-}
-.packFoilWrapper[data-highest-rarity="rare"] .packFoilBadge { color: #38bdf8; }
-.packFoilWrapper[data-highest-rarity="rare"] { filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.35)); }
-
-/* Epic */
-.packFoilWrapper[data-highest-rarity="epic"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="epic"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #2e1065 0%, #7e22ce 50%, #3b0764 100%);
-    border: 2px solid rgba(192, 132, 252, 0.65);
-}
-.packFoilWrapper[data-highest-rarity="epic"] .packFoilBadge { color: #c084fc; }
-.packFoilWrapper[data-highest-rarity="epic"] { filter: drop-shadow(0 0 16px rgba(192, 132, 252, 0.45)); }
-
-/* Legendary */
-.packFoilWrapper[data-highest-rarity="legendary"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="legendary"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #451a03 0%, #ca8a04 50%, #713f12 100%);
-    border: 2px solid rgba(250, 204, 21, 0.75);
-}
-.packFoilWrapper[data-highest-rarity="legendary"] .packFoilBadge { color: #facc15; }
-.packFoilWrapper[data-highest-rarity="legendary"] { filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.55)); }
-
-/* Mythical */
-.packFoilWrapper[data-highest-rarity="mythical"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="mythical"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #450a0a 0%, #dc2626 50%, #7f1d1d 100%);
-    border: 2px solid rgba(248, 113, 113, 0.75);
-}
-.packFoilWrapper[data-highest-rarity="mythical"] .packFoilBadge { color: #f87171; }
-.packFoilWrapper[data-highest-rarity="mythical"] { filter: drop-shadow(0 0 20px rgba(248, 113, 113, 0.55)); }
-
-/* Celestial */
-.packFoilWrapper[data-highest-rarity="celestial"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="celestial"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #0c2b4e 0%, #2563eb 50%, #1d4ed8 100%);
-    border: 2px solid rgba(96, 165, 250, 0.8);
-}
-.packFoilWrapper[data-highest-rarity="celestial"] .packFoilBadge { color: #60a5fa; }
-.packFoilWrapper[data-highest-rarity="celestial"] { filter: drop-shadow(0 0 22px rgba(96, 165, 250, 0.6)); }
-
-/* Divine */
-.packFoilWrapper[data-highest-rarity="divine"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="divine"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #1a2e05 0%, #65a30d 50%, #365314 100%);
-    border: 2px solid rgba(163, 230, 53, 0.8);
-}
-.packFoilWrapper[data-highest-rarity="divine"] .packFoilBadge { color: #a3e635; }
-.packFoilWrapper[data-highest-rarity="divine"] { filter: drop-shadow(0 0 22px rgba(163, 230, 53, 0.6)); }
-
-/* Transcendent */
-.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #500724 0%, #db2777 50%, #831843 100%);
-    border: 2px solid rgba(255, 85, 153, 0.85);
-}
-.packFoilWrapper[data-highest-rarity="transcendent"] .packFoilBadge { color: #ff5599; }
-.packFoilWrapper[data-highest-rarity="transcendent"] { filter: drop-shadow(0 0 24px rgba(255, 85, 153, 0.65)); }
-
-/* Cosmic */
-.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #2e0854 0%, #6d28d9 50%, #4c1d95 100%);
-    border: 2px solid rgba(192, 132, 252, 0.85);
-}
-.packFoilWrapper[data-highest-rarity="cosmic"] .packFoilBadge { color: #c084fc; }
-.packFoilWrapper[data-highest-rarity="cosmic"] { filter: drop-shadow(0 0 26px rgba(192, 132, 252, 0.7)); }
-
-/* Omnipotent */
-.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilTopPart,
-.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilBottomPart {
-    background: linear-gradient(145deg, #1e293b 0%, #f8fafc 50%, #334155 100%);
+.packFoilCenterSeal {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e2e8f0 0%, #94a3b8 100%);
     border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
 }
-.packFoilWrapper[data-highest-rarity="omnipotent"] .packFoilBadge { color: #ffffff; }
-.packFoilWrapper[data-highest-rarity="omnipotent"] { filter: drop-shadow(0 0 28px rgba(255, 255, 255, 0.8)); }
+
+.packFoilDetailsText {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #334155;
+    text-align: center;
+}
+
+.packFoilRaritySquare {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1.5px solid #ffffff;
+    box-sizing: border-box;
+    z-index: 10;
+}
 
 .packFoilWrapper.ripping .packFoilTopPart {
-    animation: packFoilRipTop 1.3s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+    animation: packFoilRipTop 0.8s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
 }
 
 .packFoilWrapper.ripping .packFoilBottomPart {
-    animation: packFoilRipBottom 1.3s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+    animation: packFoilRipBottom 0.8s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
 }
 
 @keyframes packFoilRipTop {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    45% { transform: translate(-20px, -24px) rotate(-16deg); opacity: 0.9; }
-    100% { transform: translate(-70px, -60px) rotate(-34deg); opacity: 0; }
+    50% { transform: translate(-22px, -24px) rotate(-16deg); opacity: 0.9; }
+    100% { transform: translate(-65px, -55px) rotate(-34deg); opacity: 0; }
 }
 
 @keyframes packFoilRipBottom {
     0% { transform: translateY(0); opacity: 1; }
     40% { transform: translateY(6px); opacity: 1; }
-    100% { transform: translateY(45px); opacity: 0; }
+    100% { transform: translateY(40px); opacity: 0; }
 }
 
 .packCardMystery {
@@ -6206,26 +6233,14 @@ body.rng-rarity-omnipotent,
     text-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
 }
 
-.packCardSpinSlow {
-    animation: packCardSpinSlower 2.8s cubic-bezier(0.12, 0.82, 0.24, 1) forwards;
+.packCardSpin1s {
+    animation: packCardSpin1sAnim 1.0s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
 }
 
-@keyframes packCardSpinSlower {
+@keyframes packCardSpin1sAnim {
     0% {
-        transform: rotateY(1800deg) scale(0.7);
-        filter: brightness(0.4);
-    }
-    50% {
-        transform: rotateY(720deg) scale(0.9);
-        filter: brightness(0.75);
-    }
-    75% {
-        transform: rotateY(180deg) scale(0.98);
-        filter: brightness(0.9);
-    }
-    90% {
-        transform: rotateY(40deg) scale(0.995);
-        filter: brightness(0.98);
+        transform: rotateY(1080deg) scale(0.8);
+        filter: brightness(0.6);
     }
     100% {
         transform: rotateY(0deg) scale(1);
@@ -6255,7 +6270,7 @@ body.rng-rarity-omnipotent,
     height: 119px;
     border-bottom: 2px dashed #475569;
     clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 80% 100%, 60% 88%, 40% 100%, 20% 88%, 0% 96%);
-    animation: packRipSeparateTop 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: packRipSeparateTop 0.38s ease-out forwards;
 }
 
 .packMysteryRipHalfBottom {
@@ -6263,21 +6278,35 @@ body.rng-rarity-omnipotent,
     height: 122px;
     border-top: 0;
     clip-path: polygon(0% 6%, 20% 14%, 40% 2%, 60% 14%, 80% 2%, 100% 10%, 100% 100%, 0% 100%);
-    animation: packRipSeparateBottom 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: packRipSeparateBottom 0.38s ease-out forwards;
 }
 
 @keyframes packRipSeparateTop {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(-20px, -26px) rotate(-10deg); opacity: 0.8; }
+    100% { transform: translate(-18px, -22px) rotate(-8deg); opacity: 0.8; }
 }
 
 @keyframes packRipSeparateBottom {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(20px, 26px) rotate(10deg); opacity: 0.8; }
+    100% { transform: translate(18px, 22px) rotate(8deg); opacity: 0.8; }
+}
+
+.packRarityFlashActive {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    pointer-events: none;
+    animation: packRarityFlashAnim 0.55s ease-out forwards;
+}
+
+@keyframes packRarityFlashAnim {
+    0% { opacity: 0; }
+    15% { opacity: 0.95; }
+    100% { opacity: 0; }
 }
 
 .packRevealedCardAnim {
-    animation: packCardRevealPop 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+    animation: packCardRevealPop 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
 }
 
 .packCardTextDetails {
@@ -6336,6 +6365,72 @@ body.rng-rarity-omnipotent,
 .packCardTextRarity[data-rarity="transcendent"] { color: #ff5599; }
 .packCardTextRarity[data-rarity="cosmic"] { color: #c084fc; }
 .packCardTextRarity[data-rarity="omnipotent"] { color: #ffffff; }
+
+.packLastResultShowcase {
+    width: 100%;
+    max-width: 820px;
+    margin: 16px auto 30px;
+    padding: 16px;
+    border: 1px solid rgba(138, 166, 191, 0.22);
+    border-radius: 14px;
+    background: rgba(14, 26, 42, 0.85);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.packLastResultTitle {
+    font-size: 16px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin-bottom: 14px;
+}
+
+.packLastResultGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    justify-items: center;
+}
+
+.packLastResultCard {
+    width: 100%;
+    max-width: 135px;
+    height: 195px;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    box-sizing: border-box;
+    border-width: 3px !important;
+}
+
+.packLastResultCard .collectionCardName {
+    font-size: 11px !important;
+    font-weight: 800;
+    color: #ffffff;
+    text-align: center;
+    word-break: break-word;
+}
+
+.packLastResultCard .collectionCardRarity {
+    font-size: 9px !important;
+    margin-top: 4px;
+}
+
+.packLastResultBadgeNew {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
 
 .packSummaryReturnBtn {
     min-width: 190px;
