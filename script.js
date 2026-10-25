@@ -1966,6 +1966,7 @@ cardsButton.addEventListener('click', () => {
     );
     switchCardsSubview('collection');
     triggerCollectionTabRequest();
+    requestPackOptions(); 
 });
 
 statsButton.addEventListener('click', switchToStats);
@@ -7154,7 +7155,6 @@ function handlePackOpenedResult(data) {
 
     startPackCardReveal(data.displayName);
 }
-
 function startPackCardReveal(packDisplayName) {
     if (!openPackView) return;
     openPackView.innerHTML = '';
@@ -7187,15 +7187,17 @@ function startPackCardReveal(packDisplayName) {
 
     openPackView.appendChild(container);
 
-    renderCurrentRevealCard();
+    renderCurrentRevealCard(packDisplayName);
 }
 
 let isCardRevealSpinning = false;
 
-function renderCurrentRevealCard() {
+function renderCurrentRevealCard(packDisplayName) {
     const slot = document.getElementById('packRevealCardSlot');
     const counter = document.getElementById('packRevealCounter');
     const nextBtn = document.getElementById('packRevealNextBtn');
+    let detailsBox = document.getElementById('packCardDetailsBox');
+
     if (!slot || !counter) return;
 
     const total = currentPackRevealCards.length;
@@ -7205,72 +7207,143 @@ function renderCurrentRevealCard() {
     if (!card) return;
 
     slot.innerHTML = '';
+    if (detailsBox) detailsBox.remove();
 
     isCardRevealSpinning = true;
     if (nextBtn) {
         nextBtn.disabled = true;
-        nextBtn.style.opacity = '0.5';
-        nextBtn.style.cursor = 'not-allowed';
     }
 
-    const mysteryBox = document.createElement('div');
-    mysteryBox.className = 'collectionCardBox packCardMystery packCardSpinning';
-    mysteryBox.innerHTML = `
-        <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</div>
-        <div class="packCardMysteryMainQ">?</div>
-    `;
-    slot.appendChild(mysteryBox);
-
-    setTimeout(() => {
-        if (!slot.contains(mysteryBox)) return;
-
-        playRngLaunchFlash();
-
+    const startCardSpinAndRip = () => {
         slot.innerHTML = '';
 
-        const cardBox = document.createElement('div');
-        cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
-        cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
-
-        const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
-        if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
-            cardBox.dataset.hasGradient = "true";
-        }
-
-        cardBox.innerHTML = `
-            <div class="collectionCardName">${card.name}</div>
-            <div class="collectionCardRarity">${card.rarity}</div>
-            ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+        const mysteryBox = document.createElement('div');
+        mysteryBox.className = 'collectionCardBox packCardMystery packCardSpinSlow';
+        mysteryBox.innerHTML = `
+            <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</div>
+            <div class="packCardMysteryMainQ">?</div>
         `;
+        slot.appendChild(mysteryBox);
 
-        slot.appendChild(cardBox);
+        setTimeout(() => {
+            if (!slot.contains(mysteryBox)) return;
 
-        isCardRevealSpinning = false;
-        if (nextBtn) {
-            nextBtn.disabled = false;
-            nextBtn.style.opacity = '';
-            nextBtn.style.cursor = '';
-            if (currentPackRevealIndex >= total - 1) {
-                nextBtn.textContent = 'Finish Opening ✔';
-                nextBtn.classList.add('finishBtn');
-            } else {
-                nextBtn.textContent = 'Next Card ▶';
-                nextBtn.classList.remove('finishBtn');
-            }
-        }
-    }, 1100);
+            slot.innerHTML = '';
+            const ripContainer = document.createElement('div');
+            ripContainer.className = 'packMysteryRippingContainer';
+            ripContainer.innerHTML = `
+                <div class="packMysteryRipHalf packMysteryRipHalfTop">
+                    <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ?</div>
+                </div>
+                <div class="packMysteryRipHalf packMysteryRipHalfBottom">
+                    <div class="packCardMysteryPattern">? ? ? ? ? ? ? ? ? ?</div>
+                </div>
+            `;
+            slot.appendChild(ripContainer);
+
+            setTimeout(() => {
+                playRngLaunchFlash();
+
+                slot.innerHTML = '';
+
+                const cardBox = document.createElement('div');
+                cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
+                cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
+
+                const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
+                if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
+                    cardBox.dataset.hasGradient = "true";
+                }
+
+                cardBox.innerHTML = `
+                    <div class="collectionCardName">${card.name}</div>
+                    <div class="collectionCardRarity">${card.rarity}</div>
+                    ${!card.duplicate ? '<div class="packCardBadgeNew">★ NEW ★</div>' : '<div class="packCardBadgeDup">DUPLICATE</div>'}
+                `;
+                slot.appendChild(cardBox);
+
+                const container = document.querySelector('.packRevealContainer');
+                if (container) {
+                    const newDetails = document.createElement('div');
+                    newDetails.id = 'packCardDetailsBox';
+                    newDetails.className = 'packCardDetailsBox packRevealedCardAnim';
+                    newDetails.innerHTML = `
+                        <div class="packCardDetailName">${card.name}</div>
+                        <div class="packCardDetailGrid">
+                            <div class="packCardDetailRow">
+                                <span class="packDetailLabel">Edition</span>
+                                <span class="packDetailValue">Edition N/A</span>
+                            </div>
+                            <div class="packCardDetailRow">
+                                <span class="packDetailLabel">Status</span>
+                                <span class="packDetailValue ${!card.duplicate ? 'statusNew' : 'statusDup'}">
+                                    ${!card.duplicate ? '★ NEW ★' : 'DUPLICATE'}
+                                </span>
+                            </div>
+                            <div class="packCardDetailRow">
+                                <span class="packDetailLabel">Modifiers</span>
+                                <span class="packDetailValue">None</span>
+                            </div>
+                            <div class="packCardDetailRow">
+                                <span class="packDetailLabel">Total Points</span>
+                                <span class="packDetailValue">N/A</span>
+                            </div>
+                        </div>
+                    `;
+
+                    const nextBtnEl = document.getElementById('packRevealNextBtn');
+                    container.insertBefore(newDetails, nextBtnEl);
+                }
+
+                isCardRevealSpinning = false;
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                    if (currentPackRevealIndex >= total - 1) {
+                        nextBtn.textContent = 'Finish Opening ✔';
+                        nextBtn.classList.add('finishBtn');
+                    } else {
+                        nextBtn.textContent = 'Next Card ▶';
+                        nextBtn.classList.remove('finishBtn');
+                    }
+                }
+            }, 420);
+        }, 1600);
+    };
+
+    if (currentPackRevealIndex === 0) {
+        const foilWrapper = document.createElement('div');
+        foilWrapper.className = 'packFoilWrapper';
+        foilWrapper.innerHTML = `
+            <div class="packFoilTopPart">
+                <span class="packFoilBadge">BOOSTER PACK</span>
+            </div>
+            <div class="packFoilBottomPart">
+                <div class="packFoilEraTitle">${packDisplayName || 'Historical Pack'}</div>
+                <div class="packFoilSub">20 CARDS INSIDE</div>
+            </div>
+        `;
+        slot.appendChild(foilWrapper);
+
+        setTimeout(() => {
+            foilWrapper.classList.add('ripping');
+            setTimeout(() => {
+                startCardSpinAndRip();
+            }, 650);
+        }, 350);
+    } else {
+        startCardSpinAndRip();
+    }
 }
 
 function advancePackCardReveal(packDisplayName) {
     if (isCardRevealSpinning) return;
     if (currentPackRevealIndex < currentPackRevealCards.length - 1) {
         currentPackRevealIndex++;
-        renderCurrentRevealCard();
+        renderCurrentRevealCard(packDisplayName);
     } else {
         renderPackSummaryScreen(packDisplayName);
     }
 }
-
 function renderPackSummaryScreen(packDisplayName) {
     if (!openPackView) return;
     openPackView.innerHTML = '';
