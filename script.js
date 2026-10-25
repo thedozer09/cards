@@ -7272,8 +7272,8 @@ function playPackCardFlash(rarity) {
     const flashEl = document.createElement('div');
     flashEl.id = 'packRarityFlashOverlay';
     flashEl.className = 'packRarityFlashActive';
-    flashEl.style.setProperty('background', flashColor, 'important');
-    flashEl.style.setProperty('box-shadow', `inset 0 0 160px ${flashColor}, 0 0 100px ${flashColor}`, 'important');
+    flashEl.style.setProperty('background-color', flashColor, 'important');
+    flashEl.style.setProperty('box-shadow', `0 0 100px 40px ${flashColor}, inset 0 0 120px #ffffff`, 'important');
 
     document.body.appendChild(flashEl);
 
@@ -7281,7 +7281,7 @@ function playPackCardFlash(rarity) {
         if (flashEl && flashEl.parentNode) {
             flashEl.remove();
         }
-    }, 550);
+    }, 1000);
 }
 
 function startPackCardReveal(packDisplayName) {
@@ -7439,9 +7439,11 @@ function renderCurrentRevealCard(packDisplayName) {
         }, 1000);
     };
 
-   if (currentPackRevealIndex === 0) {
-        const highestRarity = getHighestRarityInPack(currentPackRevealCards);
-        const highestColor = RARITY_FLASH_COLORS[highestRarity] || '#38bdf8';
+  if (currentPackRevealIndex === 0) {
+        const cleanPackTitle = (packDisplayName || 'HISTORICAL')
+            .replace(/\bpack\b/gi, '')
+            .trim()
+            .toUpperCase();
 
         const foilWrapper = document.createElement('div');
         foilWrapper.className = 'packFoilWrapper packFoilClickable';
@@ -7449,22 +7451,26 @@ function renderCurrentRevealCard(packDisplayName) {
             <div class="packFoilTopPrompt">✦ CLICK TO OPEN PACK ✦</div>
             <div class="packFoilTopPart">
                 <div class="packFoilCrimpHeader"></div>
-                <div class="packFoilGameTitle">STORM CARDS</div>
-                <div class="packFoilPackName">${(packDisplayName || 'Historical Pack').toUpperCase()}</div>
+                <div class="packFoilGameTitle">STORMCARDS</div>
+                <div class="packFoilPackName">${cleanPackTitle} PACK</div>
             </div>
             <div class="packFoilBottomPart">
-                <div class="packFoilEmblem">
-                    <img src="./tornadovector.png" class="packFoilTornadoIcon" alt="" />
-                    <img src="./carvector.png" class="packFoilTruckIcon" alt="" />
+                <div class="packFoilSubTitle">CARD COLLECTION GAME</div>
+
+                <!-- Scattered Background Decoration -->
+                <div class="packFoilDecoBackground">
+                    <img src="./tornadovector.png" class="packDecoItem decoTornado1" alt="" />
+                    <img src="./carvector.png" class="packDecoItem decoCar1" alt="" />
+                    <div class="packDecoItem packDecoCard decoCard1"><span class="decoQ">?</span></div>
+                    <img src="./tornadovector.png" class="packDecoItem decoTornado2" alt="" />
+                    <div class="packDecoItem packDecoCard decoCard2"><span class="decoQ">?</span></div>
+                    <img src="./carvector.png" class="packDecoItem decoCar2" alt="" />
                 </div>
-                <div class="packFoilClutterRow">
-                    <span>COLLECTIBLE ARCHIVE</span> • <span>DOWDATALAB</span>
-                </div>
-                <div class="packFoilFooterRow">
-                    <div class="packFoilRaritySquare" style="background-color: ${highestColor}; box-shadow: 0 0 10px ${highestColor};" title="Highest Card Rarity: ${highestRarity.toUpperCase()}"></div>
+
+                <div class="packFoilBottomCenter">
                     <div class="packFoilDetailsText">20 CARDS INSIDE</div>
-                    <div class="packFoilBarcode">|||| ||| |</div>
                 </div>
+
                 <div class="packFoilCrimpFooter"></div>
             </div>
         `;

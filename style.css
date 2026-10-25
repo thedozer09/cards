@@ -6071,12 +6071,11 @@ body.rng-rarity-omnipotent,
     box-sizing: border-box;
     position: relative;
 }
-
 .packFoilTopPart {
     height: 68px;
     background: linear-gradient(155deg, #e2e8f0 0%, #94a3b8 35%, #475569 70%, #1e293b 100%);
     border: 2px solid #cbd5e1;
-    border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.55);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.35);
@@ -6112,16 +6111,16 @@ body.rng-rarity-omnipotent,
 .packFoilGameTitle {
     font-size: 13px;
     font-weight: 1000;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.8px;
     color: #ffffff;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 0 6px rgba(56, 189, 248, 0.4);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 0 8px rgba(56, 189, 248, 0.5);
 }
 
 .packFoilPackName {
     font-size: 11px;
     font-weight: 900;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.9px;
     color: #93c5fd;
     text-transform: uppercase;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
@@ -6141,97 +6140,134 @@ body.rng-rarity-omnipotent,
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 8px 8px 12px;
-    transform-origin: top center;
-}
-
-.packFoilEmblem {
-    width: 66px;
-    height: 66px;
-    margin: 4px auto 0;
-    border-radius: 50%;
-    background: radial-gradient(circle, #334155 0%, #1e293b 65%, #0f172a 100%);
-    border: 2px solid rgba(203, 213, 225, 0.7);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55), inset 0 0 8px rgba(0, 0, 0, 0.8);
-    display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 10px 8px 12px;
+    transform-origin: top center;
     position: relative;
     overflow: hidden;
 }
 
-.packFoilTornadoIcon {
-    width: 42px;
-    height: 42px;
-    position: absolute;
-    right: 2px;
-    top: 5px;
-    opacity: 0.92;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-    pointer-events: none;
-}
-
-.packFoilTruckIcon {
-    width: 38px;
-    height: 38px;
-    position: absolute;
-    left: 4px;
-    bottom: 5px;
-    opacity: 0.95;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
-    pointer-events: none;
-}
-
-.packFoilClutterRow {
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+.packFoilSubTitle {
+    font-size: 9.5px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
     color: #cbd5e1;
-    text-align: center;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    margin: 4px 0 2px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    z-index: 5;
+    position: relative;
+    margin-top: 2px;
 }
 
-.packFoilFooterRow {
+.packFoilDecoBackground {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.packDecoItem {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+}
+
+.packDecoCard {
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.35);
+    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.packDecoCard .decoQ {
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1;
+}
+
+.decoTornado1 {
+    top: 34px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+    transform: rotate(-16deg);
+    opacity: 0.28;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.decoCar1 {
+    top: 38px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    transform: rotate(18deg);
+    opacity: 0.32;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.decoCard1 {
+    top: 76px;
+    left: 14px;
+    width: 26px;
+    height: 38px;
+    transform: rotate(10deg);
+    opacity: 0.28;
+}
+
+.decoTornado2 {
+    bottom: 34px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    transform: rotate(26deg);
+    opacity: 0.26;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.decoCard2 {
+    top: 74px;
+    right: 14px;
+    width: 25px;
+    height: 36px;
+    transform: rotate(-12deg);
+    opacity: 0.28;
+}
+
+.decoCar2 {
+    bottom: 32px;
+    left: 12px;
+    width: 28px;
+    height: 28px;
+    transform: rotate(-14deg);
+    opacity: 0.30;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.packFoilBottomCenter {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 4px;
-    margin-bottom: 2px;
+    justify-content: center;
+    margin-bottom: 4px;
     z-index: 5;
     position: relative;
 }
 
-.packFoilRaritySquare {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    min-height: 16px;
-    border-radius: 3px;
-    border: 1.5px solid #ffffff;
-    box-sizing: border-box;
-    flex-shrink: 0;
-}
-
 .packFoilDetailsText {
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    color: #f8fafc;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    font-size: 12px;
+    font-weight: 1000;
+    letter-spacing: 1.2px;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 10px rgba(56, 189, 248, 0.5);
     white-space: nowrap;
-    padding: 0 4px;
-}
-
-.packFoilBarcode {
-    font-family: monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.5);
-    white-space: nowrap;
-    line-height: 1;
 }
 
 .packFoilWrapper.ripping .packFoilTopPart {
@@ -6351,16 +6387,38 @@ body.rng-rarity-omnipotent,
 
 .packRarityFlashActive {
     position: fixed;
-    inset: 0;
+    top: 50%;
+    left: 50%;
+    width: 140vmax;
+    height: 140vmax;
+    border-radius: 50%;
     z-index: 999999;
     pointer-events: none;
-    animation: packRarityFlashAnim 0.55s ease-out forwards;
+    transform: translate(-50%, -50%) scale(0.01);
+    animation: packFlashSphereExpand 1.0s cubic-bezier(0.1, 0.85, 0.2, 1) forwards;
 }
 
-@keyframes packRarityFlashAnim {
-    0% { opacity: 0; }
-    15% { opacity: 0.95; }
-    100% { opacity: 0; }
+@keyframes packFlashSphereExpand {
+    0% {
+        transform: translate(-50%, -50%) scale(0.01);
+        opacity: 0.2;
+        filter: blur(2px);
+    }
+    18% {
+        transform: translate(-50%, -50%) scale(0.18);
+        opacity: 1;
+        filter: blur(6px);
+    }
+    65% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 0.95;
+        filter: blur(25px);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.0);
+        opacity: 0;
+        filter: blur(50px);
+    }
 }
 
 .packRevealedCardAnim {
