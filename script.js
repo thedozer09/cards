@@ -7439,7 +7439,7 @@ function renderCurrentRevealCard(packDisplayName) {
         }, 1000);
     };
 
-    if (currentPackRevealIndex === 0) {
+   if (currentPackRevealIndex === 0) {
         const highestRarity = getHighestRarityInPack(currentPackRevealCards);
         const highestColor = RARITY_FLASH_COLORS[highestRarity] || '#38bdf8';
 
@@ -7450,13 +7450,21 @@ function renderCurrentRevealCard(packDisplayName) {
             <div class="packFoilTopPart">
                 <div class="packFoilCrimpHeader"></div>
                 <div class="packFoilGameTitle">STORM CARDS</div>
-                <div class="packFoilSubBadge">OFFICIAL ARCHIVE</div>
+                <div class="packFoilPackName">${(packDisplayName || 'Historical Pack').toUpperCase()}</div>
             </div>
             <div class="packFoilBottomPart">
-                <div class="packFoilPackName">${packDisplayName || 'Historical Pack'}</div>
-                <div class="packFoilCenterSeal">⚡</div>
-                <div class="packFoilDetailsText">20 CARDS • SERIES 1</div>
-                <div class="packFoilRaritySquare" style="background-color: ${highestColor}; box-shadow: 0 0 10px ${highestColor};" title="Highest Card Rarity: ${highestRarity.toUpperCase()}"></div>
+                <div class="packFoilEmblem">
+                    <img src="./tornadovector.png" class="packFoilTornadoIcon" alt="" />
+                    <img src="./carvector.png" class="packFoilTruckIcon" alt="" />
+                </div>
+                <div class="packFoilClutterRow">
+                    <span>COLLECTIBLE ARCHIVE</span> • <span>DOWDATALAB</span>
+                </div>
+                <div class="packFoilFooterRow">
+                    <div class="packFoilRaritySquare" style="background-color: ${highestColor}; box-shadow: 0 0 10px ${highestColor};" title="Highest Card Rarity: ${highestRarity.toUpperCase()}"></div>
+                    <div class="packFoilDetailsText">20 CARDS INSIDE</div>
+                    <div class="packFoilBarcode">|||| ||| |</div>
+                </div>
                 <div class="packFoilCrimpFooter"></div>
             </div>
         `;

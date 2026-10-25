@@ -5999,7 +5999,6 @@ body.rng-rarity-omnipotent,
     font-weight: 600;
     color: #8a96a4;
 }
-
 .packRevealCardSlot {
     width: 165px;
     height: 239px;
@@ -6012,6 +6011,7 @@ body.rng-rarity-omnipotent,
     justify-content: center;
     position: relative;
     box-sizing: border-box;
+    margin-top: 26px;
 }
 
 .packRevealCardSlot .collectionCardBox {
@@ -6046,7 +6046,7 @@ body.rng-rarity-omnipotent,
 
 .packFoilTopPrompt {
     position: absolute;
-    top: -26px;
+    top: -24px;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
@@ -6054,8 +6054,10 @@ body.rng-rarity-omnipotent,
     font-weight: 900;
     letter-spacing: 0.08em;
     color: #38bdf8;
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
     animation: packFoilPromptBounce 1.1s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 10;
 }
 
 @keyframes packFoilPromptBounce {
@@ -6066,25 +6068,25 @@ body.rng-rarity-omnipotent,
 .packFoilTopPart,
 .packFoilBottomPart {
     width: 100%;
-    background: linear-gradient(155deg, #f1f5f9 0%, #cbd5e1 32%, #94a3b8 68%, #c6d7e8 100%);
-    border: 2px solid #cbd5e1;
-    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(30, 41, 59, 0.4), 0 8px 22px rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
     box-sizing: border-box;
+    position: relative;
 }
 
 .packFoilTopPart {
-    height: 58px;
+    height: 68px;
+    background: linear-gradient(155deg, #e2e8f0 0%, #94a3b8 35%, #475569 70%, #1e293b 100%);
+    border: 2px solid #cbd5e1;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    border-bottom: 2px dashed rgba(71, 85, 105, 0.65);
-    transform-origin: bottom left;
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 3px;
+    padding-top: 6px;
+    transform-origin: bottom left;
 }
 
 .packFoilCrimpHeader {
@@ -6093,8 +6095,8 @@ body.rng-rarity-omnipotent,
     position: absolute;
     top: 0;
     left: 0;
-    background: repeating-linear-gradient(90deg, rgba(148, 163, 184, 0.5) 0px, rgba(148, 163, 184, 0.5) 2px, transparent 2px, transparent 4px);
-    opacity: 0.65;
+    background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0px, rgba(255, 255, 255, 0.4) 2px, transparent 2px, transparent 4px);
+    opacity: 0.7;
 }
 
 .packFoilCrimpFooter {
@@ -6103,77 +6105,133 @@ body.rng-rarity-omnipotent,
     position: absolute;
     bottom: 0;
     left: 0;
-    background: repeating-linear-gradient(90deg, rgba(148, 163, 184, 0.5) 0px, rgba(148, 163, 184, 0.5) 2px, transparent 2px, transparent 4px);
-    opacity: 0.65;
+    background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0px, rgba(0, 0, 0, 0.35) 2px, transparent 2px, transparent 4px);
+    opacity: 0.7;
 }
 
 .packFoilGameTitle {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 1000;
-    letter-spacing: 1.2px;
-    color: #0f172a;
+    letter-spacing: 1.5px;
+    color: #ffffff;
     text-transform: uppercase;
-}
-
-.packFoilSubBadge {
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    color: #475569;
-}
-
-.packFoilBottomPart {
-    height: 181px;
-    border-top: 0;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px 8px 12px;
-    transform-origin: top center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 0 6px rgba(56, 189, 248, 0.4);
 }
 
 .packFoilPackName {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 900;
-    color: #0f172a;
+    letter-spacing: 0.8px;
+    color: #93c5fd;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
     text-align: center;
-    line-height: 1.2;
-    margin-top: 14px;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    padding: 0 6px;
+    line-height: 1.1;
 }
 
-.packFoilCenterSeal {
-    width: 44px;
-    height: 44px;
+.packFoilBottomPart {
+    height: 171px;
+    background: linear-gradient(155deg, #cbd5e1 0%, #64748b 32%, #334155 68%, #0f172a 100%);
+    border: 2px solid #94a3b8;
+    border-top: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.6), 0 8px 22px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 8px 12px;
+    transform-origin: top center;
+}
+
+.packFoilEmblem {
+    width: 66px;
+    height: 66px;
+    margin: 4px auto 0;
     border-radius: 50%;
-    background: radial-gradient(circle, #e2e8f0 0%, #94a3b8 100%);
-    border: 2px solid #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    background: radial-gradient(circle, #334155 0%, #1e293b 65%, #0f172a 100%);
+    border: 2px solid rgba(203, 213, 225, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55), inset 0 0 8px rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
-.packFoilDetailsText {
-    font-size: 9px;
+.packFoilTornadoIcon {
+    width: 42px;
+    height: 42px;
+    position: absolute;
+    right: 2px;
+    top: 5px;
+    opacity: 0.92;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+    pointer-events: none;
+}
+
+.packFoilTruckIcon {
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    left: 4px;
+    bottom: 5px;
+    opacity: 0.95;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+    pointer-events: none;
+}
+
+.packFoilClutterRow {
+    font-size: 8px;
     font-weight: 800;
-    letter-spacing: 0.06em;
-    color: #334155;
+    letter-spacing: 0.08em;
+    color: #cbd5e1;
     text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    margin: 4px 0 2px;
+}
+
+.packFoilFooterRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    margin-bottom: 2px;
+    z-index: 5;
+    position: relative;
 }
 
 .packFoilRaritySquare {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
     width: 16px;
     height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     border-radius: 3px;
     border: 1.5px solid #ffffff;
     box-sizing: border-box;
-    z-index: 10;
+    flex-shrink: 0;
+}
+
+.packFoilDetailsText {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #f8fafc;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+    padding: 0 4px;
+}
+
+.packFoilBarcode {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    line-height: 1;
 }
 
 .packFoilWrapper.ripping .packFoilTopPart {
