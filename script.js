@@ -145,47 +145,86 @@ let isReconnectingSession = false;
 let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 5;
 
+let cachedDiscordSdkInstance = null;
+
+let isForceMuted = false;
+let wasMusicMutedBeforeForce = true;
+
+function enableForceMute() {
+    if (isForceMuted) return;
+    isForceMuted = true;
+    wasMusicMutedBeforeForce = Boolean(activityMusic && activityMusic.muted);
+
+    if (activityMusic) {
+        activityMusic.muted = true;
+        fadeAudioVolume(activityMusic, 0, 150);
+    }
+    updateActivityMusicButton();
+}
+
+function disableForceMute() {
+    if (!isForceMuted) return;
+    isForceMuted = false;
+
+    if (!wasMusicMutedBeforeForce && activityMusicAllowed && tosMusicApproved && activityMusic) {
+        activityMusic.muted = false;
+        fadeAudioVolume(activityMusic, 0.25, 300);
+        startActivityMusic();
+    } else if (activityMusic) {
+        activityMusic.muted = true;
+    }
+    updateActivityMusicButton();
+}
+
 async function handleDiscordSdkInitialization(sdkCode) {
-    setOAuthStatus(isReconnectingSession ? "Reconnecting..." : "OAuth2 authenticating...");
+    setOAuthStatus(isReconnectingSession ? "Reconnecting OAuth2..." : "OAuth2 authenticating...");
     try {
         console.log("⏳ Initializing Discord SDK received from Mid...");
 
-        const blob = new Blob([sdkCode], { type: 'application/javascript' });
-        const blobUrl = URL.createObjectURL(blob);
-        const module = await import(blobUrl);
-        URL.revokeObjectURL(blobUrl);
+        if (!cachedDiscordSdkInstance) {
+            const blob = new Blob([sdkCode], { type: 'application/javascript' });
+            const blobUrl = URL.createObjectURL(blob);
+            const module = await import(blobUrl);
+            URL.revokeObjectURL(blobUrl);
 
-        const SdkClass = module.DiscordSDK || module.default?.DiscordSDK || module.default;
-        if (!SdkClass) {
-            throw new Error("DiscordSDK class not found in loaded payload.");
+            const SdkClass = module.DiscordSDK || module.default?.DiscordSDK || module.default;
+            if (!SdkClass) {
+                throw new Error("DiscordSDK class not found in loaded payload.");
+            }
+
+            cachedDiscordSdkInstance = new SdkClass(DISCORD_CLIENT_ID, {
+                disableConsoleLogOverride: true
+            });
+
+            await cachedDiscordSdkInstance.ready();
+            console.log("⏳ Discord SDK ready! Requesting OAuth code...");
         }
 
-        const discordSdk = new SdkClass(DISCORD_CLIENT_ID, {
-            disableConsoleLogOverride: true
-        });
-
-        await discordSdk.ready();
-        console.log("⏳ Discord SDK ready! Requesting OAuth code...");
-
-        const { code } = await discordSdk.commands.authorize({
+        const { code } = await cachedDiscordSdkInstance.commands.authorize({
             client_id: DISCORD_CLIENT_ID,
             response_type: 'code',
             state: '',
             prompt: 'none',
-            scope: ['identify']
+            scope: ['identify', 'applications.commands']
         });
 
-        console.log("📤 Sending OAuth code to Mid over WebSocket (isReconnect:", isReconnectingSession, ")...");
-
-        socket.send(JSON.stringify({
-            protocol: "cardgame",
-            version: 1,
-            request: "authenticate",
-            info: { 
-                code: code,
-                isReconnect: isReconnectingSession
-            }
-        }));
+        if (isReconnectingSession) {
+            console.log("📤 Sending standalone reconnect command with OAuth code to Mid...");
+            socket.send(JSON.stringify({
+                protocol: "cardgame",
+                version: 1,
+                request: "reconnect",
+                info: { code: code }
+            }));
+        } else {
+            console.log("📤 Sending initial authenticate command with OAuth code to Mid...");
+            socket.send(JSON.stringify({
+                protocol: "cardgame",
+                version: 1,
+                request: "authenticate",
+                info: { code: code }
+            }));
+        }
    } catch (err) {
         clearOAuthStatus();
         console.error("❌ Discord SDK Auth Error:", err);
@@ -304,7 +343,7 @@ function initializeActivityMusic() {
         { once: true } 
     ); 
 
-    if ( 
+   if ( 
         musicToggleButton 
     ) { 
         musicToggleButton.addEventListener( 
@@ -318,6 +357,13 @@ function initializeActivityMusic() {
                     return; 
                 } 
 
+                if (isForceMuted) {
+                    if (activityMusic) activityMusic.muted = true;
+                    wasMusicMutedBeforeForce = true;
+                    updateActivityMusicButton();
+                    return;
+                }
+
                 if ( 
                     activityMusic.muted 
                 ) { 
@@ -330,9 +376,8 @@ function initializeActivityMusic() {
                 updateActivityMusicButton(); 
             } 
         ); 
-    } 
-} 
-
+    }
+}
 function showTosGate() {
     if (activityLaunchBlocked) {
         return;
@@ -750,6 +795,7 @@ socket.addEventListener('open', () => {
                     errorMessage.classList.add("hidden");
                 }
 
+                isReconnectingSession = false;
                 requestRngServerTime();
                 return;
             }
@@ -851,6 +897,7 @@ socket.addEventListener('open', () => {
 
             if (data.type === "rng_error") {  
                 rngRequestPending = false;  
+                disableForceMute();
 
                 const message =  
                     data.data &&  
@@ -866,6 +913,7 @@ socket.addEventListener('open', () => {
 
             if (data.type === "request_error") {  
                 rngRequestPending = false;  
+                disableForceMute();
 
                 const message =  
                     data.data &&  
@@ -877,7 +925,7 @@ socket.addEventListener('open', () => {
                 errorMessage.classList.remove("hidden");  
                 initializeRngGenerateButton();  
                 return;  
-            }  
+            }
 
             if (data.type === "rng_test") {  
                 return;  
@@ -3761,7 +3809,7 @@ function startRngCardFinishEffects(card) {
 
             void card.offsetWidth;
 
-            const finishPopHandler = event => {
+         const finishPopHandler = event => {
                 if (
                     event.animationName !==
                     'rngRecordCardFinalPop'
@@ -3780,6 +3828,8 @@ function startRngCardFinishEffects(card) {
                     'animationend',
                     finishPopHandler
                 );
+
+                disableForceMute();
             };
 
             card.addEventListener(
@@ -3926,42 +3976,6 @@ function setupDiscoverSoundVolumeBoost() {
         discoverAudioCtx = new AudioCtx();
         const source = discoverAudioCtx.createMediaElementSource(discoverSound);
         discoverGainNode = discoverAudioCtx.createGain();
-        discoverGainNode.gain.value = 1.5;
-        source.connect(discoverGainNode);
-        discoverGainNode.connect(discoverAudioCtx.destination);
-    } catch (err) {
-    }
-}
-
-function fadeAudioVolume(audio, targetVolume, durationMs, onComplete) {
-    if (!audio) return;
-    const startVolume = audio.volume;
-    const startTime = performance.now();
-
-    function step(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / durationMs, 1);
-        audio.volume = Math.max(0, Math.min(1, startVolume + (targetVolume - startVolume) * progress));
-
-        if (progress < 1) {
-            requestAnimationFrame(step);
-        } else if (onComplete) {
-            onComplete();
-        }
-    }
-    requestAnimationFrame(step);
-}
-
-
-
-function setupDiscoverSoundVolumeBoost() {
-    if (!discoverSound || discoverGainNode) return;
-    try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        discoverAudioCtx = new AudioCtx();
-        const source = discoverAudioCtx.createMediaElementSource(discoverSound);
-        discoverGainNode = discoverAudioCtx.createGain();
         discoverGainNode.gain.value = 1.6; 
         source.connect(discoverGainNode);
         discoverGainNode.connect(discoverAudioCtx.destination);
@@ -3998,11 +4012,7 @@ function showNewRecordDiscoveredBanner() {
     banner.textContent = '★ NEW RECORD DISCOVERED! ★';
     generateScreen.appendChild(banner);
 
-    const isMuted = !activityMusic || activityMusic.muted;
-
-    if (!isMuted && activityMusicStarted) {
-        fadeAudioVolume(activityMusic, 0, 150);
-    }
+    const userAudioMuted = wasMusicMutedBeforeForce;
 
     setTimeout(() => {
         if (discoverSound) {
@@ -4013,7 +4023,7 @@ function showNewRecordDiscoveredBanner() {
 
             discoverSound.playbackRate = 0.88; 
 
-            if (isMuted || (activityMusic && activityMusic.muted)) {
+            if (userAudioMuted) {
                 discoverSound.muted = true;
                 discoverSound.volume = 0;
             } else {
@@ -4026,22 +4036,8 @@ function showNewRecordDiscoveredBanner() {
             if (playPromise && typeof playPromise.catch === 'function') {
                 playPromise.catch(() => {});
             }
-
-            discoverSound.onended = () => {
-                setTimeout(() => {
-                    if (activityMusic && !activityMusic.muted && activityMusicStarted) {
-                        fadeAudioVolume(activityMusic, 0.25, 400);
-                    }
-                }, 500); 
-            };
         }
     }, 450);
-
-    setTimeout(() => {
-        if (activityMusic && !activityMusic.muted && activityMusicStarted && activityMusic.volume === 0) {
-            fadeAudioVolume(activityMusic, 0.25, 400);
-        }
-    }, 4500);
 
     setTimeout(() => {
         banner.classList.add('rngNewDiscoveryFadeOut');
@@ -4301,10 +4297,11 @@ function clearRngLifetimeAnimation() {
 } 
 
 function resetDailyRngFrontend() {  
+    disableForceMute();
     stopRngDailyCountdown();  
     clearLocalRngRollState();  
     clearLocalRngResult(); 
-    clearRngRarityTheme(); 
+    clearRngRarityTheme();
 
     clearRngLifetimeAnimation(); 
     clearRngRecordCardWiggle(); 
@@ -5995,10 +5992,12 @@ modifiersDescription.textContent = 'Roll Pool sets the base drop chance. Modifie
 }  
 
 function showRngRecordResult(payload) {  
+    enableForceMute();
+
     if (rngScrambleTimer) {  
         clearInterval(rngScrambleTimer);  
         rngScrambleTimer = null;  
-    }  
+    } 
 
     if (rngScrambleProgressTimer) {  
         clearInterval(rngScrambleProgressTimer);  
@@ -7213,6 +7212,7 @@ function updateCardsPackCountdownText() {
 function triggerOpenPack(packId, displayName) {
     if (isOpeningPack) return;
     isOpeningPack = true;
+    enableForceMute();
 
     openPackView.innerHTML = `
         <div class="packOpeningLoadingBox">
@@ -7232,6 +7232,7 @@ function triggerOpenPack(packId, displayName) {
 
 function handlePackError(data) {
     isOpeningPack = false;
+    disableForceMute();
     const msg = data?.message || "Failed to open pack.";
     alert(`❌ Pack Error: ${msg}`);
     requestPackOptions();
@@ -7574,6 +7575,7 @@ function advancePackCardReveal(packDisplayName) {
 }
 
 function renderPackSummaryScreen(packDisplayName) {
+    disableForceMute();
     if (!openPackView) return;
     openPackView.innerHTML = '';
 
