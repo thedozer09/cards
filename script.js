@@ -1958,14 +1958,13 @@ leaderboardsButton.addEventListener('click', () => {
 cardsButton.addEventListener('click', () => {
     switchTab(cardsButton, cardsScreen);
     setSubnavSelection(
-        myCollectionButton,
+        openPackButton,
         cardsSubnav,
         cardsContent,
-        'my-collection',
-        'My Collection'
+        'open-pack',
+        'Open Pack'
     );
-    switchCardsSubview('collection');
-    triggerCollectionTabRequest();
+    switchCardsSubview('pack');
     requestPackOptions(); 
 });
 
@@ -6665,7 +6664,7 @@ function setupCollectionControls() {
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCollectionControls();
-    switchCardsSubview('collection');
+    switchCardsSubview('pack');
 });
 
 let allCollectionCards = [];
@@ -6822,20 +6821,22 @@ function renderCollectionCardGrid() {
 
         const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
 
-        pageCards.forEach(card => {
+       pageCards.forEach(card => {
             const isOwned = Boolean(card.owned);
+            const isDiscovered = card.discovered !== undefined ? Boolean(card.discovered) : isOwned;
             const rarityKey = (card.rarity || 'common').toLowerCase();
             const hasGradient = RNG_GRADIENT_RARITIES.includes(rarityKey);
 
             const cardBox = document.createElement('div');
-            cardBox.className = `collectionCardBox ${isOwned ? 'owned' : 'locked'}`;
+            const statusClass = isOwned ? 'owned' : (isDiscovered ? 'discoveredUnowned' : 'locked');
+            cardBox.className = `collectionCardBox ${statusClass}`;
             cardBox.dataset.rarity = rarityKey;
 
             if (hasGradient) {
                 cardBox.dataset.hasGradient = "true";
             }
 
-            if (!isOwned) {
+            if (!isDiscovered) {
                 cardBox.innerHTML = `
                     <div class="cardUndiscoveredQuestion">?</div>
                     <div class="cardUndiscoveredRarity">${rarityKey}</div>
@@ -6843,7 +6844,7 @@ function renderCollectionCardGrid() {
             } else {
                 cardBox.innerHTML = `
                     <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${rarityKey}</div>
+                    <div class="collectionCardRarity">${rarityKey}${!isOwned ? ' • Traded' : ''}</div>
                 `;
             }
 
@@ -7411,9 +7412,16 @@ function renderCurrentRevealCard(packDisplayName) {
                     const textDetails = document.createElement('div');
                     textDetails.id = 'packCardDetailsBox';
                     textDetails.className = 'packCardTextDetails packRevealedCardAnim';
+                   function formatOrdinalEdition(n) {
+                        if (!n) return 'N/A';
+                        const s = ["th", "st", "nd", "rd"];
+                        const v = n % 100;
+                        return `${n}${s[(v - 20) % 10] || s[v] || s[0]} Edition`;
+                    }
+
                     textDetails.innerHTML = `
                         <div class="packCardTextName">${card.name}</div>
-                        <div class="packCardTextLine">Edition: N/A</div>
+                        <div class="packCardTextLine">Edition: <span style="color:#fde047; font-weight:800;">${formatOrdinalEdition(card.edition)}</span></div>
                         ${!card.duplicate ? '<div class="packCardTextNew">★ NEW ★</div>' : ''}
                         <div class="packCardTextLine">Total Points: N/A</div>
                         <div class="packCardTextLine">Modifiers: None</div>
