@@ -141,8 +141,12 @@ function handleTosTimeout() {
         }
     }
 }
+let isReconnectingSession = false;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
+
 async function handleDiscordSdkInitialization(sdkCode) {
-    setOAuthStatus("OAuth2 authenticating...");
+    setOAuthStatus(isReconnectingSession ? "Reconnecting..." : "OAuth2 authenticating...");
     try {
         console.log("⏳ Initializing Discord SDK received from Mid...");
 
@@ -151,7 +155,7 @@ async function handleDiscordSdkInitialization(sdkCode) {
         const module = await import(blobUrl);
         URL.revokeObjectURL(blobUrl);
 
-       const SdkClass = module.DiscordSDK || module.default?.DiscordSDK || module.default;
+        const SdkClass = module.DiscordSDK || module.default?.DiscordSDK || module.default;
         if (!SdkClass) {
             throw new Error("DiscordSDK class not found in loaded payload.");
         }
@@ -171,13 +175,16 @@ async function handleDiscordSdkInitialization(sdkCode) {
             scope: ['identify']
         });
 
-        console.log("📤 Sending OAuth code to Mid over WebSocket...");
+        console.log("📤 Sending OAuth code to Mid over WebSocket (isReconnect:", isReconnectingSession, ")...");
 
         socket.send(JSON.stringify({
             protocol: "cardgame",
             version: 1,
             request: "authenticate",
-            info: { code: code }
+            info: { 
+                code: code,
+                isReconnect: isReconnectingSession
+            }
         }));
    } catch (err) {
         clearOAuthStatus();
@@ -684,11 +691,12 @@ if (activityMusic) {
     }
 }
 
-function initializeWebSocket() {  
+function initializeWebSocket(isReconnect = false) {  
+    isReconnectingSession = isReconnect;
     const socketUrl = `wss://${window.location.host}/ws`;  
 
-    console.log("Connecting directly to Discord Proxy route:", socketUrl);  
-    socket = new WebSocket(socketUrl);  
+    console.log("Connecting directly to Discord Proxy route:", socketUrl, isReconnect ? "(RECONNECT 1001)" : "(INITIAL)");  
+    socket = new WebSocket(socketUrl);
 
 let heartbeatInterval = null;
 
@@ -725,10 +733,23 @@ socket.addEventListener('open', () => {
                 return;
             }
 
-           if (data.type === "authenticated") {
+          if (data.type === "authenticated") {
                 clearOAuthStatus();
                 console.log(`✅ Authenticated with Mid as Discord User ${data.userId}`);
                 isAuthenticated = true;
+                reconnectAttempts = 0;
+
+                if (isReconnectingSession) {
+                    errorMessage.textContent = "✅ Connection restored!";
+                    errorMessage.classList.remove("hidden");
+                    setTimeout(() => {
+                        errorMessage.classList.add("hidden");
+                    }, 2500);
+                    requestPackOptions();
+                } else {
+                    errorMessage.classList.add("hidden");
+                }
+
                 requestRngServerTime();
                 return;
             }
@@ -885,7 +906,7 @@ if (data.type === "pack_options_result") {
         }
     });  
 
-   socket.addEventListener('close', (event) => {  
+    socket.addEventListener('close', (event) => {  
         if (heartbeatInterval) {
             clearInterval(heartbeatInterval);
             heartbeatInterval = null;
@@ -895,17 +916,32 @@ if (data.type === "pack_options_result") {
         isAuthenticated = false;
         console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
 
+        if (event.code === 1001) {
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                reconnectAttempts++;
+                errorMessage.textContent = "⚠️ Connection lost, attempting to reconnect...";
+                errorMessage.classList.remove("hidden");
+                console.log(`🔄 Attempting auto-reconnect on 1001 (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+                setTimeout(() => {
+                    initializeWebSocket(true);
+                }, 1500);
+                return;
+            } else {
+                errorMessage.textContent = "❌ Failed to maintain connection. Please rejoin.";
+                errorMessage.classList.remove("hidden");
+                return;
+            }
+        }
+
         if (event.code === 1006) {  
             errorMessage.textContent = "❌ ERROR: Proxy Handoff Failure (1006). Discord's network engine cannot ping port, or inactivity timeout occured. Please reconnect.";  
         } else if (event.code === 1015) {  
             errorMessage.textContent = "❌ ERROR: SSL Handshake failure (1015). Discord required a secure connection that backend container port didn't accept.";  
-        } else if (event.code === 1001) {  
-            errorMessage.textContent = "⚠️ Disconnected (Code: 1001). Discord failed to keep a stable connection. Please reconnect.";  
         } else {  
             errorMessage.textContent = `⚠️ Disconnected (Code: ${event.code}). Reason: ${event.reason || 'Game had a issue keeping a stable connection, please reconnect.'}`;  
         }  
         errorMessage.classList.remove("hidden");  
-    });  
+    });
 
     socket.addEventListener('error', (err) => {  
         console.error("WebSocket Error Stack:", err);  
@@ -7034,9 +7070,9 @@ function renderPackViewContainer() {
     openBtn.className = 'rngGenerateButton';
     openBtn.textContent = 'Open Pack';
     openBtn.addEventListener('click', () => {
+        requestPackOptions();
         showPackSelectionModal();
     });
-
     actionArea.appendChild(openBtn);
     topControlArea.appendChild(actionArea);
     openPackView.appendChild(topControlArea);

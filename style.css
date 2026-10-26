@@ -5779,20 +5779,20 @@ body.rng-rarity-omnipotent,
 }
 .packModalBox {
     width: 95vw;
-    max-width: 950px;
-    max-height: 90vh;
+    max-width: 940px;
+    max-height: 85vh;
     background: #141c26;
     border: 1px solid rgba(138, 166, 191, 0.25);
-    border-radius: 18px;
+    border-radius: 14px;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: packModalPop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    animation: packModalPop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
 }
 
 @keyframes packModalPop {
-    from { transform: scale(0.92); opacity: 0; }
+    from { transform: scale(0.94); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
 
@@ -5800,13 +5800,13 @@ body.rng-rarity-omnipotent,
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 18px;
+    padding: 7px 14px;
     border-bottom: 1px solid rgba(138, 166, 191, 0.15);
 }
 
 .packModalHeader h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
     color: #f1f5f9;
 }
@@ -5815,12 +5815,12 @@ body.rng-rarity-omnipotent,
     background: transparent;
     border: 0;
     color: #94a3b8;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     cursor: pointer;
     line-height: 1;
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 2px 6px;
+    border-radius: 4px;
     transition: color 0.15s ease;
 }
 
@@ -5829,23 +5829,24 @@ body.rng-rarity-omnipotent,
 }
 
 .packModalList {
-    padding: 10px 14px;
+    padding: 8px 10px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 6px;
+    overflow-y: auto;
     align-content: start;
+    box-sizing: border-box;
 }
 
 .packModalItem {
     background: rgba(22, 32, 45, 0.9);
     border: 1px solid rgba(138, 166, 191, 0.18);
-    border-radius: 10px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 6px 8px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
     box-sizing: border-box;
 }
 
@@ -5857,7 +5858,7 @@ body.rng-rarity-omnipotent,
 }
 
 .packModalName {
-    font-size: 13px;
+    font-size: 11.5px;
     font-weight: 800;
     color: #ffffff;
     white-space: nowrap;
@@ -5866,23 +5867,24 @@ body.rng-rarity-omnipotent,
 }
 
 .packModalStats {
-    font-size: 10.5px;
+    font-size: 9.5px;
     color: rgba(200, 218, 234, 0.7);
-    line-height: 1.3;
+    line-height: 1.25;
 }
 
 .packModalItemOpenBtn {
     width: 100%;
-    min-height: 28px;
-    padding: 0 10px;
+    min-height: 22px;
+    height: 22px;
+    padding: 0 6px;
     border: 1px solid rgba(185, 211, 230, 0.24);
-    border-radius: 6px;
+    border-radius: 5px;
     background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
     color: #ffffff;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3);
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
     transition: background 0.15s ease, transform 0.15s ease;
 }
 
