@@ -1841,14 +1841,17 @@ initializeTabLoadingScreens();
 
 const pendingGameNotifications = [];
 let isShowingGameNotification = false;
-
 function queueIncomingGameNotifications(data) {
     if (!data) return;
 
     if (Array.isArray(data.rarityChanges) && data.rarityChanges.length > 0) {
-        pendingGameNotifications.push({
-            type: 'rarity_change',
-            items: data.rarityChanges
+        data.rarityChanges.forEach(card => {
+            pendingGameNotifications.push({
+                type: 'rarity_change',
+                cardName: card.cardName,
+                oldRarity: card.oldRarity,
+                newRarity: card.newRarity
+            });
         });
     }
 
@@ -1890,24 +1893,17 @@ function displayGameNotificationModal(notice) {
     box.className = 'gameNotificationBox';
 
     if (notice.type === 'rarity_change') {
-        const count = notice.items.length;
-        const titleText = count > 1 ? "Several of your cards changed rarity" : "One of your cards changed rarity";
-
-        let itemsHtml = notice.items.map(card => `
-            <div class="gameNotifCardRow">
-                <span class="gameNotifCardName">${card.cardName}</span>
-                <span class="gameNotifRarityShift">
-                    <span class="gameNotifOldRarity" data-rarity="${(card.oldRarity || '').toLowerCase()}">${card.oldRarity}</span>
-                    <span class="gameNotifArrow">➔</span>
-                    <span class="gameNotifNewRarity" data-rarity="${(card.newRarity || '').toLowerCase()}">${card.newRarity}</span>
-                </span>
-            </div>
-        `).join('');
-
         box.innerHTML = `
             <div class="gameNotificationHeader">Notice</div>
-            <div class="gameNotificationTitle">${titleText}</div>
-            <div class="gameNotifList">${itemsHtml}</div>
+            <div class="gameNotificationTitle">Card Rarity Changed</div>
+            <div class="gameNotifSingleCardBox">
+                <div class="gameNotifCardName">${notice.cardName}</div>
+                <div class="gameNotifRarityShift">
+                    <span class="gameNotifOldRarity" data-rarity="${(notice.oldRarity || '').toLowerCase()}">${notice.oldRarity}</span>
+                    <span class="gameNotifArrow">➔</span>
+                    <span class="gameNotifNewRarity" data-rarity="${(notice.newRarity || '').toLowerCase()}">${notice.newRarity}</span>
+                </div>
+            </div>
             <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
         `;
     } else if (notice.type === 'user_change') {
@@ -1926,7 +1922,9 @@ function displayGameNotificationModal(notice) {
     okBtn.addEventListener('click', () => {
         overlay.remove();
         isShowingGameNotification = false;
-        triggerNextNotificationIfReady();
+        setTimeout(() => {
+            triggerNextNotificationIfReady();
+        }, 120);
     });
 }
 
@@ -6994,9 +6992,9 @@ function renderCollectionCardGrid() {
 
         const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
 
-       pageCards.forEach(card => {
+      pageCards.forEach(card => {
             const isOwned = Boolean(card.owned);
-            const isDiscovered = card.discovered !== undefined ? Boolean(card.discovered) : isOwned;
+            const isDiscovered = Boolean(card.discovered) || isOwned;
             const rarityKey = (card.rarity || 'common').toLowerCase();
             const hasGradient = RNG_GRADIENT_RARITIES.includes(rarityKey);
 
@@ -7010,16 +7008,17 @@ function renderCollectionCardGrid() {
             }
 
             if (!isDiscovered) {
-                cardBox.innerHTML = `
-                    <div class="cardUndiscoveredQuestion">?</div>
-                    <div class="cardUndiscoveredRarity">${rarityKey}</div>
-                `;
-            } else {
-                cardBox.innerHTML = `
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${rarityKey}${!isOwned ? ' • Traded' : ''}</div>
-                `;
-            }
+                    cardBox.innerHTML = `
+                        <div class="cardUndiscoveredQuestion">?</div>
+                        <div class="cardUndiscoveredRarity">${rarityKey}</div>
+                    `;
+                } else {
+                    cardBox.innerHTML = `
+                        ${isOwned ? '<div class="cardOwnedBadge">OWNED</div>' : ''}
+                        <div class="collectionCardName">${card.name}</div>
+                        <div class="collectionCardRarity">${rarityKey}${!isOwned ? ' • Traded' : ''}</div>
+                    `;
+                }
 
             fragment.appendChild(cardBox);
         });
