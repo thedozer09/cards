@@ -6995,11 +6995,12 @@ function renderCollectionCardGrid() {
       pageCards.forEach(card => {
             const isOwned = Boolean(card.owned);
             const isDiscovered = Boolean(card.discovered) || isOwned;
+            const hasOwnershipError = Boolean(card.ownershipError);
             const rarityKey = (card.rarity || 'common').toLowerCase();
             const hasGradient = RNG_GRADIENT_RARITIES.includes(rarityKey);
 
             const cardBox = document.createElement('div');
-            const statusClass = isOwned ? 'owned' : (isDiscovered ? 'discoveredUnowned' : 'locked');
+            const statusClass = hasOwnershipError ? 'owned cardBoxError' : (isDiscovered ? 'owned' : 'locked');
             cardBox.className = `collectionCardBox ${statusClass}`;
             cardBox.dataset.rarity = rarityKey;
 
@@ -7008,17 +7009,24 @@ function renderCollectionCardGrid() {
             }
 
             if (!isDiscovered) {
-                    cardBox.innerHTML = `
-                        <div class="cardUndiscoveredQuestion">?</div>
-                        <div class="cardUndiscoveredRarity">${rarityKey}</div>
-                    `;
-                } else {
-                    cardBox.innerHTML = `
-                        ${isOwned ? '<div class="cardOwnedBadge">OWNED</div>' : ''}
-                        <div class="collectionCardName">${card.name}</div>
-                        <div class="collectionCardRarity">${rarityKey}${!isOwned ? ' • Traded' : ''}</div>
-                    `;
-                }
+                cardBox.innerHTML = `
+                    <div class="cardUndiscoveredQuestion">?</div>
+                    <div class="cardUndiscoveredRarity">${rarityKey}</div>
+                `;
+            } else if (hasOwnershipError) {
+                cardBox.innerHTML = `
+                    <div class="cardOwnershipErrorBadge">⚠️ ERROR</div>
+                    <div class="collectionCardName">${card.name}</div>
+                    <div class="cardOwnershipErrorNotice">An ownership error has occurred for this card. Please contact DOWDataLab via the technical issues ticket.</div>
+                    <div class="collectionCardRarity">${rarityKey}</div>
+                `;
+            } else {
+                cardBox.innerHTML = `
+                    ${isOwned ? '<div class="cardOwnedBadge">OWNED</div>' : ''}
+                    <div class="collectionCardName">${card.name}</div>
+                    <div class="collectionCardRarity">${rarityKey}</div>
+                `;
+            }
 
             fragment.appendChild(cardBox);
         });
