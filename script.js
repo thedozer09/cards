@@ -870,7 +870,12 @@ socket.addEventListener('open', () => {
                 return;  
             }  
 
-            if (handleCardGameStatsMessage(data)) {
+           if (handleCardGameStatsMessage(data)) {
+                return;
+            }
+
+            if (data.type === "game_notifications") {
+                queueIncomingGameNotifications(data.data);
                 return;
             }
 
@@ -1833,6 +1838,98 @@ function startRngRollLoading(callback) {
 initializeTabLoadingScreens(); 
 
 
+
+const pendingGameNotifications = [];
+let isShowingGameNotification = false;
+
+function queueIncomingGameNotifications(data) {
+    if (!data) return;
+
+    if (Array.isArray(data.rarityChanges) && data.rarityChanges.length > 0) {
+        pendingGameNotifications.push({
+            type: 'rarity_change',
+            items: data.rarityChanges
+        });
+    }
+
+    if (Array.isArray(data.userChanges) && data.userChanges.length > 0) {
+        data.userChanges.forEach(change => {
+            pendingGameNotifications.push({
+                type: 'user_change',
+                message: change.message
+            });
+        });
+    }
+
+    triggerNextNotificationIfReady();
+}
+
+function triggerNextNotificationIfReady() {
+    const loading = document.getElementById('loadingScreen');
+    const isLoading = loading && !loading.classList.contains('hidden');
+
+    if (isLoading || !appLaunchStarted || isShowingGameNotification) {
+        return;
+    }
+
+    if (pendingGameNotifications.length === 0) {
+        return;
+    }
+
+    const nextNotice = pendingGameNotifications.shift();
+    displayGameNotificationModal(nextNotice);
+}
+
+function displayGameNotificationModal(notice) {
+    isShowingGameNotification = true;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'gameNotificationOverlay';
+
+    const box = document.createElement('div');
+    box.className = 'gameNotificationBox';
+
+    if (notice.type === 'rarity_change') {
+        const count = notice.items.length;
+        const titleText = count > 1 ? "Several of your cards changed rarity" : "One of your cards changed rarity";
+
+        let itemsHtml = notice.items.map(card => `
+            <div class="gameNotifCardRow">
+                <span class="gameNotifCardName">${card.cardName}</span>
+                <span class="gameNotifRarityShift">
+                    <span class="gameNotifOldRarity" data-rarity="${(card.oldRarity || '').toLowerCase()}">${card.oldRarity}</span>
+                    <span class="gameNotifArrow">➔</span>
+                    <span class="gameNotifNewRarity" data-rarity="${(card.newRarity || '').toLowerCase()}">${card.newRarity}</span>
+                </span>
+            </div>
+        `).join('');
+
+        box.innerHTML = `
+            <div class="gameNotificationHeader">Notice</div>
+            <div class="gameNotificationTitle">${titleText}</div>
+            <div class="gameNotifList">${itemsHtml}</div>
+            <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
+        `;
+    } else if (notice.type === 'user_change') {
+        box.innerHTML = `
+            <div class="gameNotificationHeader">Inventory Notice</div>
+            <div class="gameNotificationTitle">Developer Adjustment</div>
+            <p class="gameNotificationMessage">${notice.message}</p>
+            <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
+        `;
+    }
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    const okBtn = box.querySelector('#gameNotifOkBtn');
+    okBtn.addEventListener('click', () => {
+        overlay.remove();
+        isShowingGameNotification = false;
+        triggerNextNotificationIfReady();
+    });
+}
+
 function showLoadingScreenAndLaunch() {
     if (activityLaunchBlocked || appLaunchStarted) {
         return;
@@ -1897,7 +1994,7 @@ setTimeout(() => {
         updateScrollRail();
         requestCardGameStats();
 
-        if ( 
+       if ( 
             rngStoredResultScrollPending && 
             rngResultPanel 
         ) { 
@@ -1911,7 +2008,9 @@ setTimeout(() => {
             ); 
         } 
 
-        maybePlayRngLaunchFlash();  
+        maybePlayRngLaunchFlash();
+
+        triggerNextNotificationIfReady();
     }, 3000);
 }
 
