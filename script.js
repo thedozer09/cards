@@ -148,18 +148,53 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 let cachedDiscordSdkInstance = null;
 
 let isForceMuted = false;
-let wasMusicMutedBeforeForce = true;
+let wasMusicMutedBeforeForce = false;
+let musicFadeAnimFrame = null;
+
+// Smooth cosine-eased fader so volume transitions naturally without abrupt cuts
+function fadeAudioVolume(audio, targetVolume, durationMs = 500, onComplete = null) {
+    if (!audio) return;
+    if (musicFadeAnimFrame) {
+        cancelAnimationFrame(musicFadeAnimFrame);
+        musicFadeAnimFrame = null;
+    }
+
+    const startVolume = audio.volume;
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
+        const eased = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+        audio.volume = Math.max(0, Math.min(1, startVolume + (targetVolume - startVolume) * eased));
+
+        if (progress < 1) {
+            musicFadeAnimFrame = requestAnimationFrame(step);
+        } else {
+            musicFadeAnimFrame = null;
+            audio.volume = targetVolume;
+            if (onComplete) onComplete();
+        }
+    }
+    musicFadeAnimFrame = requestAnimationFrame(step);
+}
 
 function enableForceMute() {
     if (isForceMuted) return;
     isForceMuted = true;
-    wasMusicMutedBeforeForce = Boolean(activityMusic && activityMusic.muted);
+    wasMusicMutedBeforeForce = !activityMusic || activityMusic.muted || activityMusic.volume === 0;
 
-    if (activityMusic) {
+    if (activityMusic && !wasMusicMutedBeforeForce) {
+        fadeAudioVolume(activityMusic, 0, 400, () => {
+            if (isForceMuted && activityMusic) {
+                activityMusic.muted = true;
+            }
+            updateActivityMusicButton();
+        });
+    } else if (activityMusic) {
         activityMusic.muted = true;
-        fadeAudioVolume(activityMusic, 0, 150);
+        updateActivityMusicButton();
     }
-    updateActivityMusicButton();
 }
 
 function disableForceMute() {
@@ -167,9 +202,13 @@ function disableForceMute() {
     isForceMuted = false;
 
     if (!wasMusicMutedBeforeForce && activityMusicAllowed && tosMusicApproved && activityMusic) {
+        activityMusic.volume = 0;
         activityMusic.muted = false;
-        fadeAudioVolume(activityMusic, 0.25, 300);
-        startActivityMusic();
+        const playPromise = activityMusic.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.then(() => { activityMusicStarted = true; }).catch(() => {});
+        }
+        fadeAudioVolume(activityMusic, 0.25, 600);
     } else if (activityMusic) {
         activityMusic.muted = true;
     }
@@ -359,21 +398,31 @@ function initializeActivityMusic() {
 
                 if (isForceMuted) {
                     if (activityMusic) activityMusic.muted = true;
-                    wasMusicMutedBeforeForce = true;
                     updateActivityMusicButton();
                     return;
                 }
 
-                if ( 
-                    activityMusic.muted 
-                ) { 
-                    activityMusic.muted = false; 
-                    startActivityMusic(); 
-                } else { 
-                    activityMusic.muted = true; 
-                } 
+                const isCurrentlyMuted = !activityMusic || activityMusic.muted || activityMusic.volume === 0;
 
-                updateActivityMusicButton(); 
+                if (isCurrentlyMuted) { 
+                    wasMusicMutedBeforeForce = false;
+                    activityMusic.volume = 0;
+                    activityMusic.muted = false;
+
+                    const playPromise = activityMusic.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.then(() => { activityMusicStarted = true; }).catch(() => {});
+                    }
+
+                    updateActivityMusicButton(); 
+                    fadeAudioVolume(activityMusic, 0.25, 500);
+                } else { 
+                    wasMusicMutedBeforeForce = true;
+                    fadeAudioVolume(activityMusic, 0, 400, () => {
+                        activityMusic.muted = true;
+                        updateActivityMusicButton();
+                    });
+                } 
             } 
         ); 
     }
@@ -1808,11 +1857,16 @@ if (statsButton) {
    if (activityMusic) {
     activityMusicAllowed = tosMusicApproved;
     activityMusic.muted = !tosMusicApproved;
-    activityMusic.volume = 0.25;
     updateActivityMusicButton();
 
     if (tosMusicApproved) {
-        startActivityMusic();
+        activityMusic.volume = 0;
+        activityMusic.muted = false;
+        const playPromise = activityMusic.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.then(() => { activityMusicStarted = true; }).catch(() => {});
+        }
+        fadeAudioVolume(activityMusic, 0.25, 800);
     }
 }
 
@@ -1917,6 +1971,9 @@ function switchTab(button, screen) {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
 
+    disableForceMute();
+    isOpeningPack = false;
+
     setActiveTopButton(button);
     hideAllMainScreens();
     screen.classList.remove('hidden');
@@ -1960,6 +2017,9 @@ function switchToStats() {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+
+    disableForceMute();
+    isOpeningPack = false;
 
     setActiveTopButton(statsButton);
     hideAllMainScreens();
@@ -3982,25 +4042,6 @@ function setupDiscoverSoundVolumeBoost() {
     } catch (err) {}
 }
 
-function fadeAudioVolume(audio, targetVolume, durationMs, onComplete) {
-    if (!audio) return;
-    const startVolume = audio.volume;
-    const startTime = performance.now();
-
-    function step(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / durationMs, 1);
-        audio.volume = Math.max(0, Math.min(1, startVolume + (targetVolume - startVolume) * progress));
-
-        if (progress < 1) {
-            requestAnimationFrame(step);
-        } else if (onComplete) {
-            onComplete();
-        }
-    }
-    requestAnimationFrame(step);
-}
-
 function showNewRecordDiscoveredBanner() {
     const existing = document.querySelector('.rngNewDiscoveryBanner');
     if (existing) {
@@ -4012,8 +4053,6 @@ function showNewRecordDiscoveredBanner() {
     banner.textContent = '★ NEW RECORD DISCOVERED! ★';
     generateScreen.appendChild(banner);
 
-    const userAudioMuted = wasMusicMutedBeforeForce;
-
     setTimeout(() => {
         if (discoverSound) {
             setupDiscoverSoundVolumeBoost();
@@ -4023,13 +4062,8 @@ function showNewRecordDiscoveredBanner() {
 
             discoverSound.playbackRate = 0.88; 
 
-            if (userAudioMuted) {
-                discoverSound.muted = true;
-                discoverSound.volume = 0;
-            } else {
-                discoverSound.muted = false;
-                discoverSound.volume = 1.0;
-            }
+            discoverSound.muted = false;
+            discoverSound.volume = 0.5;
 
             discoverSound.currentTime = 0;
             const playPromise = discoverSound.play();
@@ -6640,6 +6674,11 @@ function switchCardsSubview(targetView) {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+
+    if (targetView !== 'pack') {
+        disableForceMute();
+        isOpeningPack = false;
+    }
 
     if (myCollectionView) myCollectionView.classList.add('hidden');
     if (openPackView) openPackView.classList.add('hidden');
