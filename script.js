@@ -7133,8 +7133,19 @@ function isCardsCooldownActive() {
     return false;
 }
 
+const PACK_OPTIONS_COOLDOWN_MS = 30 * 1000;
+let lastPackOptionsRequestTime = 0;
+
 function requestPackOptions() {
+    const now = Date.now();
+    if (now - lastPackOptionsRequestTime < PACK_OPTIONS_COOLDOWN_MS) {
+        console.log("⏳ [THROTTLE] Pack options on 30s cooldown, ignoring spam.");
+        return;
+    }
+
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    lastPackOptionsRequestTime = now;
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
@@ -7766,8 +7777,22 @@ function renderPackSummaryScreen(packDisplayName) {
 
 
 
+const LEADERBOARD_COOLDOWN_MS = 30 * 1000;
+let lastLeaderboardRequestTime = 0;
+let lastLeaderboardTypeRequested = '';
+
 function requestLeaderboard(boardType) {
+    const now = Date.now();
+    if (lastLeaderboardTypeRequested === boardType && (now - lastLeaderboardRequestTime < LEADERBOARD_COOLDOWN_MS)) {
+        console.log(`⏳ [THROTTLE] Leaderboard (${boardType}) on 30s cooldown, ignoring spam.`);
+        return;
+    }
+
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    lastLeaderboardRequestTime = now;
+    lastLeaderboardTypeRequested = boardType;
+
     if (leaderboardsContent) {
         let listContainer = document.getElementById('leaderboardListContainer');
         if (!listContainer) {
