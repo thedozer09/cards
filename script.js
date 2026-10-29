@@ -151,7 +151,6 @@ let isForceMuted = false;
 let wasMusicMutedBeforeForce = false;
 let musicFadeAnimFrame = null;
 
-// Smooth cosine-eased fader so volume transitions naturally without abrupt cuts
 function fadeAudioVolume(audio, targetVolume, durationMs = 500, onComplete = null) {
     if (!audio) return;
     if (musicFadeAnimFrame) {
@@ -993,8 +992,18 @@ if (data.type === "pack_options_result") {
                 return;
             }
 
-            if (data.type === "pack_opened_result") {
+           if (data.type === "pack_opened_result") {
                 handlePackOpenedResult(data.data);
+                return;
+            }
+
+           if (data.type === "leaderboard_data") {
+                renderLeaderboard(data.data);
+                return;
+            }
+
+            if (data.type === "leaderboard_aggregating_notice") {
+                console.log("ℹ️ Leaderboard is currently aggregating.");
                 return;
             }
 
@@ -1121,7 +1130,8 @@ const rngTodayButton = document.getElementById('rngTodayButton');
 const rngAllTimeButton = document.getElementById('rngAllTimeButton');
 const cardsNetWorthButton = document.getElementById('cardsNetWorthButton');
 const dailyPackScoreButton = document.getElementById('dailyPackScoreButton');
-dailyPackScoreButton.textContent = "This Period's Pack Score";
+if (rngTodayButton) rngTodayButton.textContent = "This Period's RNG Score";
+if (dailyPackScoreButton) dailyPackScoreButton.textContent = "This Period's Pack Score";
 const openPackButton = document.getElementById('openPackButton');
 const myCollectionButton = document.getElementById('myCollectionButton');
 const tradesButton = document.getElementById('tradesButton');
@@ -2194,6 +2204,7 @@ leaderboardsButton.addEventListener('click', () => {
         'cards-net-worth',
         'Cards Net Worth'
     );
+    requestLeaderboard('cards-net-worth');
 });
 
 cardsButton.addEventListener('click', () => {
@@ -2210,15 +2221,15 @@ cardsButton.addEventListener('click', () => {
 });
 
 statsButton.addEventListener('click', switchToStats);
-
 rngTodayButton.addEventListener('click', () => {
     setSubnavSelection(
         rngTodayButton,
         leaderboardsSubnav,
         leaderboardsContent,
-        'rng-today',
-        'RNG Today'
+        'rng-this-period',
+        "This Period's RNG Score"
     );
+    requestLeaderboard('rng-this-period');
 });
 
 rngAllTimeButton.addEventListener('click', () => {
@@ -2229,6 +2240,7 @@ rngAllTimeButton.addEventListener('click', () => {
         'rng-all-time',
         'RNG All Time'
     );
+    requestLeaderboard('rng-all-time');
 });
 
 cardsNetWorthButton.addEventListener('click', () => {
@@ -2239,6 +2251,7 @@ cardsNetWorthButton.addEventListener('click', () => {
         'cards-net-worth',
         'Cards Net Worth'
     );
+    requestLeaderboard('cards-net-worth');
 });
 
 dailyPackScoreButton.addEventListener('click', () => {
@@ -2249,6 +2262,7 @@ dailyPackScoreButton.addEventListener('click', () => {
         'daily-pack-score',
         "This Period's Pack Score"
     );
+    requestLeaderboard('daily-pack-score');
 });
 
 openPackButton.addEventListener('click', () => {
@@ -5492,11 +5506,11 @@ function sendRngLifetimeUpdate(payload) {
             version: 1, 
             request: "rng_lifetime_update", 
             info: { 
-                score: 
-                    newLifetimeScore 
+                score: newLifetimeScore,
+                rollScore: totalPoints
             } 
         }) 
-    ); 
+    );
 
     console.log( 
         `📈 RNG lifetime score update sent: ${currentLifetime} + ${totalPoints} = ${newLifetimeScore}` 
@@ -7600,14 +7614,21 @@ function renderCurrentRevealCard(packDisplayName) {
                         const v = n % 100;
                         return `${n}${s[(v - 20) % 10] || s[v] || s[0]} Edition`;
                     }
+const modText = Array.isArray(card.modifiers) && card.modifiers.length > 0
+                        ? card.modifiers.map(m => `${m.displayName || m.name} (+${m.points})`).join(', ')
+                        : 'None';
+
+                    const totalPts = Number(card.totalPoints ?? card.points ?? 0);
+                    const basePts = Number(card.points ?? 0);
+                    const modPts = Number(card.modifierPoints ?? 0);
 
                     textDetails.innerHTML = `
                         <div class="packCardTextName">${card.name}</div>
                         <div class="packCardTextLine">Edition: <span style="color:#fde047; font-weight:800;">${formatOrdinalEdition(card.edition)}</span></div>
                         ${!card.duplicate ? '<div class="packCardTextNew">★ NEW ★</div>' : ''}
-                        <div class="packCardTextLine">Total Points: N/A</div>
-                        <div class="packCardTextLine">Modifiers: None</div>
-                        <div class="packCardTextLine">Pull Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span></div>
+                        <div class="packCardTextLine">Total Points: <span style="color:#69e58f; font-weight:800;">${totalPts}</span> (${basePts} base + ${modPts} mod)</div>
+                        <div class="packCardTextLine">Modifiers: <span style="color:#cbd5e1; font-weight:700;">${modText}</span></div>
+                        <div class="packCardTextLine">Pull Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span>${card.finalRarity && card.finalRarity !== (card.rarity || 'common').toLowerCase() ? ` ➔ <span style="color:#38bdf8; font-weight:800;">${card.finalRarity.toUpperCase()}</span>` : ''}</div>
                     `;
 
                     const nextBtnEl = document.getElementById('packRevealNextBtn');
@@ -7741,4 +7762,90 @@ function renderPackSummaryScreen(packDisplayName) {
         requestPackOptions();
         renderPackViewContainer();
     });
+}
+
+
+
+function requestLeaderboard(boardType) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    if (leaderboardsContent) {
+        let listContainer = document.getElementById('leaderboardListContainer');
+        if (!listContainer) {
+            listContainer = document.createElement('div');
+            listContainer.id = 'leaderboardListContainer';
+            leaderboardsContent.appendChild(listContainer);
+        }
+        listContainer.innerHTML = '<div class="lbLoading">Loading leaderboard from Trello...</div>';
+    }
+
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "get_leaderboard",
+        info: { boardType: boardType }
+    }));
+}
+
+function renderLeaderboard(data) {
+    if (!leaderboardsContent) return;
+    let listContainer = document.getElementById('leaderboardListContainer');
+    if (!listContainer) {
+        listContainer = document.createElement('div');
+        listContainer.id = 'leaderboardListContainer';
+        leaderboardsContent.appendChild(listContainer);
+    }
+    listContainer.innerHTML = '';
+
+    // Handle Aggregating State
+    if (data && data.status === 'aggregating') {
+        listContainer.innerHTML = `
+            <div class="lbAggregatingBox">
+                <div class="loadingSpinner"></div>
+                <div class="lbAggregatingTitle">Aggregating the leaderboard, check back later.</div>
+                <div class="lbAggregatingSubtitle">Calculating total card portfolio values across player collections...</div>
+            </div>
+        `;
+        return;
+    }
+
+    const entries = (data && data.entries) || [];
+    if (entries.length === 0) {
+        listContainer.innerHTML = '<div class="lbEmpty">No scores recorded for this leaderboard yet.</div>';
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    entries.forEach(item => {
+        const row = document.createElement('div');
+        row.className = `lbRow rank-${item.rank}`;
+
+        const rankBadge = document.createElement('div');
+        rankBadge.className = 'lbRank';
+        rankBadge.textContent = `#${item.rank}`;
+
+        const avatarImg = document.createElement('img');
+        avatarImg.className = 'lbAvatar';
+        avatarImg.alt = item.username;
+        avatarImg.src = item.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
+        avatarImg.onerror = () => {
+            avatarImg.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+        };
+
+        const usernameText = document.createElement('div');
+        usernameText.className = 'lbUsername';
+        usernameText.textContent = item.username;
+
+        const scoreBadge = document.createElement('div');
+        scoreBadge.className = 'lbScore';
+        scoreBadge.textContent = `${Number(item.score || 0).toLocaleString()} pts`;
+
+        row.appendChild(rankBadge);
+        row.appendChild(avatarImg);
+        row.appendChild(usernameText);
+        row.appendChild(scoreBadge);
+        fragment.appendChild(row);
+    });
+
+    listContainer.appendChild(fragment);
+    updateScrollRail();
 }
