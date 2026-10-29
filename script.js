@@ -997,8 +997,8 @@ if (data.type === "pack_options_result") {
                 return;
             }
 
-           if (data.type === "leaderboard_data") {
-                renderLeaderboard(data.data);
+          if (data.type === "leaderboard_data") {
+                handleIncomingLeaderboardData(data.data);
                 return;
             }
 
@@ -7776,22 +7776,18 @@ function renderPackSummaryScreen(packDisplayName) {
 }
 
 
+const cachedLeaderboards = new Map();
+let activeLeaderboardView = 'cards-net-worth';
 
-const LEADERBOARD_COOLDOWN_MS = 30 * 1000;
-let lastLeaderboardRequestTime = 0;
-let lastLeaderboardTypeRequested = '';
+function requestLeaderboard(boardType, force = false) {
+    activeLeaderboardView = boardType;
 
-function requestLeaderboard(boardType) {
-    const now = Date.now();
-    if (lastLeaderboardTypeRequested === boardType && (now - lastLeaderboardRequestTime < LEADERBOARD_COOLDOWN_MS)) {
-        console.log(`⏳ [THROTTLE] Leaderboard (${boardType}) on 30s cooldown, ignoring spam.`);
+    if (!force && cachedLeaderboards.has(boardType)) {
+        renderLeaderboard(cachedLeaderboards.get(boardType));
         return;
     }
 
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
-
-    lastLeaderboardRequestTime = now;
-    lastLeaderboardTypeRequested = boardType;
 
     if (leaderboardsContent) {
         let listContainer = document.getElementById('leaderboardListContainer');
@@ -7811,6 +7807,15 @@ function requestLeaderboard(boardType) {
     }));
 }
 
+function handleIncomingLeaderboardData(data) {
+    if (!data || !data.boardType) return;
+    cachedLeaderboards.set(data.boardType, data);
+
+    if (activeLeaderboardView === data.boardType) {
+        renderLeaderboard(data);
+    }
+}
+
 function renderLeaderboard(data) {
     if (!leaderboardsContent) return;
     let listContainer = document.getElementById('leaderboardListContainer');
@@ -7821,7 +7826,6 @@ function renderLeaderboard(data) {
     }
     listContainer.innerHTML = '';
 
-    // Handle Aggregating State
     if (data && data.status === 'aggregating') {
         listContainer.innerHTML = `
             <div class="lbAggregatingBox">
