@@ -4492,10 +4492,13 @@ function resetDailyRngFrontend() {
 
 function markRngRollComplete(payload) {  
     rngPeriodStatus = "red"; 
+
+    cachedLeaderboards.delete('rng-this-period');
+    cachedLeaderboards.delete('rng-all-time');
     
     saveLocalRngResult( 
         payload 
-    ); 
+    );
 
    
 
@@ -7415,6 +7418,9 @@ function handlePackOpenedResult(data) {
     currentPackRevealCards = data.cards || [];
     currentPackRevealIndex = 0;
 
+    cachedLeaderboards.delete('daily-pack-score');
+    cachedLeaderboards.delete('cards-net-worth');
+
     saveLocalPackResult({
         displayName: data.displayName,
         cards: currentPackRevealCards,
@@ -7782,8 +7788,9 @@ let activeLeaderboardView = 'cards-net-worth';
 function requestLeaderboard(boardType, force = false) {
     activeLeaderboardView = boardType;
 
-    if (!force && cachedLeaderboards.has(boardType)) {
-        renderLeaderboard(cachedLeaderboards.get(boardType));
+    const cached = cachedLeaderboards.get(boardType);
+    if (!force && cached && cached.status !== 'aggregating' && Array.isArray(cached.entries) && cached.entries.length > 0) {
+        renderLeaderboard(cached);
         return;
     }
 
