@@ -1032,8 +1032,13 @@ if (data.type === "pack_options_result") {
                 return;
             }
 
-            if (data.type === "trade_error") {
-                alert(`⚠️ Trade Notice: ${data.data?.message || 'Trade operation failed.'}`);
+           if (data.type === "trade_error") {
+                const errorMsg = data.data?.message || 'Trade operation failed.';
+                showTradeToast(errorMsg, "error");
+                
+                if (errorMsg.toLowerCase().includes("not a registered player") || errorMsg.toLowerCase().includes("valid discord user id") || errorMsg.toLowerCase().includes("yourself")) {
+                    setRecipientFeedback(errorMsg, "error");
+                }
                 return;
             }
         } catch (err) {  
@@ -8027,12 +8032,33 @@ function setupTradeListeners() {
     }
 }
 
+function setRecipientFeedback(text, type = "error") {
+    const feedback = document.getElementById('tradeTargetFeedback');
+    const input = document.getElementById('tradeTargetUserIdInput');
+    if (!feedback || !input) return;
+
+    if (!text) {
+        feedback.textContent = "";
+        feedback.className = "tradeFeedbackText hidden";
+        input.classList.remove('input-error', 'input-success');
+        return;
+    }
+
+    feedback.textContent = text;
+    feedback.className = `tradeFeedbackText feedback-${type}`;
+    input.classList.remove('input-error', 'input-success');
+    input.classList.add(type === 'error' ? 'input-error' : 'input-success');
+}
+
 function requestVerifyTradeRecipient() {
     const input = document.getElementById('tradeTargetUserIdInput');
     const rawTargetId = input ? input.value.trim() : '';
     const cleanId = rawTargetId.replace(/[<@!>]/g, '');
 
+    setRecipientFeedback(""); // Clear previous errors
+
     if (!cleanId) {
+        setRecipientFeedback("⚠️ Please enter a Discord User ID.", "error");
         showTradeToast("Please enter a Discord User ID.", "error");
         return;
     }
@@ -8057,6 +8083,8 @@ function handleTradeRecipientResult(data) {
     tradeTargetCatalog = data.targetCards || [];
     stagedGiveCards = [];
     stagedWantCards = [];
+
+    setRecipientFeedback(`✅ Verified player: ${verifiedTradeTarget.username}`, "success");
 
     const body = document.getElementById('tradeCreateBody');
     if (body) body.classList.remove('hidden');
@@ -8164,60 +8192,31 @@ function removeStagedCard(side, index) {
     renderStagedCardsLists();
 }
 
-function acceptTrade(tradeCardId) {
-    showTradeToast("Processing trade acceptance...", "info");
-    socket.send(JSON.stringify({
-        protocol: "cardgame",
-        version: 1,
-        request: "accept_trade",
-        info: { tradeCardId }
-    }));
-}
-
-function declineTrade(tradeCardId) {
-    showTradeToast("Declining trade...", "info");
-    socket.send(JSON.stringify({
-        protocol: "cardgame",
-        version: 1,
-        request: "decline_trade",
-        info: { tradeCardId }
-    }));
-}
-
-function cancelTrade(tradeCardId) {
-    showTradeToast("Canceling offer...", "info");
-    socket.send(JSON.stringify({
-        protocol: "cardgame",
-        version: 1,
-        request: "cancel_trade",
-        info: { tradeCardId }
-    }));
-}
-
 function renderStagedCardsLists() {
     const giveList = document.getElementById('tradeGiveCardsList');
     const wantList = document.getElementById('tradeWantCardsList');
 
+    const renderPill = (c, side, idx) => `
+        <div class="tradeItemPill" data-rarity="${c.rarity}">
+            <div class="tradePillCornerAccent left"></div>
+            <div class="tradePillRarityBadge">[${c.rarity.toUpperCase()}]</div>
+            <div class="tradePillCardName">${c.name}</div>
+            <div class="tradePillEditionBadge">(Edition ${c.edition})</div>
+            <button type="button" class="tradeItemRemoveBtn" data-side="${side}" data-index="${idx}" aria-label="Remove card">✕</button>
+            <div class="tradePillCornerAccent right"></div>
+        </div>
+    `;
+
     if (giveList) {
         giveList.innerHTML = stagedGiveCards.length === 0
             ? '<div class="tradeEmptySlotText">No cards selected to give</div>'
-            : stagedGiveCards.map((c, idx) => `
-                <div class="tradeItemPill" data-rarity="${c.rarity}">
-                    <span>${c.name} (Ed. ${c.edition})</span>
-                    <button type="button" class="tradeItemRemoveBtn" data-side="give" data-index="${idx}">✕</button>
-                </div>
-            `).join('');
+            : stagedGiveCards.map((c, idx) => renderPill(c, 'give', idx)).join('');
     }
 
     if (wantList) {
         wantList.innerHTML = stagedWantCards.length === 0
             ? '<div class="tradeEmptySlotText">No cards selected to receive</div>'
-            : stagedWantCards.map((c, idx) => `
-                <div class="tradeItemPill" data-rarity="${c.rarity}">
-                    <span>${c.name} (Ed. ${c.edition})</span>
-                    <button type="button" class="tradeItemRemoveBtn" data-side="want" data-index="${idx}">✕</button>
-                </div>
-            `).join('');
+            : stagedWantCards.map((c, idx) => renderPill(c, 'want', idx)).join('');
     }
 
     updateScrollRail();
@@ -8254,6 +8253,7 @@ function handleTradeCreated(data) {
     document.getElementById('tradeCreateBody')?.classList.add('hidden');
     const targetInput = document.getElementById('tradeTargetUserIdInput');
     if (targetInput) targetInput.value = '';
+    setRecipientFeedback("");
     fetchTradesData();
 }
 
@@ -8299,7 +8299,11 @@ function renderTradeOfferCard(t, type) {
     const isIncoming = type === 'incoming';
     const partnerName = isIncoming ? t.senderUsername : t.receiverUsername;
 
-    const renderCardPill = (c) => `<span class="tradeMiniBadge" data-rarity="${c.rarity}">${c.name} (Ed. ${c.edition})</span>`;
+    const renderCardPill = (c) => `
+        <span class="tradeMiniBadge" data-rarity="${c.rarity}">
+            [${c.rarity.toUpperCase()}] ${c.name} (Edition ${c.edition})
+        </span>
+    `;
 
     const giveBadges = (t.giveCards || []).map(renderCardPill).join('') || '<em>None</em>';
     const wantBadges = (t.wantCards || []).map(renderCardPill).join('') || '<em>None</em>';
@@ -8321,7 +8325,7 @@ function renderTradeOfferCard(t, type) {
                     <div class="tradeBadgesWrap">${wantBadges}</div>
                 </div>
             </div>
-           <div class="tradeCardActions">
+            <div class="tradeCardActions">
                 ${isIncoming ? `
                     <button type="button" class="tradeActionAcceptBtn" data-trade-action="accept" data-card-id="${t.cardId}">Accept Trade</button>
                     <button type="button" class="tradeActionDeclineBtn" data-trade-action="decline" data-card-id="${t.cardId}">Decline</button>
@@ -8335,17 +8339,20 @@ function renderTradeOfferCard(t, type) {
 
 function renderRecentTradeCard(t) {
     const statusColor = t.status === 'accepted' ? '#22c55e' : (t.status === 'declined' ? '#ef4444' : '#94a3b8');
+    const partnerName = t.receiverUsername && t.receiverUsername !== "Recipient" 
+        ? t.receiverUsername 
+        : (t.senderUsername || 'Player');
+
     return `
         <div class="tradeCardBox recentTrade">
             <div class="tradeCardBoxHeader">
-                <span>Trade With: <strong>${t.receiverUsername || t.senderUsername}</strong></span>
+                <span>Trade With: <strong>${partnerName}</strong></span>
                 <span style="color:${statusColor}; font-weight:800; text-transform:uppercase;">${t.status}</span>
             </div>
             <div class="tradeCardDate">${new Date(t.timestamp).toLocaleString()}</div>
         </div>
     `;
 }
-
 function removeStagedCard(side, index) {
     if (side === 'give') stagedGiveCards.splice(index, 1);
     else stagedWantCards.splice(index, 1);

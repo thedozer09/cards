@@ -7050,32 +7050,76 @@ body.rng-rarity-omnipotent,
     color: #38bdf8;
 }
 
+.tradeRecipientSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .tradeRecipientBar {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 .tradeTargetInput {
     flex: 1 1 auto;
     height: 40px;
     padding: 0 14px;
-    border: 1px solid rgba(170, 196, 216, 0.24);
+    border: 1.5px solid rgba(170, 196, 216, 0.24);
     border-radius: 10px;
     background: rgba(8, 20, 36, 0.9);
     color: #f5f9fd;
     font-size: 13px;
     outline: none;
     box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tradeTargetInput:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.tradeTargetInput.input-error {
+    border-color: #ef4444 !important;
+    background: rgba(30, 10, 10, 0.9) !important;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important;
+    animation: inputShake 0.35s ease-in-out;
+}
+
+.tradeTargetInput.input-success {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.35) !important;
+}
+
+@keyframes inputShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.tradeFeedbackText {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.tradeFeedbackText.feedback-error {
+    color: #f87171;
+}
+
+.tradeFeedbackText.feedback-success {
+    color: #4ade80;
 }
 
 .tradeVerifyBtn {
@@ -7225,26 +7269,186 @@ body.rng-rarity-omnipotent,
 }
 
 .tradeItemPill {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 10px;
-    background: #1e293b;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 11.5px;
+    gap: 8px;
+    padding: 6px 14px 6px 12px;
+    border-radius: 999px;
+    border: 1.5px solid var(--pill-color, #94a3b8);
+    background: var(--pill-bg, rgba(148, 163, 184, 0.12));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 0 10px var(--pill-glow, rgba(148, 163, 184, 0.15));
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+}
+
+.tradeItemPill:hover {
+    transform: translateY(-1px);
+}
+
+.tradePillCornerAccent {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--pill-color, #94a3b8);
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.tradePillCornerAccent.left {
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+    border-radius: 0 999px 999px 0;
+}
+
+.tradePillCornerAccent.right {
+    top: 50%;
+    right: -5px;
+    transform: translateY(-50%);
+    border-radius: 999px 0 0 999px;
+}
+
+.tradePillRarityBadge {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: var(--pill-color, #94a3b8);
+    text-shadow: 0 0 8px var(--pill-color, rgba(148, 163, 184, 0.6));
+    flex-shrink: 0;
+}
+
+.tradePillCardName {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #ffffff;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.tradePillEditionBadge {
+    font-size: 11px;
     font-weight: 700;
-    color: #f1f5f9;
+    color: rgba(220, 231, 240, 0.85);
+    flex-shrink: 0;
 }
 
 .tradeItemRemoveBtn {
-    background: transparent;
-    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.25);
+    border: 1px solid rgba(239, 68, 68, 0.5);
     color: #f87171;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 900;
     cursor: pointer;
-    padding: 0 4px;
+    flex-shrink: 0;
+    margin-left: 4px;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tradeItemRemoveBtn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: scale(1.15);
+}
+
+.tradeItemPill[data-rarity="common"],
+.tradeMiniBadge[data-rarity="common"] {
+    --pill-color: #22c55e;
+    --pill-bg: rgba(34, 197, 94, 0.15);
+    --pill-glow: rgba(34, 197, 94, 0.25);
+}
+
+.tradeItemPill[data-rarity="uncommon"],
+.tradeMiniBadge[data-rarity="uncommon"] {
+    --pill-color: #94a3b8;
+    --pill-bg: rgba(148, 163, 184, 0.15);
+    --pill-glow: rgba(148, 163, 184, 0.25);
+}
+
+.tradeItemPill[data-rarity="rare"],
+.tradeMiniBadge[data-rarity="rare"] {
+    --pill-color: #38bdf8;
+    --pill-bg: rgba(56, 189, 248, 0.15);
+    --pill-glow: rgba(56, 189, 248, 0.25);
+}
+
+.tradeItemPill[data-rarity="epic"],
+.tradeMiniBadge[data-rarity="epic"] {
+    --pill-color: #c084fc;
+    --pill-bg: rgba(192, 132, 252, 0.15);
+    --pill-glow: rgba(192, 132, 252, 0.25);
+}
+
+.tradeItemPill[data-rarity="legendary"],
+.tradeMiniBadge[data-rarity="legendary"] {
+    --pill-color: #facc15;
+    --pill-bg: rgba(250, 204, 21, 0.15);
+    --pill-glow: rgba(250, 204, 21, 0.25);
+}
+
+.tradeItemPill[data-rarity="mythical"],
+.tradeMiniBadge[data-rarity="mythical"] {
+    --pill-color: #ef4444;
+    --pill-bg: rgba(239, 68, 68, 0.15);
+    --pill-glow: rgba(239, 68, 68, 0.25);
+}
+
+.tradeItemPill[data-rarity="celestial"],
+.tradeMiniBadge[data-rarity="celestial"] {
+    --pill-color: #60a5fa;
+    --pill-bg: rgba(96, 165, 250, 0.15);
+    --pill-glow: rgba(96, 165, 250, 0.25);
+}
+
+.tradeItemPill[data-rarity="divine"],
+.tradeMiniBadge[data-rarity="divine"] {
+    --pill-color: #a3e635;
+    --pill-bg: rgba(163, 230, 53, 0.15);
+    --pill-glow: rgba(163, 230, 53, 0.25);
+}
+
+.tradeItemPill[data-rarity="transcendent"],
+.tradeMiniBadge[data-rarity="transcendent"] {
+    --pill-color: #ff5599;
+    --pill-bg: rgba(255, 85, 153, 0.18);
+    --pill-glow: rgba(255, 85, 153, 0.35);
+}
+
+.tradeItemPill[data-rarity="cosmic"],
+.tradeMiniBadge[data-rarity="cosmic"] {
+    --pill-color: #a855f7;
+    --pill-bg: rgba(168, 85, 247, 0.18);
+    --pill-glow: rgba(168, 85, 247, 0.35);
+}
+
+.tradeItemPill[data-rarity="omnipotent"],
+.tradeMiniBadge[data-rarity="omnipotent"] {
+    --pill-color: #ffffff;
+    --pill-bg: rgba(255, 255, 255, 0.18);
+    --pill-glow: rgba(255, 255, 255, 0.4);
+}
+
+.tradeMiniBadge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--pill-color, #94a3b8);
+    background: var(--pill-bg, rgba(148, 163, 184, 0.15));
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    display: inline-block;
+    margin: 2px;
 }
 
 .tradeSendActionRow {
