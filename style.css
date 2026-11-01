@@ -7396,3 +7396,58 @@ body.rng-rarity-omnipotent,
         width: 100%;
     }
 }
+
+.tradeToastBanner {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translate(-50%, -40px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.25s ease;
+}
+
+.tradeToastBanner.toast-visible {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tradeToastBanner.toast-info {
+    background: rgba(15, 30, 48, 0.95);
+    border: 1.5px solid #38bdf8;
+    color: #38bdf8;
+}
+
+.tradeToastBanner.toast-success {
+    background: rgba(14, 38, 24, 0.95);
+    border: 1.5px solid #4ade80;
+    color: #4ade80;
+}
+
+.tradeToastBanner.toast-error {
+    background: rgba(45, 16, 16, 0.95);
+    border: 1.5px solid #f87171;
+    color: #f87171;
+}
+
+.tradeToastIcon {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.tradeToastText {
+    white-space: nowrap;
+}

@@ -7919,6 +7919,23 @@ let tradeTargetCatalog = [];
 let stagedGiveCards = [];
 let stagedWantCards = [];
 
+function showTradeToast(message, type = 'info') {
+    let toast = document.getElementById('tradeToastBanner');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'tradeToastBanner';
+        toast.className = 'tradeToastBanner';
+        document.body.appendChild(toast);
+    }
+    toast.className = `tradeToastBanner toast-${type} toast-visible`;
+    toast.innerHTML = `<span class="tradeToastIcon">${type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️')}</span> <span class="tradeToastText">${message}</span>`;
+    
+    if (toast.fadeTimer) clearTimeout(toast.fadeTimer);
+    toast.fadeTimer = setTimeout(() => {
+        toast.classList.remove('toast-visible');
+    }, 4500);
+}
+
 function initializeTradesFrontend() {
     setupTradeListeners();
     fetchTradesData();
@@ -7986,19 +8003,25 @@ function setupTradeListeners() {
 
 function requestVerifyTradeRecipient() {
     const input = document.getElementById('tradeTargetUserIdInput');
-    const targetId = input ? input.value.trim() : '';
-    if (!targetId) {
-        alert("Please enter a Discord User ID.");
+    const rawTargetId = input ? input.value.trim() : '';
+    const cleanId = rawTargetId.replace(/[<@!>]/g, '');
+
+    if (!cleanId) {
+        showTradeToast("Please enter a Discord User ID.", "error");
         return;
     }
 
-    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        showTradeToast("Connection not ready. Reconnecting...", "error");
+        return;
+    }
 
+    showTradeToast("Locating player...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
         request: "check_trade_recipient",
-        info: { targetUserId: targetId }
+        info: { targetUserId: cleanId }
     }));
 }
 
@@ -8018,6 +8041,7 @@ function handleTradeRecipientResult(data) {
     filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, '');
     filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, '');
     renderStagedCardsLists();
+    showTradeToast(`Verified: ${verifiedTradeTarget.username}`, "success");
     updateScrollRail();
 }
 
@@ -8068,7 +8092,7 @@ function addGiveCardToTrade() {
     const cardId = cardSelect.value;
     const edition = Number(editionSelect.value);
     if (!cardId || !edition) {
-        alert("Please select a card and an edition.");
+        showTradeToast("Please choose a card and edition.", "error");
         return;
     }
 
@@ -8076,7 +8100,7 @@ function addGiveCardToTrade() {
     if (!item) return;
 
     if (stagedGiveCards.some(c => c.cardId === cardId && c.edition === edition)) {
-        alert("This edition is already added to what you give.");
+        showTradeToast("This edition is already added.", "error");
         return;
     }
 
@@ -8092,7 +8116,7 @@ function addWantCardToTrade() {
     const cardId = cardSelect.value;
     const edition = Number(editionSelect.value);
     if (!cardId || !edition) {
-        alert("Please select a card and an edition.");
+        showTradeToast("Please choose a card and edition.", "error");
         return;
     }
 
@@ -8100,7 +8124,7 @@ function addWantCardToTrade() {
     if (!item) return;
 
     if (stagedWantCards.some(c => c.cardId === cardId && c.edition === edition)) {
-        alert("This edition is already added to what you request.");
+        showTradeToast("This edition is already added.", "error");
         return;
     }
 
@@ -8145,14 +8169,15 @@ function renderStagedCardsLists() {
 
 function sendFinalTradeOffer() {
     if (!verifiedTradeTarget) {
-        alert("Please find and verify a target player first.");
+        showTradeToast("Please find and verify a target player first.", "error");
         return;
     }
     if (stagedGiveCards.length === 0 && stagedWantCards.length === 0) {
-        alert("A trade must include at least one card.");
+        showTradeToast("A trade must include at least one card.", "error");
         return;
     }
 
+    showTradeToast("Sending trade offer...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
@@ -8166,7 +8191,7 @@ function sendFinalTradeOffer() {
 }
 
 function handleTradeCreated(data) {
-    alert("✅ Trade offer sent! A direct notification was dispatched to the player on Discord.");
+    showTradeToast("Trade offer sent! A Discord notification was dispatched.", "success");
     stagedGiveCards = [];
     stagedWantCards = [];
     verifiedTradeTarget = null;
@@ -8266,7 +8291,7 @@ function renderRecentTradeCard(t) {
 }
 
 window.acceptTrade = function(tradeCardId) {
-    if (!confirm("Are you sure you want to accept this trade? Card ownership will be transferred immediately.")) return;
+    showTradeToast("Processing trade acceptance...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
@@ -8276,6 +8301,7 @@ window.acceptTrade = function(tradeCardId) {
 };
 
 window.declineTrade = function(tradeCardId) {
+    showTradeToast("Declining trade...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
@@ -8285,6 +8311,7 @@ window.declineTrade = function(tradeCardId) {
 };
 
 window.cancelTrade = function(tradeCardId) {
+    showTradeToast("Canceling offer...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
         version: 1,
@@ -8294,7 +8321,7 @@ window.cancelTrade = function(tradeCardId) {
 };
 
 function handleTradeActionResult(data) {
-    alert(`✅ ${data.message}`);
+    showTradeToast(data.message, "success");
     fetchTradesData();
     requestCardGameStats();
 }
