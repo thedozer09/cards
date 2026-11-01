@@ -7532,8 +7532,13 @@ body.rng-rarity-omnipotent,
 
 .tradeBadgesWrap {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.tradeExchangeCol .tradeItemPill {
+    width: 100%;
 }
 
 .tradeMiniBadge {

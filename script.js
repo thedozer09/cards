@@ -830,6 +830,7 @@ socket.addEventListener('open', () => {
                 clearOAuthStatus();
                 console.log(`✅ Authenticated with Mid as Discord User ${data.userId}`);
                 isAuthenticated = true;
+                currentAuthenticatedUserId = String(data.userId).trim();
                 reconnectAttempts = 0;
 
                 if (isReconnectingSession) {
@@ -7918,6 +7919,9 @@ function renderLeaderboard(data) {
     updateScrollRail();
 }
 
+
+
+let currentAuthenticatedUserId = null;
 let verifiedTradeTarget = null;
 let tradeSenderCatalog = [];
 let tradeTargetCatalog = [];
@@ -7999,7 +8003,6 @@ function setupTradeListeners() {
         sendBtn.addEventListener('click', sendFinalTradeOffer);
     }
 
-    // Edition selection triggers
     const senderSelect = document.getElementById('tradeSenderCardSelect');
     if (senderSelect && !senderSelect.dataset.initialized) {
         senderSelect.dataset.initialized = "true";
@@ -8012,13 +8015,12 @@ function setupTradeListeners() {
         targetSelect.addEventListener('change', () => populateEditions('target'));
     }
 
-    // Search bar filter triggers
     const senderSearch = document.getElementById('tradeSenderSearchInput');
     if (senderSearch && !senderSearch.dataset.initialized) {
         senderSearch.dataset.initialized = "true";
         senderSearch.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-            filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, query);
+            filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, query, 'sender');
         });
     }
 
@@ -8027,7 +8029,7 @@ function setupTradeListeners() {
         targetSearch.dataset.initialized = "true";
         targetSearch.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-            filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, query);
+            filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, query, 'target');
         });
     }
 }
@@ -8055,7 +8057,7 @@ function requestVerifyTradeRecipient() {
     const rawTargetId = input ? input.value.trim() : '';
     const cleanId = rawTargetId.replace(/[<@!>]/g, '');
 
-    setRecipientFeedback(""); // Clear previous errors
+    setRecipientFeedback("");
 
     if (!cleanId) {
         setRecipientFeedback("⚠️ Please enter a Discord User ID.", "error");
@@ -8092,22 +8094,39 @@ function handleTradeRecipientResult(data) {
     const nameDisplay = document.getElementById('tradeTargetUsernameDisplay');
     if (nameDisplay) nameDisplay.textContent = `${verifiedTradeTarget.username} (THEIR SIDE)`;
 
-    filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, '');
-    filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, '');
+    const sSearch = document.getElementById('tradeSenderSearchInput');
+    if (sSearch) sSearch.value = '';
+    const tSearch = document.getElementById('tradeTargetSearchInput');
+    if (tSearch) tSearch.value = '';
+
+    filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, '', 'sender');
+    filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, '', 'target');
     renderStagedCardsLists();
     showTradeToast(`Verified: ${verifiedTradeTarget.username}`, "success");
     updateScrollRail();
 }
 
-function filterCardDropdown(selectId, catalog, query) {
+function filterCardDropdown(selectId, catalog, query, side = 'sender') {
     const select = document.getElementById(selectId);
     if (!select) return;
 
-    select.innerHTML = '<option value="">-- Choose Card --</option>';
+    select.innerHTML = '';
     const filtered = catalog.filter(c => {
         if (!query) return true;
         return c.name.toLowerCase().includes(query) || c.rarity.toLowerCase().includes(query);
     });
+
+    if (filtered.length === 0) {
+        select.innerHTML = '<option value="">-- No matching cards --</option>';
+        const editionSelect = document.getElementById(side === 'sender' ? 'tradeSenderEditionSelect' : 'tradeTargetEditionSelect');
+        if (editionSelect) editionSelect.innerHTML = '<option value="">-- Edition --</option>';
+        return;
+    }
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = query ? `-- ${filtered.length} Card${filtered.length > 1 ? 's' : ''} Found --` : '-- Choose Card --';
+    select.appendChild(defaultOpt);
 
     filtered.forEach(c => {
         const opt = document.createElement('option');
@@ -8115,6 +8134,14 @@ function filterCardDropdown(selectId, catalog, query) {
         opt.textContent = `[${c.rarity.toUpperCase()}] ${c.name}`;
         select.appendChild(opt);
     });
+
+    if (query && filtered.length > 0) {
+        select.value = filtered[0].cardId;
+        populateEditions(side);
+    } else {
+        const editionSelect = document.getElementById(side === 'sender' ? 'tradeSenderEditionSelect' : 'tradeTargetEditionSelect');
+        if (editionSelect) editionSelect.innerHTML = '<option value="">-- Edition --</option>';
+    }
 }
 
 function populateEditions(side) {
@@ -8127,13 +8154,16 @@ function populateEditions(side) {
     editionSelect.innerHTML = '<option value="">-- Edition --</option>';
 
     const cardId = cardSelect.value;
+    if (!cardId) return;
+
     const card = catalog.find(c => c.cardId === cardId);
     if (!card || !Array.isArray(card.editions)) return;
 
-    card.editions.forEach(ed => {
+    card.editions.forEach((ed, idx) => {
         const opt = document.createElement('option');
         opt.value = ed;
         opt.textContent = `Edition ${ed}`;
+        if (idx === 0) opt.selected = true;
         editionSelect.appendChild(opt);
     });
 }
@@ -8192,31 +8222,33 @@ function removeStagedCard(side, index) {
     renderStagedCardsLists();
 }
 
-function renderStagedCardsLists() {
-    const giveList = document.getElementById('tradeGiveCardsList');
-    const wantList = document.getElementById('tradeWantCardsList');
-
-    const renderPill = (c, side, idx) => `
+function buildTradePillHtml(c, isRemovable = false, side = '', idx = 0) {
+    return `
         <div class="tradeItemPill" data-rarity="${c.rarity}">
             <div class="tradePillCornerAccent left"></div>
             <div class="tradePillRarityBadge">[${c.rarity.toUpperCase()}]</div>
             <div class="tradePillCardName">${c.name}</div>
             <div class="tradePillEditionBadge">(Edition ${c.edition})</div>
-            <button type="button" class="tradeItemRemoveBtn" data-side="${side}" data-index="${idx}" aria-label="Remove card">✕</button>
+            ${isRemovable ? `<button type="button" class="tradeItemRemoveBtn" data-side="${side}" data-index="${idx}" aria-label="Remove card">✕</button>` : ''}
             <div class="tradePillCornerAccent right"></div>
         </div>
     `;
+}
+
+function renderStagedCardsLists() {
+    const giveList = document.getElementById('tradeGiveCardsList');
+    const wantList = document.getElementById('tradeWantCardsList');
 
     if (giveList) {
         giveList.innerHTML = stagedGiveCards.length === 0
             ? '<div class="tradeEmptySlotText">No cards selected to give</div>'
-            : stagedGiveCards.map((c, idx) => renderPill(c, 'give', idx)).join('');
+            : stagedGiveCards.map((c, idx) => buildTradePillHtml(c, true, 'give', idx)).join('');
     }
 
     if (wantList) {
         wantList.innerHTML = stagedWantCards.length === 0
             ? '<div class="tradeEmptySlotText">No cards selected to receive</div>'
-            : stagedWantCards.map((c, idx) => renderPill(c, 'want', idx)).join('');
+            : stagedWantCards.map((c, idx) => buildTradePillHtml(c, true, 'want', idx)).join('');
     }
 
     updateScrollRail();
@@ -8299,14 +8331,13 @@ function renderTradeOfferCard(t, type) {
     const isIncoming = type === 'incoming';
     const partnerName = isIncoming ? t.senderUsername : t.receiverUsername;
 
-    const renderCardPill = (c) => `
-        <span class="tradeMiniBadge" data-rarity="${c.rarity}">
-            [${c.rarity.toUpperCase()}] ${c.name} (Edition ${c.edition})
-        </span>
-    `;
+    const givePills = (t.giveCards && t.giveCards.length > 0)
+        ? t.giveCards.map(c => buildTradePillHtml(c, false)).join('')
+        : '<div class="tradeEmptySlotText" style="padding: 6px 0;">None</div>';
 
-    const giveBadges = (t.giveCards || []).map(renderCardPill).join('') || '<em>None</em>';
-    const wantBadges = (t.wantCards || []).map(renderCardPill).join('') || '<em>None</em>';
+    const wantPills = (t.wantCards && t.wantCards.length > 0)
+        ? t.wantCards.map(c => buildTradePillHtml(c, false)).join('')
+        : '<div class="tradeEmptySlotText" style="padding: 6px 0;">None</div>';
 
     return `
         <div class="tradeCardBox">
@@ -8317,12 +8348,12 @@ function renderTradeOfferCard(t, type) {
             <div class="tradeCardOfferDetails">
                 <div class="tradeExchangeCol">
                     <span class="tradeExchangeLabel">${isIncoming ? 'They Offer:' : 'You Offer:'}</span>
-                    <div class="tradeBadgesWrap">${giveBadges}</div>
+                    <div class="tradeBadgesWrap">${givePills}</div>
                 </div>
                 <div class="tradeExchangeArrow">⇄</div>
                 <div class="tradeExchangeCol">
                     <span class="tradeExchangeLabel">${isIncoming ? 'They Request:' : 'You Request:'}</span>
-                    <div class="tradeBadgesWrap">${wantBadges}</div>
+                    <div class="tradeBadgesWrap">${wantPills}</div>
                 </div>
             </div>
             <div class="tradeCardActions">
@@ -8339,15 +8370,36 @@ function renderTradeOfferCard(t, type) {
 
 function renderRecentTradeCard(t) {
     const statusColor = t.status === 'accepted' ? '#22c55e' : (t.status === 'declined' ? '#ef4444' : '#94a3b8');
-    const partnerName = t.receiverUsername && t.receiverUsername !== "Recipient" 
-        ? t.receiverUsername 
+
+    const isMeSender = String(t.senderId).trim() === String(currentAuthenticatedUserId).trim();
+    const partnerName = isMeSender 
+        ? (t.receiverUsername || 'Player') 
         : (t.senderUsername || 'Player');
+
+    const givePills = (t.giveCards && t.giveCards.length > 0)
+        ? t.giveCards.map(c => buildTradePillHtml(c, false)).join('')
+        : '<div class="tradeEmptySlotText" style="padding: 4px 0;">None</div>';
+
+    const wantPills = (t.wantCards && t.wantCards.length > 0)
+        ? t.wantCards.map(c => buildTradePillHtml(c, false)).join('')
+        : '<div class="tradeEmptySlotText" style="padding: 4px 0;">None</div>';
 
     return `
         <div class="tradeCardBox recentTrade">
             <div class="tradeCardBoxHeader">
                 <span>Trade With: <strong>${partnerName}</strong></span>
                 <span style="color:${statusColor}; font-weight:800; text-transform:uppercase;">${t.status}</span>
+            </div>
+            <div class="tradeCardOfferDetails" style="margin: 4px 0;">
+                <div class="tradeExchangeCol">
+                    <span class="tradeExchangeLabel">${isMeSender ? 'You Offered:' : 'They Offered:'}</span>
+                    <div class="tradeBadgesWrap">${givePills}</div>
+                </div>
+                <div class="tradeExchangeArrow">⇄</div>
+                <div class="tradeExchangeCol">
+                    <span class="tradeExchangeLabel">${isMeSender ? 'You Requested:' : 'They Requested:'}</span>
+                    <div class="tradeBadgesWrap">${wantPills}</div>
+                </div>
             </div>
             <div class="tradeCardDate">${new Date(t.timestamp).toLocaleString()}</div>
         </div>
