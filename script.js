@@ -7944,6 +7944,32 @@ function initializeTradesFrontend() {
 }
 
 function setupTradeListeners() {
+    const tradesViewContainer = document.getElementById('tradesView');
+    if (tradesViewContainer && !tradesViewContainer.dataset.delegationInitialized) {
+        tradesViewContainer.dataset.delegationInitialized = "true";
+        tradesViewContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            const action = btn.dataset.tradeAction;
+            const cardId = btn.dataset.cardId;
+
+            if (action === 'accept' && cardId) {
+                acceptTrade(cardId);
+            } else if (action === 'decline' && cardId) {
+                declineTrade(cardId);
+            } else if (action === 'cancel' && cardId) {
+                cancelTrade(cardId);
+            } else if (btn.classList.contains('tradeItemRemoveBtn')) {
+                const side = btn.dataset.side;
+                const index = Number(btn.dataset.index);
+                if (side && !isNaN(index)) {
+                    removeStagedCard(side, index);
+                }
+            }
+        });
+    }
+
     const verifyBtn = document.getElementById('tradeVerifyTargetBtn');
     if (verifyBtn && !verifyBtn.dataset.initialized) {
         verifyBtn.dataset.initialized = "true";
@@ -8132,11 +8158,41 @@ function addWantCardToTrade() {
     renderStagedCardsLists();
 }
 
-window.removeStagedCard = function(side, index) {
+function removeStagedCard(side, index) {
     if (side === 'give') stagedGiveCards.splice(index, 1);
     else stagedWantCards.splice(index, 1);
     renderStagedCardsLists();
-};
+}
+
+function acceptTrade(tradeCardId) {
+    showTradeToast("Processing trade acceptance...", "info");
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "accept_trade",
+        info: { tradeCardId }
+    }));
+}
+
+function declineTrade(tradeCardId) {
+    showTradeToast("Declining trade...", "info");
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "decline_trade",
+        info: { tradeCardId }
+    }));
+}
+
+function cancelTrade(tradeCardId) {
+    showTradeToast("Canceling offer...", "info");
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "cancel_trade",
+        info: { tradeCardId }
+    }));
+}
 
 function renderStagedCardsLists() {
     const giveList = document.getElementById('tradeGiveCardsList');
@@ -8148,7 +8204,7 @@ function renderStagedCardsLists() {
             : stagedGiveCards.map((c, idx) => `
                 <div class="tradeItemPill" data-rarity="${c.rarity}">
                     <span>${c.name} (Ed. ${c.edition})</span>
-                    <button type="button" class="tradeItemRemoveBtn" onclick="removeStagedCard('give', ${idx})">✕</button>
+                    <button type="button" class="tradeItemRemoveBtn" data-side="give" data-index="${idx}">✕</button>
                 </div>
             `).join('');
     }
@@ -8159,7 +8215,7 @@ function renderStagedCardsLists() {
             : stagedWantCards.map((c, idx) => `
                 <div class="tradeItemPill" data-rarity="${c.rarity}">
                     <span>${c.name} (Ed. ${c.edition})</span>
-                    <button type="button" class="tradeItemRemoveBtn" onclick="removeStagedCard('want', ${idx})">✕</button>
+                    <button type="button" class="tradeItemRemoveBtn" data-side="want" data-index="${idx}">✕</button>
                 </div>
             `).join('');
     }
@@ -8265,12 +8321,12 @@ function renderTradeOfferCard(t, type) {
                     <div class="tradeBadgesWrap">${wantBadges}</div>
                 </div>
             </div>
-            <div class="tradeCardActions">
+           <div class="tradeCardActions">
                 ${isIncoming ? `
-                    <button type="button" class="tradeActionAcceptBtn" onclick="acceptTrade('${t.cardId}')">Accept Trade</button>
-                    <button type="button" class="tradeActionDeclineBtn" onclick="declineTrade('${t.cardId}')">Decline</button>
+                    <button type="button" class="tradeActionAcceptBtn" data-trade-action="accept" data-card-id="${t.cardId}">Accept Trade</button>
+                    <button type="button" class="tradeActionDeclineBtn" data-trade-action="decline" data-card-id="${t.cardId}">Decline</button>
                 ` : `
-                    <button type="button" class="tradeActionCancelBtn" onclick="cancelTrade('${t.cardId}')">Cancel Offer</button>
+                    <button type="button" class="tradeActionCancelBtn" data-trade-action="cancel" data-card-id="${t.cardId}">Cancel Offer</button>
                 `}
             </div>
         </div>
@@ -8290,7 +8346,13 @@ function renderRecentTradeCard(t) {
     `;
 }
 
-window.acceptTrade = function(tradeCardId) {
+function removeStagedCard(side, index) {
+    if (side === 'give') stagedGiveCards.splice(index, 1);
+    else stagedWantCards.splice(index, 1);
+    renderStagedCardsLists();
+}
+
+function acceptTrade(tradeCardId) {
     showTradeToast("Processing trade acceptance...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
@@ -8298,9 +8360,9 @@ window.acceptTrade = function(tradeCardId) {
         request: "accept_trade",
         info: { tradeCardId }
     }));
-};
+}
 
-window.declineTrade = function(tradeCardId) {
+function declineTrade(tradeCardId) {
     showTradeToast("Declining trade...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
@@ -8308,9 +8370,9 @@ window.declineTrade = function(tradeCardId) {
         request: "decline_trade",
         info: { tradeCardId }
     }));
-};
+}
 
-window.cancelTrade = function(tradeCardId) {
+function cancelTrade(tradeCardId) {
     showTradeToast("Canceling offer...", "info");
     socket.send(JSON.stringify({
         protocol: "cardgame",
@@ -8318,7 +8380,7 @@ window.cancelTrade = function(tradeCardId) {
         request: "cancel_trade",
         info: { tradeCardId }
     }));
-};
+}
 
 function handleTradeActionResult(data) {
     showTradeToast(data.message, "success");
