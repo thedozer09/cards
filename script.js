@@ -1007,8 +1007,33 @@ if (data.type === "pack_options_result") {
                 return;
             }
 
-            if (data.type === "pack_error") {
+           if (data.type === "pack_error") {
                 handlePackError(data.data);
+                return;
+            }
+
+            if (data.type === "trade_recipient_result") {
+                handleTradeRecipientResult(data.data);
+                return;
+            }
+
+            if (data.type === "create_trade_result") {
+                handleTradeCreated(data.data);
+                return;
+            }
+
+            if (data.type === "trades_data_result") {
+                renderTradesData(data.data);
+                return;
+            }
+
+            if (data.type === "trade_action_result") {
+                handleTradeActionResult(data.data);
+                return;
+            }
+
+            if (data.type === "trade_error") {
+                alert(`⚠️ Trade Notice: ${data.data?.message || 'Trade operation failed.'}`);
                 return;
             }
         } catch (err) {  
@@ -2297,6 +2322,8 @@ tradesButton.addEventListener('click', () => {
         'trades',
         'Trades'
     );
+    switchCardsSubview('trades');
+    initializeTradesFrontend();
 });
 
 const scrollRail = document.querySelector('.scrollRail');  
@@ -7884,4 +7911,390 @@ function renderLeaderboard(data) {
 
     listContainer.appendChild(fragment);
     updateScrollRail();
+}
+
+let verifiedTradeTarget = null;
+let tradeSenderCatalog = [];
+let tradeTargetCatalog = [];
+let stagedGiveCards = [];
+let stagedWantCards = [];
+
+function initializeTradesFrontend() {
+    setupTradeListeners();
+    fetchTradesData();
+    renderStagedCardsLists();
+    updateScrollRail();
+}
+
+function setupTradeListeners() {
+    const verifyBtn = document.getElementById('tradeVerifyTargetBtn');
+    if (verifyBtn && !verifyBtn.dataset.initialized) {
+        verifyBtn.dataset.initialized = "true";
+        verifyBtn.addEventListener('click', requestVerifyTradeRecipient);
+    }
+
+    const addGiveBtn = document.getElementById('tradeAddGiveCardBtn');
+    if (addGiveBtn && !addGiveBtn.dataset.initialized) {
+        addGiveBtn.dataset.initialized = "true";
+        addGiveBtn.addEventListener('click', addGiveCardToTrade);
+    }
+
+    const addWantBtn = document.getElementById('tradeAddWantCardBtn');
+    if (addWantBtn && !addWantBtn.dataset.initialized) {
+        addWantBtn.dataset.initialized = "true";
+        addWantBtn.addEventListener('click', addWantCardToTrade);
+    }
+
+    const sendBtn = document.getElementById('tradeSendOfferBtn');
+    if (sendBtn && !sendBtn.dataset.initialized) {
+        sendBtn.dataset.initialized = "true";
+        sendBtn.addEventListener('click', sendFinalTradeOffer);
+    }
+
+    // Edition selection triggers
+    const senderSelect = document.getElementById('tradeSenderCardSelect');
+    if (senderSelect && !senderSelect.dataset.initialized) {
+        senderSelect.dataset.initialized = "true";
+        senderSelect.addEventListener('change', () => populateEditions('sender'));
+    }
+
+    const targetSelect = document.getElementById('tradeTargetCardSelect');
+    if (targetSelect && !targetSelect.dataset.initialized) {
+        targetSelect.dataset.initialized = "true";
+        targetSelect.addEventListener('change', () => populateEditions('target'));
+    }
+
+    // Search bar filter triggers
+    const senderSearch = document.getElementById('tradeSenderSearchInput');
+    if (senderSearch && !senderSearch.dataset.initialized) {
+        senderSearch.dataset.initialized = "true";
+        senderSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, query);
+        });
+    }
+
+    const targetSearch = document.getElementById('tradeTargetSearchInput');
+    if (targetSearch && !targetSearch.dataset.initialized) {
+        targetSearch.dataset.initialized = "true";
+        targetSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, query);
+        });
+    }
+}
+
+function requestVerifyTradeRecipient() {
+    const input = document.getElementById('tradeTargetUserIdInput');
+    const targetId = input ? input.value.trim() : '';
+    if (!targetId) {
+        alert("Please enter a Discord User ID.");
+        return;
+    }
+
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "check_trade_recipient",
+        info: { targetUserId: targetId }
+    }));
+}
+
+function handleTradeRecipientResult(data) {
+    verifiedTradeTarget = data.recipient;
+    tradeSenderCatalog = data.senderCards || [];
+    tradeTargetCatalog = data.targetCards || [];
+    stagedGiveCards = [];
+    stagedWantCards = [];
+
+    const body = document.getElementById('tradeCreateBody');
+    if (body) body.classList.remove('hidden');
+
+    const nameDisplay = document.getElementById('tradeTargetUsernameDisplay');
+    if (nameDisplay) nameDisplay.textContent = `${verifiedTradeTarget.username} (THEIR SIDE)`;
+
+    filterCardDropdown('tradeSenderCardSelect', tradeSenderCatalog, '');
+    filterCardDropdown('tradeTargetCardSelect', tradeTargetCatalog, '');
+    renderStagedCardsLists();
+    updateScrollRail();
+}
+
+function filterCardDropdown(selectId, catalog, query) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    select.innerHTML = '<option value="">-- Choose Card --</option>';
+    const filtered = catalog.filter(c => {
+        if (!query) return true;
+        return c.name.toLowerCase().includes(query) || c.rarity.toLowerCase().includes(query);
+    });
+
+    filtered.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.cardId;
+        opt.textContent = `[${c.rarity.toUpperCase()}] ${c.name}`;
+        select.appendChild(opt);
+    });
+}
+
+function populateEditions(side) {
+    const isSender = side === 'sender';
+    const cardSelect = document.getElementById(isSender ? 'tradeSenderCardSelect' : 'tradeTargetCardSelect');
+    const editionSelect = document.getElementById(isSender ? 'tradeSenderEditionSelect' : 'tradeTargetEditionSelect');
+    const catalog = isSender ? tradeSenderCatalog : tradeTargetCatalog;
+
+    if (!cardSelect || !editionSelect) return;
+    editionSelect.innerHTML = '<option value="">-- Edition --</option>';
+
+    const cardId = cardSelect.value;
+    const card = catalog.find(c => c.cardId === cardId);
+    if (!card || !Array.isArray(card.editions)) return;
+
+    card.editions.forEach(ed => {
+        const opt = document.createElement('option');
+        opt.value = ed;
+        opt.textContent = `Edition ${ed}`;
+        editionSelect.appendChild(opt);
+    });
+}
+
+function addGiveCardToTrade() {
+    const cardSelect = document.getElementById('tradeSenderCardSelect');
+    const editionSelect = document.getElementById('tradeSenderEditionSelect');
+    if (!cardSelect || !editionSelect) return;
+
+    const cardId = cardSelect.value;
+    const edition = Number(editionSelect.value);
+    if (!cardId || !edition) {
+        alert("Please select a card and an edition.");
+        return;
+    }
+
+    const item = tradeSenderCatalog.find(c => c.cardId === cardId);
+    if (!item) return;
+
+    if (stagedGiveCards.some(c => c.cardId === cardId && c.edition === edition)) {
+        alert("This edition is already added to what you give.");
+        return;
+    }
+
+    stagedGiveCards.push({ cardId: item.cardId, name: item.name, rarity: item.rarity, edition: edition });
+    renderStagedCardsLists();
+}
+
+function addWantCardToTrade() {
+    const cardSelect = document.getElementById('tradeTargetCardSelect');
+    const editionSelect = document.getElementById('tradeTargetEditionSelect');
+    if (!cardSelect || !editionSelect) return;
+
+    const cardId = cardSelect.value;
+    const edition = Number(editionSelect.value);
+    if (!cardId || !edition) {
+        alert("Please select a card and an edition.");
+        return;
+    }
+
+    const item = tradeTargetCatalog.find(c => c.cardId === cardId);
+    if (!item) return;
+
+    if (stagedWantCards.some(c => c.cardId === cardId && c.edition === edition)) {
+        alert("This edition is already added to what you request.");
+        return;
+    }
+
+    stagedWantCards.push({ cardId: item.cardId, name: item.name, rarity: item.rarity, edition: edition });
+    renderStagedCardsLists();
+}
+
+window.removeStagedCard = function(side, index) {
+    if (side === 'give') stagedGiveCards.splice(index, 1);
+    else stagedWantCards.splice(index, 1);
+    renderStagedCardsLists();
+};
+
+function renderStagedCardsLists() {
+    const giveList = document.getElementById('tradeGiveCardsList');
+    const wantList = document.getElementById('tradeWantCardsList');
+
+    if (giveList) {
+        giveList.innerHTML = stagedGiveCards.length === 0
+            ? '<div class="tradeEmptySlotText">No cards selected to give</div>'
+            : stagedGiveCards.map((c, idx) => `
+                <div class="tradeItemPill" data-rarity="${c.rarity}">
+                    <span>${c.name} (Ed. ${c.edition})</span>
+                    <button type="button" class="tradeItemRemoveBtn" onclick="removeStagedCard('give', ${idx})">✕</button>
+                </div>
+            `).join('');
+    }
+
+    if (wantList) {
+        wantList.innerHTML = stagedWantCards.length === 0
+            ? '<div class="tradeEmptySlotText">No cards selected to receive</div>'
+            : stagedWantCards.map((c, idx) => `
+                <div class="tradeItemPill" data-rarity="${c.rarity}">
+                    <span>${c.name} (Ed. ${c.edition})</span>
+                    <button type="button" class="tradeItemRemoveBtn" onclick="removeStagedCard('want', ${idx})">✕</button>
+                </div>
+            `).join('');
+    }
+
+    updateScrollRail();
+}
+
+function sendFinalTradeOffer() {
+    if (!verifiedTradeTarget) {
+        alert("Please find and verify a target player first.");
+        return;
+    }
+    if (stagedGiveCards.length === 0 && stagedWantCards.length === 0) {
+        alert("A trade must include at least one card.");
+        return;
+    }
+
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "create_trade",
+        info: {
+            receiverUserId: verifiedTradeTarget.userId,
+            giveCards: stagedGiveCards,
+            wantCards: stagedWantCards
+        }
+    }));
+}
+
+function handleTradeCreated(data) {
+    alert("✅ Trade offer sent! A direct notification was dispatched to the player on Discord.");
+    stagedGiveCards = [];
+    stagedWantCards = [];
+    verifiedTradeTarget = null;
+    document.getElementById('tradeCreateBody')?.classList.add('hidden');
+    const targetInput = document.getElementById('tradeTargetUserIdInput');
+    if (targetInput) targetInput.value = '';
+    fetchTradesData();
+}
+
+function fetchTradesData() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "get_trades"
+    }));
+}
+
+function renderTradesData(data) {
+    const incomingList = document.getElementById('tradeIncomingList');
+    const outgoingList = document.getElementById('tradeOutgoingList');
+    const recentList = document.getElementById('tradeRecentList');
+
+    if (incomingList) {
+        const items = data.incoming || [];
+        incomingList.innerHTML = items.length === 0
+            ? '<div class="tradeEmptySlotText">No pending incoming trade offers.</div>'
+            : items.map(t => renderTradeOfferCard(t, 'incoming')).join('');
+    }
+
+    if (outgoingList) {
+        const items = data.outgoing || [];
+        outgoingList.innerHTML = items.length === 0
+            ? '<div class="tradeEmptySlotText">No pending outgoing trade offers.</div>'
+            : items.map(t => renderTradeOfferCard(t, 'outgoing')).join('');
+    }
+
+    if (recentList) {
+        const items = data.recent || [];
+        recentList.innerHTML = items.length === 0
+            ? '<div class="tradeEmptySlotText">No trade activity in the last 48 hours.</div>'
+            : items.map(t => renderRecentTradeCard(t)).join('');
+    }
+
+    updateScrollRail();
+}
+
+function renderTradeOfferCard(t, type) {
+    const isIncoming = type === 'incoming';
+    const partnerName = isIncoming ? t.senderUsername : t.receiverUsername;
+
+    const renderCardPill = (c) => `<span class="tradeMiniBadge" data-rarity="${c.rarity}">${c.name} (Ed. ${c.edition})</span>`;
+
+    const giveBadges = (t.giveCards || []).map(renderCardPill).join('') || '<em>None</em>';
+    const wantBadges = (t.wantCards || []).map(renderCardPill).join('') || '<em>None</em>';
+
+    return `
+        <div class="tradeCardBox">
+            <div class="tradeCardBoxHeader">
+                <span>${isIncoming ? 'From: ' : 'Sent To: '}<strong>${partnerName}</strong></span>
+                <span class="tradeCardDate">${new Date(t.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="tradeCardOfferDetails">
+                <div class="tradeExchangeCol">
+                    <span class="tradeExchangeLabel">${isIncoming ? 'They Offer:' : 'You Offer:'}</span>
+                    <div class="tradeBadgesWrap">${giveBadges}</div>
+                </div>
+                <div class="tradeExchangeArrow">⇄</div>
+                <div class="tradeExchangeCol">
+                    <span class="tradeExchangeLabel">${isIncoming ? 'They Request:' : 'You Request:'}</span>
+                    <div class="tradeBadgesWrap">${wantBadges}</div>
+                </div>
+            </div>
+            <div class="tradeCardActions">
+                ${isIncoming ? `
+                    <button type="button" class="tradeActionAcceptBtn" onclick="acceptTrade('${t.cardId}')">Accept Trade</button>
+                    <button type="button" class="tradeActionDeclineBtn" onclick="declineTrade('${t.cardId}')">Decline</button>
+                ` : `
+                    <button type="button" class="tradeActionCancelBtn" onclick="cancelTrade('${t.cardId}')">Cancel Offer</button>
+                `}
+            </div>
+        </div>
+    `;
+}
+
+function renderRecentTradeCard(t) {
+    const statusColor = t.status === 'accepted' ? '#22c55e' : (t.status === 'declined' ? '#ef4444' : '#94a3b8');
+    return `
+        <div class="tradeCardBox recentTrade">
+            <div class="tradeCardBoxHeader">
+                <span>Trade With: <strong>${t.receiverUsername || t.senderUsername}</strong></span>
+                <span style="color:${statusColor}; font-weight:800; text-transform:uppercase;">${t.status}</span>
+            </div>
+            <div class="tradeCardDate">${new Date(t.timestamp).toLocaleString()}</div>
+        </div>
+    `;
+}
+
+window.acceptTrade = function(tradeCardId) {
+    if (!confirm("Are you sure you want to accept this trade? Card ownership will be transferred immediately.")) return;
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "accept_trade",
+        info: { tradeCardId }
+    }));
+};
+
+window.declineTrade = function(tradeCardId) {
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "decline_trade",
+        info: { tradeCardId }
+    }));
+};
+
+window.cancelTrade = function(tradeCardId) {
+    socket.send(JSON.stringify({
+        protocol: "cardgame",
+        version: 1,
+        request: "cancel_trade",
+        info: { tradeCardId }
+    }));
+};
+
+function handleTradeActionResult(data) {
+    alert(`✅ ${data.message}`);
+    fetchTradesData();
+    requestCardGameStats();
 }

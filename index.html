@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Card Game</title>
-    <link rel="stylesheet" href="./style.css?v=198">
+    <link rel="stylesheet" href="./style.css?v=199">
    
 </head>
 <body>
@@ -184,7 +184,110 @@
                     </div>
 
                     <div id="tradesView" class="cardsSubview hidden">
-                        <div class="subviewPlaceholder">Trading interface coming soon.</div>
+
+                        <div class="tradeSectionBlock">
+                            <div class="tradeSectionTitleRow">
+                                <span class="tradeSectionIcon">✦</span>
+                                <h3 class="tradeSectionHeading">Create New Trade</h3>
+                            </div>
+                            <p class="tradeSectionSubtitle">Enter a Discord User ID to verify a player and set up an exchange.</p>
+
+                            <div class="tradeRecipientBar">
+                                <input type="text" id="tradeTargetUserIdInput" class="tradeTargetInput" placeholder="Enter Discord User ID..." autocomplete="off">
+                                <button type="button" id="tradeVerifyTargetBtn" class="tradeVerifyBtn">Find Player</button>
+                            </div>
+
+                            <div id="tradeCreateBody" class="tradeCreateBody hidden">
+                                <div class="tradePlayerHeader">
+                                    <div class="tradePlayerInfo senderInfo">
+                                        <span class="tradeSideTag">YOU OFFER</span>
+                                    </div>
+                                    <div class="tradePlayerInfo recipientInfo">
+                                        <span class="tradeSideTag" id="tradeTargetUsernameDisplay">RECIPIENT OFFERS</span>
+                                    </div>
+                                </div>
+
+                                <div class="tradeColumnsContainer">
+                                    <div class="tradeSideColumn tradeSenderSide">
+                                        <h4>Your Cards</h4>
+                                        <input type="text" id="tradeSenderSearchInput" class="tradeCardFilterInput" placeholder="Filter your cards..." autocomplete="off">
+                                        <div class="tradePickerRow">
+                                            <select id="tradeSenderCardSelect" class="tradeCardSelect">
+                                                <option value="">-- Choose Card --</option>
+                                            </select>
+                                            <select id="tradeSenderEditionSelect" class="tradeEditionSelect">
+                                                <option value="">-- Edition --</option>
+                                            </select>
+                                            <button type="button" id="tradeAddGiveCardBtn" class="tradeAddBtn">+ Add Card</button>
+                                        </div>
+                                        <div class="tradeStagedHeader">Selected to Give:</div>
+                                        <div id="tradeGiveCardsList" class="tradeSelectedList"></div>
+                                    </div>
+
+                                    <div class="tradeColumnDivider"></div>
+
+                                    <div class="tradeSideColumn tradeRecipientSide">
+                                        <h4>Their Cards</h4>
+                                        <input type="text" id="tradeTargetSearchInput" class="tradeCardFilterInput" placeholder="Filter their cards..." autocomplete="off">
+                                        <div class="tradePickerRow">
+                                            <select id="tradeTargetCardSelect" class="tradeCardSelect">
+                                                <option value="">-- Choose Card --</option>
+                                            </select>
+                                            <select id="tradeTargetEditionSelect" class="tradeEditionSelect">
+                                                <option value="">-- Edition --</option>
+                                            </select>
+                                            <button type="button" id="tradeAddWantCardBtn" class="tradeAddBtn">+ Add Card</button>
+                                        </div>
+                                        <div class="tradeStagedHeader">Selected to Receive:</div>
+                                        <div id="tradeWantCardsList" class="tradeSelectedList"></div>
+                                    </div>
+                                </div>
+
+                                <div class="tradeSendActionRow">
+                                    <button type="button" id="tradeSendOfferBtn" class="tradeSendBtn">Send Trade Offer</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tradePageSeparator">
+                            <span>Incoming & Outgoing</span>
+                        </div>
+
+                        <div class="tradeSectionBlock">
+                            <div class="tradeSectionTitleRow">
+                                <span class="tradeSectionIcon">📬</span>
+                                <h3 class="tradeSectionHeading">Incoming Offers</h3>
+                            </div>
+                            <p class="tradeSectionSubtitle">Trade offers sent to you by other players.</p>
+                            <div id="tradeIncomingList" class="tradesOfferCardsList"></div>
+                        </div>
+
+                        <div class="tradePageSeparator">
+                            <span>Pending Outgoing</span>
+                        </div>
+
+                        <div class="tradeSectionBlock">
+                            <div class="tradeSectionTitleRow">
+                                <span class="tradeSectionIcon">📤</span>
+                                <h3 class="tradeSectionHeading">Outgoing Offers</h3>
+                            </div>
+                            <p class="tradeSectionSubtitle">Trade offers you have sent that are waiting for a response.</p>
+                            <div id="tradeOutgoingList" class="tradesOfferCardsList"></div>
+                        </div>
+
+                        <div class="tradePageSeparator">
+                            <span>Activity History</span>
+                        </div>
+
+                        <div class="tradeSectionBlock">
+                            <div class="tradeSectionTitleRow">
+                                <span class="tradeSectionIcon">🕒</span>
+                                <h3 class="tradeSectionHeading">Recent Trades (Last 48 Hours)</h3>
+                            </div>
+                            <p class="tradeSectionSubtitle">Completed, declined, or canceled trade history.</p>
+                            <div id="tradeRecentList" class="tradesOfferCardsList"></div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -204,7 +307,7 @@
 
     <div class="scrollRail"></div>
 
-    <script src="./script.js?v=220"></script>
+    <script src="./script.js?v=221"></script>
 
 </body>
 </html>

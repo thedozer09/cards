@@ -6971,3 +6971,428 @@ body.rng-rarity-omnipotent,
     color: #94a3b8;
     line-height: 1.45;
 }
+
+#tradesView {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.tradeSectionBlock {
+    width: 100%;
+    background: rgba(14, 26, 42, 0.82);
+    border: 1px solid rgba(138, 166, 191, 0.22);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tradeSectionTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.tradeSectionIcon {
+    font-size: 16px;
+    color: #38bdf8;
+}
+
+.tradeSectionHeading {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #f1f5f9;
+    letter-spacing: 0.3px;
+}
+
+.tradeSectionSubtitle {
+    margin: 0 0 14px 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.tradePageSeparator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 0;
+    position: relative;
+}
+
+.tradePageSeparator::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(138, 166, 191, 0.3), transparent);
+}
+
+.tradePageSeparator span {
+    position: relative;
+    background: #0f172a;
+    padding: 4px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(138, 166, 191, 0.25);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #38bdf8;
+}
+
+.tradeRecipientBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tradeTargetInput {
+    flex: 1 1 auto;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid rgba(170, 196, 216, 0.24);
+    border-radius: 10px;
+    background: rgba(8, 20, 36, 0.9);
+    color: #f5f9fd;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.tradeTargetInput:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.tradeVerifyBtn {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(185, 211, 230, 0.24);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tradeVerifyBtn:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    transform: translateY(-1px);
+}
+
+.tradeCreateBody {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(138, 166, 191, 0.18);
+}
+
+.tradePlayerHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.tradeSideTag {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: #38bdf8;
+    background: rgba(8, 20, 36, 0.6);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.tradeColumnsContainer {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.tradeSideColumn {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tradeSideColumn h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #e2e8f0;
+}
+
+.tradeCardFilterInput {
+    width: 100%;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(138, 166, 191, 0.2);
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 11.5px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.tradeCardFilterInput:focus {
+    border-color: #38bdf8;
+}
+
+.tradeColumnDivider {
+    width: 1.5px;
+    background: linear-gradient(180deg, transparent, rgba(138, 166, 191, 0.35), transparent);
+}
+
+.tradePickerRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tradeCardSelect,
+.tradeEditionSelect {
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(138, 166, 191, 0.2);
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 12px;
+    outline: none;
+}
+
+.tradeAddBtn {
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    background: #1e293b;
+    color: #38bdf8;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tradeAddBtn:hover {
+    background: #0284c7;
+    color: #ffffff;
+}
+
+.tradeStagedHeader {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.tradeSelectedList {
+    min-height: 100px;
+    max-height: 160px;
+    overflow-y: auto;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(8, 15, 26, 0.65);
+    border: 1px solid rgba(138, 166, 191, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tradeEmptySlotText {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    padding: 22px 0;
+}
+
+.tradeItemPill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: #1e293b;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.tradeItemRemoveBtn {
+    background: transparent;
+    border: none;
+    color: #f87171;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.tradeSendActionRow {
+    display: flex;
+    justify-content: center;
+    padding-top: 14px;
+    border-top: 1px solid rgba(138, 166, 191, 0.15);
+}
+
+.tradeSendBtn {
+    min-width: 220px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+    transition: transform 0.15s ease;
+}
+
+.tradeSendBtn:hover {
+    transform: translateY(-1px);
+}
+
+.tradesOfferCardsList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tradeCardBox {
+    background: rgba(8, 18, 32, 0.8);
+    border: 1px solid rgba(138, 166, 191, 0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tradeCardBoxHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: #f8fafc;
+}
+
+.tradeCardDate {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.tradeCardOfferDetails {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(4, 10, 18, 0.55);
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.tradeExchangeCol {
+    flex: 1 1 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tradeExchangeLabel {
+    font-size: 11px;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.tradeBadgesWrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.tradeMiniBadge {
+    padding: 3px 6px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.tradeExchangeArrow {
+    font-size: 18px;
+    font-weight: 900;
+    color: #38bdf8;
+}
+
+.tradeCardActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.tradeActionAcceptBtn {
+    background: #16a34a;
+    border: 1px solid rgba(110, 231, 183, 0.4);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tradeActionDeclineBtn,
+.tradeActionCancelBtn {
+    background: #ef4444;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@media (max-width: 650px) {
+    .tradeColumnsContainer {
+        flex-direction: column;
+    }
+
+    .tradeColumnDivider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .tradeRecipientBar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tradeVerifyBtn {
+        width: 100%;
+    }
+}
