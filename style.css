@@ -7660,3 +7660,209 @@ body.rng-rarity-omnipotent,
 .tradeToastText {
     white-space: nowrap;
 }
+
+
+.finishedCardInnerBorder {
+    position: absolute;
+    inset: 4px;
+    border: 2px solid var(--rarity-bright, #cbd5e1);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.finishedCardHeader {
+    width: 100%;
+    background: rgba(10, 15, 22, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 5px;
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    box-sizing: border-box;
+}
+
+.finishedCardTitle {
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.finishedCardRarityTag {
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: var(--rarity-bright, #38bdf8);
+    opacity: 0.9;
+    flex-shrink: 0;
+}
+
+.finishedCardArtFrame {
+    flex: 1 1 auto;
+    width: 100%;
+    margin: 4px 0;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.finishedCardArtImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.finishedCardFooter {
+    width: 100%;
+    background: var(--rarity-bright, #cbd5e1);
+    border-radius: 4px;
+    padding: 2.5px 0;
+    text-align: center;
+}
+
+.finishedCardGameTitle {
+    font-size: 8px;
+    font-weight: 1000;
+    letter-spacing: 1px;
+    color: #080d14;
+}
+
+.cardInspectOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999995;
+    background: rgba(4, 9, 16, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    animation: packModalFadeIn 0.2s ease-out forwards;
+}
+
+.cardInspectBox {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #141c26;
+    border: 1px solid rgba(138, 166, 191, 0.25);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    box-sizing: border-box;
+}
+
+.cardInspectCardSlot {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.cardInspectCardSlot .collectionCardBox {
+    width: 200px !important;
+    height: 290px !important;
+}
+
+.cardInspectActionRow {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.cardInspectShareBtn,
+.cardInspectOwnersBtn {
+    flex: 1 1 50%;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.15s ease;
+}
+
+.cardInspectShareBtn {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+}
+
+.cardInspectShareBtn:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+}
+
+.cardInspectOwnersBtn {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+.cardInspectOwnersBtn:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+.cardInspectOwnersList {
+    width: 100%;
+    background: rgba(8, 15, 26, 0.7);
+    border: 1px solid rgba(138, 166, 191, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-sizing: border-box;
+}
+
+.cardInspectOwnerRow {
+    font-size: 12px;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cardInspectScore {
+    font-size: 14px;
+    font-weight: 800;
+    color: #4ade80;
+    text-align: center;
+}
+
+.cardInspectModifiersList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cardInspectCloseBtn {
+    margin-top: 6px;
+    padding: 8px 24px;
+    border-radius: 8px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
