@@ -7015,6 +7015,48 @@ function handleCollectionDataResponse(payload) {
     updateCollectionRosterText();
     renderCollectionCardGrid();
 }
+function getCardArtworkUrl(card) {
+    const desc = card.desc || '';
+    let fileName = 'tornado.png';
+
+    const imageMatch = desc.match(/(?:^|[\r\n])[ \t]*[-*]?[ \t]*\*{0,2}(?:images?)\*{0,2}[ \t]*:[ \t]*([^\r\n.]+)(?:\.\w+)?/i);
+    if (imageMatch && imageMatch[1].trim()) {
+        fileName = `${imageMatch[1].trim()}.png`;
+    } else {
+        const bottomMatch = desc.match(/(?:^|[\r\n])[ \t]*([PTpt])[ \t]*(?:$|[\r\n])/);
+        if (bottomMatch) {
+            const type = bottomMatch[1].toUpperCase();
+            if (type === 'P') fileName = 'person.png';
+            if (type === 'T') fileName = 'tornado.png';
+        }
+    }
+
+    return `./${fileName}`;
+}
+
+function renderFinishedCardHtml(card, extraClasses = '') {
+    const rarity = (card.rarity || 'common').toLowerCase();
+    const artworkUrl = getCardArtworkUrl(card);
+    const hasGradient = ['transcendent', 'cosmic', 'omnipotent'].includes(rarity);
+
+    return `
+        <div class="collectionCardBox owned finishedCard ${extraClasses}" data-rarity="${rarity}" ${hasGradient ? 'data-has-gradient="true"' : ''}>
+            <div class="finishedCardInnerBorder">
+                <div class="finishedCardHeader">
+                    <span class="finishedCardTitle">${card.name}</span>
+                    <span class="finishedCardRarityTag" data-rarity="${rarity}">${rarity.toUpperCase()}</span>
+                </div>
+                <div class="finishedCardArtFrame">
+                    <img src="${artworkUrl}" alt="${card.name}" class="finishedCardArtImg" onerror="this.onerror=null; this.src='./images/tornado.png';" />
+                </div>
+                <div class="finishedCardFooter">
+                    <span class="finishedCardGameTitle">STORM CARDS</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 
 function renderCollectionCardGrid() {
     if (!collectionCardsGrid) return;
@@ -7042,43 +7084,42 @@ function renderCollectionCardGrid() {
 
         const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
 
-      pageCards.forEach(card => {
+     pageCards.forEach(card => {
             const isOwned = Boolean(card.owned);
             const isDiscovered = Boolean(card.discovered) || isOwned;
             const hasOwnershipError = Boolean(card.ownershipError);
             const rarityKey = (card.rarity || 'common').toLowerCase();
             const hasGradient = RNG_GRADIENT_RARITIES.includes(rarityKey);
 
-            const cardBox = document.createElement('div');
-            const statusClass = hasOwnershipError ? 'owned cardBoxError' : (isDiscovered ? 'owned' : 'locked');
-            cardBox.className = `collectionCardBox ${statusClass}`;
-            cardBox.dataset.rarity = rarityKey;
-
-            if (hasGradient) {
-                cardBox.dataset.hasGradient = "true";
-            }
+            const wrap = document.createElement('div');
 
             if (!isDiscovered) {
-                cardBox.innerHTML = `
-                    <div class="cardUndiscoveredQuestion">?</div>
-                    <div class="cardUndiscoveredRarity">${rarityKey}</div>
+                wrap.innerHTML = `
+                    <div class="collectionCardBox locked" data-rarity="${rarityKey}" ${hasGradient ? 'data-has-gradient="true"' : ''}>
+                        <div class="cardUndiscoveredQuestion">?</div>
+                        <div class="cardUndiscoveredRarity">${rarityKey}</div>
+                    </div>
                 `;
             } else if (hasOwnershipError) {
-                cardBox.innerHTML = `
-                    <div class="cardOwnershipErrorBadge">⚠️ ERROR</div>
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="cardOwnershipErrorNotice">An ownership error has occurred for this card. Please contact DOWDataLab via the technical issues ticket.</div>
-                    <div class="collectionCardRarity">${rarityKey}</div>
+                wrap.innerHTML = `
+                    <div class="collectionCardBox owned cardBoxError" data-rarity="${rarityKey}">
+                        <div class="cardOwnershipErrorBadge">⚠️ ERROR</div>
+                        <div class="collectionCardName">${card.name}</div>
+                        <div class="cardOwnershipErrorNotice">An ownership error has occurred for this card. Please contact DOWDataLab via the technical issues ticket.</div>
+                        <div class="collectionCardRarity">${rarityKey}</div>
+                    </div>
                 `;
             } else {
-                cardBox.innerHTML = `
-                    ${isOwned ? '<div class="cardOwnedBadge">OWNED</div>' : ''}
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${rarityKey}</div>
-                `;
+                wrap.innerHTML = renderFinishedCardHtml(card);
+                if (isOwned) {
+                    wrap.firstElementChild.insertAdjacentHTML('afterbegin', '<div class="cardOwnedBadge">OWNED</div>');
+                }
+                wrap.firstElementChild.addEventListener('click', () => {
+                    openCardDetailModal(card);
+                });
             }
 
-            fragment.appendChild(cardBox);
+            fragment.appendChild(wrap.firstElementChild);
         });
 
     collectionCardsGrid.appendChild(fragment);
@@ -7119,11 +7160,114 @@ function renderCollectionCardGrid() {
         }
     });
 
-    paginationBar.appendChild(prevBtn);
+  paginationBar.appendChild(prevBtn);
     paginationBar.appendChild(pageIndicator);
     paginationBar.appendChild(nextBtn);
 
     collectionCardsGrid.after(paginationBar);
+}
+
+function parseCardOwnersList(desc) {
+    if (!desc) return [];
+    const match = desc.match(/(?:^|[\r\n])[ \t]*[-*]?[ \t]*\*{0,2}owners?\*{0,2}[ \t]*:[ \t]*([^\r\n]+)/i);
+    if (!match) return [];
+    
+    const entries = match[1].split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+    const sMap = ["th", "st", "nd", "rd"];
+    const formatOrd = n => {
+        const v = n % 100;
+        return `${n}${sMap[(v - 20) % 10] || sMap[v] || sMap[0]}`;
+    };
+
+    return entries.map(e => {
+        const parts = e.split('_');
+        const ownerId = parts[0] || 'Unknown';
+        const editions = parts.filter(p => /^E\d+$/i.test(p)).map(p => formatOrd(parseInt(p.slice(1), 10)));
+        return {
+            owner: `Owner #${ownerId}`,
+            count: editions.length || 1,
+            editionsText: editions.length > 0 ? editions.join(', ') : '1st'
+        };
+    });
+}
+
+function openCardDetailModal(card) {
+    const existing = document.getElementById('cardInspectModal');
+    if (existing) existing.remove();
+
+    const isOwned = Boolean(card.owned);
+    const owners = parseCardOwnersList(card.desc);
+    const totalPts = Number(card.totalPoints ?? card.points ?? 0);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'cardInspectModal';
+    overlay.className = 'cardInspectOverlay';
+
+    overlay.innerHTML = `
+        <div class="cardInspectBox">
+            <div class="cardInspectCardSlot">
+                ${renderFinishedCardHtml(card)}
+            </div>
+
+            <div class="cardInspectActionRow">
+                ${isOwned ? '<button type="button" class="cardInspectShareBtn" id="cardInspectShareBtn">📤 Share</button>' : ''}
+                <button type="button" class="cardInspectOwnersBtn" id="cardInspectOwnersBtn">👥 Owners</button>
+            </div>
+
+           <div id="cardInspectOwnersList" class="cardInspectOwnersList hidden">
+                ${(!card.owners || card.owners.length === 0) ? '<div style="color:#94a3b8; font-size:12px; text-align:center;">No recorded owners.</div>' : card.owners.map(o => `
+                    <div class="cardInspectOwnerRow" style="display:flex; justify-content:space-between; align-items:center; padding:3px 0;">
+                        <span><strong>${o.username}</strong> <span style="color:#64748b; font-size:11px;">(${o.userId})</span> - <strong>${o.count}x</strong></span>
+                        <span style="color:#38bdf8; font-weight:700; font-size:11.5px;">(${o.editionsText})</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="cardInspectScore">Total Score: ${totalPts} Points</div>
+
+            <div class="cardInspectModifiersList">
+                ${Array.isArray(card.modifiers) && card.modifiers.length > 0 ? card.modifiers.map(m => `
+                    <div class="highlightModItem">
+                        <div class="highlightModHeader">
+                            <span class="highlightModRarity" data-rarity="${(m.rarity || 'common').toLowerCase()}">[${(m.rarity || 'common').toUpperCase()}]</span>
+                            <span class="highlightModName">${m.displayName || m.name}</span>
+                            <span class="highlightModPts">(+${m.points} pts)</span>
+                        </div>
+                        <div class="highlightModDesc">${m.description || ''}</div>
+                    </div>
+                `).join('') : '<div style="color:#64748b; font-size:12px; text-align:center;">No modifiers applied</div>'}
+            </div>
+
+            <button type="button" class="cardInspectCloseBtn" id="cardInspectCloseBtn">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#cardInspectCloseBtn')?.addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    overlay.querySelector('#cardInspectOwnersBtn')?.addEventListener('click', () => {
+        const list = overlay.querySelector('#cardInspectOwnersList');
+        if (list) list.classList.toggle('hidden');
+    });
+
+    overlay.querySelector('#cardInspectShareBtn')?.addEventListener('click', () => {
+        if (!socket || socket.readyState !== WebSocket.OPEN) return;
+        socket.send(JSON.stringify({
+            protocol: "cardgame",
+            version: 1,
+            request: "share_card",
+            info: {
+                cardId: card.id,
+                cardName: card.name,
+                rarity: card.rarity,
+                desc: card.desc,
+                edition: card.edition || 1
+            }
+        }));
+        showTradeToast("Sharing card to Discord...", "info");
+    });
 }
 const PACK_LOCAL_RESULT_STORAGE_KEY = 'cardgame_pack_last_result';
 
@@ -7249,9 +7393,8 @@ function renderPackViewContainer() {
                     cardEl.dataset.hasGradient = "true";
                 }
 
-                cardEl.innerHTML = `
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${card.rarity}</div>
+               cardEl.innerHTML = `
+                    ${renderFinishedCardHtml(card)}
                     ${!card.duplicate ? '<div class="packLastResultBadgeNew">★ NEW ★</div>' : ''}
                 `;
                 grid.appendChild(cardEl);
@@ -7633,25 +7776,14 @@ function renderCurrentRevealCard(packDisplayName) {
             `;
             slot.appendChild(ripContainer);
 
-            setTimeout(() => {
+           setTimeout(() => {
                 playPackCardFlash(card.rarity);
 
                 slot.innerHTML = '';
 
-                const cardBox = document.createElement('div');
-                cardBox.className = `collectionCardBox owned packRevealedCardAnim`;
-                cardBox.dataset.rarity = (card.rarity || 'common').toLowerCase();
-
-                const RNG_GRADIENT_RARITIES = ['transcendent', 'cosmic', 'omnipotent'];
-                if (RNG_GRADIENT_RARITIES.includes((card.rarity || '').toLowerCase())) {
-                    cardBox.dataset.hasGradient = "true";
-                }
-
-                cardBox.innerHTML = `
-                    <div class="collectionCardName">${card.name}</div>
-                    <div class="collectionCardRarity">${card.rarity}</div>
-                `;
-                slot.appendChild(cardBox);
+                const cardWrapper = document.createElement('div');
+                cardWrapper.innerHTML = renderFinishedCardHtml(card, 'packRevealedCardAnim');
+                slot.appendChild(cardWrapper.firstElementChild);
 
                 const centerContainer = document.querySelector('.packRevealContainer');
                 if (centerContainer) {
@@ -7773,10 +7905,7 @@ function advancePackCardReveal(packDisplayName) {
                 sideCard.dataset.hasGradient = "true";
             }
 
-            sideCard.innerHTML = `
-                <div class="collectionCardName">${card.name}</div>
-                <div class="collectionCardRarity">${card.rarity}</div>
-            `;
+            sideCard.innerHTML = renderFinishedCardHtml(card).replace('collectionCardBox owned', 'collectionCardBox owned packSideCardItem');
 
             targetStack.appendChild(sideCard);
         }
