@@ -7190,14 +7190,13 @@ function parseCardOwnersList(desc) {
         };
     });
 }
-
 function openCardDetailModal(card) {
     const existing = document.getElementById('cardInspectModal');
     if (existing) existing.remove();
 
     const isOwned = Boolean(card.owned);
-    const owners = parseCardOwnersList(card.desc);
     const totalPts = Number(card.totalPoints ?? card.points ?? 0);
+    const owners = Array.isArray(card.owners) ? card.owners : [];
 
     const overlay = document.createElement('div');
     overlay.id = 'cardInspectModal';
@@ -7210,22 +7209,34 @@ function openCardDetailModal(card) {
             </div>
 
             <div class="cardInspectActionRow">
-                ${isOwned ? '<button type="button" class="cardInspectShareBtn" id="cardInspectShareBtn">📤 Share</button>' : ''}
-                <button type="button" class="cardInspectOwnersBtn" id="cardInspectOwnersBtn">👥 Owners</button>
+                <button type="button" class="cardInspectShareBtn ${!isOwned ? 'btn-disabled' : ''}" id="cardInspectShareBtn" ${!isOwned ? 'disabled' : ''}>Share</button>
+                <button type="button" class="cardInspectOwnersBtn" id="cardInspectOwnersBtn">Owners</button>
             </div>
 
-           <div id="cardInspectOwnersList" class="cardInspectOwnersList hidden">
-                ${(!card.owners || card.owners.length === 0) ? '<div style="color:#94a3b8; font-size:12px; text-align:center;">No recorded owners.</div>' : card.owners.map(o => `
-                    <div class="cardInspectOwnerRow" style="display:flex; justify-content:space-between; align-items:center; padding:3px 0;">
-                        <span><strong>${o.username}</strong> <span style="color:#64748b; font-size:11px;">(${o.userId})</span> - <strong>${o.count}x</strong></span>
-                        <span style="color:#38bdf8; font-weight:700; font-size:11.5px;">(${o.editionsText})</span>
-                    </div>
-                `).join('')}
+            <div id="cardInspectOwnersList" class="cardInspectOwnersList hidden">
+                ${owners.length === 0 ? '<div style="color:#94a3b8; font-size:12px; text-align:center;">No recorded owners.</div>' : owners.map(o => {
+                    const editionsList = (o.editionsText || '').split(',').map(s => s.trim()).filter(Boolean);
+                    let formattedEditions = o.editionsText || '1st';
+                    if (editionsList.length > 5) {
+                        formattedEditions = `${editionsList.slice(0, 5).join(', ')}, and ${editionsList.length - 5} more`;
+                    }
+                    return `
+                        <div class="cardInspectOwnerRow">
+                            <span><strong>${o.username}</strong> <span style="color:#64748b; font-size:11px;">(${o.userId})</span> - <strong>${o.count}x</strong></span>
+                            <span style="color:#38bdf8; font-weight:700; font-size:11px;">(${formattedEditions})</span>
+                        </div>
+                    `;
+                }).join('')}
             </div>
 
-            <div class="cardInspectScore">Total Score: ${totalPts} Points</div>
+            <div class="cardInspectInfoStack">
+                <div class="cardInspectName">${card.name}</div>
+                <div class="cardInspectRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</div>
+                <div class="cardInspectScore">${totalPts} Points</div>
+            </div>
 
             <div class="cardInspectModifiersList">
+                <div class="cardInspectModsHeading">Applied Modifiers</div>
                 ${Array.isArray(card.modifiers) && card.modifiers.length > 0 ? card.modifiers.map(m => `
                     <div class="highlightModItem">
                         <div class="highlightModHeader">
@@ -7235,7 +7246,7 @@ function openCardDetailModal(card) {
                         </div>
                         <div class="highlightModDesc">${m.description || ''}</div>
                     </div>
-                `).join('') : '<div style="color:#64748b; font-size:12px; text-align:center;">No modifiers applied</div>'}
+                `).join('') : '<div style="color:#64748b; font-size:12px; text-align:center; padding: 4px 0;">No modifiers applied</div>'}
             </div>
 
             <button type="button" class="cardInspectCloseBtn" id="cardInspectCloseBtn">Close</button>
@@ -7252,22 +7263,26 @@ function openCardDetailModal(card) {
         if (list) list.classList.toggle('hidden');
     });
 
-    overlay.querySelector('#cardInspectShareBtn')?.addEventListener('click', () => {
-        if (!socket || socket.readyState !== WebSocket.OPEN) return;
-        socket.send(JSON.stringify({
-            protocol: "cardgame",
-            version: 1,
-            request: "share_card",
-            info: {
-                cardId: card.id,
-                cardName: card.name,
-                rarity: card.rarity,
-                desc: card.desc,
-                edition: card.edition || 1
-            }
-        }));
-        showTradeToast("Sharing card to Discord...", "info");
-    });
+    if (isOwned) {
+        overlay.querySelector('#cardInspectShareBtn')?.addEventListener('click', () => {
+            if (!socket || socket.readyState !== WebSocket.OPEN) return;
+            socket.send(JSON.stringify({
+                protocol: "cardgame",
+                version: 1,
+                request: "share_card",
+                info: {
+                    cardId: card.id,
+                    cardName: card.name,
+                    rarity: card.rarity,
+                    desc: card.desc,
+                    edition: card.edition || 1,
+                    totalPoints: totalPts,
+                    modifiers: card.modifiers || []
+                }
+            }));
+            showTradeToast("Sharing card to Discord...", "info");
+        });
+    }
 }
 const PACK_LOCAL_RESULT_STORAGE_KEY = 'cardgame_pack_last_result';
 
@@ -7809,8 +7824,8 @@ const modText = Array.isArray(card.modifiers) && card.modifiers.length > 0
                         <div class="packCardTextLine">Edition: <span style="color:#fde047; font-weight:800;">${formatOrdinalEdition(card.edition)}</span></div>
                         ${!card.duplicate ? '<div class="packCardTextNew">★ NEW ★</div>' : ''}
                         <div class="packCardTextLine">Total Points: <span style="color:#69e58f; font-weight:800;">${totalPts}</span> (${basePts} base + ${modPts} mod)</div>
-                        <div class="packCardTextLine">Modifiers: <span style="color:#cbd5e1; font-weight:700;">${modText}</span></div>
-                        <div class="packCardTextLine">Pull Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span>${card.finalRarity && card.finalRarity !== (card.rarity || 'common').toLowerCase() ? ` ➔ <span style="color:#38bdf8; font-weight:800;">${card.finalRarity.toUpperCase()}</span>` : ''}</div>
+                        <div class="packCardTextLine">Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span></div>
+                        <div class="packCardTextLine" style="margin-top: 4px;">Modifiers: <span style="color:#cbd5e1; font-weight:700;">${modText}</span></div>
                     `;
 
                     const nextBtnEl = document.getElementById('packRevealNextBtn');
@@ -7905,7 +7920,12 @@ function advancePackCardReveal(packDisplayName) {
                 sideCard.dataset.hasGradient = "true";
             }
 
-            sideCard.innerHTML = renderFinishedCardHtml(card).replace('collectionCardBox owned', 'collectionCardBox owned packSideCardItem');
+           sideCard.className = 'collectionCardBox locked packSideCardItem';
+            sideCard.dataset.rarity = rarityKey;
+            sideCard.innerHTML = `
+                <div class="cardUndiscoveredQuestion" style="font-size: 30px; margin-bottom: 2px;">?</div>
+                <div class="cardUndiscoveredRarity" style="font-size: 7.5px;">${rarityKey}</div>
+            `;
 
             targetStack.appendChild(sideCard);
         }

@@ -7758,19 +7758,147 @@ body.rng-rarity-omnipotent,
 
 .cardInspectBox {
     width: 100%;
-    max-width: 440px;
-    max-height: 90vh;
+    max-width: 420px;
+    max-height: 88vh;
     overflow-y: auto;
-    background: #141c26;
-    border: 1px solid rgba(138, 166, 191, 0.25);
-    border-radius: 14px;
-    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(138, 166, 191, 0.3) transparent;
+    background: #0f1622;
+    border: 1.5px solid #26384f;
+    border-radius: 20px;
+    padding: 22px 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    gap: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
     box-sizing: border-box;
+}
+
+.cardInspectActionRow {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.cardInspectShareBtn,
+.cardInspectOwnersBtn {
+    flex: 1 1 50%;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid #38bdf8;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    transition: all 0.15s ease;
+}
+
+.cardInspectShareBtn:hover:not(:disabled),
+.cardInspectOwnersBtn:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    transform: translateY(-1px);
+}
+
+.cardInspectShareBtn:disabled,
+.cardInspectShareBtn.btn-disabled {
+    background: #1e293b !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
+    color: #64748b !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    opacity: 0.45;
+}
+
+.cardInspectInfoStack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+}
+
+.cardInspectName {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ffffff;
+    text-align: center;
+}
+
+.cardInspectRarity {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #38bdf8;
+}
+
+.cardInspectRarity[data-rarity="common"] { color: #4ade80; }
+.cardInspectRarity[data-rarity="uncommon"] { color: #94a3b8; }
+.cardInspectRarity[data-rarity="rare"] { color: #38bdf8; }
+.cardInspectRarity[data-rarity="epic"] { color: #c084fc; }
+.cardInspectRarity[data-rarity="legendary"] { color: #facc15; }
+.cardInspectRarity[data-rarity="mythical"] { color: #f87171; }
+.cardInspectRarity[data-rarity="celestial"] { color: #60a5fa; }
+.cardInspectRarity[data-rarity="divine"] { color: #a3e635; }
+.cardInspectRarity[data-rarity="transcendent"] { color: #ff5599; }
+.cardInspectRarity[data-rarity="cosmic"] { color: #c084fc; }
+.cardInspectRarity[data-rarity="omnipotent"] { color: #ffffff; }
+
+.cardInspectScore {
+    font-size: 14px;
+    font-weight: 800;
+    color: #4ade80;
+    margin-top: 2px;
+}
+
+.cardInspectModsHeading {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+
+
+.packLastResultCard.finishedCard {
+    width: 130px !important;
+    height: 188px !important;
+    border-width: 2.5px !important;
+}
+
+.packLastResultCard .finishedCardInnerBorder {
+    inset: 3px !important;
+    padding: 3px !important;
+}
+
+.packLastResultCard .finishedCardHeader {
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+}
+
+.packLastResultCard .finishedCardTitle {
+    font-size: 8px !important;
+}
+
+.packLastResultCard .finishedCardRarityTag {
+    font-size: 6.5px !important;
+}
+
+.packLastResultCard .finishedCardArtFrame {
+    margin: 2px 0 !important;
+}
+
+.packLastResultCard .finishedCardFooter {
+    padding: 1.5px 0 !important;
+}
+
+.packLastResultCard .finishedCardGameTitle {
+    font-size: 6.5px !important;
 }
 
 .cardInspectCardSlot {
