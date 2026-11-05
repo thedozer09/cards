@@ -7050,11 +7050,11 @@ function renderFinishedCardHtml(card, extraClasses = '') {
                 </div>
                 <div class="finishedCardArtFrame">
                     <img src="${artworkUrl}" alt="${card.name}" class="finishedCardArtImg" onerror="this.onerror=null; this.src='./images/tornado.png';" />
+                    ${isDiscovered ? '<span class="cardArtBadge cardDiscoveredBadge">DISCOVERED</span>' : ''}
+                    ${isOwned ? '<span class="cardArtBadge cardOwnedBadge">OWNED</span>' : ''}
                 </div>
                 <div class="finishedCardFooter">
-                    ${isDiscovered ? '<span class="cardFooterBadge cardDiscoveredBadge">DISCOVERED</span>' : '<span class="cardFooterBadgePlaceholder"></span>'}
                     <span class="finishedCardGameTitle">STORM CARDS</span>
-                    ${isOwned ? '<span class="cardFooterBadge cardOwnedBadge">OWNED</span>' : '<span class="cardFooterBadgePlaceholder"></span>'}
                 </div>
             </div>
         </div>
@@ -7195,6 +7195,9 @@ function openCardDetailModal(card) {
     const existing = document.getElementById('cardInspectModal');
     if (existing) existing.remove();
 
+   
+    document.body.style.overflow = 'hidden';
+
     const isOwned = Boolean(card.owned);
     const totalPts = Number(card.totalPoints ?? card.points ?? 0);
     const owners = Array.isArray(card.owners) ? card.owners : [];
@@ -7267,10 +7270,15 @@ function openCardDetailModal(card) {
         </div>
     `;
 
-    document.body.appendChild(overlay);
+   document.body.appendChild(overlay);
 
-    overlay.querySelector('#cardInspectCloseBtn')?.addEventListener('click', () => overlay.remove());
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    const closeModal = () => {
+        overlay.remove();
+        document.body.style.overflow = '';
+    };
+
+    overlay.querySelector('#cardInspectCloseBtn')?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
     overlay.querySelector('#cardInspectOwnersBtn')?.addEventListener('click', () => {
         const list = overlay.querySelector('#cardInspectOwnersList');
@@ -7280,6 +7288,9 @@ function openCardDetailModal(card) {
     if (isOwned) {
         overlay.querySelector('#cardInspectShareBtn')?.addEventListener('click', () => {
             if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+            const trueBaseRarity = card.baseRarity || (card.fullName && card.fullName.includes('_') ? card.fullName.split('_')[0] : card.rarity);
+
             socket.send(JSON.stringify({
                 protocol: "cardgame",
                 version: 1,
@@ -7287,6 +7298,7 @@ function openCardDetailModal(card) {
                 info: {
                     cardId: card.id,
                     cardName: card.name,
+                    baseRarity: trueBaseRarity,
                     rarity: card.rarity,
                     desc: card.desc,
                     edition: card.edition || 1,
