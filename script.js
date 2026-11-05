@@ -7038,6 +7038,8 @@ function renderFinishedCardHtml(card, extraClasses = '') {
     const rarity = (card.rarity || 'common').toLowerCase();
     const artworkUrl = getCardArtworkUrl(card);
     const hasGradient = ['transcendent', 'cosmic', 'omnipotent'].includes(rarity);
+    const isOwned = Boolean(card.owned);
+    const isDiscovered = Boolean(card.discovered) || isOwned;
 
     return `
         <div class="collectionCardBox owned finishedCard ${extraClasses}" data-rarity="${rarity}" ${hasGradient ? 'data-has-gradient="true"' : ''}>
@@ -7050,7 +7052,9 @@ function renderFinishedCardHtml(card, extraClasses = '') {
                     <img src="${artworkUrl}" alt="${card.name}" class="finishedCardArtImg" onerror="this.onerror=null; this.src='./images/tornado.png';" />
                 </div>
                 <div class="finishedCardFooter">
+                    ${isDiscovered ? '<span class="cardFooterBadge cardDiscoveredBadge">DISCOVERED</span>' : '<span class="cardFooterBadgePlaceholder"></span>'}
                     <span class="finishedCardGameTitle">STORM CARDS</span>
+                    ${isOwned ? '<span class="cardFooterBadge cardOwnedBadge">OWNED</span>' : '<span class="cardFooterBadgePlaceholder"></span>'}
                 </div>
             </div>
         </div>
@@ -7109,11 +7113,8 @@ function renderCollectionCardGrid() {
                         <div class="collectionCardRarity">${rarityKey}</div>
                     </div>
                 `;
-            } else {
+          } else {
                 wrap.innerHTML = renderFinishedCardHtml(card);
-                if (isOwned) {
-                    wrap.firstElementChild.insertAdjacentHTML('afterbegin', '<div class="cardOwnedBadge">OWNED</div>');
-                }
                 wrap.firstElementChild.addEventListener('click', () => {
                     openCardDetailModal(card);
                 });
@@ -7213,17 +7214,27 @@ function openCardDetailModal(card) {
                 <button type="button" class="cardInspectOwnersBtn" id="cardInspectOwnersBtn">Owners</button>
             </div>
 
-            <div id="cardInspectOwnersList" class="cardInspectOwnersList hidden">
-                ${owners.length === 0 ? '<div style="color:#94a3b8; font-size:12px; text-align:center;">No recorded owners.</div>' : owners.map(o => {
+           <div id="cardInspectOwnersList" class="cardInspectOwnersList hidden">
+                ${owners.length === 0 ? '<div class="cardInspectNoOwners">No recorded owners.</div>' : owners.map(o => {
                     const editionsList = (o.editionsText || '').split(',').map(s => s.trim()).filter(Boolean);
-                    let formattedEditions = o.editionsText || '1st';
+                    let formattedEditions = 'None';
                     if (editionsList.length > 5) {
                         formattedEditions = `${editionsList.slice(0, 5).join(', ')}, and ${editionsList.length - 5} more`;
+                    } else if (editionsList.length > 0) {
+                        formattedEditions = editionsList.join(', ');
                     }
                     return `
-                        <div class="cardInspectOwnerRow">
-                            <span><strong>${o.username}</strong> <span style="color:#64748b; font-size:11px;">(${o.userId})</span> - <strong>${o.count}x</strong></span>
-                            <span style="color:#38bdf8; font-weight:700; font-size:11px;">(${formattedEditions})</span>
+                        <div class="cardInspectOwnerCard">
+                            <div class="ownerLeftCol">
+                                <div class="ownerUsername">${o.username}</div>
+                                <div class="ownerUserId">${o.userId}</div>
+                            </div>
+                            <div class="ownerMidCol">
+                                <div class="ownerCountBadge">${o.count}x</div>
+                            </div>
+                            <div class="ownerRightCol">
+                                <div class="ownerEditionsText">${formattedEditions}</div>
+                            </div>
                         </div>
                     `;
                 }).join('')}
@@ -7237,16 +7248,19 @@ function openCardDetailModal(card) {
 
             <div class="cardInspectModifiersList">
                 <div class="cardInspectModsHeading">Applied Modifiers</div>
-                ${Array.isArray(card.modifiers) && card.modifiers.length > 0 ? card.modifiers.map(m => `
-                    <div class="highlightModItem">
+                ${Array.isArray(card.modifiers) && card.modifiers.length > 0 ? card.modifiers.map(m => {
+                    const mRarity = (m.rarity || 'common').toLowerCase();
+                    return `
+                    <div class="highlightModItem" data-rarity="${mRarity}">
                         <div class="highlightModHeader">
-                            <span class="highlightModRarity" data-rarity="${(m.rarity || 'common').toLowerCase()}">[${(m.rarity || 'common').toUpperCase()}]</span>
+                            <span class="highlightModRarity">[${mRarity.toUpperCase()}]</span>
                             <span class="highlightModName">${m.displayName || m.name}</span>
                             <span class="highlightModPts">(+${m.points} pts)</span>
                         </div>
                         <div class="highlightModDesc">${m.description || ''}</div>
                     </div>
-                `).join('') : '<div style="color:#64748b; font-size:12px; text-align:center; padding: 4px 0;">No modifiers applied</div>'}
+                    `;
+                }).join('') : '<div style="color:#64748b; font-size:12px; text-align:center; padding: 4px 0;">No modifiers applied</div>'}
             </div>
 
             <button type="button" class="cardInspectCloseBtn" id="cardInspectCloseBtn">Close</button>
