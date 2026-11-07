@@ -3,13 +3,17 @@
 ### Copyright Notice
 Copyright © 2026 Hunter Games Studios. All rights reserved.
 
-All items in this repository (excluding music and sounds) are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, downloading, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
+All items in this repository (excluding music, sounds, and some images) are the exclusive intellectual property of Hunter Games Studios. Unauthorized copying, downloading, modification, distribution, hosting, or reverse engineering of this software, via any medium, is strictly prohibited. 
 
-Music and sounds by third parties; not the property of Hunter Games Studios.
+Music, sounds, and some images by third parties; not the property of Hunter Games Studios.
 
 Hip Hop Drums.wav by CrushedLoops -- https://freesound.org/s/621600/ -- License: Creative Commons 0
 
 Dream Catcher by Vexento -- https://www.youtube.com/watch?v=nK5blLPbFyE -- License: Permission Given
+
+Tornado - Tornado Symbol Png, Transparent Png by Daniele Liverotti - https://www.pngitem.com/middle/JowxiT_tornado-tornado-symbol-png-transparent-png/ -- License: PUO
+
+blank profile picture mystery man by WandererCreative - https://pixabay.com/vectors/blank-profile-picture-mystery-man-973460/ -- License: Pixabay Content License
 
 ### Computer Misuse & Security Warning
 This repository is  for backend technical purposes only. Any unauthorized attempts to:
