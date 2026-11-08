@@ -2451,12 +2451,22 @@ function createCollectionStats() {
 }
 
 function updateCardGameCountDisplays(statsData) {
-    const recordsDiscovered = statsData
-        ? statsData.recordsDiscovered
-        : undefined;
-    const totalRecords = statsData
-        ? statsData.totalRecords
-        : undefined;
+    let recordsDiscovered = statsData ? statsData.recordsDiscovered : undefined;
+    const totalRecords = statsData ? statsData.totalRecords : undefined;
+
+    let cardsDiscovered = statsData ? statsData.cardsDiscovered : undefined;
+    let cardsOwned = statsData ? statsData.cardsOwned : undefined;
+    const totalCards = statsData ? statsData.totalCards : undefined;
+
+    if (typeof recordsDiscovered === 'number' && typeof totalRecords === 'number' && totalRecords > 0) {
+        recordsDiscovered = Math.min(recordsDiscovered, totalRecords);
+    }
+    if (typeof cardsDiscovered === 'number' && typeof totalCards === 'number' && totalCards > 0) {
+        cardsDiscovered = Math.min(cardsDiscovered, totalCards);
+    }
+    if (typeof cardsOwned === 'number' && typeof totalCards === 'number' && totalCards > 0) {
+        cardsOwned = Math.min(cardsOwned, totalCards);
+    }
 
     if (rngRecordsDiscoveredCount) {
         rngRecordsDiscoveredCount.textContent =
@@ -2465,12 +2475,12 @@ function updateCardGameCountDisplays(statsData) {
 
     if (collectionCardsDiscoveredValue) {
         collectionCardsDiscoveredValue.textContent =
-            `${formatStatsValue(statsData ? statsData.cardsDiscovered : undefined)} out of ${formatStatsValue(statsData ? statsData.totalCards : undefined)} cards discovered`;
+            `${formatStatsValue(cardsDiscovered)} out of ${formatStatsValue(totalCards)} cards discovered`;
     }
 
     if (collectionCardsOwnedValue) {
         collectionCardsOwnedValue.textContent =
-            `${formatStatsValue(statsData ? statsData.cardsOwned : undefined)} out of ${formatStatsValue(statsData ? statsData.totalCards : undefined)} cards owned`;
+            `${formatStatsValue(cardsOwned)} out of ${formatStatsValue(totalCards)} cards owned`;
     }
 }
 
@@ -6894,10 +6904,12 @@ const CARDS_PER_PAGE = 30;
 const STATS_COOLDOWN_MS = 30 * 1000;              // 30s cooldown for stats
 const COLLECTION_TAB_COOLDOWN_MS = 30 * 1000;     // 30s cooldown when clicking Cards or My Collection
 const COLLECTION_SEARCH_COOLDOWN_MS = 8 * 1000;   // 8s cooldown for search / filter changes
+const SHARE_CARD_COOLDOWN_MS = 15 * 1000;         // 15s cooldown for sharing cards to Discord
 
 let lastStatsRequestTime = 0;
 let lastCollectionTabRequestTime = 0;
 let lastCollectionSearchRequestTime = 0;
+let lastShareCardRequestTime = 0;
 
 let collectionPendingSearchTimer = null;
 let collectionHasPendingSearch = false;
@@ -7287,8 +7299,17 @@ function openCardDetailModal(card) {
 
     if (isOwned) {
         overlay.querySelector('#cardInspectShareBtn')?.addEventListener('click', () => {
+            const now = Date.now();
+            const elapsed = now - lastShareCardRequestTime;
+            if (elapsed < SHARE_CARD_COOLDOWN_MS) {
+                const remaining = Math.ceil((SHARE_CARD_COOLDOWN_MS - elapsed) / 1000);
+                showTradeToast(`Share is on cooldown (${remaining}s remaining).`, "info");
+                return;
+            }
+
             if (!socket || socket.readyState !== WebSocket.OPEN) return;
 
+            lastShareCardRequestTime = now;
             const trueBaseRarity = card.baseRarity || (card.fullName && card.fullName.includes('_') ? card.fullName.split('_')[0] : card.rarity);
 
             socket.send(JSON.stringify({
@@ -7746,6 +7767,9 @@ function startPackCardReveal(packDisplayName) {
     cardSlot.className = 'packRevealCardSlot';
     centerContainer.appendChild(cardSlot);
 
+   const actionsRow = document.createElement('div');
+    actionsRow.className = 'packRevealActionsRow';
+
     const nextBtn = document.createElement('button');
     nextBtn.id = 'packRevealNextBtn';
     nextBtn.type = 'button';
@@ -7754,7 +7778,19 @@ function startPackCardReveal(packDisplayName) {
     nextBtn.addEventListener('click', () => {
         advancePackCardReveal(packDisplayName);
     });
-    centerContainer.appendChild(nextBtn);
+
+    const openAllBtn = document.createElement('button');
+    openAllBtn.id = 'packRevealOpenAllBtn';
+    openAllBtn.type = 'button';
+    openAllBtn.className = 'packRevealNextBtn packRevealOpenAllBtn';
+    openAllBtn.textContent = 'Open All ⏩';
+    openAllBtn.addEventListener('click', () => {
+        skipPackCardReveal(packDisplayName);
+    });
+
+    actionsRow.appendChild(nextBtn);
+    actionsRow.appendChild(openAllBtn);
+    centerContainer.appendChild(actionsRow);
 
     stageWrapper.appendChild(leftStack);
     stageWrapper.appendChild(centerContainer);
@@ -7763,6 +7799,12 @@ function startPackCardReveal(packDisplayName) {
     openPackView.appendChild(stageWrapper);
 
     renderCurrentRevealCard(packDisplayName);
+}
+
+function skipPackCardReveal(packDisplayName) {
+    isCardRevealSpinning = false;
+    currentPackRevealIndex = currentPackRevealCards.length;
+    renderPackSummaryScreen(packDisplayName);
 }
 
 let isCardRevealSpinning = false;
@@ -7849,13 +7891,17 @@ const modText = Array.isArray(card.modifiers) && card.modifiers.length > 0
                         <div class="packCardTextName">${card.name}</div>
                         <div class="packCardTextLine">Edition: <span style="color:#fde047; font-weight:800;">${formatOrdinalEdition(card.edition)}</span></div>
                         ${!card.duplicate ? '<div class="packCardTextNew">★ NEW ★</div>' : ''}
-                        <div class="packCardTextLine">Total Points: <span style="color:#69e58f; font-weight:800;">${totalPts}</span> (${basePts} base + ${modPts} mod)</div>
+                        <div class="packCardTextLine">Total Points: <span style="color:#69e58f; font-weight:800;">${totalPts}</span></div>
                         <div class="packCardTextLine">Rarity: <span class="packCardTextRarity" data-rarity="${(card.rarity || 'common').toLowerCase()}">${(card.rarity || 'common').toUpperCase()}</span></div>
                         <div class="packCardTextLine" style="margin-top: 4px;">Modifiers: <span style="color:#cbd5e1; font-weight:700;">${modText}</span></div>
                     `;
 
-                    const nextBtnEl = document.getElementById('packRevealNextBtn');
-                    centerContainer.insertBefore(textDetails, nextBtnEl);
+                    const actionsRowEl = centerContainer.querySelector('.packRevealActionsRow') || document.getElementById('packRevealNextBtn');
+                    if (actionsRowEl) {
+                        centerContainer.insertBefore(textDetails, actionsRowEl);
+                    } else {
+                        centerContainer.appendChild(textDetails);
+                    }
                 }
 
                 isCardRevealSpinning = false;
