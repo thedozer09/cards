@@ -1888,10 +1888,30 @@ function queueIncomingGameNotifications(data) {
     if (Array.isArray(data.rarityChanges) && data.rarityChanges.length > 0) {
         data.rarityChanges.forEach(card => {
             pendingGameNotifications.push({
-                type: 'rarity_change',
-                cardName: card.cardName,
+                type: card.isRecord ? 'record_rarity_change' : 'rarity_change',
+                cardName: card.cardName || card.recordName,
                 oldRarity: card.oldRarity,
                 newRarity: card.newRarity
+            });
+        });
+    }
+
+    if (Array.isArray(data.recordRarityChanges) && data.recordRarityChanges.length > 0) {
+        data.recordRarityChanges.forEach(rec => {
+            pendingGameNotifications.push({
+                type: 'record_rarity_change',
+                recordName: rec.recordName || rec.cardName,
+                oldRarity: rec.oldRarity,
+                newRarity: rec.newRarity
+            });
+        });
+    }
+
+    if (Array.isArray(data.recordChanges) && data.recordChanges.length > 0) {
+        data.recordChanges.forEach(change => {
+            pendingGameNotifications.push({
+                type: 'record_change',
+                message: change.message
             });
         });
     }
@@ -1923,7 +1943,6 @@ function triggerNextNotificationIfReady() {
     const nextNotice = pendingGameNotifications.shift();
     displayGameNotificationModal(nextNotice);
 }
-
 function displayGameNotificationModal(notice) {
     isShowingGameNotification = true;
 
@@ -1945,6 +1964,27 @@ function displayGameNotificationModal(notice) {
                     <span class="gameNotifNewRarity" data-rarity="${(notice.newRarity || '').toLowerCase()}">${notice.newRarity}</span>
                 </div>
             </div>
+            <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
+        `;
+    } else if (notice.type === 'record_rarity_change') {
+        box.innerHTML = `
+            <div class="gameNotificationHeader">RNG Record Notice</div>
+            <div class="gameNotificationTitle">Record Rarity Changed</div>
+            <div class="gameNotifSingleCardBox">
+                <div class="gameNotifCardName">${notice.recordName || notice.cardName}</div>
+                <div class="gameNotifRarityShift">
+                    <span class="gameNotifOldRarity" data-rarity="${(notice.oldRarity || '').toLowerCase()}">${notice.oldRarity}</span>
+                    <span class="gameNotifArrow">➔</span>
+                    <span class="gameNotifNewRarity" data-rarity="${(notice.newRarity || '').toLowerCase()}">${notice.newRarity}</span>
+                </div>
+            </div>
+            <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
+        `;
+    } else if (notice.type === 'record_change') {
+        box.innerHTML = `
+            <div class="gameNotificationHeader">RNG Notice</div>
+            <div class="gameNotificationTitle">Record Adjustment</div>
+            <p class="gameNotificationMessage">${notice.message}</p>
             <button type="button" class="gameNotifOkBtn" id="gameNotifOkBtn">OK</button>
         `;
     } else if (notice.type === 'user_change') {
